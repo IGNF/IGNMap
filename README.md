@@ -6,11 +6,11 @@
 IGNMap est un logiciel de visualisation de données géographiques. Il permet de visualiser des données vectorielles, des images, des modèles numériques de terrain, des nuages de points LIDAR.  
 IGNMap n’est pas à proprement parler un système d’informations géographiques (SIG) mais plutôt un outil léger pour visualiser et analyser des données.  
 Quelques exemples de visualisation :  
-<https://raw.githubusercontent.com/IGNF/IGNMap/main/images/IGNMap01.png>
+<https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/IGNMap01.png>
 
-<https://raw.githubusercontent.com/IGNF/IGNMap/main/images/IGNMap02.png>
+<https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/IGNMap02.png>
 
-<https://raw.githubusercontent.com/IGNF/IGNMap/main/images/IGNMap03.png>
+<https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/IGNMap03.png>
 
 ## Historique
 
