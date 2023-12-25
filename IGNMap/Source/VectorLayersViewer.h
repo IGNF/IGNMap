@@ -1,0 +1,74 @@
+///==============================================================================
+// VectorLayersViewer.h
+//
+// Author : F.Becirspahic
+// Date : 19/12/2021
+//==============================================================================
+
+#pragma once
+
+#include <JuceHeader.h>
+#include "../../XTool/XGeoBase.h"
+#include "../../XTool/XGeoClass.h"
+
+//==============================================================================
+// LayerViewerComponent : table pour montrer les proprietes des layers
+//==============================================================================
+class LayerViewerModel : public juce::TableListBoxModel,
+	public juce::ChangeListener,
+	public juce::Slider::Listener,
+	public juce::ActionBroadcaster {
+public:
+	typedef enum { Visibility = 1, Selectable = 2, Name = 3, PenWidth = 4, PenColour = 5, FillColour = 6, Options = 7 } Column;
+	LayerViewerModel();
+
+	int getNumRows() override;
+	void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
+	void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/) override;
+	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	juce::var getDragSourceDescription(const juce::SparseSet<int>& selectedRows) override;
+
+	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+	void sliderValueChanged(juce::Slider* slider) override;
+
+	void SetBase(XGeoBase* base) { m_Base = base; }
+	XGeoClass* FindVectorClass(int index);
+
+private:
+	XGeoBase* m_Base;
+	int										m_ActiveRow;
+	int										m_ActiveColumn;
+};
+
+//==============================================================================
+// VectorLayersViewer : fenetre pour contenir le LayerViewerComponent
+//==============================================================================
+class VectorLayersViewer : public juce::Component,
+	public juce::ActionListener,
+	public juce::DragAndDropTarget,
+	public juce::DragAndDropContainer {
+public:
+	VectorLayersViewer();
+
+	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); }
+	void SetActionListener(juce::ActionListener* listener) { m_Model.addActionListener(listener); }
+	void UpdateColumnName();
+	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
+	// Gestion des actions
+	void actionListenerCallback(const juce::String& message) override;
+
+	// Drag&Drop
+	void itemDropped(const SourceDetails& details) override;
+	bool isInterestedInDragSource(const SourceDetails& details) override;
+	void itemDragEnter(const SourceDetails&) override { ; }
+	void itemDragMove(const SourceDetails&) override { ; }
+	void itemDragExit(const SourceDetails&) override { ; }
+
+private:
+	XGeoBase* m_Base;
+	juce::TableListBox	m_Table;
+	LayerViewerModel		m_Model;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VectorLayersViewer)
+};
