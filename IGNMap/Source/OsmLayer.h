@@ -1,10 +1,13 @@
-//==============================================================================
-//    OsmLayer.h
-//    Created: 10 Nov 2023 8:21:26am
-//    Author:  FBecirspahic
-//    Gestion des flux de donnees OSM raster
-//==============================================================================
-
+//-----------------------------------------------------------------------------
+//								OsmLayer.h
+//								==========
+//
+// Gestion des flux de donnees OSM raster
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 10/11/2023
+//-----------------------------------------------------------------------------
 
 #pragma once
 #include <JuceHeader.h>

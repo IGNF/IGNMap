@@ -1,3 +1,14 @@
+//-----------------------------------------------------------------------------
+//								MainComponent.h
+//								===============
+//
+// Composant principal de l'application
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 26/12/2023
+//-----------------------------------------------------------------------------
+
 #pragma once
 
 #include <JuceHeader.h>

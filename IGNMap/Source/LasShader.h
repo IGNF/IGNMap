@@ -1,9 +1,13 @@
-//==============================================================================
-// LasShader.h
-// Created: 28 Oct 2023 10:57:11am
-// Author:  FBecirspahic
+//-----------------------------------------------------------------------------
+//								LasShader.h
+//								===========
+//
 // Colorisation des nuages LIDAR
-//==============================================================================
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 28/10/2023
+//-----------------------------------------------------------------------------
 
 #pragma once
 #include <JuceHeader.h>

@@ -1,9 +1,13 @@
-//==============================================================================
-//    SelTreeViewer.cpp
+//-----------------------------------------------------------------------------
+//								SelTreeViewer.cpp
+//								=================
 //
-//  Created: 14 Mar 2022 3:50:54pm
-//  Author:  FBecirspahic
-//==============================================================================
+// Visualisation d'une selection d'objets sous forme d'arbre
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 14/03/2022
+//-----------------------------------------------------------------------------
 
 #include <JuceHeader.h>
 #include "SelTreeViewer.h"

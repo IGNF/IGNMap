@@ -1,3 +1,14 @@
+//-----------------------------------------------------------------------------
+//								MainComponent.cpp
+//								=================
+//
+// Composant principal de l'application
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 26/12/2023
+//-----------------------------------------------------------------------------
+
 #include "MainComponent.h"
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
@@ -373,7 +384,7 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 			result.setTicked(m_ImageOptionsViewer.get()->isVisible());
 		break;
 	case CommandIDs::menuAbout:
-		result.setInfo(juce::translate("About XMap"), juce::translate("About XMap"), "Menu", 0);
+		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
 		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);

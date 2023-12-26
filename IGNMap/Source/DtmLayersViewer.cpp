@@ -1,9 +1,13 @@
-//==============================================================================
-// DtmViewer.cpp
-// Created: 21 Jan 2022 10:09:55am
-// Author:  FBecirspahic
-//==============================================================================
-
+//-----------------------------------------------------------------------------
+//								DtmLayersViewer.h
+//								=================
+//
+// Visualisation des classes d'objets MNT
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 21/01/2022
+//-----------------------------------------------------------------------------
 
 #include "DtmLayersViewer.h"
 #include "Utilities.h"

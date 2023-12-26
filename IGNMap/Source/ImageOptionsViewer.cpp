@@ -1,9 +1,13 @@
-//==============================================================================
-// ImageOptionsViewer.cpp
-// 
-// Created: 29 Sep 2023 4:21:15pm
-// Author:  FBecirspahic
-//==============================================================================
+//-----------------------------------------------------------------------------
+//								ImageOptionsViewer.cpp
+//								======================
+//
+// Visulisation des options d'une image
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 29/09/2023
+//-----------------------------------------------------------------------------
 
 #include "ImageOptionsViewer.h"
 #include "GeoBase.h"

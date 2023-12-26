@@ -1,17 +1,17 @@
-/*
-  ==============================================================================
-
-    LasLayersViewer.cpp
-    Created: 27 Oct 2023 12:15:28pm
-    Author:  FBecirspahic
-
-  ==============================================================================
-*/
+//-----------------------------------------------------------------------------
+//								LasLayersViewer.cpp
+//								===================
+//
+// Visulisation des classes d'objets LAS/LAZ
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 27/10/2023
+//-----------------------------------------------------------------------------
 
 #include "LasLayersViewer.h"
 #include "Utilities.h"
 #include "LasShader.h"
-
 
 //==============================================================================
 // FindLasClass : renvoie la ieme classe LAS de la base ou nullptr sinon

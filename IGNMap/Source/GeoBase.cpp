@@ -1,12 +1,13 @@
-/*
-  ==============================================================================
-
-    GeoBase.cpp
-    Created: 9 Jan 2023 9:11:28am
-    Author:  FBecirspahic
-
-  ==============================================================================
-*/
+//-----------------------------------------------------------------------------
+//								GeoBase.cpp
+//								===========
+//
+// Encapsulation des classes XTool pour la gestion de donnees
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 09/01/2023
+//-----------------------------------------------------------------------------
 
 #include "GeoBase.h"
 

@@ -1,12 +1,13 @@
-/*
-  ==============================================================================
-
-    WmtsLayer.cpp
-    Created: 13 Nov 2023 3:08:24pm
-    Author:  FBecirspahic
-
-  ==============================================================================
-*/
+//-----------------------------------------------------------------------------
+//								WmtsLayer.cpp
+//								=============
+//
+// Gestion des flux WMTS
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 13/11/2023
+//-----------------------------------------------------------------------------
 
 #include "WmtsLayer.h"
 #include "../../XToolGeod/XGeoPref.h"

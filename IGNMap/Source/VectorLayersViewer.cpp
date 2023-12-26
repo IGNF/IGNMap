@@ -1,9 +1,13 @@
-//==============================================================================
-// LayerViewer.cpp
+//-----------------------------------------------------------------------------
+//								VectorLayersViewer.cpp
+//								======================
 //
-// Author : F.Becirspahic
-// Date : 19/12/2021
-//==============================================================================
+// Visualisation de classes d'objets vectoriel
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 19/12/2021
+//-----------------------------------------------------------------------------
 
 #include "VectorLayersViewer.h"
 #include "Utilities.h"

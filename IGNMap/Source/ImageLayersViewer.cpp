@@ -1,10 +1,13 @@
-//==============================================================================
+//-----------------------------------------------------------------------------
+//								ImageLayersViewer.cpp
+//								=====================
 //
-//    ImageLayersViewer.cpp
-//    Created: 16 Oct 2023 4:50:11pm
-//    Author:  FBecirspahic
+// Visulisation des classes d'objets images
 //
-//==============================================================================
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 16/10/2023
+//-----------------------------------------------------------------------------
 
 #include "ImageLayersViewer.h"
 #include "Utilities.h"

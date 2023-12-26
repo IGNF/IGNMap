@@ -1,12 +1,13 @@
-/*
-  ==============================================================================
-
-    OGL3DViewer.h
-    Created: 1 Dec 2023 11:39:58am
-    Author:  FBecirspahic
-
-  ==============================================================================
-*/
+//-----------------------------------------------------------------------------
+//								OGL3DViewer.h
+//								=============
+//
+// Composant pour la visualisation OpenGL d'objets geographiques
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 01/12/2023
+//-----------------------------------------------------------------------------
 
 #pragma once
 

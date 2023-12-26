@@ -1,9 +1,13 @@
-//==============================================================================
-// DtmShader.h
-// Created: 19 Jan 2022 4:41:34pm
-// Author:  FBecirspahic
+//-----------------------------------------------------------------------------
+//								DtmShader.h
+//								===========
+//
 // Estompage / ombrage des MNT (tire de XDtmShader, adapte a JUCE)
-//==============================================================================
+//
+// Auteur : F.Becirspahic - IGN / DSI / SIMV
+// License : GNU AFFERO GENERAL PUBLIC LICENSE v3
+// Date de creation : 19/01/2022
+//-----------------------------------------------------------------------------
 
 #pragma once
 
