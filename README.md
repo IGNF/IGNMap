@@ -56,11 +56,33 @@ Pour la compilation sous Windows, on utilise Visual Studio, la version gratuite 
 
 ## L'arborescence du projet
 
-Exemple d'arborescence de projet :
+Pour pouvoir compiler le projet, il est nécessaire de récupérer les bibliothèques tierces et d'installer l'ensemble des bibliothèques dans
+un même répertoire :
 
-* `.github/` : dossier contenant les modèles d'issues et github actions ;
-* `doc/` : dossier contenant des fichiers .md de documentation (ex: install.md) ;
-* `tests/`: scripts et explications pour lancer les tests ;
+* `IGNMap/` : dossier contenant les sources du projet ;
+* `jpeg-9d/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
+* `JUCE/` : dossier contenant [JUCE](https://juce.com/) ;
+* `LASzip/` : dossier contenant la bibliothèque [LASzip](https://github.com/LASzip/LASzip) ;
+* `libwebp-1.2.4/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
+* `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
+* `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
+* `XTool/` : bibliothèque de base pour la gestion de données géographiques ;
+* `XToolAlgo/` : bibliothèque pour les algorithmes géomatiques ;
+* `XToolGeod/` : bibliothèque pour les calculs géodésiques ;
+* `XToolImage/` : bibliothèque pour la gestion des images ;
+* `XToolVector/` : bibliothèque pour la gestion des données vectorielles ;
+  
+Le répertoire IGNMap contient :
+* `Builds/` : ce répertoire contient les différentes cibles de compilation comme les makefile LINUX ou le projet Visual Studio ;
+* `Images/` : les images nécessaires pour l'interface homme-machine ;
+* `JuceLibraryCode/` : le code JUCE généré par le Projucer de JUCE. Ne pas y toucher !!!
+* `Source/` : les sources de l'interface homme-machine d'IGNMap ;
+* `IGNMap.jucer` : le fichier projet du Projucer. Ne pas éditer ce fichier à la main ! Il faut l'ouvrir avec le Projucer.
+  
+De plus, on trouvera :
+* `Documentation/` : dossier contenant la documentation ;
+* `LICENSE` : le fichier de license AGPL ;
+* `LICENSE.md` : fichier explicitant la licence ;
 * `README.md` : ce fichier
 
 ## Contacts du projets
