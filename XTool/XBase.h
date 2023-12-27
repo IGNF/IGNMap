@@ -20,6 +20,7 @@
 #include <cassert>
 
 // Definitions des types standards C++ 11
+#ifdef XTOOL_C11_TYPES_NEEDED
 #ifndef uint64_t
 typedef unsigned long long uint64_t;
 #endif
@@ -34,6 +35,7 @@ typedef unsigned short uint16_t;
 
 #ifndef uint8_t
 typedef unsigned char uint8_t;
+#endif
 #endif
 
 #ifndef XPt

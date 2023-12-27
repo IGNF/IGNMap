@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <cstring>
 #include "../XTool/XEndian.h"
 #include "XOpenJp2Image.h"
 #include "XTiffReader.h"
@@ -242,9 +243,9 @@ bool XOpenJp2Image::ReadGeorefUuid(std::istream* uuid)
 bool XOpenJp2Image::FindGeorefUuidBox(const char* filename)
 {
   // Identifiant MrSID des box GeoJP2
-  static const char mrsid_uuid[16] = { 0xb1, 0x4b, 0xf8, 0xbd, 0x08, 0x3d,
-                                       0x4b, 0x43, 0xa5, 0xae, 0x8c, 0xd7,
-                                       0xd5, 0xa6, 0xce, 0x03 };
+  static const char mrsid_uuid[16] = { (char)0xb1, (char)0x4b, (char)0xf8, (char)0xbd, (char)0x08, (char)0x3d,
+                                       (char)0x4b, (char)0x43, (char)0xa5, (char)0xae, (char)0x8c, (char)0xd7,
+                                       (char)0xd5, (char)0xa6, (char)0xce, (char)0x03 };
 
   std::ifstream in;
   in.open(filename, std::ios_base::binary | std::ifstream::in);
