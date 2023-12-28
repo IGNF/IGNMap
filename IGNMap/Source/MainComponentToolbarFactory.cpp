@@ -56,65 +56,92 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
 
 juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
 {
+  if (m_Listener == nullptr)  // Le Listener doit etre fixe
+    return nullptr;
+  juce::ToolbarButton* button = nullptr;
   switch (itemId)
   {
   case doc_new:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("New.png"));
-    return new juce::ToolbarButton(move, juce::translate("New"), std::move(drawable), {});
+    button = new juce::ToolbarButton(doc_new, juce::translate("New"), std::move(drawable), {});
+    break;
   }
   case doc_open:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("Open.png"));
-    return new juce::ToolbarButton(move, juce::translate("Open"), std::move(drawable), {});
+    button = new juce::ToolbarButton(doc_open, juce::translate("Open"), std::move(drawable), {});
+    break;
   }
   case doc_save:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("Save.png"));
-    return new juce::ToolbarButton(move, juce::translate("Save"), std::move(drawable), {});
+    button = new juce::ToolbarButton(doc_save, juce::translate("Save"), std::move(drawable), {});
+    break;
   }
   case edit_copy:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("Copy.png"));
-    return new juce::ToolbarButton(move, juce::translate("Copy"), std::move(drawable), {});
+    button =  new juce::ToolbarButton(edit_copy, juce::translate("Copy"), std::move(drawable), {});
+    break;
   }
   case edit_cut:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("Cut.png"));
-    return new juce::ToolbarButton(move, juce::translate("Cut"), std::move(drawable), {});
+    button = new juce::ToolbarButton(edit_cut, juce::translate("Cut"), std::move(drawable), {});
+    break;
   }
   case edit_paste:
   {
     auto drawable = std::make_unique<juce::DrawableImage>();
     drawable->setImage(getImageFromAssets("Paste.png"));
-    return new juce::ToolbarButton(move, juce::translate("Paste"), std::move(drawable), {});
+    button = new juce::ToolbarButton(edit_paste, juce::translate("Paste"), std::move(drawable), {});
+    break;
   }
   case move:
   {
-    auto drawable = std::make_unique<juce::DrawableImage>();
-    drawable->setImage(getImageFromAssets("Move.png"));
-    return new juce::ToolbarButton(move, juce::translate("Move"), std::move(drawable), {});
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Move.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Move.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    button = new juce::ToolbarButton(move, juce::translate("Move"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    break;
   }
   case select:
   {
-    auto drawable = std::make_unique<juce::DrawableImage>();
-    drawable->setImage(getImageFromAssets("Select.png"));
-    return new juce::ToolbarButton(move, juce::translate("Select"), std::move(drawable), {});
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Select.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Select.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    button = new juce::ToolbarButton(select, juce::translate("Select"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    break;
   }
   case zoom:
   {
-    auto drawable = std::make_unique<juce::DrawableImage>();
-    drawable->setImage(getImageFromAssets("Zoom.png"));
-    return new juce::ToolbarButton(move, juce::translate("Zoom"), std::move(drawable), {});
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Zoom.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Zoom.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    button = new juce::ToolbarButton(zoom, juce::translate("Zoom"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    break;
   }
 
-  default:                break;
+  default: return nullptr;
   }
-
-  return nullptr;
+  button->addListener(m_Listener);
+  return button;
 }

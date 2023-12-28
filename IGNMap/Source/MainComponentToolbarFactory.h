@@ -16,7 +16,10 @@
 class MainComponentToolbarFactory final : public juce::ToolbarItemFactory
 {
 public:
-  MainComponentToolbarFactory() {}
+  MainComponentToolbarFactory() { m_Listener = nullptr; }
+  void SetListener(juce::Button::Listener* listener) { m_Listener = listener; }
+
+  juce::Button::Listener* m_Listener;
 
   // ID unique des outils de la toolbar
   enum MainComponentToolbarItemIds

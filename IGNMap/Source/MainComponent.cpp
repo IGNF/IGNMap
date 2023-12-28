@@ -30,6 +30,7 @@ MainComponent::MainComponent()
 
 	m_Toolbar.reset(new juce::Toolbar());
 	addAndMakeVisible(m_Toolbar.get());
+	m_ToolbarFactory.SetListener(this);
 	m_Toolbar.get()->addDefaultItems(m_ToolbarFactory);
 
 	m_VectorViewer.reset(new VectorLayersViewer);
@@ -124,7 +125,7 @@ void MainComponent::resized()
 	m_Toolbar.get()->setBounds(juce::Rectangle<int>(0, menubarH, toolbarW, b.getHeight() - menubarH));
   juce::Rectangle<int> R;
   R.setLeft(toolbarW);
-  R.setRight(b.getRight()- toolbarW);
+  R.setRight(b.getRight());
   R.setTop(menubarH);
   R.setBottom(b.getBottom());
   //m_MapView->setBounds(R);
@@ -664,11 +665,22 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 //==============================================================================
 void MainComponent::buttonClicked(juce::Button* button)
 {
-	if (button->getCommandID() == 1) {
+	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
+	if (tlb == nullptr)
+		return;
+	if (tlb->getItemId() == m_ToolbarFactory.doc_new) {
 		Clear();
 		sendActionMessage("NewWindow");
 	}
-
+	if (tlb->getItemId() == m_ToolbarFactory.move) {
+		m_MapView.get()->SetMouseMode(MapView::Move);
+	}
+	if (tlb->getItemId() == m_ToolbarFactory.select) {
+		m_MapView.get()->SetMouseMode(MapView::Select);
+	}
+	if (tlb->getItemId() == m_ToolbarFactory.zoom) {
+		m_MapView.get()->SetMouseMode(MapView::Zoom);
+	}
 }
 
 //==============================================================================

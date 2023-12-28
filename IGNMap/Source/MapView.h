@@ -52,6 +52,9 @@ public:
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
 
+  enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4};
+  void SetMouseMode(MouseMode mode) { m_nMouseMode = mode; }
+
 private:
   XFrame        m_Frame;
   double				m_dX0;
@@ -63,6 +66,7 @@ private:
   double        m_dX;
   double        m_dY;
   double        m_dZ;
+  int           m_nMouseMode;
   juce::Point<int>  m_StartPt;
   juce::Point<int>  m_DragPt;
   juce::Image   m_Image;    // Image de la vue

@@ -32,6 +32,7 @@ void MapView::Clear()
 	m_bDrag = m_bZoom = m_bSelect = false;
 	m_GeoBase = nullptr;
 	m_Frame = XFrame();
+	m_nMouseMode = Move;
 }
 
 void MapView::paint(juce::Graphics& g)
@@ -129,11 +130,11 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 	m_MapThread.Draw(imaG);
 	m_StartPt = event.getPosition();
 	setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
-	if (event.mods.isCtrlDown()) {
+	if ((event.mods.isCtrlDown()) || (m_nMouseMode == Zoom)) {
 		m_bZoom = true;
 		return;
 	}
-	if (event.mods.isShiftDown()) {
+	if ((event.mods.isShiftDown()) || (m_nMouseMode == Select)) {
 		m_bSelect = true;
 		return;
 	}
