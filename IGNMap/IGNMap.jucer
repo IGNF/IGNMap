@@ -438,6 +438,10 @@
       <FILE id="HDKe0t" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="LBPoZX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="LvESbM" name="MainComponentToolbarFactory.cpp" compile="1"
+            resource="0" file="Source/MainComponentToolbarFactory.cpp"/>
+      <FILE id="LHCs29" name="MainComponentToolbarFactory.h" compile="0"
+            resource="0" file="Source/MainComponentToolbarFactory.h"/>
       <FILE id="zNPjlm" name="MapThread.cpp" compile="1" resource="0" file="Source/MapThread.cpp"/>
       <FILE id="GQfsNH" name="MapThread.h" compile="0" resource="0" file="Source/MapThread.h"/>
       <FILE id="Q3bCs3" name="MapView.cpp" compile="1" resource="0" file="Source/MapView.cpp"/>

@@ -859,6 +859,9 @@
     <ClCompile Include="..\..\Source\MainComponent.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\MainComponentToolbarFactory.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\MapThread.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -2932,6 +2935,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MainComponentToolbarFactory.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MapThread.h">

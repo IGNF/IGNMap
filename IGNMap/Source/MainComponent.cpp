@@ -28,6 +28,10 @@ MainComponent::MainComponent()
   setApplicationCommandManagerToWatch(&m_CommandManager);
   m_CommandManager.registerAllCommandsForTarget(this);
 
+	m_Toolbar.reset(new juce::Toolbar());
+	addAndMakeVisible(m_Toolbar.get());
+	m_Toolbar.get()->addDefaultItems(m_ToolbarFactory);
+
 	m_VectorViewer.reset(new VectorLayersViewer);
 	addAndMakeVisible(m_VectorViewer.get());
 	m_VectorViewer.get()->SetBase(&m_GeoBase);
@@ -113,12 +117,15 @@ MainComponent::~MainComponent()
 void MainComponent::resized()
 {
   auto b = getLocalBounds();
-  m_MenuBar.get()->setBounds(b.removeFromTop(juce::LookAndFeel::getDefaultLookAndFeel()
-    .getDefaultMenuBarHeight()));
+	int menubarH = juce::LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight();
+	int toolbarW = 32;
+  m_MenuBar.get()->setBounds(b.removeFromTop(menubarH));
+	m_Toolbar.get()->setVertical(true);
+	m_Toolbar.get()->setBounds(juce::Rectangle<int>(0, menubarH, toolbarW, b.getHeight() - menubarH));
   juce::Rectangle<int> R;
-  R.setLeft(0);
-  R.setRight(b.getRight());
-  R.setTop(juce::LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight());
+  R.setLeft(toolbarW);
+  R.setRight(b.getRight()- toolbarW);
+  R.setTop(menubarH);
   R.setBottom(b.getBottom());
   //m_MapView->setBounds(R);
 
@@ -135,7 +142,7 @@ void MainComponent::resized()
 //==============================================================================
 juce::StringArray MainComponent::getMenuBarNames()
 {
-	return { juce::translate("File"), juce::translate("Edit"), juce::translate("Layers"), juce::translate("View"), "?" };
+	return { juce::translate("File"), juce::translate("Edit"), juce::translate("Tools"), juce::translate("View"), "?" };
 }
 
 juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String& menuName)
@@ -157,17 +164,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		ImportSubMenu.addSeparator();
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuImportLasFile);
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuImportLasFolder);
-		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
-
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuQuit);
-	}
-	else if (menuIndex == 1) // Edit
-	{
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
-	}
-	else if (menuIndex == 2) // Layers
-	{
+		ImportSubMenu.addSeparator();
 		juce::PopupMenu WmtsSubMenu;
 		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddOSM);
 		juce::PopupMenu GeoportailSubMenu;
@@ -180,9 +177,22 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailPlanIGN);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailParcelExpress);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailSCAN50Histo);
-		WmtsSubMenu.addSubMenu(juce::translate("Geoportail (France)"), GeoportailSubMenu);
+		WmtsSubMenu.addSubMenu(juce::translate("Geoplateforme (France)"), GeoportailSubMenu);
 		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddWmtsServer);
-		menu.addSubMenu(juce::translate("Add WMTS / TMS server"), WmtsSubMenu);
+		ImportSubMenu.addSubMenu(juce::translate("Import WMTS / TMS server"), WmtsSubMenu);
+
+		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
+
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuQuit);
+	}
+	else if (menuIndex == 1) // Edit
+	{
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
+	}
+	else if (menuIndex == 2) // Tools
+	{ 
+		
 	}
 	else if (menuIndex == 3)
 	{
@@ -293,7 +303,7 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		result.setInfo(juce::translate("Import a LAS/LAZ folder"), juce::translate("Import a LAS/LAZ folder"), "Menu", 0);
 		break;
 	case CommandIDs::menuAddOSM:
-		result.setInfo(juce::translate("Add OSM data"), juce::translate("Add OSM data"), "Menu", 0);
+		result.setInfo(juce::translate("Import OSM data"), juce::translate("Import OSM data"), "Menu", 0);
 		break;
 	case CommandIDs::menuAddGeoportailOrthophoto:
 		result.setInfo(juce::translate("Orthophoto"), juce::translate("Orthophoto"), "Menu", 0);
@@ -647,6 +657,18 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		}
 		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 	}
+}
+
+//==============================================================================
+// Reponses aux boutons de la toolbar
+//==============================================================================
+void MainComponent::buttonClicked(juce::Button* button)
+{
+	if (button->getCommandID() == 1) {
+		Clear();
+		sendActionMessage("NewWindow");
+	}
+
 }
 
 //==============================================================================

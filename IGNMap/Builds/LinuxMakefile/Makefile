@@ -255,6 +255,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/LasShader_1eec2304.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
   $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
+  $(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o \
   $(JUCE_OBJDIR)/MapThread_564c0ce7.o \
   $(JUCE_OBJDIR)/MapView_229c9e02.o \
   $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
@@ -1268,6 +1269,11 @@ $(JUCE_OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
 $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MainComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o: ../../Source/MainComponentToolbarFactory.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MainComponentToolbarFactory.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MapThread_564c0ce7.o: ../../Source/MapThread.cpp

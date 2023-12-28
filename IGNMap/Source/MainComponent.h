@@ -24,6 +24,7 @@
 #include "SelTreeViewer.h"
 #include "ImageOptionsViewer.h"
 #include "OGL3DViewer.h"
+#include "MainComponentToolbarFactory.h"
 
 //==============================================================================
 /*
@@ -34,7 +35,8 @@ class MainComponent  : public juce::Component,
   public juce::ApplicationCommandTarget,
   public juce::MenuBarModel,
   public juce::ActionListener,
-  public juce::ActionBroadcaster
+  public juce::ActionBroadcaster,
+  public juce::Button::Listener
 {
 public:
   // Liste des commandes de l'application
@@ -52,6 +54,7 @@ public:
     menuAddOSM, menuAddWmtsServer,
     menuAddGeoportailOrthophoto, menuAddGeoportailOrthophotoIRC, menuAddGeoportailOrthohisto, menuAddGeoportailSatellite,
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
+    menuMove, menuSelect, menuZoom,
     menuAbout
   };
 
@@ -76,6 +79,9 @@ public:
   // Gestion des actions
   void actionListenerCallback(const juce::String& message) override;
 
+  // Reponse aux boutons
+  void buttonClicked(juce::Button*) override;
+
 private:
   juce::ApplicationCommandManager m_CommandManager;
   std::unique_ptr<juce::MenuBarComponent> m_MenuBar;
@@ -90,9 +96,10 @@ private:
 
   juce::StretchableLayoutManager m_VerticalLayout;
   std::unique_ptr<juce::StretchableLayoutResizerBar> m_VerticalDividerBar;
-  std::unique_ptr <juce::ConcertinaPanel> m_Panel;
+  std::unique_ptr<juce::ConcertinaPanel> m_Panel;
+  std::unique_ptr<juce::Toolbar> m_Toolbar;
+  MainComponentToolbarFactory m_ToolbarFactory;
 
-  //GeoBase m_Base;
   XGeoBase m_GeoBase;
 
   juce::String OpenFolder(juce::String optionName = "", juce::String mes = "");
