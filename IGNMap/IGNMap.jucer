@@ -6,12 +6,16 @@
               defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
+      <FILE id="BcYc12" name="Move.png" compile="0" resource="1" file="Images/Move.png"/>
       <FILE id="qhgxQ6" name="NoSelectable.png" compile="0" resource="1"
             file="Images/NoSelectable.png"/>
       <FILE id="nUxKfx" name="NoView.png" compile="0" resource="1" file="Images/NoView.png"/>
       <FILE id="uDq1oD" name="Options.png" compile="0" resource="1" file="Images/Options.png"/>
+      <FILE id="C3qDH8" name="Select.png" compile="0" resource="1" file="Images/Select.png"/>
+      <FILE id="o6hJ93" name="Select3D.png" compile="0" resource="1" file="Images/Select3D.png"/>
       <FILE id="qc52PI" name="Selectable.png" compile="0" resource="1" file="Images/Selectable.png"/>
       <FILE id="QwTqKW" name="View.png" compile="0" resource="1" file="Images/View.png"/>
+      <FILE id="g44xDI" name="Zoom.png" compile="0" resource="1" file="Images/Zoom.png"/>
     </GROUP>
     <GROUP id="{7FB695EE-758D-98D5-CDC3-20CD7DEF086E}" name="jpeg-9d">
       <GROUP id="{F39B650A-2A44-7CB1-AAEB-E7FEA7B804A9}" name="Header">

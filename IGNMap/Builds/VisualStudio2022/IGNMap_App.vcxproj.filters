@@ -4730,6 +4730,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Images\Move.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
     <None Include="..\..\Images\NoSelectable.png">
       <Filter>IGNMap\Images</Filter>
     </None>
@@ -4739,10 +4742,19 @@
     <None Include="..\..\Images\Options.png">
       <Filter>IGNMap\Images</Filter>
     </None>
+    <None Include="..\..\Images\Select.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Select3D.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
     <None Include="..\..\Images\Selectable.png">
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\View.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Zoom.png">
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Source\Translation_fr.txt">

@@ -8,6 +8,9 @@
 
 namespace BinaryData
 {
+    extern const char*   Move_png;
+    const int            Move_pngSize = 5869;
+
     extern const char*   NoSelectable_png;
     const int            NoSelectable_pngSize = 1281;
 
@@ -17,17 +20,26 @@ namespace BinaryData
     extern const char*   Options_png;
     const int            Options_pngSize = 4937;
 
+    extern const char*   Select_png;
+    const int            Select_pngSize = 715;
+
+    extern const char*   Select3D_png;
+    const int            Select3D_pngSize = 618;
+
     extern const char*   Selectable_png;
     const int            Selectable_pngSize = 1267;
 
     extern const char*   View_png;
     const int            View_pngSize = 1279;
 
+    extern const char*   Zoom_png;
+    const int            Zoom_pngSize = 6752;
+
     extern const char*   Translation_fr_txt;
     const int            Translation_fr_txtSize = 2072;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 6;
+    const int namedResourceListSize = 10;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

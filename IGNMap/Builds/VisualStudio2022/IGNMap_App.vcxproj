@@ -2490,11 +2490,15 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Images\Move.png"/>
     <None Include="..\..\Images\NoSelectable.png"/>
     <None Include="..\..\Images\NoView.png"/>
     <None Include="..\..\Images\Options.png"/>
+    <None Include="..\..\Images\Select.png"/>
+    <None Include="..\..\Images\Select3D.png"/>
     <None Include="..\..\Images\Selectable.png"/>
     <None Include="..\..\Images\View.png"/>
+    <None Include="..\..\Images\Zoom.png"/>
     <None Include="..\..\Source\Translation_fr.txt"/>
     <None Include="..\..\..\JUCE\modules\juce_core\native\java\README.txt"/>
     <None Include="..\..\..\JUCE\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt"/>
