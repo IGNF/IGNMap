@@ -24,16 +24,10 @@ public:
   // ID unique des outils de la toolbar
   enum MainComponentToolbarItemIds
   {
-    doc_new = 1,
-    doc_open = 2,
-    doc_save = 3,
-    doc_saveAs = 4,
-    edit_copy = 5,
-    edit_cut = 6,
-    edit_paste = 7,
-    move = 8,
-    select = 9,
-    zoom = 10
+    Move = 1,
+    Select = 2,
+    Zoom = 3,
+    Select3D = 4
   };
 
   void getAllToolbarItemIds(juce::Array<int>& ids) override;

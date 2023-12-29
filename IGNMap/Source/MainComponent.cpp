@@ -537,7 +537,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		ShowHidePanel(m_ImageOptionsViewer.get());
 		break;
 	case CommandIDs::menuAbout:
-		AboutXMap();
+		AboutIGNMap();
 		break;
 	default:
 		return false;
@@ -573,14 +573,17 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(false, false, false, false, false);
 		return;
 	}
+	if (message == "UpdateSelectFeatures") {
+		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
+		m_ImageOptionsViewer.get()->SetGeoBase(&m_GeoBase);
+		m_MapView.get()->RenderMap(true, false, false, false, false);
+		return;
+	}
 
 	juce::StringArray T;
 	T.addTokens(message, ":", "");
 
-	if (T[0] == "UpdateSelectFeatures") {
-		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
-		m_ImageOptionsViewer.get()->SetGeoBase(&m_GeoBase);
-		m_MapView.get()->RenderMap(true, false, false, false, false);
+	if (T[0] == "Update3DView") {
 		if (T.size() < 5)
 			return;
 		XFrame F;
@@ -588,7 +591,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		F.Xmax = T[2].getDoubleValue();
 		F.Ymin = T[3].getDoubleValue();
 		F.Ymax = T[4].getDoubleValue();
-		m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
+		if (m_OGL3DViewer.get() != nullptr) {
+			m_OGL3DViewer.get()->setVisible(true);
+			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
+		}
 		return;
 	}
 
@@ -668,18 +674,17 @@ void MainComponent::buttonClicked(juce::Button* button)
 	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
 	if (tlb == nullptr)
 		return;
-	if (tlb->getItemId() == m_ToolbarFactory.doc_new) {
-		Clear();
-		sendActionMessage("NewWindow");
-	}
-	if (tlb->getItemId() == m_ToolbarFactory.move) {
+	if (tlb->getItemId() == m_ToolbarFactory.Move) {
 		m_MapView.get()->SetMouseMode(MapView::Move);
 	}
-	if (tlb->getItemId() == m_ToolbarFactory.select) {
+	if (tlb->getItemId() == m_ToolbarFactory.Select) {
 		m_MapView.get()->SetMouseMode(MapView::Select);
 	}
-	if (tlb->getItemId() == m_ToolbarFactory.zoom) {
+	if (tlb->getItemId() == m_ToolbarFactory.Zoom) {
 		m_MapView.get()->SetMouseMode(MapView::Zoom);
+	}
+	if (tlb->getItemId() == m_ToolbarFactory.Select3D) {
+		m_MapView.get()->SetMouseMode(MapView::Select3D);
 	}
 }
 
@@ -810,11 +815,11 @@ void MainComponent::Clear()
 //==============================================================================
 // A propos
 //==============================================================================
-void MainComponent::AboutXMap()
+void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.0.1";
-	juce::String info = "25/12/2023";
-	juce::String message = "IGNMap Version : " + version + "\n" + info + "\n";
+	juce::String info = "29/12/2023";
+	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
 	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,

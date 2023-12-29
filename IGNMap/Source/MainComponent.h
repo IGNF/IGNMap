@@ -109,7 +109,7 @@ private:
   void SaveAppOption(juce::String name, juce::String value);
 
   void Clear();
-  void AboutXMap();
+  void AboutIGNMap();
   void Translate();
   void ShowHidePanel(juce::Component* component);
 

@@ -134,7 +134,7 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 		m_bZoom = true;
 		return;
 	}
-	if ((event.mods.isShiftDown()) || (m_nMouseMode == Select)) {
+	if ((event.mods.isShiftDown()) || (m_nMouseMode == Select) || (m_nMouseMode == Select3D)) {
 		m_bSelect = true;
 		return;
 	}
@@ -175,7 +175,10 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 			CenterView((X0 + X1) * 0.5, (Y0 + Y1) * 0.5);
 		}
 		if (m_bSelect) {
-			SelectFeatures(X0, Y0, X1, Y1);
+			if (m_nMouseMode == Select)
+				SelectFeatures(X0, Y0, X1, Y1);
+			if (m_nMouseMode == Select3D)
+				Update3DView(X0, Y0, X1, Y1);
 		}
 		if ((!m_bZoom) && (!m_bSelect)) {
 			m_dX0 -= m_DragPt.x * m_dScale;
@@ -371,8 +374,19 @@ void MapView::SelectFeatures(const double& X0, const double& Y0, const double& X
 	F += XPt2D(X0, Y0);
 	F += XPt2D(X1, Y1);
 	m_GeoBase->SelectFeatures(&F);
-	sendActionMessage("UpdateSelectFeatures:" + juce::String(F.Xmin) + ":" + juce::String(F.Xmax) + ":" + 
-																							juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
+	sendActionMessage("UpdateSelectFeatures");
+}
+
+//==============================================================================
+// Selection de l'emprise pour l'affichage 3D
+//==============================================================================
+void MapView::Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1)
+{
+	XFrame F;
+	F += XPt2D(X0, Y0);
+	F += XPt2D(X1, Y1);
+	sendActionMessage("Update3DView:" + juce::String(F.Xmin) + ":" + juce::String(F.Xmax) + ":" +
+		juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
 }
 
 void MapView::DrawFrame(const XFrame& env)

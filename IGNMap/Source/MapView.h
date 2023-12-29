@@ -40,6 +40,7 @@ public:
   void RenderMap(bool overlay = true, bool raster = true, bool dtm = true, bool vector = true, bool las = true, bool totalUpdate = false);
   void SelectFeatures(juce::Point<int>);
   void SelectFeatures(const double& X0, const double& Y0, const double& X1, const double& Y1);
+  void Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void DrawDecoration(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   double ComputeCartoScale(double cartoscale = 0.);
 
