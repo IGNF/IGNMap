@@ -187,7 +187,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		}
 	}
 	else {
-		if (event.mods.isShiftDown())
+		if (event.mods.isShiftDown() || (m_nMouseMode == Select))
 			SelectFeatures(event.getPosition());
 	}
 	m_bDrag = m_bZoom = m_bSelect = false;

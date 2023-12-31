@@ -61,6 +61,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button->setClickingTogglesState(true);
     button->setToggleState(true, juce::NotificationType::dontSendNotification);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Move ; Shift : select ; Ctrl : zoom"));
     break;
   }
   case Select:
@@ -73,6 +74,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button = new juce::ToolbarButton(Select, juce::translate("Select"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Select one or several objects"));
     break;
   }
   case Zoom:
@@ -85,6 +87,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button = new juce::ToolbarButton(Zoom, juce::translate("Zoom"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Zoom"));
     break;
   }
   case Select3D:
@@ -97,6 +100,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button = new juce::ToolbarButton(Select3D, juce::translate("Select3D"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Select 3D view"));
     break;
   }
 
