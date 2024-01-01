@@ -50,6 +50,7 @@ private:
 //==============================================================================
 class VectorLayersViewer : public juce::Component,
 	public juce::ActionListener,
+	public juce::ActionBroadcaster,
 	public juce::DragAndDropTarget,
 	public juce::DragAndDropContainer {
 public:

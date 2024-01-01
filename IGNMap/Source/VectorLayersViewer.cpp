@@ -130,16 +130,13 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		geoLayer->Visible(!geoLayer->Visible());
-		if (geoLayer->IsVector())
-			sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		geoLayer->Selectable(!geoLayer->Selectable());
-		sendActionMessage("UpdateSelectable");
+		sendActionMessage("UpdateVectorSelectability");
 		return;
 	}
 
@@ -311,22 +308,43 @@ void VectorLayersViewer::UpdateColumnName()
 //==============================================================================
 void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 {
-	if (message == "UpdateVector") {
-		repaint();
-	}
-	if (message == "UpdateRaster") {
-		repaint();
-	}
-	if (message == "UpdateDtm") {
-		repaint();
-	}
 	if (message == "NewWindow") {
 		m_Table.updateContent();
 		m_Table.repaint();
+		return;
 	}
-	if (message == "UpdateSelectable") {
+	if (message == "UpdateVector") {
+		repaint();
+	}
+
+	// Classes selectionnees
+	std::vector<XGeoClass*> T;
+	if (m_Base != nullptr) {
+		juce::SparseSet< int > S = m_Table.getSelectedRows();
+		int count = -1;
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsVector()) {
+				count++;
+				if (S.contains(count))
+					T.push_back(C);
+			}
+		}
+	}
+
+	if (message == "UpdateVectorVisibility") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
+		sendActionMessage("UpdateVector");
 	}
+	if (message == "UpdateVectorSelectability") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Selectable(!T[i]->Selectable());
+		m_Table.repaint();
+		//sendActionMessage("UpdateVector");
+	}
+
 }
 
 //==============================================================================

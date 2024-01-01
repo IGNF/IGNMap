@@ -35,6 +35,7 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
   // This returns an ordered list of the set of items that make up a
   // toolbar's default set. Not all items need to be on this list, and
   // items can appear multiple times (e.g. the separators used here).
+  ids.add(spacerId);
   ids.add(Move);
   ids.add(Select);
   ids.add(Zoom);

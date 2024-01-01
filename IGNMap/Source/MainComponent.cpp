@@ -37,6 +37,7 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_VectorViewer.get());
 	m_VectorViewer.get()->SetBase(&m_GeoBase);
 	m_VectorViewer.get()->SetActionListener(this);
+	m_VectorViewer.get()->addActionListener(this);
 	addActionListener(m_VectorViewer.get());
 
 	m_ImageViewer.reset(new ImageLayersViewer);
