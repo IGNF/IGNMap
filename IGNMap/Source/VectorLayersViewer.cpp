@@ -186,7 +186,7 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
-			sendActionMessage("RemoveVectorClass:" + geoLayer->Layer()->Name() + ":" + geoLayer->Name()); };
+			sendActionMessage("RemoveVectorClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -315,6 +315,7 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 	}
 	if (message == "UpdateVector") {
 		repaint();
+		return;
 	}
 
 	// Classes selectionnees
@@ -342,7 +343,15 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_Table.repaint();
-		//sendActionMessage("UpdateVector");
+	}
+	if (message == "RemoveVectorClass") {
+		m_Base->ClearSelection();
+		for (int i = 0; i < T.size(); i++)
+			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+		m_Table.deselectAllRows();
+		m_Table.repaint();
+		sendActionMessage("UpdateSelectFeatures");
+		sendActionMessage("UpdateVector");
 	}
 
 }

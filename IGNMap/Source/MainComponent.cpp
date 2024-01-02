@@ -37,7 +37,6 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_VectorViewer.get());
 	m_VectorViewer.get()->SetBase(&m_GeoBase);
 	m_VectorViewer.get()->SetActionListener(this);
-	m_VectorViewer.get()->addActionListener(this);
 	addActionListener(m_VectorViewer.get());
 
 	m_ImageViewer.reset(new ImageLayersViewer);
@@ -642,29 +641,6 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		double Y = T[2].getDoubleValue();
 		m_ImageOptionsViewer.get()->SetGroundPos(X, Y);
 	}
-	if ((T[0] == "RemoveVectorClass")||(T[0] == "RemoveImageClass")||(T[0] == "RemoveDtmClass")||(T[0] == "RemoveLasClass")) {
-		if (T.size() < 2)
-			return;
-		m_GeoBase.ClearSelection();
-		m_GeoBase.RemoveClass(T[1].toStdString().c_str(), T[2].toStdString().c_str());
-		if (T[0] == "RemoveVectorClass") {
-			m_VectorViewer.get()->SetBase(&m_GeoBase);
-			m_MapView.get()->RenderMap(true, false, false, true, false, true);
-		}
-		if (T[0] == "RemoveImageClass") {
-			m_ImageViewer.get()->SetBase(&m_GeoBase);
-			m_MapView.get()->RenderMap(true, true, false, false, false, true);
-		}
-		if (T[0] == "RemoveDtmClass") {
-			m_DtmViewer.get()->SetBase(&m_GeoBase);
-			m_MapView.get()->RenderMap(true, false, true, false, false, true);
-		}
-		if (T[0] == "RemoveLasClass") {
-			m_LasViewer.get()->SetBase(&m_GeoBase);
-			m_MapView.get()->RenderMap(true, false, false, false, true, true);
-		}
-		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
-	}
 }
 
 //==============================================================================
@@ -819,7 +795,7 @@ void MainComponent::Clear()
 void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.0.1";
-	juce::String info = "31/12/2023";
+	juce::String info = "02/01/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);

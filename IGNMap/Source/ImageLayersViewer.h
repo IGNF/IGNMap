@@ -50,13 +50,14 @@ private:
 //==============================================================================
 class ImageLayersViewer : public juce::Component,
 	public juce::ActionListener,
+	public juce::ActionBroadcaster,
 	public juce::DragAndDropTarget,
 	public juce::DragAndDropContainer {
 public:
 	ImageLayersViewer();
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); }
-	void SetActionListener(juce::ActionListener* listener) { m_Model.addActionListener(listener); }
+	void SetActionListener(juce::ActionListener* listener) { addActionListener(listener); m_Model.addActionListener(listener); }
 	void UpdateColumnName();
 	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
 	// Gestion des actions

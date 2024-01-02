@@ -72,6 +72,7 @@ private:
 //==============================================================================
 class DtmLayersViewer : public juce::Component,
 	public juce::ActionListener,
+	public juce::ActionBroadcaster,
 	public juce::ComboBox::Listener,
 	public juce::Slider::Listener,
 	public juce::DragAndDropTarget,
@@ -81,7 +82,7 @@ public:
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_TableDtm.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener) 
-		{ m_ModelDtm.addActionListener(listener); m_ModelRange.addActionListener(listener); }
+		{ addActionListener(listener); m_ModelDtm.addActionListener(listener); m_ModelRange.addActionListener(listener); }
 	void UpdateColumnName();
 	void resized() override;
 	// Gestion des actions

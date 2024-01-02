@@ -126,15 +126,13 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		dtmClass->Visible(!dtmClass->Visible());
-		sendActionMessage("UpdateDtm");
+		sendActionMessage("UpdateDtmVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		dtmClass->Selectable(!dtmClass->Selectable());
-		sendActionMessage("UpdateSelectable");
+		sendActionMessage("UpdateDtmSelectability");
 		return;
 	}
 
@@ -149,7 +147,7 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
-			sendActionMessage("RemoveDtmClass:" + dtmClass->Layer()->Name() + ":" + dtmClass->Name()); };
+			sendActionMessage("RemoveDtmClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -348,6 +346,7 @@ DtmLayersViewer::DtmLayersViewer()
 	// Bordure
 	m_TableDtm.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_TableDtm.setOutlineThickness(1);
+	m_TableDtm.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
 	m_TableDtm.getHeader().addColumn(juce::translate(" "), DtmViewerModel::Column::Visibility, 25);
 	m_TableDtm.getHeader().addColumn(juce::translate(" "), DtmViewerModel::Column::Selectable, 25);
@@ -455,14 +454,53 @@ void DtmLayersViewer::resized()
 //==============================================================================
 void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 {
-	if (message == "UpdateDtm") {
+	if (message == "NewWindow") {
+		m_TableDtm.updateContent();
+		m_TableDtm.repaint();
+		return;
+	}	if (message == "UpdateDtm") {
 		repaint();
+		return;
 	}
 	if (message == "UpdateRange") {
 		m_TableRange.updateContent();
+		return;
 	}
-	if (message == "UpdateSelectable") {
+
+	// Classes selectionnees
+	std::vector<XGeoClass*> T;
+	if (m_Base != nullptr) {
+		juce::SparseSet< int > S = m_TableDtm.getSelectedRows();
+		int count = -1;
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsDTM()) {
+				count++;
+				if (S.contains(count))
+					T.push_back(C);
+			}
+		}
+	}
+
+	if (message == "UpdateDtmVisibility") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Visible(!T[i]->Visible());
 		m_TableDtm.repaint();
+		sendActionMessage("UpdateDtm");
+	}
+	if (message == "UpdateDtmSelectability") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Selectable(!T[i]->Selectable());
+		m_TableDtm.repaint();
+	}
+	if (message == "RemoveDtmClass") {
+		m_Base->ClearSelection();
+		for (int i = 0; i < T.size(); i++)
+			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+		m_TableDtm.deselectAllRows();
+		m_TableDtm.repaint();
+		sendActionMessage("UpdateSelectFeatures");
+		sendActionMessage("UpdateDtm");
 	}
 }
 

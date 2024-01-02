@@ -126,20 +126,13 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		geoLayer->Visible(!geoLayer->Visible());
-		if (geoLayer->IsVector())
-			sendActionMessage("UpdateVector");
-		if (geoLayer->IsRaster())
-			sendActionMessage("UpdateRaster");
-		if (geoLayer->IsDTM())
-			sendActionMessage("UpdateDtm");
+		sendActionMessage("UpdateImageVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		geoLayer->Selectable(!geoLayer->Selectable());
-		sendActionMessage("UpdateSelectable");
+		sendActionMessage("UpdateImageSelectability");
 		return;
 	}
 
@@ -185,7 +178,7 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
-			sendActionMessage("RemoveImageClass:" + geoLayer->Layer()->Name() + ":" + geoLayer->Name()); };
+			sendActionMessage("RemoveImageClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -275,6 +268,7 @@ ImageLayersViewer::ImageLayersViewer()
 	// Bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_Table.setOutlineThickness(1);
+	m_Table.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
 	m_Table.getHeader().addColumn(juce::translate(" "), ImageViewerModel::Column::Visibility, 25);
 	m_Table.getHeader().addColumn(juce::translate(" "), ImageViewerModel::Column::Selectable, 25);
@@ -302,21 +296,50 @@ void ImageLayersViewer::UpdateColumnName()
 //==============================================================================
 void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 {
-	if (message == "UpdateVector") {
-		repaint();
-	}
 	if (message == "UpdateRaster") {
 		repaint();
-	}
-	if (message == "UpdateDtm") {
-		repaint();
+		return;
 	}
 	if (message == "NewWindow") {
 		m_Table.updateContent();
 		m_Table.repaint();
+		return;
 	}
-	if (message == "UpdateSelectable") {
+	
+	// Classes selectionnees
+	std::vector<XGeoClass*> T;
+	if (m_Base != nullptr) {
+		juce::SparseSet< int > S = m_Table.getSelectedRows();
+		int count = -1;
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsRaster()) {
+				count++;
+				if (S.contains(count))
+					T.push_back(C);
+			}
+		}
+	}
+
+	if (message == "UpdateImageVisibility") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
+		sendActionMessage("UpdateRaster");
+	}
+	if (message == "UpdateImageSelectability") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Selectable(!T[i]->Selectable());
+		m_Table.repaint();
+	}
+	if (message == "RemoveImageClass") {
+		m_Base->ClearSelection();
+		for (int i = 0; i < T.size(); i++)
+			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+		m_Table.deselectAllRows();
+		m_Table.repaint();
+		sendActionMessage("UpdateSelectFeatures");
+		sendActionMessage("UpdateRaster");
 	}
 }
 

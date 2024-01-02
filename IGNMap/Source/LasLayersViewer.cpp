@@ -117,15 +117,13 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		lasClass->Visible(!lasClass->Visible());
-		sendActionMessage("UpdateLas");
+		sendActionMessage("UpdateLasVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		lasClass->Selectable(!lasClass->Selectable());
-		sendActionMessage("UpdateSelectable");
+		sendActionMessage("UpdateLasSelectability");
 		return;
 	}
 
@@ -140,7 +138,7 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
-			sendActionMessage("RemoveLasClass:" + lasClass->Layer()->Name() + ":" + lasClass->Name()); };
+			sendActionMessage("RemoveLasClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -305,6 +303,7 @@ LasLayersViewer::LasLayersViewer()
 	// Bordure
 	m_TableLas.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_TableLas.setOutlineThickness(1);
+	m_TableLas.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Visibility, 25);
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Selectable, 25);
@@ -403,11 +402,49 @@ void LasLayersViewer::resized()
 //==============================================================================
 void LasLayersViewer::actionListenerCallback(const juce::String& message)
 {
-	if (message == "UpdateLas") {
-		repaint();
-	}
-	if (message == "UpdateSelectable") {
+	if (message == "NewWindow") {
+		m_TableLas.updateContent();
 		m_TableLas.repaint();
+		return;
+	}	if (message == "UpdateLas") {
+		repaint();
+		return;
+	}
+
+	// Classes selectionnees
+	std::vector<XGeoClass*> T;
+	if (m_Base != nullptr) {
+		juce::SparseSet< int > S = m_TableLas.getSelectedRows();
+		int count = -1;
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsLAS()) {
+				count++;
+				if (S.contains(count))
+					T.push_back(C);
+			}
+		}
+	}
+
+	if (message == "UpdateLasVisibility") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Visible(!T[i]->Visible());
+		m_TableLas.repaint();
+		sendActionMessage("UpdateLas");
+	}
+	if (message == "UpdateLasSelectability") {
+		for (int i = 0; i < T.size(); i++)
+			T[i]->Selectable(!T[i]->Selectable());
+		m_TableLas.repaint();
+	}
+	if (message == "RemoveLasClass") {
+		m_Base->ClearSelection();
+		for (int i = 0; i < T.size(); i++)
+			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+		m_TableLas.deselectAllRows();
+		m_TableLas.repaint();
+		sendActionMessage("UpdateSelectFeatures");
+		sendActionMessage("UpdateLas");
 	}
 }
 

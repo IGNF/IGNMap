@@ -70,6 +70,7 @@ private:
 //==============================================================================
 class LasLayersViewer : public juce::Component,
 	public juce::ActionListener,
+	public juce::ActionBroadcaster,
 	public juce::ComboBox::Listener,
 	public juce::Slider::Listener,
 	public juce::DragAndDropTarget,
@@ -80,6 +81,7 @@ public:
 	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelLas.SetBase(base); m_TableLas.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener)
 	{
+		addActionListener(listener);
 		m_ModelLas.addActionListener(listener); 
 		m_ModelClassif.addActionListener(listener);
 	}
