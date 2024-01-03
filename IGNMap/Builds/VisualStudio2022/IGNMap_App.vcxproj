@@ -363,6 +363,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XTool\XPolygone2D.cpp"/>
     <ClCompile Include="..\..\..\XTool\XPt2D.cpp"/>
     <ClCompile Include="..\..\..\XTool\XPt3D.cpp"/>
+    <ClCompile Include="..\..\..\XToolAlgo\XLasFile.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XAlgoGeod.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XDomGeod.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XGeodGrid.cpp"/>
@@ -1927,6 +1928,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XTool\XPt3D.h"/>
     <ClInclude Include="..\..\..\XTool\XTransfo.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XColor.h"/>
+    <ClInclude Include="..\..\..\XToolAlgo\XLasFile.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XAlgoGeod.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XDomGeod.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XGeodConverter.h"/>

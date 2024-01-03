@@ -12,6 +12,8 @@
 #include "LasLayersViewer.h"
 #include "Utilities.h"
 #include "LasShader.h"
+#include "../XTool/XGeoVector.h"
+#include "../XToolAlgo/XLasFile.h"
 
 //==============================================================================
 // FindLasClass : renvoie la ieme classe LAS de la base ou nullptr sinon
@@ -139,10 +141,14 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveLasClass"); };
+		std::function< void() > ComputeDtm = [=]() { // Calcul d'un MNT
+			sendActionMessage("ComputeDtm"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addSeparator();
+		menu.addItem(juce::translate("Compute DTM"), ComputeDtm);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -446,6 +452,8 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateLas");
 	}
+	if (message == "ComputeDtm")
+		ComputeDtm(T);
 }
 
 //==============================================================================
@@ -500,4 +508,82 @@ bool LasLayersViewer::isInterestedInDragSource(const SourceDetails& details)
 	if (details.sourceComponent.get() != &m_TableLas)
 		return false;
 	return true;
+}
+
+//==============================================================================
+// Calcul de MNT a partir des fichiers LAS
+//==============================================================================
+void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
+{
+	std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
+	asyncAlertWindow = std::make_unique<juce::AlertWindow>(juce::translate("Compute DTM/DSM"),
+		juce::translate("This tool allows to compute a DTM or a DSM for each LAS file"),
+		juce::MessageBoxIconType::QuestionIcon);
+
+	asyncAlertWindow->addTextEditor("GSD", "1.0", juce::translate("GSD:"));
+	juce::TextEditor* gsd_editor = asyncAlertWindow->getTextEditor("GSD");
+	gsd_editor->setInputRestrictions(5, "0123456789.");
+	asyncAlertWindow->addComboBox("Algo", { "Z minimum", "Z average", "Z maximum" }, juce::translate("Algorithm:"));
+	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
+
+	if(asyncAlertWindow->runModalLoop() == 0)
+		return;
+
+	juce::String path;
+	juce::FileChooser fc(juce::translate("Choose a directory..."), path, "*", true);
+	if (!fc.browseForDirectory())
+		return;
+	auto result = fc.getURLResult();
+	auto foldername = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
+	auto algoIndexChosen = asyncAlertWindow->getComboBoxComponent("Algo")->getSelectedItemIndex();
+	auto gsd_text = asyncAlertWindow->getTextEditorContents("GSD");
+	double gsd = gsd_text.getDoubleValue();
+
+	// Thread de traitement
+	class MyTask : public juce::ThreadWithProgressWindow {
+	public:
+		std::vector<XGeoClass*> T;
+		double GSD = 1.;
+		XLasFile::AlgoDtm algo = XLasFile::ZMinimum;
+		juce::String folder_out;
+
+		MyTask() : ThreadWithProgressWindow(juce::translate("Compute DTM/DSM ..."), true, true) { ; }
+		void run()
+		{
+			uint32_t nb_file = 0, count = 0;
+			for (int i = 0; i < T.size(); i++) 
+				nb_file += T[i]->NbVector();
+			if (nb_file == 0)
+				return;
+
+			for (int i = 0; i < T.size(); i++) {
+				if (threadShouldExit())
+					break;
+				for (int j = 0; j < T[i]->NbVector(); j++) {
+					if (threadShouldExit())
+						break;
+					setProgress((double)count / (double)nb_file);
+					count++;
+					XGeoVector* V = T[i]->Vector(j);
+					if (V->TypeVector() != XGeoVector::LAS)
+						continue;
+					XLasFile las;
+					if (!las.Open(V->Filename()))
+						continue;
+					juce::File file(V->Filename());
+					juce::String file_out = folder_out + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".tif";
+					setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
+					las.ComputeDtm(file_out.toStdString(), GSD, algo);
+				}
+			}
+		}
+	};
+
+	MyTask M;
+	M.GSD = gsd;
+	M.T = T;
+	M.folder_out = foldername;
+	M.algo = (XLasFile::AlgoDtm)(algoIndexChosen + 1);
+	M.runThread();
 }

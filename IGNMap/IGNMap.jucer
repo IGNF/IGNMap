@@ -520,6 +520,8 @@
     </GROUP>
     <GROUP id="{922568F6-A5F8-F969-4DAF-930F4E8FE4E7}" name="XToolAlgo">
       <FILE id="nQypig" name="XColor.h" compile="0" resource="0" file="../XToolAlgo/XColor.h"/>
+      <FILE id="v2dLJ0" name="XLasFile.cpp" compile="1" resource="0" file="../XToolAlgo/XLasFile.cpp"/>
+      <FILE id="aLJf7D" name="XLasFile.h" compile="0" resource="0" file="../XToolAlgo/XLasFile.h"/>
     </GROUP>
     <GROUP id="{DBEF2DB7-C523-4320-EC11-103B4DF3114E}" name="XToolGeod">
       <FILE id="MwykR8" name="XAlgoGeod.cpp" compile="1" resource="0" file="../XToolGeod/XAlgoGeod.cpp"/>

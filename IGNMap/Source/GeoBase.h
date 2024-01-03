@@ -106,6 +106,7 @@ public:
 
   virtual eTypeVector TypeVector() const { return XGeoVector::LAS; }
   virtual	bool ReadAttributes(std::vector<std::string>&);
+  virtual std::string Filename() { return m_strFilename; }
   virtual inline double* ZRange() { return m_ZRange; }
   virtual inline double Zmin() const { return m_ZRange[0]; }
   virtual inline double Zmax() const { return m_ZRange[1]; }

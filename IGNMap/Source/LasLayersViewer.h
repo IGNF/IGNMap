@@ -99,6 +99,9 @@ public:
 	void itemDragMove(const SourceDetails&) override { ; }
 	void itemDragExit(const SourceDetails&) override { ; }
 
+	// Algorithmes
+	void ComputeDtm(std::vector< XGeoClass*>);
+
 private:
 	XGeoBase* m_Base;
 	juce::TableListBox	m_TableLas;
