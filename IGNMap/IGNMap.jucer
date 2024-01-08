@@ -457,6 +457,8 @@
       <FILE id="lvSmQO" name="SelTreeViewer.cpp" compile="1" resource="0"
             file="Source/SelTreeViewer.cpp"/>
       <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>
+      <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
+            file="Source/ThreadClassProcessor.h"/>
       <FILE id="sAzanD" name="Translation_fr.txt" compile="0" resource="1"
             file="Source/Translation_fr.txt"/>
       <FILE id="lv0bzz" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
@@ -607,6 +609,8 @@
       <FILE id="xPl9PU" name="XDBase.h" compile="0" resource="0" file="../XToolVector/XDBase.h"/>
       <FILE id="CVgyzh" name="XGpkgMap.cpp" compile="1" resource="0" file="../XToolVector/XGpkgMap.cpp"/>
       <FILE id="lzzCOk" name="XGpkgMap.h" compile="0" resource="0" file="../XToolVector/XGpkgMap.h"/>
+      <FILE id="RfNpRt" name="XMifMid.cpp" compile="1" resource="0" file="../XToolVector/XMifMid.cpp"/>
+      <FILE id="ACDx7C" name="XMifMid.h" compile="0" resource="0" file="../XToolVector/XMifMid.h"/>
       <FILE id="nkbpkv" name="XShapefile.cpp" compile="1" resource="0" file="../XToolVector/XShapefile.cpp"/>
       <FILE id="OGl1eL" name="XShapefile.h" compile="0" resource="0" file="../XToolVector/XShapefile.h"/>
       <FILE id="sldkY5" name="XShapefileConverter.cpp" compile="1" resource="0"

@@ -315,6 +315,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XZlibCodec_7db0ce3d.o \
   $(JUCE_OBJDIR)/XDBase_47d5afbd.o \
   $(JUCE_OBJDIR)/XGpkgMap_9b3203bf.o \
+  $(JUCE_OBJDIR)/XMifMid_16cf4f80.o \
   $(JUCE_OBJDIR)/XShapefile_324c5d85.o \
   $(JUCE_OBJDIR)/XShapefileConverter_24c58b65.o \
   $(JUCE_OBJDIR)/XShapefileRecord_3816b976.o \
@@ -1570,6 +1571,11 @@ $(JUCE_OBJDIR)/XDBase_47d5afbd.o: ../../../XToolVector/XDBase.cpp
 $(JUCE_OBJDIR)/XGpkgMap_9b3203bf.o: ../../../XToolVector/XGpkgMap.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XGpkgMap.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XMifMid_16cf4f80.o: ../../../XToolVector/XMifMid.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XMifMid.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XShapefile_324c5d85.o: ../../../XToolVector/XShapefile.cpp

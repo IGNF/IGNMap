@@ -394,6 +394,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XToolImage\XZlibCodec.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XDBase.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp"/>
+    <ClCompile Include="..\..\..\XToolVector\XMifMid.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefile.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefileConverter.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefileRecord.cpp"/>
@@ -1898,6 +1899,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\Source\OGL3DViewer.h"/>
     <ClInclude Include="..\..\Source\OsmLayer.h"/>
     <ClInclude Include="..\..\Source\SelTreeViewer.h"/>
+    <ClInclude Include="..\..\Source\ThreadClassProcessor.h"/>
     <ClInclude Include="..\..\Source\Utilities.h"/>
     <ClInclude Include="..\..\Source\VectorLayersViewer.h"/>
     <ClInclude Include="..\..\Source\WmtsLayer.h"/>
@@ -1960,6 +1962,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XToolImage\XZlibCodec.h"/>
     <ClInclude Include="..\..\..\XToolVector\XDBase.h"/>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h"/>
+    <ClInclude Include="..\..\..\XToolVector\XMifMid.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefile.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefileConverter.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefileRecord.h"/>

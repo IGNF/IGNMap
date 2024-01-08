@@ -693,7 +693,7 @@ juce::String MainComponent::OpenFolder(juce::String optionName, juce::String mes
 //==============================================================================
 juce::String MainComponent::OpenFile(juce::String optionName, juce::String mes, juce::String filter)
 {
-	juce::String path, message, filters;
+	juce::String path = optionName, message = mes, filters = filter;
 	if (!optionName.isEmpty())
 		path = GetAppOption(optionName);
 	if (mes.isEmpty())
@@ -809,7 +809,7 @@ void MainComponent::AboutIGNMap()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = OpenFile("VectorPath");
+		filename = OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -820,6 +820,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoBase::ImportShapefile(filename, &m_GeoBase);
 	if (extension == ".gpkg")
 		flag = GeoBase::ImportGeoPackage(filename, &m_GeoBase);
+	if (extension == ".mif")
+		flag = GeoBase::ImportMifMid(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");

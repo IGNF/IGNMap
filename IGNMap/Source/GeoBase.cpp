@@ -15,6 +15,7 @@
 #include "../../XTool/XPath.h"
 #include "../../XToolVector/XShapefile.h"
 #include "../../XToolVector/XGpkgMap.h"
+#include "../../XToolVector/XMifMid.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 
@@ -466,6 +467,13 @@ bool GeoBase::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& n
 	for (int i = 0; i < T.size(); i++)
 		ImportGeoPackage(T[i].getFullPathName(), base);
 
+	// Format MIF/MID
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.mif");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportMifMid(T[i].getFullPathName(), base);
+
+
 	ColorizeClasses(base);
 
 	return true;
@@ -496,6 +504,20 @@ bool GeoBase::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* m
 		return false;
 	base->UpdateFrame();
 	base->SortClass();
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier MIF/MID
+//-----------------------------------------------------------------------------
+bool GeoBase::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return false;
+	XGeoClass* C = XMifMid::ImportMifMid(base, fileName.toStdString().c_str(), map);
+	if (C == NULL)
+		return false;
+
 	return true;
 }
 

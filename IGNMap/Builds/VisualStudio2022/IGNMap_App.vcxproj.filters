@@ -1039,6 +1039,9 @@
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XToolVector\XMifMid.cpp">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XShapefile.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
@@ -2958,6 +2961,9 @@
     <ClInclude Include="..\..\Source\SelTreeViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ThreadClassProcessor.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Utilities.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
@@ -3142,6 +3148,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolVector\XMifMid.h">
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XShapefile.h">

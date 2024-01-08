@@ -67,8 +67,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, XError
 	F.Xmax = gsd * ceil(F.Xmax / gsd);
 	F.Ymax = gsd * ceil(F.Ymax / gsd);
 
-	uint32_t W = (uint32_t)ceil(F.Width() / gsd) + 1;
-	uint32_t H = (uint32_t)ceil(F.Height() / gsd) + 1;
+	uint32_t W = (uint32_t)ceil(F.Width() / gsd);
+	uint32_t H = (uint32_t)ceil(F.Height() / gsd);
 
 	// Allocation du tableau MNT
 	float* area = new float[W * H];
@@ -92,8 +92,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, XError
 		Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;
 		Z = m_Point->Z * m_Header->z_scale_factor + m_Header->z_offset;
 
-		u = (int)floor((X - F.Xmin) / gsd);
-		v = (int)floor((F.Ymax - Y) / gsd);
+		u = (int)XRint((X - F.Xmin) / gsd);
+		v = (int)XRint((F.Ymax - Y) / gsd);
 		if ((u >= W) || (v >= H))	// Theoriquement cela ne devrait pas arrive si l'entete du LAS est correcte
 			continue;
 		if ((u < 0) || (v < 0))

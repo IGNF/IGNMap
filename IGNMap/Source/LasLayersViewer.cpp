@@ -12,6 +12,7 @@
 #include "LasLayersViewer.h"
 #include "Utilities.h"
 #include "LasShader.h"
+#include "ThreadClassProcessor.h"
 #include "../XTool/XGeoVector.h"
 #include "../XToolAlgo/XLasFile.h"
 
@@ -541,49 +542,31 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	double gsd = gsd_text.getDoubleValue();
 
 	// Thread de traitement
-	class MyTask : public juce::ThreadWithProgressWindow {
+	class MyTask : public ThreadClassProcessor {
 	public:
-		std::vector<XGeoClass*> T;
 		double GSD = 1.;
 		XLasFile::AlgoDtm algo = XLasFile::ZMinimum;
-		juce::String folder_out;
 
-		MyTask() : ThreadWithProgressWindow(juce::translate("Compute DTM/DSM ..."), true, true) { ; }
-		void run()
+		MyTask() : ThreadClassProcessor(juce::translate("Compute DTM/DSM ..."), true) { ; }
+
+		virtual bool Process(XGeoVector* V)
 		{
-			uint32_t nb_file = 0, count = 0;
-			for (int i = 0; i < T.size(); i++) 
-				nb_file += T[i]->NbVector();
-			if (nb_file == 0)
-				return;
-
-			for (int i = 0; i < T.size(); i++) {
-				if (threadShouldExit())
-					break;
-				for (int j = 0; j < T[i]->NbVector(); j++) {
-					if (threadShouldExit())
-						break;
-					setProgress((double)count / (double)nb_file);
-					count++;
-					XGeoVector* V = T[i]->Vector(j);
-					if (V->TypeVector() != XGeoVector::LAS)
-						continue;
-					XLasFile las;
-					if (!las.Open(V->Filename()))
-						continue;
-					juce::File file(V->Filename());
-					juce::String file_out = folder_out + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".tif";
-					setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
-					las.ComputeDtm(file_out.toStdString(), GSD, algo);
-				}
-			}
+			if (V->TypeVector() != XGeoVector::LAS)
+				return false;
+			XLasFile las;
+			if (!las.Open(V->Filename()))
+				return false;
+			juce::File file(V->Filename());
+			juce::String file_out = m_strFolderOut + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".tif";
+			setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
+			return las.ComputeDtm(file_out.toStdString(), GSD, algo);
 		}
 	};
 
 	MyTask M;
 	M.GSD = gsd;
-	M.T = T;
-	M.folder_out = foldername;
+	M.m_T = T;
+	M.m_strFolderOut = foldername;
 	M.algo = (XLasFile::AlgoDtm)(algoIndexChosen + 1);
 	M.runThread();
 }
