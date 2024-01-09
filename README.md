@@ -60,7 +60,7 @@ Pour pouvoir compiler le projet, il est nécessaire de récupérer les biblioth�
 un même répertoire :
 
 * `IGNMap/` : dossier contenant les sources du projet ;
-* `jpeg-9d/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
+* `jpeg-9e/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
 * `JUCE/` : dossier contenant [JUCE](https://juce.com/) ;
 * `LASzip/` : dossier contenant la bibliothèque [LASzip](https://github.com/LASzip/LASzip) ;
 * `libwebp-1.2.4/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;

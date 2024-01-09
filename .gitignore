@@ -1,0 +1,4 @@
+IGNMap/Builds/VisualStudio2022/x64/Release/*
+IGNMap/Builds/VisualStudio2022/x64/Debug/*
+IGNMap/Builds/LinuxMakefile/build/*
+IGNMap/Builds/VisualStudio2022/.vs/*
