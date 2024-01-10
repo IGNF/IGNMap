@@ -11,7 +11,9 @@
 
 #include "VectorLayersViewer.h"
 #include "Utilities.h"
+#include "ThreadClassProcessor.h"
 #include "../../XTool/XGeoClass.h"
+#include "../../XToolVector/XShapefileConverter.h"
 
 //==============================================================================
 // LayerViewerComponent : constructeur
@@ -187,10 +189,14 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveVectorClass"); };
+		std::function< void() > ExportClass = [=]() { // Export de la classe
+			sendActionMessage("ExportClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addSeparator();
+		menu.addItem(juce::translate("Export Class"), ExportClass);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -353,7 +359,8 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateVector");
 	}
-
+	if (message == "ExportClass")
+		ExportClass(T);
 }
 
 //==============================================================================
@@ -388,4 +395,45 @@ bool VectorLayersViewer::isInterestedInDragSource(const SourceDetails& details)
 	if (details.sourceComponent.get() != &m_Table)
 		return false;
 	return true;
+}
+
+//==============================================================================
+// Export des classes en Shapefile
+//==============================================================================
+void VectorLayersViewer::ExportClass(std::vector<XGeoClass*> T)
+{
+	juce::String path;
+	juce::FileChooser fc(juce::translate("Choose a directory..."), path, "*", true);
+	if (!fc.browseForDirectory())
+		return;
+	auto result = fc.getURLResult();
+	auto foldername = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
+
+	// Thread de traitement
+	class MyTask : public juce::ThreadWithProgressWindow {
+	public:
+		std::vector<XGeoClass*> m_T;	// Liste des classes a traiter
+		std::string m_strFolderName;
+		MyTask() : ThreadWithProgressWindow(juce::translate("Shapefile export ..."), true, true) { ; }
+		void run()
+		{
+			uint32_t count = 0;
+			for (int i = 0; i < m_T.size(); i++) {
+				setProgress((double)count / (double)m_T.size());
+				count++;
+				if (!m_T[i]->Visible())
+					continue;
+				if (threadShouldExit())
+					break;
+				setStatusMessage(juce::translate("Processing ") + m_T[i]->Name());
+				XShapefileConverter converter;
+				converter.ConvertClass(m_T[i], m_strFolderName.c_str());
+			}
+		}
+	};
+
+	MyTask M;
+	M.m_T = T;
+	M.m_strFolderName = foldername.toStdString();
+	M.runThread();
 }

@@ -17,7 +17,7 @@
 #include "../../XToolImage/XFileImage.h"
 #include "../../XTool/XGeoVector.h"
 #include "../../XTool/XGeoFDtm.h"
-#include "../../LASzip/src/laszip_api.h"
+#include "../../XToolAlgo/XLasFile.h"
 
 class XGeoBase;
 class XGeoMap;
@@ -96,13 +96,12 @@ protected:
 //==============================================================================
 // Classe GeoLAS : pour la gestion des LAS importes
 //==============================================================================
-class GeoLAS : public XGeoVector {
+class GeoLAS : public XGeoVector, public XLasFile {
 public:
   GeoLAS() {
-    m_Reader = nullptr; m_Header = nullptr; m_Point = nullptr; m_ZRange[0] = m_ZRange[1] = XGEO_NO_DATA;
+    m_ZRange[0] = m_ZRange[1] = XGEO_NO_DATA;
   }
   bool Open(std::string filename);
-  bool Close();
 
   virtual eTypeVector TypeVector() const { return XGeoVector::LAS; }
   virtual	bool ReadAttributes(std::vector<std::string>&);
@@ -111,18 +110,7 @@ public:
   virtual inline double Zmin() const { return m_ZRange[0]; }
   virtual inline double Zmax() const { return m_ZRange[1]; }
 
-  laszip_POINTER GetReader() { return m_Reader; }
-  laszip_header* GetHeader() { return m_Header; }
-  laszip_point* GetPoint() { return m_Point; }
-  laszip_I64 NbLasPoints() { 
-    if (m_Header == nullptr) return 0;
-    return (m_Header->number_of_point_records ? m_Header->number_of_point_records : m_Header->extended_number_of_point_records); }
-
 protected:
-  std::string m_strFilename;
-  laszip_POINTER m_Reader;
-  laszip_header* m_Header;
-  laszip_point* m_Point;
   double m_ZRange[2];
 };
 
@@ -151,4 +139,5 @@ namespace GeoBase {
   bool RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
                       int transparency = 0, uint32_t color = 0xFFFFFFFF, uint32_t fill = 0xFFFFFFFF, uint32_t zorder = 0, uint8_t size = 1);
   void ColorizeClasses(XGeoBase* base);
+  juce::File CreateCacheDir(juce::String name);
 }

@@ -12,6 +12,8 @@
 #include "DtmLayersViewer.h"
 #include "Utilities.h"
 #include "DtmShader.h"
+#include "ThreadClassProcessor.h"
+#include "GeoBase.h"
 
 //==============================================================================
 // DtmViewerModel : constructeur
@@ -148,10 +150,14 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveDtmClass"); };
+		std::function< void() > ComputeDeltaZ = [=]() { // Calcul des deltaZ importants
+			sendActionMessage("ComputeDeltaZ"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addSeparator();
+		menu.addItem(juce::translate("Compute Delta Z"), ComputeDeltaZ);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -340,6 +346,7 @@ void DtmRangeModel::sliderValueChanged(juce::Slider* slider)
 DtmLayersViewer::DtmLayersViewer()
 {
 	m_Base = nullptr;
+	m_Cache = GeoBase::CreateCacheDir("DTM");
 	DtmShader shader;	// Necessaire pour initialiser les plages et les couleurs
 	setName("DTM Layers");
 	m_ModelDtm.addActionListener(this);
@@ -502,6 +509,9 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateDtm");
 	}
+	if (message == "ComputeDeltaZ")
+		ComputeDeltaZ(T);
+
 }
 
 //==============================================================================
@@ -567,4 +577,68 @@ bool DtmLayersViewer::isInterestedInDragSource(const SourceDetails& details)
 	if (details.sourceComponent.get() != &m_TableDtm)
 		return false;
 	return true;
+}
+
+//==============================================================================
+// Calcul des delta Z importants en noeuds successifs
+//==============================================================================
+void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
+{
+	std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
+	asyncAlertWindow = std::make_unique<juce::AlertWindow>(juce::translate("Compute Delta Z"),
+		juce::translate("This tool allows to find the delta Z between successive nodes"),
+		juce::MessageBoxIconType::QuestionIcon);
+
+	asyncAlertWindow->addTextEditor("DeltaZ", "5.0", juce::translate("Delta Z :"));
+	juce::TextEditor* deltaZ_editor = asyncAlertWindow->getTextEditor("DeltaZ");
+	deltaZ_editor->setInputRestrictions(5, "0123456789.");
+	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
+
+	if (asyncAlertWindow->runModalLoop() == 0)
+		return;
+	double deltaZ = asyncAlertWindow->getTextEditorContents("DeltaZ").getDoubleValue();
+
+	// Thread de traitement
+	class MyTask : public ThreadClassProcessor {
+	public:
+		double deltaZ = 5.;
+
+		MyTask() : ThreadClassProcessor(juce::translate("Compute Delta Z ..."), true) { ; }
+
+		virtual bool Process(XGeoVector* V)
+		{
+			if (V->TypeVector() != XGeoVector::DTM)
+				return false;
+			XGeoFDtm* dtm = dynamic_cast<XGeoFDtm*>(V);
+			if (dtm == nullptr)
+				return false;
+			std::vector<XPt3D> DZ;
+			if (!dtm->DeltaMax(deltaZ, DZ))
+				return false;
+			std::ofstream mif, mid;
+			mif.open(m_strMifFile.toStdString(), std::ios::out | std::ios::app);
+			mid.open(m_strMidFile.toStdString(), std::ios::out | std::ios::app);
+			mif.setf(std::ios::fixed); mif.precision(2);
+			mid.setf(std::ios::fixed); mid.precision(2);
+			for (size_t i = 0; i < DZ.size(); i++) {
+				mif << "POINT " << DZ[i].X << " " << DZ[i].Y << std::endl;
+				mid << DZ[i].Z << std::endl;
+			}
+			return true;
+		}
+	};
+
+	MyTask M;
+	M.deltaZ = deltaZ;
+	M.m_T = T;
+	M.CreateMifMidFile(m_Cache, "DeltaZ");
+	std::ofstream mif;
+	mif.open(M.m_strMifFile.toStdString(), std::ios::out | std::ios::app);
+	mif << "COLUMNS 1" << std::endl << "DeltaZ decimal (10,2)" << std::endl << "DATA" << std::endl;
+	mif.close();
+	M.runThread();
+	GeoBase::ImportMifMid(M.m_strMifFile, m_Base);
+	GeoBase::ColorizeClasses(m_Base);
+	sendActionMessage("UpdateVector");
 }

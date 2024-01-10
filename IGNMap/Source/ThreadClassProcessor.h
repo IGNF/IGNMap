@@ -14,21 +14,26 @@
 #include <JuceHeader.h>
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
+#include "../../XToolGeod/XGeoPref.h"
 
 class ThreadClassProcessor : public juce::ThreadWithProgressWindow {
 public:
 	std::vector<XGeoClass*> m_T;	// Liste des classes a traiter
+	bool	m_bOnlyVisible;					// Traitement des objets visibles uniquement
 	juce::String m_strFolderOut;			// Repertoire de destination
 	juce::String m_strFileExtension;	// Extension des fichiers de sortie
-	bool	m_bOnlyVisible;					// Traitement des objets visibles uniquement
+	juce::String m_strMifFile;				// Nom du fichier MIF eventuellement cree par le traitement
+	juce::String m_strMidFile;				// Nom du fichier MID eventuellement cree par le traitement
 
 	ThreadClassProcessor(juce::String windowTitle, bool onlyVisible) : ThreadWithProgressWindow(juce::translate(windowTitle), true, true)
 	{
 		m_bOnlyVisible = onlyVisible;
 	}
 
+	// Methode virtuelle a implementer pour realiser le traitement
 	virtual bool Process(XGeoVector*) = 0;
 	
+	// Methode run du thread
 	void run()
 	{
 		uint32_t nb_file = 0, count = 0;
@@ -56,5 +61,18 @@ public:
 				Process(V);
 			}
 		}
+	}
+
+	// Creation d'un fichier MIF/MID pour exposer les resultats du traitement
+	bool CreateMifMidFile(juce::File cacheDir, juce::String name) {
+		juce::File mif = cacheDir.getNonexistentChildFile(name, ".mif");
+		juce::File mid = cacheDir.getNonexistentChildFile(name, ".mid");
+		mif.appendText("VERSION 300\r\nCharset \"WindowsLatin1\"");
+		XGeoPref pref;
+		mif.appendText(XGeoProjection::MifProjection(pref.Projection()));
+		mif.appendText("\r\n");
+		m_strMifFile = mif.getFullPathName();
+		m_strMidFile = mid.getFullPathName();
+		return true;
 	}
 };

@@ -79,6 +79,7 @@ class DtmLayersViewer : public juce::Component,
 	public juce::DragAndDropContainer {
 public:
 	DtmLayersViewer();
+	virtual ~DtmLayersViewer() { m_Cache.deleteRecursively(); }
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_TableDtm.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener) 
@@ -97,8 +98,12 @@ public:
 	void itemDragMove(const SourceDetails&) override { ; }
 	void itemDragExit(const SourceDetails&) override { ; }
 
+	// Algorithmes
+	void ComputeDeltaZ(std::vector< XGeoClass*>);
+
 private:
 	XGeoBase* m_Base;
+	juce::File m_Cache;
 	juce::TableListBox	m_TableDtm;
 	DtmViewerModel			m_ModelDtm;
 	juce::TableListBox	m_TableRange;

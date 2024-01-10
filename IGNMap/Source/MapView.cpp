@@ -175,7 +175,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 			CenterView((X0 + X1) * 0.5, (Y0 + Y1) * 0.5);
 		}
 		if (m_bSelect) {
-			if (m_nMouseMode == Select)
+			if ((m_nMouseMode == Select)|| (event.mods.isShiftDown()))
 				SelectFeatures(X0, Y0, X1, Y1);
 			if (m_nMouseMode == Select3D)
 				Update3DView(X0, Y0, X1, Y1);

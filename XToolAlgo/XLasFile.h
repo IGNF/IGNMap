@@ -22,6 +22,9 @@ public:
 
 	bool Open(std::string filename);
 	bool Close();
+	laszip_POINTER GetReader() { return m_Reader; }
+	laszip_header* GetHeader() { return m_Header; }
+	laszip_point* GetPoint() { return m_Point; }
 	laszip_I64 NbLasPoints() {
 		if (m_Header == nullptr) return 0;
 		return (m_Header->number_of_point_records ? m_Header->number_of_point_records : m_Header->extended_number_of_point_records);

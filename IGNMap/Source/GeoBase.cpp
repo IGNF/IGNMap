@@ -112,10 +112,8 @@ bool GeoFileImage::AnalyzeImage(std::string path)
 // Creation du repertoire cache temporaire pour stocker les imagettes
 //-----------------------------------------------------------------------------
 void GeoInternetImage::CreateCacheDir(juce::String name)
-{
-	juce::File tmpDir = juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory);
-	m_Cache = tmpDir.getNonexistentChildFile(name, "");
-	m_Cache.createDirectory();
+{ 
+	m_Cache = GeoBase::CreateCacheDir(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -313,38 +311,11 @@ bool GeoDTM::ImportTif(std::string file_tif, std::string file_bin)
 //==============================================================================
 bool GeoLAS::Open(std::string filename)
 {
-	if (laszip_create(&m_Reader))
+	if (!XLasFile::Open(filename))
 		return false;
-	laszip_BOOL compress;
-	if (laszip_open_reader(m_Reader, filename.c_str(), &compress)) {
-		laszip_destroy(m_Reader);
-		return false;
-	}
-	if (laszip_get_header_pointer(m_Reader, &m_Header)) {
-		laszip_destroy(m_Reader);
-		return false;
-	}
-	if (laszip_get_point_pointer(m_Reader, &m_Point)) {
-		laszip_destroy(m_Reader);
-		return false;
-	}
-
-	m_strFilename = filename;
 	m_Frame = XFrame(m_Header->min_x, m_Header->min_y, m_Header->max_x, m_Header->max_y);
 	m_ZRange[0] = m_Header->min_z;
 	m_ZRange[1] = m_Header->max_z;
-	return true;
-}
-
-//==============================================================================
-// Classe GeoLAS : fermerture d'un fichier LAS
-//==============================================================================
-bool GeoLAS::Close()
-{
-	if (m_Reader != nullptr) {
-		laszip_close_reader(m_Reader);
-		laszip_destroy(m_Reader);
-	}
 	return true;
 }
 
@@ -566,4 +537,15 @@ bool GeoBase::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName,
 	base->AddMap(map);
 	base->SortClass();
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Creation du repertoire cache temporaire
+//-----------------------------------------------------------------------------
+juce::File GeoBase::CreateCacheDir(juce::String name)
+{
+	juce::File tmpDir = juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory);
+	juce::File cache = tmpDir.getNonexistentChildFile(name, "");
+	cache.createDirectory();
+	return cache;
 }
