@@ -18,7 +18,7 @@ IGNMap était à la base un outil interne de l’institut géographique national
 
 La version 2 a été distribuée à l’extérieur de l’IGN, principalement pour aider au passage au RGF 93, cette version proposant des outils pour la conversion des données des anciennes projections légales (Lambert 2 étendu pour la France métropolitaine ; Saint-Anne, Fort Marigot et Fort Desaix pour les Antilles, CSG1967 pour la Guyane ; Piton des Neiges pour la Réunion ; …) vers les nouvelles projections (Lambert 93, RGAF09, RGRG95, RGR92, …). Cette version 2 était développée avec QT4 pour la création de l’interface homme-machine. La version 2 est disponible sur le site [IGNMap](https://ignmap.ign.fr/).  
 
-Cette nouvelle version, donc la version 3, est développée avec [JUCE](https://juce.com/).
+Cette nouvelle version, donc la version 3, est développée avec [JUCE](https://juce.com/). Elle est open-source, sous licence AGPL-3.
 
 ## JUCE
 

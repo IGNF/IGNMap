@@ -663,6 +663,10 @@ void MainComponent::buttonClicked(juce::Button* button)
 	if (tlb->getItemId() == m_ToolbarFactory.Select3D) {
 		m_MapView.get()->SetMouseMode(MapView::Select3D);
 	}
+	if (tlb->getItemId() == m_ToolbarFactory.Gsd) {
+		double gsd = tlb->getButtonText().getDoubleValue();
+		m_MapView.get()->ZoomGsd(gsd);
+	}
 }
 
 //==============================================================================

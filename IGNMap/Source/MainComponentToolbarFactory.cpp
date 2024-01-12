@@ -22,6 +22,7 @@ void MainComponentToolbarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
   ids.add(Select);
   ids.add(Zoom);
   ids.add(Select3D);
+  ids.add(Gsd);
 
   // If you're going to use separators, then they must also be added explicitly
   // to the list.
@@ -42,6 +43,7 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
   ids.add(Select3D);
   ids.add(spacerId);
   ids.add(separatorBarId);
+  ids.add(Gsd);
 }
 
 juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
@@ -102,6 +104,14 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
     button->setTooltip(juce::translate("Select 3D view"));
+    break;
+  }
+  case Gsd:
+  {
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("GSD.png"));
+    button = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
+    button->setTooltip(juce::translate("GSD of the view"));
     break;
   }
 

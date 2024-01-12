@@ -265,6 +265,22 @@ void MapView::ZoomScale(double scale)
 }
 
 //==============================================================================
+// Zoom a une resolution donnee
+//==============================================================================
+void MapView::ZoomGsd(double gsd)
+{
+	if ((gsd <= 0.) || (gsd > 100000.))
+		return;
+	if (fabs(gsd - m_dScale) < 0.01)
+		return;
+	auto b = getLocalBounds();
+	double X = b.getWidth() / 2, Y = b.getHeight() / 2;
+	Pixel2Ground(X, Y);
+	m_dScale = gsd;
+	CenterView(X, Y);
+}
+
+//==============================================================================
 // Zoom sur une emprise
 //==============================================================================
 void MapView::ZoomFrame(const XFrame& F, double buffer)

@@ -30,6 +30,7 @@ public:
   void ZoomWorld();
   void ZoomLevel();
   void ZoomScale(double scale);
+  void ZoomGsd(double gsd);
   void ZoomFrame(const XFrame& F, double buffer = 0.);
   void DrawFrame(const XFrame& F);
   void CenterView(const double& X, const double& Y);
