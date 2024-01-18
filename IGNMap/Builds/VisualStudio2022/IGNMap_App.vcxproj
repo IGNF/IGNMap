@@ -327,6 +327,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\openjpeg\src\lib\openjp2\thread.c"/>
     <ClCompile Include="..\..\Source\DtmLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\DtmShader.cpp"/>
+    <ClCompile Include="..\..\Source\ExportImageDlg.cpp"/>
     <ClCompile Include="..\..\Source\GeoBase.cpp"/>
     <ClCompile Include="..\..\Source\ImageLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\ImageOptionsViewer.cpp"/>
@@ -1887,6 +1888,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\thread.h"/>
     <ClInclude Include="..\..\Source\DtmLayersViewer.h"/>
     <ClInclude Include="..\..\Source\DtmShader.h"/>
+    <ClInclude Include="..\..\Source\ExportImageDlg.h"/>
     <ClInclude Include="..\..\Source\GeoBase.h"/>
     <ClInclude Include="..\..\Source\ImageLayersViewer.h"/>
     <ClInclude Include="..\..\Source\ImageOptionsViewer.h"/>

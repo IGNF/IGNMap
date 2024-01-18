@@ -12,7 +12,9 @@
 #include "MainComponent.h"
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
+#include "ExportImageDlg.h"
 #include "../../XToolGeod/XGeoPref.h"
+#include "../../XToolImage/XTiffWriter.h"
 
 
 //==============================================================================
@@ -184,6 +186,10 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 
 		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
 
+		juce::PopupMenu ExportSubMenu;
+		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportImage);
+		menu.addSubMenu(juce::translate("Export"), ExportSubMenu);
+
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuQuit);
 	}
 	else if (menuIndex == 1) // Edit
@@ -246,6 +252,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuImportVectorFile, CommandIDs::menuImportVectorFolder, 
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
+		CommandIDs::menuExportImage,
 		CommandIDs::menuZoomTotal, CommandIDs::menuZoomLevel,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
@@ -332,6 +339,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAddWmtsServer:
 		result.setInfo(juce::translate("WMTS Server"), juce::translate("WMTS Server"), "Menu", 0);
+		break;
+	case CommandIDs::menuExportImage:
+		result.setInfo(juce::translate("Export image"), juce::translate("Export image"), "Menu", 0);
 		break;
 	case CommandIDs::menuZoomTotal:
 		result.setInfo(juce::translate("Zoom total"), juce::translate("Zoom total"), "Menu", 0);
@@ -476,6 +486,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuAddWmtsServer:
 		AddWmtsServer();
+		break;
+	case CommandIDs::menuExportImage:
+		ExportImage();
 		break;
 	case CommandIDs::menuZoomTotal:
 		m_MapView.get()->ZoomWorld();
@@ -1133,6 +1146,28 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 }
 
 //==============================================================================
+// Export sous forme d'image
+//==============================================================================
+bool MainComponent::ExportImage()
+{
+	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, 743000.0, 6750500, 743500, 6751000, 1.);
+	juce::DialogWindow::LaunchOptions options;
+	options.content.setOwned(dlg);
+
+	juce::Rectangle<int> area(0, 0, 410, 300);
+
+	options.content->setSize(area.getWidth(), area.getHeight());
+	options.dialogTitle = juce::translate("Export Image");
+	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.escapeKeyTriggersCloseButton = true;
+	options.useNativeTitleBar = false;
+	options.resizable = false;
+
+	options.runModal();
+	return true;
+}
+
+//==============================================================================
 // Chargement d'un fichier de traduction
 //==============================================================================
 void MainComponent::Translate()
@@ -1170,17 +1205,24 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 	}
 }
 
+//==============================================================================
+// Methode test ... 
+//==============================================================================
 void MainComponent::Test()
 {
-	if (m_DtmViewer.get()->isVisible()) {
-		m_Panel.get()->setPanelSize(m_DtmViewer.get(), 0, true);
-		m_Panel.get()->setPanelHeaderSize(m_DtmViewer.get(), 0);
-		m_DtmViewer.get()->setVisible(false);
+	XTiffWriter writer;
+	writer.SetGeoTiff(500000., 6500000., 1.);
+	writer.WriteTiled("D:\\Test_tile.tif", 1000, 1000, 1, 8, nullptr, 0, 256, 256);
+	std::ofstream file;
+	file.open("D:\\Test_tile.tif", std::ios::out | std::ios::binary | std::ios::app);
+	file.seekp(0, std::ios_base::end);
+
+	uint8_t* area = new uint8_t[256 * 256];
+	for (int i = 0; i < 16; i++) {
+		::memset(area, i * 16, 256 * 256 * sizeof(uint8_t));
+		file.write((const char*)area, 256 * 256 * sizeof(uint8_t));
 	}
-	else {
-		m_Panel.get()->setPanelHeaderSize(m_DtmViewer.get(), 20);
-		m_DtmViewer.get()->setVisible(true);
-		m_Panel.get()->expandPanelFully(m_DtmViewer.get(),true);
-	}
+	file.close();
+	delete[] area;
 }
 

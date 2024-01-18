@@ -45,6 +45,8 @@ public:
 
 	bool Write(const char* filename, uint32_t w, uint32_t h, uint16_t nbSample = 1, 
              uint16_t nbBits = 8, uint8_t* buf = NULL, uint16_t format = 0);
+	bool WriteTiled(const char* filename, uint32_t w, uint32_t h, uint16_t nbSample = 1,
+		uint16_t nbBits = 8, uint8_t* buf = NULL, uint16_t format = 0, uint32_t tileW = 256, uint32_t tileH = 256);
 };
 
 

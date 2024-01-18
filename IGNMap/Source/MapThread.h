@@ -31,6 +31,8 @@ public:
   juce::int64 NumObjects() { return m_nNumObjects; }
   XFrame Frame() { return m_Frame; }
   float GetZ(int u, int v);
+  uint32_t ImageWidth() { return m_Raster.getWidth(); }
+  uint32_t ImageHeight() { return m_Raster.getHeight(); }
 
   virtual void 	run() override;
   bool Draw(juce::Graphics& g, int x0 = 0, int y0 = 0);

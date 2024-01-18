@@ -838,6 +838,9 @@
     <ClCompile Include="..\..\Source\DtmShader.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ExportImageDlg.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\GeoBase.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -2923,6 +2926,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DtmShader.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ExportImageDlg.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GeoBase.h">

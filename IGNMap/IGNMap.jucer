@@ -422,6 +422,10 @@
             file="Source/DtmLayersViewer.h"/>
       <FILE id="wv4RK7" name="DtmShader.cpp" compile="1" resource="0" file="Source/DtmShader.cpp"/>
       <FILE id="Ysux8W" name="DtmShader.h" compile="0" resource="0" file="Source/DtmShader.h"/>
+      <FILE id="IUCQEA" name="ExportImageDlg.cpp" compile="1" resource="0"
+            file="Source/ExportImageDlg.cpp"/>
+      <FILE id="bJ7a4v" name="ExportImageDlg.h" compile="0" resource="0"
+            file="Source/ExportImageDlg.h"/>
       <FILE id="MWj6Zn" name="GeoBase.cpp" compile="1" resource="0" file="Source/GeoBase.cpp"/>
       <FILE id="nrp2RE" name="GeoBase.h" compile="0" resource="0" file="Source/GeoBase.h"/>
       <FILE id="LKaR73" name="ImageLayersViewer.cpp" compile="1" resource="0"

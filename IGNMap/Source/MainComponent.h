@@ -47,6 +47,7 @@ public:
     menuTranslate, menuTest,
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile, 
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,
+    menuExportImage,
     menuZoomTotal, menuZoomLevel,
     menuScale1k, menuScale10k, menuScale25k, menuScale100k, menuScale250k,
     menuShowSidePanel, menuShow3DViewer,
@@ -124,6 +125,8 @@ private:
   bool ImportImageFile(juce::String rasterfile = "");
   bool ImportDtmFile(juce::String dtmfile = "");
   bool ImportLasFile(juce::String lasfile = "");
+
+  bool ExportImage();
 
   bool AddOSMServer();
   bool AddWmtsServer();

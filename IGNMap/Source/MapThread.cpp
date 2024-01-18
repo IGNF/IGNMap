@@ -42,7 +42,7 @@ bool MapThread::AllocPoints(int numPt)
 }
 
 //==============================================================================
-// Fixe les dimensions des images servant au desson
+// Fixe les dimensions des images servant au dessin
 //==============================================================================
 void MapThread::SetDimension(const int& w, const int& h)
 {
