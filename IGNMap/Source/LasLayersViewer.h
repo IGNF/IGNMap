@@ -2,7 +2,7 @@
 //								LasLayersViewer.h
 //								=================
 //
-// Visulisation des classes d'objets LAS/LAZ
+// Visualisation des classes d'objets LAS/LAZ
 //
 // Auteur : F.Becirspahic - IGN / DSI / SIMV
 // License : GNU AFFERO GENERAL PUBLIC LICENSE v3

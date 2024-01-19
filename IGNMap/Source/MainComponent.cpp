@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "MainComponent.h"
+#include "AppUtil.h"
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
 #include "ExportImageDlg.h"
@@ -683,60 +684,11 @@ void MainComponent::buttonClicked(juce::Button* button)
 }
 
 //==============================================================================
-// Choix d'un repertoire
-//==============================================================================
-juce::String MainComponent::OpenFolder(juce::String optionName, juce::String mes)
-{
-	juce::String path, message;
-	if (!optionName.isEmpty())
-		path = GetAppOption(optionName);
-	if (mes.isEmpty())
-		message = juce::translate("Choose a directory...");
-	
-	juce::FileChooser fc(message, path, "*", true);
-	if (fc.browseForDirectory()) {
-		auto result = fc.getURLResult();
-		auto name = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
-
-		if (!optionName.isEmpty())
-			SaveAppOption(optionName, name);
-		return name;
-	}
-	return "";
-}
-
-//==============================================================================
-// Choix d'un fichier
-//==============================================================================
-juce::String MainComponent::OpenFile(juce::String optionName, juce::String mes, juce::String filter)
-{
-	juce::String path = optionName, message = mes, filters = filter;
-	if (!optionName.isEmpty())
-		path = GetAppOption(optionName);
-	if (mes.isEmpty())
-		message = juce::translate("Choose a file...");
-	if (filter.isEmpty())
-		filters = "*";
-	
-	juce::FileChooser fc(message, path, filters, true);
-	if (fc.browseForFileToOpen()) {
-		auto result = fc.getURLResult();
-		auto name = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
-
-		if (!optionName.isEmpty())
-			SaveAppOption(optionName, name);
-		return name;
-	}
-	return "";
-}
-
-
-//==============================================================================
 // Choix d'un fichier vecteur
 //==============================================================================
 void MainComponent::ImportVectorFolder()
 {
-	juce::String folderName = OpenFolder("VectorFolderPath");
+	juce::String folderName = AppUtil::OpenFolder("VectorFolderPath");
 	if (folderName.isEmpty())
 		return;
 	int nb_total, nb_imported;
@@ -751,7 +703,7 @@ void MainComponent::ImportVectorFolder()
 //==============================================================================
 void MainComponent::ImportImageFolder()
 {
-	juce::String folderName = OpenFolder("ImageFolderPath");
+	juce::String folderName = AppUtil::OpenFolder("ImageFolderPath");
 	if (folderName.isEmpty())
 		return;
 	XGeoClass* C = ImportDataFolder(folderName, XGeoVector::Raster);
@@ -764,30 +716,6 @@ void MainComponent::ImportImageFolder()
 	C->Repres()->FillColor(0xFFFFFFFF);
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
 	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-}
-
-//==============================================================================
-// Gestion des options de l'application
-//==============================================================================
-juce::String MainComponent::GetAppOption(juce::String name)
-{
-	juce::PropertiesFile::Options options;
-	options.applicationName = "GdalMap";
-	juce::ApplicationProperties app;
-	app.setStorageParameters(options);
-	juce::PropertiesFile* file = app.getUserSettings();
-	return file->getValue(name);
-}
-
-void MainComponent::SaveAppOption(juce::String name, juce::String value)
-{
-	juce::PropertiesFile::Options options;
-	options.applicationName = "GdalMap";
-	juce::ApplicationProperties app;
-	app.setStorageParameters(options);
-	juce::PropertiesFile* file = app.getUserSettings();
-	file->setValue(name, value);
-	app.saveIfNeeded();
 }
 
 //==============================================================================
@@ -812,7 +740,7 @@ void MainComponent::Clear()
 void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.0.1";
-	juce::String info = "02/01/2024";
+	juce::String info = "19/01/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
@@ -826,7 +754,7 @@ void MainComponent::AboutIGNMap()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -862,7 +790,7 @@ bool MainComponent::ImportImageFile(juce::String rasterfile)
 {
 	juce::String filename = rasterfile;
 	if (filename.isEmpty())
-		filename = OpenFile("RasterPath");
+		filename = AppUtil::OpenFile("RasterPath");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -892,7 +820,7 @@ bool MainComponent::ImportImageFile(juce::String rasterfile)
 //==============================================================================
 void MainComponent::ImportDtmFolder()
 {
-	juce::String folderName = OpenFolder("DtmFolderPath");
+	juce::String folderName = AppUtil::OpenFolder("DtmFolderPath");
 	if (folderName.isEmpty())
 		return;
 	XGeoClass* C = ImportDataFolder(folderName, XGeoVector::DTM);
@@ -907,7 +835,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 {
 	juce::String filename = dtmfile;
 	if (filename.isEmpty())
-		filename = OpenFile("DtmPath");
+		filename = AppUtil::OpenFile("DtmPath");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -1037,7 +965,7 @@ XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::
 //==============================================================================
 void MainComponent::ImportLasFolder()
 {
-	juce::String folderName = OpenFolder("LasFolderPath");
+	juce::String folderName = AppUtil::OpenFolder("LasFolderPath");
 	if (folderName.isEmpty())
 		return;
 	XGeoClass* C = ImportDataFolder(folderName, XGeoVector::LAS);
@@ -1052,7 +980,7 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 {
 	juce::String filename = lasfile;
 	if (filename.isEmpty())
-		filename = OpenFile("LasPath");
+		filename = AppUtil::OpenFile("LasPath");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -1172,7 +1100,7 @@ bool MainComponent::ExportImage()
 //==============================================================================
 void MainComponent::Translate()
 {
-	juce::String filename = OpenFile();
+	juce::String filename = AppUtil::OpenFile();
 	if (filename.isEmpty())
 		return;
 	juce::File file(filename);

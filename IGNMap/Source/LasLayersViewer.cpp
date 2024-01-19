@@ -2,7 +2,7 @@
 //								LasLayersViewer.cpp
 //								===================
 //
-// Visulisation des classes d'objets LAS/LAZ
+// Visualisation des classes d'objets LAS/LAZ
 //
 // Auteur : F.Becirspahic - IGN / DSI / SIMV
 // License : GNU AFFERO GENERAL PUBLIC LICENSE v3
@@ -11,6 +11,7 @@
 
 #include "LasLayersViewer.h"
 #include "Utilities.h"
+#include "AppUtil.h"
 #include "LasShader.h"
 #include "ThreadClassProcessor.h"
 #include "../XTool/XGeoVector.h"
@@ -531,12 +532,9 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	if(asyncAlertWindow->runModalLoop() == 0)
 		return;
 
-	juce::String path;
-	juce::FileChooser fc(juce::translate("Choose a directory..."), path, "*", true);
-	if (!fc.browseForDirectory())
+	juce::String foldername = AppUtil::OpenFolder("Las2Dtm", juce::translate("Choose a directory..."));
+	if (foldername.isEmpty())
 		return;
-	auto result = fc.getURLResult();
-	auto foldername = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
 	auto algoIndexChosen = asyncAlertWindow->getComboBoxComponent("Algo")->getSelectedItemIndex();
 	auto gsd_text = asyncAlertWindow->getTextEditorContents("GSD");
 	double gsd = gsd_text.getDoubleValue();

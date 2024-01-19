@@ -2,7 +2,7 @@
 //								Utilities.h
 //								===========
 //
-// Fonctions utilitaires JUCE
+// Fonctions utilitaires JUCE : inspirees de Assets/DemoUtilities.h des exemples JUCE
 //
 // Auteur : F.Becirspahic - IGN / DSI / SIMV
 // License : GNU AFFERO GENERAL PUBLIC LICENSE v3
@@ -34,7 +34,7 @@ inline std::unique_ptr<juce::InputStream> createAssetInputStream(const char* res
 //==============================================================================
 inline juce::Image getImageFromAssets(const char* assetName)
 {
-  auto hashCode = (juce::String(assetName) + "@gdalmap_assets").hashCode64();
+  auto hashCode = (juce::String(assetName) + "@ignmap_assets").hashCode64();
   auto img = juce::ImageCache::getFromHashCode(hashCode);
 
   if (img.isNull())
