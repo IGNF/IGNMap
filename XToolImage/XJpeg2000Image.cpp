@@ -117,18 +117,23 @@ XJpeg2000Image::XJpeg2000Image(const char* filename)
   jpx_codestream_source code_source = m_Jpx_in->access_codestream(0);
   jp2_dimensions dim = code_source.access_dimensions();
   m_nBitDepth = dim.get_bit_depth(0);
+  if ((m_nBitDepth > 8)&&(m_nBitDepth <= 16)){
+    m_nNbBits = 16;
+  }
 
   if (m_nBitDepth > 8) {
+    m_RawCompositor = new XKduRegionCompositor;
+    m_RawCompositor->create(m_Jpx_in);
+    m_RawCompositor->add_ilayer(0, kdu_dims(), kdu_dims());
+    m_RawCompositor->set_surface_initialization_mode(false);
+    m_RawCompositor->set_scale(false, false, false, 1.0F);
     m_FloatCompositor = new XKduRegionCompositor;
     m_FloatCompositor->create(m_Jpx_in);
     m_FloatCompositor->add_ilayer(0, kdu_dims(), kdu_dims());
     m_FloatCompositor->set_surface_initialization_mode(false);
     m_FloatCompositor->set_scale(false, false, false, 1.0F);
+    delete m_Compositor;
   }
-  else
-    m_FloatCompositor = NULL;
-
-  m_nNumli = 0;
 
   m_dX0 = 0.;	// A revoir avec le XML
   m_dY0 = 0.;
@@ -224,13 +229,24 @@ XJpeg2000Image::~XJpeg2000Image()
 {
   if (m_bValid) {
     m_Jpx_in->close();
-    if (m_FloatCompositor != NULL) delete m_FloatCompositor;
+    if (m_RawCompositor != nullptr) delete m_RawCompositor;
     delete m_Compositor;
     delete m_Jpx_in;
     m_Src->close();
     delete m_Src;
   }
   m_bValid = false;
+}
+
+//-----------------------------------------------------------------------------
+// Metadonnees de l'image sous forme de cles / valeurs
+//-----------------------------------------------------------------------------
+std::string XJpeg2000Image::Metadata()
+{
+  std::ostringstream out;
+  out << XBaseImage::Metadata();
+  out << "BitDepth:" << m_nBitDepth << ";";
+  return out.str();
 }
 
 //-----------------------------------------------------------------------------
@@ -263,6 +279,8 @@ bool XJpeg2000Image::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w
 bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area,
                                 uint32_t factor, uint32_t wout, uint32_t hout)
 {
+  if (m_nBitDepth > 8)
+    return GetJp2AreaFloat(x, y, w, h, area, factor, wout, hout);
   float k_factor = 1;
   if (factor != 1)
     k_factor = 1.F / (float)factor;
@@ -321,6 +339,59 @@ bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, 
 }
 
 //-----------------------------------------------------------------------------
+// Lecture d'une region Jpeg2000 stockee en float avec passage en 16 bits
+//-----------------------------------------------------------------------------
+bool XJpeg2000Image::GetJp2AreaFloat(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area,
+                                     uint32_t factor, uint32_t wout, uint32_t hout)
+{
+  float k_factor = 1;
+  if (factor != 1)
+    k_factor = 1.F / (float)factor;
+  if ((wout == 0) || (hout == 0)) {
+    wout = w;
+    hout = h;
+  }
+
+  kdu_dims image_dims, new_region;
+
+  image_dims.pos.x = (int)(x * k_factor);
+  image_dims.pos.y = (int)(y * k_factor);
+  image_dims.size.x = (int)(w * k_factor);
+  image_dims.size.y = (int)(h * k_factor);
+
+  m_FloatCompositor->refresh();
+  m_FloatCompositor->set_scale(false, false, false, (float)k_factor);
+  m_FloatCompositor->set_buffer_surface(image_dims);
+  kdu_compositor_buf* buf = m_FloatCompositor->get_composition_buffer(image_dims);
+  if (buf == nullptr)
+    return false;
+  if ((image_dims.size.x < (int)wout) || (image_dims.size.y < (int)hout))
+    return false;
+  int buffer_row_gap = 0;
+  float* buffer = buf->get_float_buf(buffer_row_gap, false);
+  while (m_FloatCompositor->process(100000, new_region));
+
+  float* ptr = buffer;
+  uint16_t* data = (uint16_t*)area;
+  uint32_t nbbyte = NbSample();
+  uint32_t count = (nbbyte * wout);
+  for (uint32_t i = 0; i < hout; i++) {
+    ptr = &buffer[buffer_row_gap * i];
+    for (uint32_t j = 0; j < wout; j++) {
+      ptr++;  // Canal alpha
+      data[0] = *ptr * 65535; ptr++;
+      data[1] = *ptr * 65535; ptr++;
+      data[2] = *ptr * 65535; ptr++;
+      data += nbbyte;
+    }
+  }
+  //if (NbSample() == 3)
+  //  SwitchRGB2BGR(area, wout* hout);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Recuperation des valeurs brutes des pixels
 //-----------------------------------------------------------------------------
 bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t win, double* pix,
@@ -341,13 +412,15 @@ bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t w
   image_dims.size.x = (int)(2 * win + 1);
   image_dims.size.y = (int)(2 * win + 1);
 
-  m_FloatCompositor->refresh();
-  m_FloatCompositor->set_scale(false, false, false, (float)1.);
-  m_FloatCompositor->set_buffer_surface(image_dims);
-  while (m_FloatCompositor->process(100000, new_region));
-  kdu_compositor_buf* buf = m_FloatCompositor->get_composition_buffer(image_dims);
+  m_RawCompositor->refresh();
+  m_RawCompositor->set_scale(false, false, false, 1.f);
+  m_RawCompositor->set_buffer_surface(image_dims);
+  kdu_compositor_buf* buf = m_RawCompositor->get_composition_buffer(image_dims);
+  if (buf == nullptr)
+    return false;
   int buffer_row_gap = 0;
   float* buffer = buf->get_float_buf(buffer_row_gap, false);
+  while (m_RawCompositor->process(100000, new_region));
 
   double* ptr_pix = pix;
   float* ptr_buf = buffer;
@@ -355,7 +428,7 @@ bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t w
     for (uint32_t i = 0; i < (2 * win + 1); i++) {
       ptr_buf++;  // Canal alpha
       for (uint32_t k = 0; k < m_nNbSample; k++) {
-        *ptr_pix = *ptr_buf;
+        *ptr_pix = (*ptr_buf * 65535);
         ptr_pix++; ptr_buf++;
       }
       ptr_buf += (3 - m_nNbSample);
@@ -389,11 +462,11 @@ bool XJpeg2000Image::GetRawArea(XFile* file, uint32_t x, uint32_t y, uint32_t w,
   image_dims.size.x = (int)(w * k_factor);
   image_dims.size.y = (int)(h * k_factor);
 
-  m_FloatCompositor->refresh();
-  m_FloatCompositor->set_scale(false, false, false, k_factor);
-  m_FloatCompositor->set_buffer_surface(image_dims);
-  while (m_FloatCompositor->process(100000, new_region));
-  kdu_compositor_buf* buf = m_FloatCompositor->get_composition_buffer(image_dims);
+  m_RawCompositor->refresh();
+  m_RawCompositor->set_scale(false, false, false, k_factor);
+  m_RawCompositor->set_buffer_surface(image_dims);
+  while (m_RawCompositor->process(100000, new_region));
+  kdu_compositor_buf* buf = m_RawCompositor->get_composition_buffer(image_dims);
   int buffer_row_gap = 0;
   float* buffer = buf->get_float_buf(buffer_row_gap, false);
   float* ptr;

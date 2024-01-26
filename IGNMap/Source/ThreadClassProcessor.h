@@ -64,13 +64,22 @@ public:
 	}
 
 	// Creation d'un fichier MIF/MID pour exposer les resultats du traitement
-	bool CreateMifMidFile(juce::File cacheDir, juce::String name) {
+	bool CreateMifMidFile(juce::File cacheDir, juce::String name, juce::StringArray att) {
 		juce::File mif = cacheDir.getNonexistentChildFile(name, ".mif");
 		juce::File mid = cacheDir.getNonexistentChildFile(name, ".mid");
 		mif.appendText("VERSION 300\r\nCharset \"WindowsLatin1\"");
 		XGeoPref pref;
 		mif.appendText(XGeoProjection::MifProjection(pref.Projection()));
 		mif.appendText("\r\n");
+		// Ecriture des noms d'attributs
+		if ((!att.isEmpty())) {
+			mif.appendText("COLUMNS " + juce::String(att.size()) + "\r\n");
+			for (int i = 0; i < att.size(); i++) {
+				mif.appendText(att[i] + "\r\n");
+			}
+			mif.appendText("DATA\r\n");
+		}
+
 		m_strMifFile = mif.getFullPathName();
 		m_strMidFile = mid.getFullPathName();
 		return true;

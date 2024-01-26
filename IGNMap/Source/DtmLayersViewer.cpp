@@ -632,11 +632,9 @@ void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
 	MyTask M;
 	M.deltaZ = deltaZ;
 	M.m_T = T;
-	M.CreateMifMidFile(m_Cache, "DeltaZ");
-	std::ofstream mif;
-	mif.open(M.m_strMifFile.toStdString(), std::ios::out | std::ios::app);
-	mif << "COLUMNS 1" << std::endl << "DeltaZ decimal (10,2)" << std::endl << "DATA" << std::endl;
-	mif.close();
+	juce::StringArray Att;
+	Att.add("DeltaZ decimal (10,2)");
+	M.CreateMifMidFile(m_Cache, juce::String("DeltaZ_") + juce::String(deltaZ,2) , Att);
 	M.runThread();
 	GeoBase::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoBase::ColorizeClasses(m_Base);

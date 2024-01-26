@@ -232,6 +232,8 @@ void ImageOptionsViewer::SetGroundPos(const double& X, const double& Y)
 {
   if (m_Image == nullptr)
     return;
+  if (getParentHeight() < 100)  // On suppose que le panneau est ferme
+    return;
   double xmin = 0., ymax = 0., gsd = 0.;
   if (!m_Image->GetGeoref(&xmin, &ymax, &gsd))
     return;
@@ -260,6 +262,7 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
   if (m_PixModel.PixY >= (m_Image->XFileImage::Height() - m_PixModel.WinSize))
     m_PixModel.PixY = m_Image->XFileImage::Height() - m_PixModel.WinSize - 1;
 
+  m_PixModel.NbBits = m_Image->NbBits();
   if (!m_PixModel.AllocPixels(m_Image->NbSample()))
     return;
 
@@ -282,10 +285,14 @@ void PixelValuesModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
     g.drawText("no data", 0, 0, width, height, juce::Justification::centred);
     return;
   }
-
-  uint8_t red = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + R_channel];
-  uint8_t green = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + G_channel];
-  uint8_t blue = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + B_channel];
+  double factor = 1.;
+  if (NbBits == 16)
+    factor = 256;
+  uint8_t red = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + R_channel] / factor;
+  uint8_t green = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + G_channel] / factor;
+  uint8_t blue = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + B_channel] / factor;
+  if (NbSample == 1)
+    blue = green = red;
 
   juce::Colour color(red, green, blue);
   g.setColour(color);

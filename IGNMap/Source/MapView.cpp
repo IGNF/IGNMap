@@ -141,9 +141,6 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 	m_bZoom = m_bSelect = false;
 	m_bDrag = true;
 	setMouseCursor(juce::MouseCursor(juce::MouseCursor::DraggingHandCursor));
-	double x0 = m_StartPt.getX(), y0 = m_StartPt.getY();
-	Pixel2Ground(x0, y0);
-	sendActionMessage("UpdateGroundPos:"+ juce::String(x0, 2) + ":" + juce::String(y0, 2));
 }
 
 void MapView::mouseMove(const juce::MouseEvent& event)
@@ -189,6 +186,8 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	else {
 		if (event.mods.isShiftDown() || (m_nMouseMode == Select))
 			SelectFeatures(event.getPosition());
+		else
+			sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
 	}
 	m_bDrag = m_bZoom = m_bSelect = false;
 	m_DragPt = juce::Point<int>(0, 0);

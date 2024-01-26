@@ -20,14 +20,14 @@ class jp2_family_src;
 
 class XJpeg2000Image : public XBaseImage {
 protected:
-  bool											m_bValid;	// Indique si l'image est valide
-  uint32_t										m_nNumli;	// Numero de la ligne active
-  jpx_source*               m_Jpx_in;
-  kdu_region_compositor*    m_Compositor;
-  jp2_family_src*           m_Src;
+  bool											m_bValid = false;	// Indique si l'image est valide
+  jpx_source*               m_Jpx_in = nullptr;
+  kdu_region_compositor*    m_Compositor = nullptr;
+  jp2_family_src*           m_Src = nullptr;
   std::string							  m_strXmlMetadata;
-  int                       m_nBitDepth;
-  XKduRegionCompositor*     m_FloatCompositor;
+  int                       m_nBitDepth = 0;
+  XKduRegionCompositor*     m_RawCompositor = nullptr;
+  XKduRegionCompositor*     m_FloatCompositor = nullptr;
 
   bool ReadGeorefXmlOld();
   bool ReadGeorefXml();
@@ -38,6 +38,7 @@ public:
   virtual ~XJpeg2000Image();
 
   virtual std::string Format() { return "JP2";}
+  virtual std::string Metadata();
   bool IsValid() { return m_bValid; }
   virtual inline bool NeedFile() { return false; }
 
@@ -46,6 +47,8 @@ public:
   virtual bool GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area,
                           uint32_t factor = 1, uint32_t wout = 0, uint32_t hout = 0);
   virtual bool GetLine(XFile* file, uint32_t num, uint8_t* area) { return false; }
+  bool GetJp2AreaFloat(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area,
+                       uint32_t factor = 1, uint32_t wout = 0, uint32_t hout = 0);
 
   virtual uint32_t FileSize() { return 0; }
 

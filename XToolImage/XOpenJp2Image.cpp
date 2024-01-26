@@ -117,6 +117,7 @@ bool XOpenJp2Image::CreateCodec()
     m_Stream = nullptr;
     return false;
   }
+  opj_codec_set_threads(m_Codec, 4);
   opj_decoder_set_strict_mode(m_Codec, OPJ_TRUE);
 
   if (!opj_read_header(m_Stream, m_Codec, &m_Image)) {
@@ -181,11 +182,8 @@ bool XOpenJp2Image::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w,
     fac /= 2;
   } while (fac > 1);
 
-  //if (m_Image->comps[0].factor != opj_factor) {  // Le codec est a reconstruire
-   // ClearCodec();
-  if (!CreateCodec())
-    return false;
-  //}
+   if (!CreateCodec())
+     return false;
   
   if (!opj_set_decoded_resolution_factor(m_Codec, opj_factor)) 
     return false;

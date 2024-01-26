@@ -39,6 +39,7 @@ public:
 	uint32_t NbSample;
 	double* PixValue;
 	uint8_t R_channel = 0, G_channel = 1, B_channel = 2;
+	uint8_t NbBits = 8;
 };
 
 //==============================================================================

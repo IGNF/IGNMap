@@ -60,6 +60,8 @@ uint32_t XBaseImage::PixSize()
 std::string XBaseImage::Metadata()
 {
 	std::ostringstream out;
+  out.setf(std::ios::fixed);
+  out.precision(2);
 	out << "Largeur:" << m_nW << ";Hauteur:" << m_nH << ";Nb Bits:" << m_nNbBits
 		<< ";Nb Sample:" << m_nNbSample << ";Xmin:" << m_dX0 << ";Ymax:" << m_dY0
     << ";GSD:" << m_dGSD <<";";
