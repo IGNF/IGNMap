@@ -23,6 +23,10 @@ void MainComponentToolbarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
   ids.add(Zoom);
   ids.add(Select3D);
   ids.add(Gsd);
+  ids.add(Polyline);
+  ids.add(Polygone);
+  ids.add(Rectangle);
+  ids.add(Text);
 
   // If you're going to use separators, then they must also be added explicitly
   // to the list.
@@ -41,6 +45,11 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
   ids.add(Select);
   ids.add(Zoom);
   ids.add(Select3D);
+  ids.add(separatorBarId);
+  ids.add(Polyline);
+  ids.add(Polygone);
+  ids.add(Rectangle);
+  ids.add(Text);
   ids.add(spacerId);
   ids.add(separatorBarId);
   ids.add(Gsd);
@@ -112,6 +121,60 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     drawable_off->setImage(getImageFromAssets("GSD.png"));
     button = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
     button->setTooltip(juce::translate("GSD of the view"));
+    break;
+  }
+
+  // Outils de dessin
+  case Polyline:
+  {
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Polyline.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Polyline.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkred);
+    button = new juce::ToolbarButton(Move, juce::translate("Polyline"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Polyline"));
+    break;
+  }
+  case Polygone:
+  {
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Polygone.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Polygone.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkred);
+    button = new juce::ToolbarButton(Select, juce::translate("Polygone"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Polygone"));
+    break;
+  }
+  case Rectangle:
+  {
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Rectangle.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Rectangle.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkred);
+    button = new juce::ToolbarButton(Select, juce::translate("Rectangle"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Rectangle"));
+    break;
+  }
+  case Text:
+  {
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(getImageFromAssets("Text.png"));
+    auto drawable_on = std::make_unique<juce::DrawableImage>();
+    drawable_on->setImage(getImageFromAssets("Text.png"));
+    drawable_on->setOverlayColour(juce::Colours::darkred);
+    button = new juce::ToolbarButton(Select, juce::translate("Text"), std::move(drawable_off), std::move(drawable_on));
+    button->setClickingTogglesState(true);
+    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
+    button->setTooltip(juce::translate("Texte"));
     break;
   }
 

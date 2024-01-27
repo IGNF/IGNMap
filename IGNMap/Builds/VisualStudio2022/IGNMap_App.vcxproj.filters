@@ -1039,6 +1039,9 @@
     <ClCompile Include="..\..\..\XToolImage\XZlibCodec.cpp">
       <Filter>IGNMap\XToolImage</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XToolVector\XAnnotation.cpp">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XDBase.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
@@ -3155,6 +3158,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\XToolImage\XZlibCodec.h">
       <Filter>IGNMap\XToolImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolVector\XAnnotation.h">
+      <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XDBase.h">
       <Filter>IGNMap\XToolVector</Filter>

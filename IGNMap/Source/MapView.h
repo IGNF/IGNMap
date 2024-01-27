@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 
 #include "MapThread.h"
+#include "../../XToolVector/XAnnotation.h"
 
 class XGeoBase;
 
@@ -74,6 +75,7 @@ private:
   juce::Image   m_Image;    // Image de la vue
   MapThread     m_MapThread;
   XGeoBase* m_GeoBase;
+  XAnnotation   m_Annotation; // Annotation en cours d'edition
 
   void timerCallback() override { repaint(); }
 

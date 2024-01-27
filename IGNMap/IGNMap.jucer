@@ -611,6 +611,8 @@
       <FILE id="Won5pa" name="XZlibCodec.h" compile="0" resource="0" file="../XToolImage/XZlibCodec.h"/>
     </GROUP>
     <GROUP id="{3CC8B6C1-C4FA-5C61-06D1-6CC641737184}" name="XToolVector">
+      <FILE id="RVnSNP" name="XAnnotation.cpp" compile="1" resource="0" file="../XToolVector/XAnnotation.cpp"/>
+      <FILE id="DSzMgR" name="XAnnotation.h" compile="0" resource="0" file="../XToolVector/XAnnotation.h"/>
       <FILE id="mGDbLH" name="XDBase.cpp" compile="1" resource="0" file="../XToolVector/XDBase.cpp"/>
       <FILE id="xPl9PU" name="XDBase.h" compile="0" resource="0" file="../XToolVector/XDBase.h"/>
       <FILE id="CVgyzh" name="XGpkgMap.cpp" compile="1" resource="0" file="../XToolVector/XGpkgMap.cpp"/>

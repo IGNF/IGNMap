@@ -394,6 +394,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XToolImage\XWebPCodec.cpp"/>
     <ClCompile Include="..\..\..\XToolImage\XWebPImage.cpp"/>
     <ClCompile Include="..\..\..\XToolImage\XZlibCodec.cpp"/>
+    <ClCompile Include="..\..\..\XToolVector\XAnnotation.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XDBase.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XMifMid.cpp"/>
@@ -1964,6 +1965,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XToolImage\XWebPCodec.h"/>
     <ClInclude Include="..\..\..\XToolImage\XWebPImage.h"/>
     <ClInclude Include="..\..\..\XToolImage\XZlibCodec.h"/>
+    <ClInclude Include="..\..\..\XToolVector\XAnnotation.h"/>
     <ClInclude Include="..\..\..\XToolVector\XDBase.h"/>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h"/>
     <ClInclude Include="..\..\..\XToolVector\XMifMid.h"/>

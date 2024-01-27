@@ -72,7 +72,12 @@ public:
     Select = 2,
     Zoom = 3,
     Select3D = 4,
-    Gsd = 100
+    Gsd = 100,
+    Polyline = 200,
+    Polygone = 201,
+    Rectangle = 202,
+    Ellipse = 203,
+    Text = 204
   };
 
   void getAllToolbarItemIds(juce::Array<int>& ids) override;

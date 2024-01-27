@@ -315,6 +315,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XWebPCodec_3ce15dac.o \
   $(JUCE_OBJDIR)/XWebPImage_4b8ccc71.o \
   $(JUCE_OBJDIR)/XZlibCodec_7db0ce3d.o \
+  $(JUCE_OBJDIR)/XAnnotation_f349c011.o \
   $(JUCE_OBJDIR)/XDBase_47d5afbd.o \
   $(JUCE_OBJDIR)/XGpkgMap_9b3203bf.o \
   $(JUCE_OBJDIR)/XMifMid_16cf4f80.o \
@@ -1573,6 +1574,11 @@ $(JUCE_OBJDIR)/XWebPImage_4b8ccc71.o: ../../../XToolImage/XWebPImage.cpp
 $(JUCE_OBJDIR)/XZlibCodec_7db0ce3d.o: ../../../XToolImage/XZlibCodec.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XZlibCodec.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XAnnotation_f349c011.o: ../../../XToolVector/XAnnotation.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XAnnotation.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XDBase_47d5afbd.o: ../../../XToolVector/XDBase.cpp
