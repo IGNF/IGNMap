@@ -55,7 +55,7 @@ public:
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
 
-  enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4};
+  enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4, Drawing = 5};
   void SetMouseMode(MouseMode mode) { m_nMouseMode = mode; }
 
 private:

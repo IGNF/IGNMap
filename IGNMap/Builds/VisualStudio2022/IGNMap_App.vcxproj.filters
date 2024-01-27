@@ -4763,6 +4763,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Images\GSD.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\IGNMap.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
     <None Include="..\..\Images\Move.png">
       <Filter>IGNMap\Images</Filter>
     </None>
@@ -4775,6 +4781,15 @@
     <None Include="..\..\Images\Options.png">
       <Filter>IGNMap\Images</Filter>
     </None>
+    <None Include="..\..\Images\Polygone.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Polyline.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Rectangle.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
     <None Include="..\..\Images\Select.png">
       <Filter>IGNMap\Images</Filter>
     </None>
@@ -4782,6 +4797,9 @@
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\Selectable.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Text.png">
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\View.png">
@@ -4801,6 +4819,9 @@
     </None>
     <None Include="..\..\..\JUCE\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt">
       <Filter>JUCE Modules\juce_graphics\image_formats\pnglib</Filter>
+    </None>
+    <None Include=".\icon.ico">
+      <Filter>JUCE Library Code</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

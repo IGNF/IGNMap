@@ -52,7 +52,7 @@ void XMifMid::Class(XGeoClass* C)
 	}
 	// Fixe le schema de la classe a partir du MIF
 	std::string name, type;
-	int length, dec = 0;
+	int length = 20, dec = 0;
 	XGeoAttribut::eType attType = XGeoAttribut::String;
 	XGeoSchema schema;
 	for (i = 0; i < m_Column.size(); i++) {

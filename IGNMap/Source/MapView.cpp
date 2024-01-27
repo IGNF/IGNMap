@@ -40,7 +40,8 @@ void MapView::paint(juce::Graphics& g)
 	if ((m_bZoom) || (m_bSelect)) {
 		g.drawImageAt(m_Image, 0, 0);
 		g.setColour(juce::Colours::pink);
-		g.drawRect(juce::Rectangle<int>(m_StartPt, m_DragPt + m_StartPt), 1);
+		if (m_bZoom) g.setColour(juce::Colours::coral);
+		g.drawRect(juce::Rectangle<int>(m_StartPt, m_DragPt + m_StartPt), 2);
 		return;
 	}
 	if (m_bDrag) {

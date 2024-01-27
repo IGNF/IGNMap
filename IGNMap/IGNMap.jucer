@@ -6,14 +6,20 @@
               defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
+      <FILE id="D0Gt1C" name="GSD.png" compile="0" resource="1" file="Images/GSD.png"/>
+      <FILE id="cCtoK8" name="IGNMap.png" compile="0" resource="1" file="Images/IGNMap.png"/>
       <FILE id="BcYc12" name="Move.png" compile="0" resource="1" file="Images/Move.png"/>
       <FILE id="qhgxQ6" name="NoSelectable.png" compile="0" resource="1"
             file="Images/NoSelectable.png"/>
       <FILE id="nUxKfx" name="NoView.png" compile="0" resource="1" file="Images/NoView.png"/>
       <FILE id="uDq1oD" name="Options.png" compile="0" resource="1" file="Images/Options.png"/>
+      <FILE id="RILn7C" name="Polygone.png" compile="0" resource="1" file="Images/Polygone.png"/>
+      <FILE id="d2ujBd" name="Polyline.png" compile="0" resource="1" file="Images/Polyline.png"/>
+      <FILE id="Dct1tZ" name="Rectangle.png" compile="0" resource="1" file="Images/Rectangle.png"/>
       <FILE id="C3qDH8" name="Select.png" compile="0" resource="1" file="Images/Select.png"/>
       <FILE id="o6hJ93" name="Select3D.png" compile="0" resource="1" file="Images/Select3D.png"/>
       <FILE id="qc52PI" name="Selectable.png" compile="0" resource="1" file="Images/Selectable.png"/>
+      <FILE id="p7VaYp" name="Text.png" compile="0" resource="1" file="Images/Text.png"/>
       <FILE id="QwTqKW" name="View.png" compile="0" resource="1" file="Images/View.png"/>
       <FILE id="g44xDI" name="Zoom.png" compile="0" resource="1" file="Images/Zoom.png"/>
     </GROUP>
@@ -681,7 +687,8 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS"
-                userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h">
+                userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h"
+                smallIcon="cCtoK8" bigIcon="cCtoK8">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"/>
@@ -697,7 +704,8 @@
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;"
-            userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h">
+            userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h"
+            smallIcon="cCtoK8" bigIcon="cCtoK8">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.2.4"
                        postbuildCommand="MKDIR .\x64\Debug\App\Images&#10;COPY ..\..\Images\*.* .\x64\Debug\App\Images&#10;"/>
