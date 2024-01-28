@@ -665,22 +665,27 @@ void MainComponent::buttonClicked(juce::Button* button)
 	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
 	if (tlb == nullptr)
 		return;
-	if (tlb->getItemId() == m_ToolbarFactory.Move) {
+	if (tlb->getItemId() == m_ToolbarFactory.Move)
 		m_MapView.get()->SetMouseMode(MapView::Move);
-	}
-	if (tlb->getItemId() == m_ToolbarFactory.Select) {
+	if (tlb->getItemId() == m_ToolbarFactory.Select)
 		m_MapView.get()->SetMouseMode(MapView::Select);
-	}
-	if (tlb->getItemId() == m_ToolbarFactory.Zoom) {
+	if (tlb->getItemId() == m_ToolbarFactory.Zoom)
 		m_MapView.get()->SetMouseMode(MapView::Zoom);
-	}
-	if (tlb->getItemId() == m_ToolbarFactory.Select3D) {
+	if (tlb->getItemId() == m_ToolbarFactory.Select3D)
 		m_MapView.get()->SetMouseMode(MapView::Select3D);
-	}
+
 	if (tlb->getItemId() == m_ToolbarFactory.Gsd) {
 		double gsd = tlb->getButtonText().getDoubleValue();
 		m_MapView.get()->ZoomGsd(gsd);
 	}
+	if (tlb->getItemId() == m_ToolbarFactory.Polyline)
+		m_MapView.get()->SetMouseMode(MapView::Polyline);
+	if (tlb->getItemId() == m_ToolbarFactory.Polygone)
+		m_MapView.get()->SetMouseMode(MapView::Polygone);
+	if (tlb->getItemId() == m_ToolbarFactory.Rectangle)
+		m_MapView.get()->SetMouseMode(MapView::Rectangle);
+	if (tlb->getItemId() == m_ToolbarFactory.Text)
+		m_MapView.get()->SetMouseMode(MapView::Text);
 }
 
 //==============================================================================
@@ -740,7 +745,7 @@ void MainComponent::Clear()
 void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.0.1";
-	juce::String info = "19/01/2024";
+	juce::String info = "28/01/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);

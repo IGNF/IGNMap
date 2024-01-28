@@ -76,8 +76,8 @@ public:
     Polyline = 200,
     Polygone = 201,
     Rectangle = 202,
-    Ellipse = 203,
-    Text = 204
+    Text = 203,
+    Ellipse = 204
   };
 
   void getAllToolbarItemIds(juce::Array<int>& ids) override;

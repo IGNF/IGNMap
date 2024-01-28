@@ -29,10 +29,11 @@ void MapView::Clear()
 {
 	m_dX0 = m_dY0 = m_dX = m_dY = m_dZ = 0.;
 	m_dScale = 1.0;
-	m_bDrag = m_bZoom = m_bSelect = false;
+	m_bDrag = m_bZoom = m_bSelect = m_bDrawing = false;
 	m_GeoBase = nullptr;
 	m_Frame = XFrame();
 	m_nMouseMode = Move;
+	m_Annotation.Clear();
 }
 
 void MapView::paint(juce::Graphics& g)
@@ -48,11 +49,14 @@ void MapView::paint(juce::Graphics& g)
 		//g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId
 		g.fillAll(juce::Colours::white);
 		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
+		DrawAnnotation(g, m_DragPt.x, m_DragPt.y);
 		DrawDecoration(g, m_DragPt.x, m_DragPt.y);
 		return;
 	}
 
 	m_MapThread.Draw(g);
+	if (!m_MapThread.isThreadRunning())
+		DrawAnnotation(g);
 	DrawDecoration(g);
 }
 
@@ -123,6 +127,20 @@ void MapView::RenderMap(bool overlay, bool raster, bool dtm, bool vector, bool l
 }
 
 //==============================================================================
+// Mode de la souris : deplacement, selection, zoom, dessin ...
+//==============================================================================
+void MapView::SetMouseMode(MouseMode mode)
+{ 
+	m_nMouseMode = mode;
+	if (m_nMouseMode == Move)
+		setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+	else
+		setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
+	m_Annotation.Close();
+	m_Annotation.Clear();
+}
+
+//==============================================================================
 // Gestion de la souris
 //==============================================================================
 void MapView::mouseDown(const juce::MouseEvent& event)
@@ -130,7 +148,7 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 	juce::Graphics imaG(m_Image);
 	m_MapThread.Draw(imaG);
 	m_StartPt = event.getPosition();
-	setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
+	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
 	if ((event.mods.isCtrlDown()) || (m_nMouseMode == Zoom)) {
 		m_bZoom = true;
 		return;
@@ -139,7 +157,12 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 		m_bSelect = true;
 		return;
 	}
-	m_bZoom = m_bSelect = false;
+	if ((m_nMouseMode == Polyline) || (m_nMouseMode == Polygone) || (m_nMouseMode == Rectangle) || (m_nMouseMode == Text)) {
+		m_bDrawing = true;
+		AddAnnotationPoint(m_StartPt);
+		return;
+	}
+	m_bZoom = m_bSelect = m_bDrawing = false;
 	m_bDrag = true;
 	setMouseCursor(juce::MouseCursor(juce::MouseCursor::DraggingHandCursor));
 }
@@ -161,7 +184,7 @@ void MapView::mouseDrag(const juce::MouseEvent& event)
 
 void MapView::mouseUp(const juce::MouseEvent& event)
 {
-	setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 	double X0 = m_StartPt.x, Y0 = m_StartPt.y, X1 = m_StartPt.x + m_DragPt.x, Y1 = m_StartPt.y + m_DragPt.y;
 	Pixel2Ground(X0, Y0);
 	Pixel2Ground(X1, Y1);
@@ -181,6 +204,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		if ((!m_bZoom) && (!m_bSelect)) {
 			m_dX0 -= m_DragPt.x * m_dScale;
 			m_dY0 += m_DragPt.y * m_dScale;
+			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 			RenderMap();
 		}
 	}
@@ -409,4 +433,58 @@ void MapView::DrawFrame(const XFrame& env)
 {
 
 	repaint();
+}
+
+//==============================================================================
+// Ajout d'un point a l'annotation en cours d'edition
+//==============================================================================
+void MapView::AddAnnotationPoint(juce::Point<int>& P)
+{
+	double X0 = P.x, Y0 = P.y;
+	Pixel2Ground(X0, Y0);
+	if (m_Annotation.Primitive() == XAnnotation::pNull) {
+		if (m_nMouseMode == Polyline) m_Annotation.Primitive(XAnnotation::pPolyline);
+		if (m_nMouseMode == Polygone) m_Annotation.Primitive(XAnnotation::pPolygon);
+		if (m_nMouseMode == Rectangle) m_Annotation.Primitive(XAnnotation::pRect);
+		if (m_nMouseMode == Text) m_Annotation.Primitive(XAnnotation::pText);
+	}
+	m_Annotation.AddPt(X0, Y0);
+}
+
+//==============================================================================
+// Dessin de l'annotation en cours
+//==============================================================================
+void MapView::DrawAnnotation(juce::Graphics& g, int deltaX, int deltaY)
+{
+	if (m_Annotation.NbPt() < 1)
+		return;
+	XPt2D P0 = m_Annotation.Pt(0);
+	Ground2Pixel(P0.X, P0.Y);
+	P0 += XPt2D(deltaX, deltaY);
+	g.setColour(juce::Colours::chartreuse);
+	g.drawEllipse(P0.X - 3, P0.Y - 3, 6, 6, 2);
+
+	if (m_Annotation.Primitive() == XAnnotation::pText) {
+		g.drawSingleLineText(juce::String("Text"), P0.X + 5, P0.Y);
+		return;
+	}
+	if (m_Annotation.Primitive() == XAnnotation::pRect) {
+		XPt2D P1 = m_Annotation.Pt(2);	// XAnnotation renvoit systematiquement 4 points
+		Ground2Pixel(P1.X, P1.Y);
+		P1 += XPt2D(deltaX, deltaY);
+		g.drawEllipse(P1.X - 3, P1.Y - 3, 6, 6, 2);
+		g.drawRect(juce::Rectangle<float>(juce::Point<float>(P0.X, P0.Y), juce::Point<float>(P1.X, P1.Y)));
+		return;
+	}
+	if (m_Annotation.NbPt() < 2)
+		return;
+	juce::Path path;
+	path.startNewSubPath(P0.X, P0.Y);
+	for (uint32_t i = 0; i < m_Annotation.NbPt(); i++) {
+		XPt2D Pi = m_Annotation.Pt(i);
+		Ground2Pixel(Pi.X, Pi.Y);
+		Pi += XPt2D(deltaX, deltaY);
+		path.lineTo(Pi.X, Pi.Y);
+	}
+	g.strokePath(path, juce::PathStrokeType(2, juce::PathStrokeType::beveled));
 }

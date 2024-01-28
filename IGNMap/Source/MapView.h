@@ -44,6 +44,7 @@ public:
   void SelectFeatures(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void DrawDecoration(juce::Graphics&, int deltaX = 0, int deltaY = 0);
+  void DrawAnnotation(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   double ComputeCartoScale(double cartoscale = 0.);
 
   void paint(juce::Graphics&) override;
@@ -55,8 +56,8 @@ public:
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
 
-  enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4, Drawing = 5};
-  void SetMouseMode(MouseMode mode) { m_nMouseMode = mode; }
+  enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4, Polyline = 5, Polygone = 6, Rectangle = 7, Text = 8};
+  void SetMouseMode(MouseMode mode);
 
 private:
   XFrame        m_Frame;
@@ -66,6 +67,7 @@ private:
   bool					m_bDrag;
   bool          m_bZoom;
   bool          m_bSelect;
+  bool          m_bDrawing;
   double        m_dX;
   double        m_dY;
   double        m_dZ;
@@ -78,6 +80,8 @@ private:
   XAnnotation   m_Annotation; // Annotation en cours d'edition
 
   void timerCallback() override { repaint(); }
+
+  void AddAnnotationPoint(juce::Point<int>&);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MapView)
 };

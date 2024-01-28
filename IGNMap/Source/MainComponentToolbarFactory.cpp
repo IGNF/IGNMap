@@ -132,7 +132,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(getImageFromAssets("Polyline.png"));
     drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Move, juce::translate("Polyline"), std::move(drawable_off), std::move(drawable_on));
+    button = new juce::ToolbarButton(Polyline, juce::translate("Polyline"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
     button->setTooltip(juce::translate("Polyline"));
@@ -145,7 +145,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(getImageFromAssets("Polygone.png"));
     drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Select, juce::translate("Polygone"), std::move(drawable_off), std::move(drawable_on));
+    button = new juce::ToolbarButton(Polygone, juce::translate("Polygone"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
     button->setTooltip(juce::translate("Polygone"));
@@ -158,7 +158,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(getImageFromAssets("Rectangle.png"));
     drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Select, juce::translate("Rectangle"), std::move(drawable_off), std::move(drawable_on));
+    button = new juce::ToolbarButton(Rectangle, juce::translate("Rectangle"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
     button->setTooltip(juce::translate("Rectangle"));
@@ -171,10 +171,10 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(getImageFromAssets("Text.png"));
     drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Select, juce::translate("Text"), std::move(drawable_off), std::move(drawable_on));
+    button = new juce::ToolbarButton(Text, juce::translate("Text"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Texte"));
+    button->setTooltip(juce::translate("Text"));
     break;
   }
 
