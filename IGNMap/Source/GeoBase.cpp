@@ -88,11 +88,11 @@ bool GeoFileImage::AnalyzeImage(std::string path)
 	double xmin = 0., ymax = 0., gsd = 1.;
 	GetGeoref(&xmin, &ymax, &gsd);
 	if ((xmin == 0.) && (ymax == 0.)) {
-		if (GeoBase::FindGeorefTab(path, &xmin, &ymax, &gsd)) {
+		if (GeoTools::FindGeorefTab(path, &xmin, &ymax, &gsd)) {
 			XFileImage::SetGeoref(xmin, ymax, gsd);
 		}
 		else {
-			if (GeoBase::FindGeorefTfw(path, &xmin, &ymax, &gsd)) {
+			if (GeoTools::FindGeorefTfw(path, &xmin, &ymax, &gsd)) {
 				XFileImage::SetGeoref(xmin, ymax, gsd);
 			}
 			else {
@@ -113,7 +113,7 @@ bool GeoFileImage::AnalyzeImage(std::string path)
 //-----------------------------------------------------------------------------
 void GeoInternetImage::CreateCacheDir(juce::String name)
 { 
-	m_Cache = GeoBase::CreateCacheDir(name);
+	m_Cache = GeoTools::CreateCacheDir(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -279,8 +279,8 @@ bool GeoDTM::ImportTif(std::string file_tif, std::string file_bin)
 		if (parser.Parse(xmlfile))
 			xml_file = XmlRead(&parser);
 		if (!xml_file) { // On cherche un TFW
-			if (!GeoBase::FindGeorefTfw(file_tif.c_str(), &x0, &y0, &m_dGSD))
-				GeoBase::FindGeorefTab(file_tif.c_str(), &x0, &y0, &m_dGSD);
+			if (!GeoTools::FindGeorefTfw(file_tif.c_str(), &x0, &y0, &m_dGSD))
+				GeoTools::FindGeorefTab(file_tif.c_str(), &x0, &y0, &m_dGSD);
 			if (m_dGSD <= 0.)
 				return false;
 			m_Frame.Xmin = x0 + m_dGSD * 0.5;
@@ -340,7 +340,7 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 //-----------------------------------------------------------------------------
 // Recherche d'un geo-referencement TAB
 //-----------------------------------------------------------------------------
-bool GeoBase::FindGeorefTab(std::string filename, double* Xmin, double* Ymax, double* GSD)
+bool GeoTools::FindGeorefTab(std::string filename, double* Xmin, double* Ymax, double* GSD)
 {
 	std::string grfFile, path = filename;
 	grfFile = path.substr(0, path.rfind('.')) + ".tab";
@@ -393,7 +393,7 @@ bool GeoBase::FindGeorefTab(std::string filename, double* Xmin, double* Ymax, do
 //-----------------------------------------------------------------------------
 // Recherche d'un geo-referencement TFW
 //-----------------------------------------------------------------------------
-bool GeoBase::FindGeorefTfw(std::string filename, double* Xmin, double* Ymax, double* GSD)
+bool GeoTools::FindGeorefTfw(std::string filename, double* Xmin, double* Ymax, double* GSD)
 {
 	std::string tfwFile, path = filename;
 	tfwFile = path.substr(0, path.rfind('.')) + ".tfw";
@@ -420,7 +420,7 @@ bool GeoBase::FindGeorefTfw(std::string filename, double* Xmin, double* Ymax, do
 //-----------------------------------------------------------------------------
 // Import d'un repertoire de donnees vectorielles
 //-----------------------------------------------------------------------------
-bool GeoBase::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& nb_total, int& nb_imported)
+bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& nb_total, int& nb_imported)
 {
 	juce::File folder = folderName;
 	nb_imported = 0;
@@ -453,7 +453,7 @@ bool GeoBase::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& n
 //-----------------------------------------------------------------------------
 // Import d'un fichier Shapefile
 //-----------------------------------------------------------------------------
-bool GeoBase::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map)
+bool GeoTools::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
@@ -467,7 +467,7 @@ bool GeoBase::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* ma
 //-----------------------------------------------------------------------------
 // Import d'un fichier GeoPackage
 //-----------------------------------------------------------------------------
-bool GeoBase::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map)
+bool GeoTools::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
@@ -481,7 +481,7 @@ bool GeoBase::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* m
 //-----------------------------------------------------------------------------
 // Import d'un fichier MIF/MID
 //-----------------------------------------------------------------------------
-bool GeoBase::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
+bool GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
@@ -495,7 +495,7 @@ bool GeoBase::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 //-----------------------------------------------------------------------------
 // Colorisation des classes
 //-----------------------------------------------------------------------------
-void GeoBase::ColorizeClasses(XGeoBase* base)
+void GeoTools::ColorizeClasses(XGeoBase* base)
 {
 	XGeoRepres defaut_repres;
 	for (uint32_t i = 0; i < base->NbLayer(); i++) {
@@ -518,7 +518,7 @@ void GeoBase::ColorizeClasses(XGeoBase* base)
 //-----------------------------------------------------------------------------
 // Enregistrement d'un objet dans une map et une classe
 //-----------------------------------------------------------------------------
-bool GeoBase::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
+bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
 														 int transparency, uint32_t color, uint32_t fill, uint32_t zorder, uint8_t size)
 {
 	XGeoMap* map = new XGeoMap(mapName);
@@ -542,7 +542,7 @@ bool GeoBase::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName,
 //-----------------------------------------------------------------------------
 // Creation du repertoire cache temporaire
 //-----------------------------------------------------------------------------
-juce::File GeoBase::CreateCacheDir(juce::String name)
+juce::File GeoTools::CreateCacheDir(juce::String name)
 {
 	juce::File tmpDir = juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory);
 	juce::File cache = tmpDir.getNonexistentChildFile(name, "");

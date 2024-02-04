@@ -70,6 +70,8 @@ kdu_compositor_buf* XKduRegionCompositor::allocate_buffer(kdu_coords min_size, k
 XJpeg2000Image::XJpeg2000Image(const char* filename)
 {
   kdu_customize_errors(&cjp2_error);
+  m_strFilename = filename;
+
   m_Compositor = new kdu_region_compositor;
   m_Jpx_in = new jpx_source;
   m_Src = new jp2_family_src;
@@ -133,7 +135,10 @@ XJpeg2000Image::XJpeg2000Image(const char* filename)
     m_FloatCompositor->set_surface_initialization_mode(false);
     m_FloatCompositor->set_scale(false, false, false, 1.0F);
     delete m_Compositor;
+    m_Compositor = nullptr;
   }
+  else
+    m_RawCompositor = m_FloatCompositor = nullptr;
 
   m_dX0 = 0.;	// A revoir avec le XML
   m_dY0 = 0.;
@@ -220,6 +225,7 @@ XJpeg2000Image::XJpeg2000Image(const char* filename)
     }
     break;
   }
+  ClearCodec();
 }
 
 //-----------------------------------------------------------------------------
@@ -227,15 +233,80 @@ XJpeg2000Image::XJpeg2000Image(const char* filename)
 //-----------------------------------------------------------------------------
 XJpeg2000Image::~XJpeg2000Image()
 {
-  if (m_bValid) {
-    m_Jpx_in->close();
-    if (m_RawCompositor != nullptr) delete m_RawCompositor;
-    delete m_Compositor;
-    delete m_Jpx_in;
-    m_Src->close();
-    delete m_Src;
-  }
+  ClearCodec();
   m_bValid = false;
+}
+
+//-----------------------------------------------------------------------------
+// Creation du codec de lecture
+//-----------------------------------------------------------------------------
+bool XJpeg2000Image::CreateCodec()
+{
+  m_Jpx_in = new jpx_source;
+  m_Src = new jp2_family_src;
+  m_Src->open(m_strFilename.c_str());
+
+  int result;
+  try {
+    result = m_Jpx_in->open(m_Src, true);
+  }
+  catch (int) {
+    result = -1;
+  }
+
+  if (result < 0) {
+    m_bValid = false;
+    delete m_Jpx_in;
+    delete m_Src;
+    m_Src = nullptr;
+    m_Jpx_in = nullptr;
+    return false;
+  }
+
+  if (m_nBitDepth > 8) {
+    m_RawCompositor = new XKduRegionCompositor;
+    m_RawCompositor->create(m_Jpx_in);
+    m_RawCompositor->add_ilayer(0, kdu_dims(), kdu_dims());
+    m_RawCompositor->set_surface_initialization_mode(false);
+    m_RawCompositor->set_scale(false, false, false, 1.0F);
+    m_FloatCompositor = new XKduRegionCompositor;
+    m_FloatCompositor->create(m_Jpx_in);
+    m_FloatCompositor->add_ilayer(0, kdu_dims(), kdu_dims());
+    m_FloatCompositor->set_surface_initialization_mode(false);
+    m_FloatCompositor->set_scale(false, false, false, 1.0F);
+  }
+  else {
+    m_Compositor = new kdu_region_compositor;
+    m_Compositor->create(m_Jpx_in);
+    m_Compositor->add_ilayer(0, kdu_dims(), kdu_dims());
+    m_Compositor->set_surface_initialization_mode(false);
+    m_Compositor->set_scale(false, false, false, 1.0F);
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Fermeture du codec
+//-----------------------------------------------------------------------------
+void XJpeg2000Image::ClearCodec()
+{
+  if (m_bValid) {
+    if (m_Jpx_in != nullptr) {
+      m_Jpx_in->close();
+      delete m_Jpx_in;
+      m_Jpx_in = nullptr;
+    }
+    if (m_RawCompositor != nullptr) delete m_RawCompositor;
+    if (m_FloatCompositor != nullptr) delete m_FloatCompositor;
+    m_RawCompositor = m_FloatCompositor = nullptr;
+    if (m_Compositor != nullptr) delete m_Compositor;
+    m_Compositor = nullptr;
+    if (m_Src != nullptr) {
+      m_Src->close();
+      delete m_Src;
+      m_Src = nullptr;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -281,6 +352,8 @@ bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, 
 {
   if (m_nBitDepth > 8)
     return GetJp2AreaFloat(x, y, w, h, area, factor, wout, hout);
+  if (!CreateCodec())
+    return false;
   float k_factor = 1;
   if (factor != 1)
     k_factor = 1.F / (float)factor;
@@ -306,15 +379,19 @@ bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, 
     uint32_t newWout = (uint32_t)(k_factor * w);
     uint32_t newHout = (uint32_t)(k_factor * h);
     uint8_t* tmparea = new uint8_t[newWout * newHout * NbSample()];
-    if (tmparea == NULL)
+    if (tmparea == NULL) {
+      ClearCodec();
       return false;
+    }
     bool flag = GetJp2Area(x, y, w, h, tmparea, newFactor, newWout, newHout);
     ZoomArea(tmparea, area, newWout, newHout, wout, hout, NbSample());
     delete[] tmparea;
     return flag;
   }
-  if ((image_dims.size.x < (int)wout) || (image_dims.size.y < (int)hout))
+  if ((image_dims.size.x < (int)wout) || (image_dims.size.y < (int)hout)) {
+    ClearCodec();
     return false;
+  }
   int buffer_row_gap = 0;
   kdu_uint32* buffer = buf->get_buf(buffer_row_gap, false);
   while (m_Compositor->process(100000, new_region));
@@ -334,7 +411,7 @@ bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, 
   }
   if (NbSample() == 3)
     SwitchRGB2BGR(area, wout * hout);
-
+  ClearCodec();
   return true;
 }
 
@@ -344,6 +421,8 @@ bool XJpeg2000Image::GetJp2Area(uint32_t x, uint32_t y, uint32_t w, uint32_t h, 
 bool XJpeg2000Image::GetJp2AreaFloat(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area,
                                      uint32_t factor, uint32_t wout, uint32_t hout)
 {
+  if (!CreateCodec())
+    return false;
   float k_factor = 1;
   if (factor != 1)
     k_factor = 1.F / (float)factor;
@@ -363,10 +442,10 @@ bool XJpeg2000Image::GetJp2AreaFloat(uint32_t x, uint32_t y, uint32_t w, uint32_
   m_FloatCompositor->set_scale(false, false, false, (float)k_factor);
   m_FloatCompositor->set_buffer_surface(image_dims);
   kdu_compositor_buf* buf = m_FloatCompositor->get_composition_buffer(image_dims);
-  if (buf == nullptr)
+  if ((buf == nullptr) || (image_dims.size.x < (int)wout) || (image_dims.size.y < (int)hout)) {
+    ClearCodec();
     return false;
-  if ((image_dims.size.x < (int)wout) || (image_dims.size.y < (int)hout))
-    return false;
+  }
   int buffer_row_gap = 0;
   float* buffer = buf->get_float_buf(buffer_row_gap, false);
   while (m_FloatCompositor->process(100000, new_region));
@@ -379,15 +458,16 @@ bool XJpeg2000Image::GetJp2AreaFloat(uint32_t x, uint32_t y, uint32_t w, uint32_
     ptr = &buffer[buffer_row_gap * i];
     for (uint32_t j = 0; j < wout; j++) {
       ptr++;  // Canal alpha
-      data[0] = *ptr * 65535; ptr++;
-      data[1] = *ptr * 65535; ptr++;
-      data[2] = *ptr * 65535; ptr++;
+      for (uint32_t k = 0; k < nbbyte; k++) {
+        data[k] = *ptr * 65535; ptr++;
+      }
       data += nbbyte;
+      ptr += (3 - nbbyte);  // Les images traitees par Kakadu sont toujours sur 4 octets
     }
   }
   //if (NbSample() == 3)
   //  SwitchRGB2BGR(area, wout* hout);
-
+  ClearCodec();
   return true;
 }
 
@@ -399,6 +479,8 @@ bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t w
 {
   if (m_nBitDepth <= 8)
     return XBaseImage::GetRawPixel(file, x, y, win, pix, nb_sample);
+  if (!CreateCodec())
+    return false;
 
   if ((win > x) || (win > y))
     return false;
@@ -416,8 +498,10 @@ bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t w
   m_RawCompositor->set_scale(false, false, false, 1.f);
   m_RawCompositor->set_buffer_surface(image_dims);
   kdu_compositor_buf* buf = m_RawCompositor->get_composition_buffer(image_dims);
-  if (buf == nullptr)
+  if (buf == nullptr) {
+    ClearCodec();
     return false;
+  }
   int buffer_row_gap = 0;
   float* buffer = buf->get_float_buf(buffer_row_gap, false);
   while (m_RawCompositor->process(100000, new_region));
@@ -436,6 +520,7 @@ bool XJpeg2000Image::GetRawPixel(XFile* file, uint32_t x, uint32_t y, uint32_t w
   }
 
   *nb_sample = m_nNbSample;
+  ClearCodec();
   return true;
 }
 
@@ -447,8 +532,10 @@ bool XJpeg2000Image::GetRawArea(XFile* file, uint32_t x, uint32_t y, uint32_t w,
 {
   if (m_nBitDepth <= 8)
     return XBaseImage::GetRawArea(file, x, y, w, h, pix, nb_sample, factor, normalized);
-
+ 
   if ((x + w > m_nW) || (y + h > m_nH))
+    return false;
+  if (!CreateCodec())
     return false;
 
   float k_factor = 1;
@@ -483,6 +570,7 @@ bool XJpeg2000Image::GetRawArea(XFile* file, uint32_t x, uint32_t y, uint32_t w,
   //::memcpy(pix, buffer, w * h * sizeof(float)*4L);
 
   *nb_sample = m_nNbSample;
+  ClearCodec();
   return true;
 }
 

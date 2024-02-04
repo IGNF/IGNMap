@@ -36,7 +36,8 @@ class MainComponent  : public juce::Component,
   public juce::MenuBarModel,
   public juce::ActionListener,
   public juce::ActionBroadcaster,
-  public juce::Button::Listener
+  public juce::Button::Listener,
+  public juce::InterprocessConnection
 {
 public:
   // Liste des commandes de l'application
@@ -56,6 +57,7 @@ public:
     menuAddGeoportailOrthophoto, menuAddGeoportailOrthophotoIRC, menuAddGeoportailOrthohisto, menuAddGeoportailSatellite,
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
+    menuSynchronize,
     menuAbout
   };
 
@@ -128,6 +130,11 @@ private:
                      uint32_t tileW = 256, uint32_t tileH = 256, uint32_t max_zoom = 19, std::string apikey = "");
 
   void Test();
+
+  void Synchronize();
+  void connectionMade() override;
+  void connectionLost() override;
+  void messageReceived(const juce::MemoryBlock& message) override;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

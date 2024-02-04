@@ -247,6 +247,12 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
 {
   if (m_Image == nullptr)
     return;
+  if ((X < 0) || (Y < 0) || (X >= m_Image->XFileImage::Width()) || (Y >= m_Image->XFileImage::Height())) {
+    m_PixModel.ClearPixels();  // Hors image
+    m_tblPixels.updateContent();
+    m_tblPixels.repaint();
+    return;
+  }
 
   if (X <= (int)m_PixModel.WinSize)
     m_PixModel.PixX = m_PixModel.WinSize + 1;

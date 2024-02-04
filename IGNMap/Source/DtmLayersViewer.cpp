@@ -346,7 +346,7 @@ void DtmRangeModel::sliderValueChanged(juce::Slider* slider)
 DtmLayersViewer::DtmLayersViewer()
 {
 	m_Base = nullptr;
-	m_Cache = GeoBase::CreateCacheDir("DTM");
+	m_Cache = GeoTools::CreateCacheDir("DTM");
 	DtmShader shader;	// Necessaire pour initialiser les plages et les couleurs
 	setName("DTM Layers");
 	m_ModelDtm.addActionListener(this);
@@ -636,7 +636,7 @@ void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
 	Att.add("DeltaZ decimal (10,2)");
 	M.CreateMifMidFile(m_Cache, juce::String("DeltaZ_") + juce::String(deltaZ,2) , Att);
 	M.runThread();
-	GeoBase::ImportMifMid(M.m_strMifFile, m_Base);
-	GeoBase::ColorizeClasses(m_Base);
+	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVector");
 }

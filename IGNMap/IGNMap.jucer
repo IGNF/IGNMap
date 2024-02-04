@@ -690,8 +690,10 @@
                 userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h"
                 smallIcon="cCtoK8" bigIcon="cCtoK8">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"
+                       userNotes="make CONFIG=Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"
+                       userNotes="make CONFIG=Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

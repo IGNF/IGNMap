@@ -21,6 +21,7 @@ class jp2_family_src;
 class XJpeg2000Image : public XBaseImage {
 protected:
   bool											m_bValid = false;	// Indique si l'image est valide
+  std::string               m_strFilename;
   jpx_source*               m_Jpx_in = nullptr;
   kdu_region_compositor*    m_Compositor = nullptr;
   jp2_family_src*           m_Src = nullptr;
@@ -28,6 +29,9 @@ protected:
   int                       m_nBitDepth = 0;
   XKduRegionCompositor*     m_RawCompositor = nullptr;
   XKduRegionCompositor*     m_FloatCompositor = nullptr;
+
+  bool CreateCodec();
+  void ClearCodec();
 
   bool ReadGeorefXmlOld();
   bool ReadGeorefXml();

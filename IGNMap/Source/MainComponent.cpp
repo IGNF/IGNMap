@@ -21,7 +21,7 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-  m_MapView.reset(new MapView);
+  m_MapView.reset(new MapView("View1"));
   addAndMakeVisible(m_MapView.get());
 	m_MapView.get()->SetGeoBase(&m_GeoBase);
   m_MapView.get()->addActionListener(this);
@@ -115,6 +115,12 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+	if (isConnected()) {
+		juce::String message = "Disconnect";
+		juce::MemoryBlock block(message.getCharPointer(), message.length());
+		sendMessage(block);
+		disconnect();
+	}
 }
 
 
@@ -200,7 +206,8 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	}
 	else if (menuIndex == 2) // Tools
 	{ 
-		
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
+		menu.addItem(1000, "Test");
 	}
 	else if (menuIndex == 3)
 	{
@@ -235,12 +242,13 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 
 void MainComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
 {
-
+	if (menuItemID == 1000)
+		Test();
 }
 
 juce::ApplicationCommandTarget* MainComponent::getNextCommandTarget()
 {
-	return NULL;
+	return findFirstTargetParentComponent();
 }
 
 //==============================================================================
@@ -262,7 +270,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailOrthohisto, CommandIDs::menuAddGeoportailSatellite, CommandIDs::menuAddGeoportailCartes,
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
 		CommandIDs::menuAddGeoportailSCAN50Histo,
-		CommandIDs::menuAddWmtsServer,
+		CommandIDs::menuAddWmtsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuAbout };
 	c.addArray(commands);
@@ -276,11 +284,11 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	switch (commandID)
 	{
 	case CommandIDs::menuNew:
-		result.setInfo(juce::translate("New Window"), "Places the menu bar inside the application window", "Menu", 0);
+		result.setInfo(juce::translate("New Window"), juce::translate("Clear the content of IGNMap"), "Menu", 0);
 		result.addDefaultKeypress('n', juce::ModifierKeys::ctrlModifier);
 		break;
 	case CommandIDs::menuQuit:
-		result.setInfo(juce::translate("Quit"), "Uses a burger menu", "Menu", 0);
+		result.setInfo(juce::translate("Quit"), juce::translate("Quit IGNMap"), "Menu", 0);
 		result.addDefaultKeypress('q', juce::ModifierKeys::ctrlModifier);
 		break;
 	case CommandIDs::menuTranslate:
@@ -386,12 +394,12 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 			result.setTicked(m_ImageViewer.get()->isVisible());
 		break;
 	case CommandIDs::menuShowDtmLayers:
-		result.setInfo(juce::translate("View DTM Layers Panek"), juce::translate("View DTM Layers Panel"), "Menu", 0);
+		result.setInfo(juce::translate("View DTM Layers Panel"), juce::translate("View DTM Layers Panel"), "Menu", 0);
 		if (m_DtmViewer.get() != nullptr)
 			result.setTicked(m_DtmViewer.get()->isVisible());
 		break;
 	case CommandIDs::menuShowLasLayers:
-		result.setInfo(juce::translate("View LAS Layers Panek"), juce::translate("View LAS Layers Panel"), "Menu", 0);
+		result.setInfo(juce::translate("View LAS Layers Panel"), juce::translate("View LAS Layers Panel"), "Menu", 0);
 		if (m_LasViewer.get() != nullptr)
 			result.setTicked(m_LasViewer.get()->isVisible());
 		break;
@@ -404,6 +412,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		result.setInfo(juce::translate("View Image Options Panel"), juce::translate("View Image Options Panel"), "Menu", 0);
 		if (m_ImageOptionsViewer.get() != nullptr)
 			result.setTicked(m_ImageOptionsViewer.get()->isVisible());
+		break;
+	case CommandIDs::menuSynchronize:
+		result.setInfo(juce::translate("Synchronize"), juce::translate("Synchronize with another IGNMap"), "Menu", 0);
 		break;
 	case CommandIDs::menuAbout:
 		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
@@ -550,6 +561,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuShowImageOptions:
 		ShowHidePanel(m_ImageOptionsViewer.get());
 		break;
+	case CommandIDs::menuSynchronize:
+		Synchronize();
+		break;
 	case CommandIDs::menuAbout:
 		AboutIGNMap();
 		break;
@@ -631,16 +645,6 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		F.Ymax = T[4].getDoubleValue();
 		m_MapView.get()->ZoomFrame(F, 10.);
 	}
-	if (T[0] == "DrawFrame") {
-		if (T.size() < 5)
-			return;
-		XFrame F;
-		F.Xmin = T[1].getDoubleValue();
-		F.Xmax = T[2].getDoubleValue();
-		F.Ymin = T[3].getDoubleValue();
-		F.Ymax = T[4].getDoubleValue();
-		m_MapView.get()->DrawFrame(F);
-	}
 	if (T[0] == "CenterFrame") {
 		if (T.size() < 3)
 			return;
@@ -654,6 +658,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		double X = T[1].getDoubleValue();
 		double Y = T[2].getDoubleValue();
 		m_ImageOptionsViewer.get()->SetGroundPos(X, Y);
+	}
+	if (T[0] == "CenterView") {
+		if (isConnected()) {
+			juce::MemoryBlock block(message.getCharPointer(), message.length());
+			sendMessage(block);
+		}
 	}
 }
 
@@ -689,6 +699,36 @@ void MainComponent::buttonClicked(juce::Button* button)
 }
 
 //==============================================================================
+// Retire tous les jeux de donnees charges
+//==============================================================================
+void MainComponent::Clear()
+{
+	m_MapView.get()->Clear();
+	m_GeoBase.Clear();
+	m_MapView.get()->SetGeoBase(&m_GeoBase);
+	m_VectorViewer.get()->SetBase(&m_GeoBase);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	m_DtmViewer.get()->SetBase(&m_GeoBase);
+	m_LasViewer.get()->SetBase(&m_GeoBase);
+	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
+	m_ImageOptionsViewer.get()->SetImage(nullptr);
+}
+
+//==============================================================================
+// A propos
+//==============================================================================
+void MainComponent::AboutIGNMap()
+{
+	juce::String version = "0.0.1";
+	juce::String info = "04/02/2024";
+	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
+	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
+		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
+	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+		juce::translate("About IGNMap"), message, "OK");
+}
+
+//==============================================================================
 // Choix d'un fichier vecteur
 //==============================================================================
 void MainComponent::ImportVectorFolder()
@@ -697,7 +737,7 @@ void MainComponent::ImportVectorFolder()
 	if (folderName.isEmpty())
 		return;
 	int nb_total, nb_imported;
-	GeoBase::ImportVectorFolder(folderName, &m_GeoBase, nb_total, nb_imported);
+	GeoTools::ImportVectorFolder(folderName, &m_GeoBase, nb_total, nb_imported);
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->RenderMap(true, false, false, true, false, true);
 	m_VectorViewer.get()->SetBase(&m_GeoBase);
@@ -724,36 +764,6 @@ void MainComponent::ImportImageFolder()
 }
 
 //==============================================================================
-// Retire tous les jeux de donnees charges
-//==============================================================================
-void MainComponent::Clear()
-{
-	m_MapView.get()->Clear();
-	m_GeoBase.Clear();
-	m_MapView.get()->SetGeoBase(&m_GeoBase);
-	m_VectorViewer.get()->SetBase(&m_GeoBase);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
-	m_DtmViewer.get()->SetBase(&m_GeoBase);
-	m_LasViewer.get()->SetBase(&m_GeoBase);
-	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
-	m_ImageOptionsViewer.get()->SetImage(nullptr);
-}
-
-//==============================================================================
-// A propos
-//==============================================================================
-void MainComponent::AboutIGNMap()
-{
-	juce::String version = "0.0.1";
-	juce::String info = "28/01/2024";
-	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
-	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
-		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
-	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
-		juce::translate("About IGNMap"), message, "OK");
-}
-
-//==============================================================================
 // Ajout d'une couche vectorielle
 //==============================================================================
 bool MainComponent::ImportVectorFile(juce::String filename)
@@ -767,17 +777,17 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 	extension = extension.toLowerCase();
 	bool flag = false;
 	if (extension == ".shp")
-		flag = GeoBase::ImportShapefile(filename, &m_GeoBase);
+		flag = GeoTools::ImportShapefile(filename, &m_GeoBase);
 	if (extension == ".gpkg")
-		flag = GeoBase::ImportGeoPackage(filename, &m_GeoBase);
+		flag = GeoTools::ImportGeoPackage(filename, &m_GeoBase);
 	if (extension == ".mif")
-		flag = GeoBase::ImportMifMid(filename, &m_GeoBase);
+		flag = GeoTools::ImportMifMid(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
 		return false;
 	}
-	GeoBase::ColorizeClasses(&m_GeoBase);
+	GeoTools::ColorizeClasses(&m_GeoBase);
 
 	m_GeoBase.UpdateFrame();
 
@@ -808,7 +818,7 @@ bool MainComponent::ImportImageFile(juce::String rasterfile)
 			filename + juce::translate(" : this file cannot be opened"), "OK");
 		return false;
 	}
-	if (!GeoBase::RegisterObject(&m_GeoBase, image, name.toStdString().c_str(), "Raster", name.toStdString().c_str())) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, image, name.toStdString().c_str(), "Raster", name.toStdString().c_str())) {
 		delete image;
 		return false;
 	}
@@ -856,7 +866,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 		return false;
 	}
 
-	if (!GeoBase::RegisterObject(&m_GeoBase, dtm, name.toStdString().c_str(), "DTM", name.toStdString().c_str())) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, dtm, name.toStdString().c_str(), "DTM", name.toStdString().c_str())) {
 		delete dtm;
 		return false;
 	}
@@ -1000,7 +1010,7 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 		return false;
 	}
 
-	if (!GeoBase::RegisterObject(&m_GeoBase, las, name.toStdString().c_str(), "LAS", name.toStdString().c_str())) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, las, name.toStdString().c_str(), "LAS", name.toStdString().c_str())) {
 		delete las;
 		return false;
 	}
@@ -1023,7 +1033,7 @@ bool MainComponent::AddOSMServer()
 
 	OsmLayer* osm = new OsmLayer("tile.openstreetmap.org");
 	osm->SetFrame(F);
-	if (!GeoBase::RegisterObject(&m_GeoBase, osm, "OSM", "OSM", "tile.openstreetmap.org")) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, osm, "OSM", "OSM", "tile.openstreetmap.org")) {
 		delete osm;
 		return false;
 	}
@@ -1067,7 +1077,7 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 
 	WmtsLayer* wmts = new WmtsLayer(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);
 	wmts->SetFrame(F);
-	if (!GeoBase::RegisterObject(&m_GeoBase, wmts, "WMTS", "WMTS", layer)) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, wmts, "WMTS", "WMTS", layer)) {
 		delete wmts;
 		return false;
 	}
@@ -1143,6 +1153,7 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	/*
 	XTiffWriter writer;
 	writer.SetGeoTiff(500000., 6500000., 1.);
 	writer.WriteTiled("D:\\Test_tile.tif", 1000, 1000, 1, 8, nullptr, 0, 256, 256);
@@ -1157,5 +1168,78 @@ void MainComponent::Test()
 	}
 	file.close();
 	delete[] area;
+	*/
+	if (isConnected()) {
+		std::string message = "Ceci est un test";
+		juce::MemoryBlock block(message.c_str(), message.size());
+		sendMessage(block);
+		return;
+	}
+	if (!createPipe("IGNMap", -1, true)) {
+		if (connectToPipe("IGNMap", -1)) {
+			juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+				juce::translate("About IGNMap"), getConnectedHostName(), "OK");
+		}
+	}
 }
 
+//==============================================================================
+// Synchronisation de 2 instances d'IGNMap
+//==============================================================================
+void MainComponent::Synchronize()
+{
+	if (isConnected()) {
+		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+			juce::translate("Synchronization"), juce::translate("Already connected"), "OK");
+		return;
+	}
+	if (!createPipe("IGNMap", -1, true)) {
+		if (connectToPipe("IGNMap", -1)) {
+			juce::Rectangle< int > R = getParentMonitorArea();
+			if (getParentComponent()!=nullptr)
+				getParentComponent()->setBounds(R.getWidth() / 2, 0, R.getWidth() / 2, R.getHeight());
+			juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+				juce::translate("Synchronization"), juce::translate("Connected with ") + getConnectedHostName(), "OK");
+		}
+	}
+	else {
+		juce::Rectangle< int > R = getParentMonitorArea();
+		if (getParentComponent() != nullptr)
+			getParentComponent()->setBounds(0, 0, R.getWidth() / 2, R.getHeight());
+		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+			juce::translate("Synchronization"), juce::translate("Connection ready ... waiting for another IGNMap"), "OK");
+	}
+}
+
+//==============================================================================
+// Methodes de InterprocessConnection 
+//==============================================================================
+void MainComponent::connectionMade()
+{
+}
+
+void MainComponent::connectionLost()
+{
+	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
+		juce::translate("Synchronization"), juce::translate("Connection lost !"), "OK");
+}
+
+void MainComponent::messageReceived(const juce::MemoryBlock& message)
+{
+	juce::String chaine = message.toString();
+	if (chaine == "Disconnect") {
+		disconnect();
+		return;
+	}
+	juce::StringArray T;
+	T.addTokens(chaine, ":", "");
+	if (T[0] == "CenterView") {
+		if (T.size() < 4)
+			return;
+		double X = T[1].getDoubleValue();
+		double Y = T[2].getDoubleValue();
+		double scale = T[3].getDoubleValue();
+		m_MapView.get()->CenterView(X, Y, scale, false);
+	}
+
+}

@@ -23,7 +23,7 @@ class XGeoBase;
 class MapView : public juce::Component, private juce::Timer, public juce::ActionBroadcaster
 {
 public:
-  MapView();
+  MapView(juce::String name);
   ~MapView() override;
   void Clear();
 
@@ -33,8 +33,7 @@ public:
   void ZoomScale(double scale);
   void ZoomGsd(double gsd);
   void ZoomFrame(const XFrame& F, double buffer = 0.);
-  void DrawFrame(const XFrame& F);
-  void CenterView(const double& X, const double& Y);
+  void CenterView(const double& X, const double& Y, double scale = -1., bool notification = true);
   void Pixel2Ground(double& X, double& Y);
   void Ground2Pixel(double& X, double& Y);
   void SetGeoBase(XGeoBase* base) { m_MapThread.stopThread(-1); m_GeoBase = base; resized(); }
@@ -60,6 +59,7 @@ public:
   void SetMouseMode(MouseMode mode);
 
 private:
+  juce::String  m_strName;
   XFrame        m_Frame;
   double				m_dX0;
   double				m_dY0;

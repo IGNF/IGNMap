@@ -245,12 +245,20 @@ void OGLWidget::paint(juce::Graphics& g)
 {
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
   g.setFont(12);
+  /*
   juce::String angles = "Angles : (" + juce::String(m_R.X) + " ; " + juce::String(m_R.Y) + " ; " + juce::String(m_R.Z) + ")";
   g.drawText(angles, 25, 20, 300, 30, juce::Justification::left);
   juce::String translation = "Translations : (" + juce::String(m_T.X) + " ; " + juce::String(m_T.Y) + " ; " + juce::String(m_T.Z) + ")";
   g.drawText(translation, 25, 40, 300, 30, juce::Justification::left);
-  juce::String lasPoint = "Las points : " + juce::String(m_nNbLasVertex);
-  g.drawText(lasPoint, 25, 60, 300, 30, juce::Justification::left);
+  */
+  juce::String help = "Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)";
+  g.drawText(help, 25, 20, 300, 30, juce::Justification::left);
+  help = "Visibility: K (Vector) ; L (Las) ; M (DTM)";
+  g.drawText(help, 25, 40, 300, 30, juce::Justification::left);
+  juce::String nbPoint = "Points : " + juce::String(m_nNbLasVertex) + " Las";
+  nbPoint += " | " + juce::String(m_nNbPolyVertex) + " Polygon";
+  nbPoint += " | " + juce::String(m_nNbLineVertex) + " Line";
+  g.drawText(nbPoint, 25, 60, 300, 30, juce::Justification::left);
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
   g.drawText(lastPt, 25, 80, 300, 30, juce::Justification::left);
   g.drawLine(20, 20, 170, 20);

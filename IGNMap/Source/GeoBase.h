@@ -117,7 +117,7 @@ protected:
 //==============================================================================
 // Fonctions de recherche de fichiers de georeferencement
 //==============================================================================
-namespace GeoBase {
+namespace GeoTools {
   bool FindGeorefTab(std::string filename, double* Xmin, double* Ymax, double* GSD);
   bool FindGeorefTfw(std::string filename, double* Xmin, double* Ymax, double* GSD);
 }
@@ -125,7 +125,7 @@ namespace GeoBase {
 //==============================================================================
 // Fonctions d'import des donnees vectorielles en fonction des formats
 //==============================================================================
-namespace GeoBase {
+namespace GeoTools {
   bool ImportVectorFolder(juce::String folderName, XGeoBase* base, int& nb_total, int& nb_imported);
   bool ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
@@ -135,7 +135,7 @@ namespace GeoBase {
 //==============================================================================
 // Fonctions utilitaires
 //==============================================================================
-namespace GeoBase {
+namespace GeoTools {
   bool RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
                       int transparency = 0, uint32_t color = 0xFFFFFFFF, uint32_t fill = 0xFFFFFFFF, uint32_t zorder = 0, uint8_t size = 1);
   void ColorizeClasses(XGeoBase* base);

@@ -13,11 +13,12 @@
 #include "../../XTool/XGeoBase.h"
 
 //==============================================================================
-MapView::MapView() : m_MapThread("MapThread")
+MapView::MapView(juce::String name) : m_MapThread(name)
 {
+	m_strName = name;
 	Clear();
 	setOpaque(true);
-	startTimerHz(60);
+	startTimerHz(20);
 }
 
 MapView::~MapView()
@@ -205,14 +206,17 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 			m_dX0 -= m_DragPt.x * m_dScale;
 			m_dY0 += m_DragPt.y * m_dScale;
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
-			RenderMap();
+			//RenderMap();
+			CenterView(m_dX0 + b.getWidth() * m_dScale * 0.5, m_dY0 - b.getHeight() * m_dScale * 0.5);
 		}
 	}
 	else {
 		if (event.mods.isShiftDown() || (m_nMouseMode == Select))
 			SelectFeatures(event.getPosition());
-		else
+		else {
+			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 			sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
+		}
 	}
 	m_bDrag = m_bZoom = m_bSelect = false;
 	m_DragPt = juce::Point<int>(0, 0);
@@ -319,12 +323,17 @@ void MapView::ZoomFrame(const XFrame& F, double buffer)
 //==============================================================================
 // Centre la vue sur un point terrain
 //==============================================================================
-void MapView::CenterView(const double& X, const double& Y)
+void MapView::CenterView(const double& X, const double& Y, double scale, bool notification)
 {
 	auto b = getLocalBounds();
+	if (scale > 0)
+		m_dScale = scale;
 	m_dX0 = X - b.getWidth() * 0.5 * m_dScale;
 	m_dY0 = Y + b.getHeight() * 0.5 * m_dScale;
 	RenderMap();
+	if (notification)
+		sendActionMessage("CenterView:" + juce::String(X, 2) + ":" + juce::String(Y, 2) +
+																	":" + juce::String(m_dScale, 2));
 }
 
 //==============================================================================
@@ -380,8 +389,6 @@ void MapView::SetFrame(XFrame F)
 		ComputeCartoScale(10000);
 	}
 	m_Frame = F;
-	m_dX0 = F.Xmin;
-	m_dY0 = F.Ymax;
 	CenterView(X, Y);
 }
 
@@ -429,12 +436,6 @@ void MapView::Update3DView(const double& X0, const double& Y0, const double& X1,
 		juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
 }
 
-void MapView::DrawFrame(const XFrame& env)
-{
-
-	repaint();
-}
-
 //==============================================================================
 // Ajout d'un point a l'annotation en cours d'edition
 //==============================================================================
@@ -462,29 +463,29 @@ void MapView::DrawAnnotation(juce::Graphics& g, int deltaX, int deltaY)
 	Ground2Pixel(P0.X, P0.Y);
 	P0 += XPt2D(deltaX, deltaY);
 	g.setColour(juce::Colours::chartreuse);
-	g.drawEllipse(P0.X - 3, P0.Y - 3, 6, 6, 2);
+	g.drawEllipse((float)P0.X - 3.f, (float)P0.Y - 3.f, 6.f, 6.f, 2.f);
 
 	if (m_Annotation.Primitive() == XAnnotation::pText) {
-		g.drawSingleLineText(juce::String("Text"), P0.X + 5, P0.Y);
+		g.drawSingleLineText(juce::String("Text"), (int)P0.X + 5, (int)P0.Y);
 		return;
 	}
 	if (m_Annotation.Primitive() == XAnnotation::pRect) {
 		XPt2D P1 = m_Annotation.Pt(2);	// XAnnotation renvoit systematiquement 4 points
 		Ground2Pixel(P1.X, P1.Y);
 		P1 += XPt2D(deltaX, deltaY);
-		g.drawEllipse(P1.X - 3, P1.Y - 3, 6, 6, 2);
-		g.drawRect(juce::Rectangle<float>(juce::Point<float>(P0.X, P0.Y), juce::Point<float>(P1.X, P1.Y)));
+		g.drawEllipse((float)P1.X - 3.f, (float)P1.Y - 3.f, 6.f, 6.f, 2.f);
+		g.drawRect(juce::Rectangle<float>(juce::Point<float>((float)P0.X, (float)P0.Y), juce::Point<float>((float)P1.X, (float)P1.Y)));
 		return;
 	}
 	if (m_Annotation.NbPt() < 2)
 		return;
 	juce::Path path;
-	path.startNewSubPath(P0.X, P0.Y);
+	path.startNewSubPath((float)P0.X, (float)P0.Y);
 	for (uint32_t i = 0; i < m_Annotation.NbPt(); i++) {
 		XPt2D Pi = m_Annotation.Pt(i);
 		Ground2Pixel(Pi.X, Pi.Y);
 		Pi += XPt2D(deltaX, deltaY);
-		path.lineTo(Pi.X, Pi.Y);
+		path.lineTo((float)Pi.X, (float)Pi.Y);
 	}
 	g.strokePath(path, juce::PathStrokeType(2, juce::PathStrokeType::beveled));
 }

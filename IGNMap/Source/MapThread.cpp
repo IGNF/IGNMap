@@ -56,6 +56,7 @@ void MapThread::SetDimension(const int& w, const int& h)
 		m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
 		m_Las = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
 		m_bRasterDone = false;
+		m_ClipLas = m_ClipRaster = m_ClipVector = juce::Rectangle<int>();
 	}
 }
 
@@ -673,7 +674,7 @@ bool MapThread::DrawFileRaster(GeoFileImage* image)
 	}
 
 	if (m_bFirstRaster) {	// Nettoyage pour la premiere couche raster a afficher
-		m_Raster.clear(m_Raster.getBounds(), juce::Colour(0xFFFFFFFF));
+		//m_Raster.clear(m_Raster.getBounds(), juce::Colour(0xFFFFFFFF));
 		m_bFirstRaster = false;
 	}
 	juce::Graphics graphic(m_Raster);

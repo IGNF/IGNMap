@@ -9,6 +9,7 @@
 // Date de creation : 03/01/2024
 //-----------------------------------------------------------------------------
 
+#include <cstring>
 #include "XLasFile.h"
 #include "../XTool/XFrame.h"
 #include "../XToolImage/XTiffWriter.h"

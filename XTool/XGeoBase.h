@@ -29,7 +29,7 @@ protected:
 	uint32_t	m_nVersion;			// Version de la base
 
 public:
-	XGeoBase() {m_dZmin = m_dZmax = XGEO_NO_DATA; m_nVersion = 0;}
+	XGeoBase() { m_dZmin = m_dZmax = XGEO_NO_DATA; m_nVersion = 0; }
 	virtual ~XGeoBase();
 
   bool UpdateFrame(XFrame* initF = NULL);

@@ -22,7 +22,7 @@ class XGeoBase;
 class PixelValuesModel : public juce::TableListBoxModel {
 public:
 	PixelValuesModel() : juce::TableListBoxModel() { PixX = PixY = 0; WinSize = 3; NbSample = 0; PixValue = nullptr;}
-	~PixelValuesModel() { if (PixValue != nullptr) delete[] PixValue; }
+	~PixelValuesModel() { ClearPixels(); }
 
 	virtual void paintCell(juce::Graphics&, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
 	virtual void paintRowBackground(juce::Graphics&, int rowNumber, int width, int height, bool rowIsSelected) override { ; }
@@ -31,6 +31,7 @@ public:
 	virtual juce::String getCellTooltip(int rowNumber, int columnId) override { return GetText(rowNumber, columnId); }
 
 	bool AllocPixels(uint32_t nbSample);
+	void ClearPixels() { if (PixValue != nullptr) { delete[] PixValue; PixValue = nullptr; } }
 	juce::String GetText(int rowNumber, int columnId);
 
 	uint32_t PixX;
