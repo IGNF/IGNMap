@@ -833,8 +833,10 @@ bool MapThread::DrawLas(GeoLAS* las)
 	double Xmax = (m_Frame.Xmax - header->x_offset) / header->x_scale_factor;
 	double Ymin = (m_Frame.Ymin - header->y_offset) / header->y_scale_factor;
 	double Ymax = (m_Frame.Ymax - header->y_offset) / header->y_scale_factor;
-	double Zmin = m_GeoBase->ZMin();
-	double deltaZ = m_GeoBase->ZMax() - m_GeoBase->ZMin();
+	double Zmin = (LasShader::Zmin() - header->z_offset) / header->z_scale_factor;
+	double Zmax = (LasShader::Zmax() - header->z_offset) / header->z_scale_factor;
+	double Z0 = LasShader::Zmin();// m_GeoBase->ZMin();
+	double deltaZ = LasShader::Zmax() - Z0; // m_GeoBase->ZMax() - Z0;
 	if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
 
 	double X, Y, Z;
@@ -850,6 +852,8 @@ bool MapThread::DrawLas(GeoLAS* las)
 		if (point->X >= Xmax) continue;
 		if (point->Y <= Ymin) continue;
 		if (point->Y >= Ymax) continue;
+		if (point->Z < Zmin) continue;
+		if (point->Z > Zmax) continue;
 
 		X = point->X * header->x_scale_factor + header->x_offset;
 		Y = point->Y * header->y_scale_factor + header->y_offset;
@@ -860,7 +864,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 		switch (shader.Mode()) {
 		case LasShader::ShaderMode::Altitude :
 			Z = point->Z * header->z_scale_factor + header->z_offset;
-			col = shader.AltiColor( (Z - Zmin) * 255 / deltaZ );
+			col = shader.AltiColor( (Z - Z0) * 255 / deltaZ );
 			*data_ptr = (uint32_t)col.getARGB();
 			break;
 		case LasShader::ShaderMode::RGB:

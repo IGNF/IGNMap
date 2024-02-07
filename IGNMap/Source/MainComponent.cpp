@@ -621,20 +621,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		F.Ymax = T[4].getDoubleValue();
 		if (m_OGL3DViewer.get() != nullptr) {
 			m_OGL3DViewer.get()->setVisible(true);
+			m_OGL3DViewer.get()->toFront(true);
 			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
 		}
 		return;
 	}
 
-	if (T[0] == "SelectFeature") {
-		if (T.size() < 3)
-			return;
-		//GIntBig id = T[1].getLargeIntValue();
-		int idLayer = T[2].getIntValue();
-		//m_Base.SelectFeatureFields(idLayer, id);
-		//m_FeatureViewer.get()->SetBase(&m_Base);
-		return;
-	}
 	if (T[0] == "ZoomFrame") {
 		if (T.size() < 5)
 			return;
@@ -1169,18 +1161,7 @@ void MainComponent::Test()
 	file.close();
 	delete[] area;
 	*/
-	if (isConnected()) {
-		std::string message = "Ceci est un test";
-		juce::MemoryBlock block(message.c_str(), message.size());
-		sendMessage(block);
-		return;
-	}
-	if (!createPipe("IGNMap", -1, true)) {
-		if (connectToPipe("IGNMap", -1)) {
-			juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
-				juce::translate("About IGNMap"), getConnectedHostName(), "OK");
-		}
-	}
+
 }
 
 //==============================================================================

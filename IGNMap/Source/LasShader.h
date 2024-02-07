@@ -24,6 +24,10 @@ public:
 	static void Opacity(double opacity) { m_Opacity = opacity; }
 	static double MaxGsd() { return m_MaxGsd; }
 	static void MaxGsd(double gsd) { m_MaxGsd = gsd; }
+	static double Zmin() { return m_Zmin; }
+	static void Zmin(double z) { m_Zmin = z; }
+	static double Zmax() { return m_Zmax; }
+	static void Zmax(double z) { m_Zmax = z; }
 	static juce::Colour ClassificationColor(unsigned char classif) { return m_ClassifColors[classif]; }
 	static juce::Colour AltiColor(unsigned char alti) { return m_AltiColors[alti]; }
 	static juce::String ClassificationName(unsigned char classif);
@@ -41,6 +45,8 @@ protected:
 	static juce::Colour m_AltiColors[256];			// Palette altimetrique
 	static double m_Opacity;
 	static double m_MaxGsd;		// GSD maximale d'affichage des points du LAS
+	static double m_Zmin;			// Zmin que l'on considere
+	static double m_Zmax;			// Zmax que l'on considere
 	static bool m_ClassifVisibility[256];
 	static bool m_ClassifSelectable[256];
 };

@@ -78,7 +78,7 @@ class LasLayersViewer : public juce::Component,
 public:
 	LasLayersViewer();
 
-	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelLas.SetBase(base); m_TableLas.updateContent(); }
+	void SetBase(XGeoBase* base);
 	void SetActionListener(juce::ActionListener* listener)
 	{
 		addActionListener(listener);
@@ -109,6 +109,8 @@ private:
 	juce::ComboBox			m_Mode;
 	juce::Slider				m_Opacity;
 	juce::Slider				m_MaxGsd;
+	juce::Slider				m_sldZmin;
+	juce::Slider				m_sldZmax;
 	juce::TableListBox	m_TableClassif;
 	ClassifModel				m_ModelClassif;
 

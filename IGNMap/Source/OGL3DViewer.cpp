@@ -578,11 +578,14 @@ void OGLWidget::DrawLas(GeoLAS* las)
   double Xmax = (m_Frame.Xmax - header->x_offset) / header->x_scale_factor;
   double Ymin = (m_Frame.Ymin - header->y_offset) / header->y_scale_factor;
   double Ymax = (m_Frame.Ymax - header->y_offset) / header->y_scale_factor;
-  double Zmin = m_Base->ZMin();
-  double deltaZ = m_Base->ZMax() - m_Base->ZMin();
+  double Zmin = (LasShader::Zmin() - header->z_offset) / header->z_scale_factor;
+  double Zmax = (LasShader::Zmax() - header->z_offset) / header->z_scale_factor;
+
+  double Z0 = LasShader::Zmin();
+  double deltaZ = LasShader::Zmax() - Z0;
   if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
   if (m_dZ0 <= XGEO_NO_DATA)
-    m_dZ0 = header->min_z;
+    m_dZ0 = LasShader::Zmin();
 
   double X, Y, Z;
   juce::Colour col = juce::Colours::orchid;
@@ -597,6 +600,8 @@ void OGLWidget::DrawLas(GeoLAS* las)
     if (point->X >= Xmax) continue;
     if (point->Y <= Ymin) continue;
     if (point->Y >= Ymax) continue;
+    if (point->Z < Zmin) continue;
+    if (point->Z > Zmax) continue;
 
     X = point->X * header->x_scale_factor + header->x_offset;
     Y = point->Y * header->y_scale_factor + header->y_offset;
@@ -607,7 +612,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
 
     switch (shader.Mode()) {
     case LasShader::ShaderMode::Altitude:
-      col = shader.AltiColor((Z - Zmin) * 255 / deltaZ);
+      col = shader.AltiColor((Z - Z0) * 255 / deltaZ);
       *data_ptr = (uint32_t)col.getARGB();
       break;
     case LasShader::ShaderMode::RGB:

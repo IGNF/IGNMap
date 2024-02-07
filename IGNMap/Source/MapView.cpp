@@ -432,6 +432,11 @@ void MapView::Update3DView(const double& X0, const double& Y0, const double& X1,
 	XFrame F;
 	F += XPt2D(X0, Y0);
 	F += XPt2D(X1, Y1);
+	m_MapThread.signalThreadShouldExit();
+	if (m_MapThread.isThreadRunning()) { // On arrete le thread de dessin pour privilegier la vue 3D
+		if (!m_MapThread.stopThread(-1))
+			return;
+	}
 	sendActionMessage("Update3DView:" + juce::String(F.Xmin) + ":" + juce::String(F.Xmax) + ":" +
 		juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
 }

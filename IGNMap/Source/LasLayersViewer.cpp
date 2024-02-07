@@ -356,6 +356,28 @@ LasLayersViewer::LasLayersViewer()
 	m_MaxGsd.setChangeNotificationOnlyOnRelease(true);
 	addAndMakeVisible(m_MaxGsd);
 
+	// Sliders ZMin et ZMax
+	m_sldZmin.setRange(-10000., 10000., 1.);
+	m_sldZmin.setValue(LasShader::Zmin());
+	m_sldZmin.setSliderStyle(juce::Slider::LinearBar);
+	m_sldZmin.setNumDecimalPlacesToDisplay(0);
+	m_sldZmin.setTextValueSuffix(" Zmin");
+	m_sldZmin.addListener(this);
+	m_sldZmin.setChangeNotificationOnlyOnRelease(true);
+	m_sldZmax.setRange(-10000., 10000., 1.);
+	m_sldZmax.setValue(LasShader::Zmax());
+	m_sldZmax.setSliderStyle(juce::Slider::LinearBar);
+	m_sldZmax.setNumDecimalPlacesToDisplay(0);
+	m_sldZmax.setTextValueSuffix(" Zmax");
+	m_sldZmax.addListener(this);
+	m_sldZmax.setChangeNotificationOnlyOnRelease(true);
+	addAndMakeVisible(m_sldZmin);
+	addAndMakeVisible(m_sldZmax);
+	if (LasShader::Mode() == LasShader::ShaderMode::Classification) {
+		m_sldZmin.setVisible(false);
+		m_sldZmax.setVisible(false);
+	}
+
 	// Couleurs des classifications
 	m_ModelClassif.addActionListener(this);
 	// Bordure
@@ -372,6 +394,37 @@ LasLayersViewer::LasLayersViewer()
 	addAndMakeVisible(m_TableClassif);
 	if (LasShader::Mode() != LasShader::ShaderMode::Classification)
 		m_TableClassif.setVisible(false);
+}
+
+//==============================================================================
+// LayerViewer : fixe la base de donnees
+//==============================================================================
+void LasLayersViewer::SetBase(XGeoBase* base)
+{ 
+	m_Base = base;
+	m_ModelLas.SetBase(base);
+	m_TableLas.updateContent();
+	double zmin = std::numeric_limits<double>::max();
+	double zmax = std::numeric_limits<double>::min();
+	int count = 0;
+	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+		XGeoClass* C = m_Base->Class(i);
+		if (!C->IsLAS())
+			continue;
+		count++;
+		zmin = XMin(C->Zmin(), zmin);
+		zmax = XMax(C->Zmax(), zmax);
+	}
+	if (count < 1)
+		return;
+	zmin = floor(zmin);
+	zmax = ceil(zmax);
+	LasShader::Zmin(zmin);
+	LasShader::Zmax(zmax);
+	m_sldZmin.setRange(zmin, zmax, 1.);
+	m_sldZmax.setRange(zmin, zmax, 1.);
+	m_sldZmin.setValue(LasShader::Zmin());
+	m_sldZmax.setValue(LasShader::Zmax());
 }
 
 //==============================================================================
@@ -403,6 +456,10 @@ void LasLayersViewer::resized()
 	m_Mode.setSize(b.getWidth(), 24);
 	m_TableClassif.setTopLeftPosition(0, b.getHeight() / 2 + 90);
 	m_TableClassif.setSize(b.getWidth(), 200);
+	m_sldZmin.setTopLeftPosition(0, b.getHeight() / 2 + 90);
+	m_sldZmin.setSize(b.getWidth(), 24);
+	m_sldZmax.setTopLeftPosition(0, b.getHeight() / 2 + 120);
+	m_sldZmax.setSize(b.getWidth(), 24);
 }
 
 //==============================================================================
@@ -467,10 +524,16 @@ void LasLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		LasShader shader;
 		shader.Mode((LasShader::ShaderMode)(m_Mode.getSelectedId()));
 		m_ModelLas.sendActionMessage("UpdateLas");
-		if (LasShader::Mode() != LasShader::ShaderMode::Classification)
+		if (LasShader::Mode() != LasShader::ShaderMode::Classification) {
 			m_TableClassif.setVisible(false);
-		else
+			m_sldZmin.setVisible(true);
+			m_sldZmax.setVisible(true);
+		}
+		else {
 			m_TableClassif.setVisible(true);
+			m_sldZmin.setVisible(false);
+			m_sldZmax.setVisible(false);
+		}
 	}
 }
 
@@ -483,6 +546,11 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 		LasShader::Opacity(slider->getValue());
 	if (slider == &m_MaxGsd)
 		LasShader::MaxGsd(slider->getValue());
+	if (slider == &m_sldZmin)
+		LasShader::Zmin(slider->getValue());
+	if (slider == &m_sldZmax)
+		LasShader::Zmax(slider->getValue());
+
 	m_ModelLas.sendActionMessage("UpdateLas");
 }
 

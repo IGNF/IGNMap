@@ -14,6 +14,8 @@
 bool LasShader::m_Init = false;
 double LasShader::m_Opacity = 100.0;
 double LasShader::m_MaxGsd = 5.0;
+double LasShader::m_Zmin = -10000.;
+double LasShader::m_Zmax = 10000.;
 LasShader::ShaderMode LasShader::m_Mode = LasShader::ShaderMode::Altitude; // Mode d'affichage
 juce::Colour LasShader::m_ClassifColors[256];	// Classification ASPRS
 juce::Colour LasShader::m_AltiColors[256];

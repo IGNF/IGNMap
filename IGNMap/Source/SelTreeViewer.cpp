@@ -74,7 +74,6 @@ void SelTreeItem::itemClicked(const juce::MouseEvent&)
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr)) {
     SelTreeViewer* viewer = static_cast<SelTreeViewer*>(getOwnerView());
-    //viewer->sendActionMessage("SelectFeature:" + juce::String(m_Feature.Id()) + ":" + juce::String(m_Feature.IdLayer()));
     XFrame F = m_Feature->Frame();
     viewer->sendActionMessage("DrawEnvelope:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
       juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
