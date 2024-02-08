@@ -47,10 +47,10 @@ void MapView::paint(juce::Graphics& g)
 		return;
 	}
 	if (m_bDrag) {
-		//g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId
 		g.fillAll(juce::Colours::white);
 		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
 		DrawAnnotation(g, m_DragPt.x, m_DragPt.y);
+		DrawTarget(g, m_DragPt.x, m_DragPt.y);
 		DrawDecoration(g, m_DragPt.x, m_DragPt.y);
 		return;
 	}
@@ -58,6 +58,7 @@ void MapView::paint(juce::Graphics& g)
 	m_MapThread.Draw(g);
 	if (!m_MapThread.isThreadRunning())
 		DrawAnnotation(g);
+	DrawTarget(g);
 	DrawDecoration(g);
 }
 
@@ -216,6 +217,11 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		else {
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 			sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
+			if (event.mods.isAltDown()) {
+				double x = event.getPosition().x, y = event.getPosition().y;
+				Pixel2Ground(x, y);
+				SetTarget(x, y);
+			}
 		}
 	}
 	m_bDrag = m_bZoom = m_bSelect = false;
@@ -390,6 +396,31 @@ void MapView::SetFrame(XFrame F)
 	}
 	m_Frame = F;
 	CenterView(X, Y);
+}
+
+//==============================================================================
+// Fixe le point cible de la vue
+//==============================================================================
+void MapView::SetTarget(double x, double y, bool notify)
+{ 
+	m_Target = XPt2D(x, y);
+	if (notify)
+		sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2));
+}
+
+//==============================================================================
+// Dessin du point cible
+//==============================================================================
+void MapView::DrawTarget(juce::Graphics& g, int deltaX, int deltaY)
+{
+	XPt2D P0 = m_Target;
+	Ground2Pixel(P0.X, P0.Y);
+	P0 += XPt2D(deltaX, deltaY);
+	if ((P0.X < 0)||(P0.Y < 0))
+		return;
+	g.setColour(juce::Colours::fuchsia);
+	g.drawEllipse((float)P0.X - 2.f, (float)P0.Y - 2.f, 4.f, 4.f, 1.f);
+	g.drawEllipse((float)P0.X - 4.f, (float)P0.Y - 4.f, 8.f, 8.f, 2.f);
 }
 
 //==============================================================================

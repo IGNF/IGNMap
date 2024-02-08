@@ -45,6 +45,8 @@ public:
   void DrawDecoration(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   void DrawAnnotation(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   double ComputeCartoScale(double cartoscale = 0.);
+  void SetTarget(double x, double y, bool notify = true);
+  void DrawTarget(juce::Graphics&, int deltaX = 0, int deltaY = 0);
 
   void paint(juce::Graphics&) override;
   void resized() override;
@@ -76,8 +78,9 @@ private:
   juce::Point<int>  m_DragPt;
   juce::Image   m_Image;    // Image de la vue
   MapThread     m_MapThread;
-  XGeoBase* m_GeoBase;
+  XGeoBase*     m_GeoBase;
   XAnnotation   m_Annotation; // Annotation en cours d'edition
+  XPt2D         m_Target;     // Point cible
 
   void timerCallback() override { repaint(); }
 

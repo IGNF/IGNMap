@@ -651,6 +651,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		double Y = T[2].getDoubleValue();
 		m_ImageOptionsViewer.get()->SetGroundPos(X, Y);
 	}
+	if (T[0] == "UpdateTargetPos") {
+		if (isConnected()) {
+			juce::MemoryBlock block(message.getCharPointer(), message.length());
+			sendMessage(block);
+		}
+	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {
 			juce::MemoryBlock block(message.getCharPointer(), message.length());
@@ -1221,6 +1227,15 @@ void MainComponent::messageReceived(const juce::MemoryBlock& message)
 		double Y = T[2].getDoubleValue();
 		double scale = T[3].getDoubleValue();
 		m_MapView.get()->CenterView(X, Y, scale, false);
+		return;
+	}
+	if (T[0] == "UpdateTargetPos") {
+		if (T.size() < 3)
+			return;
+		double X = T[1].getDoubleValue();
+		double Y = T[2].getDoubleValue();
+		m_MapView.get()->SetTarget(X, Y, false);
+		return;
 	}
 
 }
