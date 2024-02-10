@@ -1091,7 +1091,9 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 //==============================================================================
 bool MainComponent::ExportImage()
 {
-	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, 743000.0, 6750500, 743500, 6751000, 1.);
+	XFrame F = m_MapView.get()->GetSelectionFrame();
+	double gsd = m_MapView.get()->GetGsd();
+	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), XRint(gsd));
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);
 

@@ -11,7 +11,7 @@
 #define XWEBPIMAGE_H
 
 extern "C" {
-#include "../libwebp-1.2.4/src/webp/decode.h"
+#include "../libwebp-1.3.2/src/webp/decode.h"
 }
 
 #include "XBaseImage.h"

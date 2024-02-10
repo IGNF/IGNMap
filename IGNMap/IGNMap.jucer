@@ -197,178 +197,178 @@
       <FILE id="Snqn3a" name="mydefs.cpp" compile="1" resource="0" file="../LASzip/src/mydefs.cpp"/>
       <FILE id="edugUj" name="mydefs.hpp" compile="0" resource="0" file="../LASzip/src/mydefs.hpp"/>
     </GROUP>
-    <GROUP id="{B5244094-3984-16A1-BD64-D72BF56AC2D3}" name="libwebp-1.2.4">
+    <GROUP id="{B5244094-3984-16A1-BD64-D72BF56AC2D3}" name="libwebp-1.3.2">
       <GROUP id="{E9FEE2AE-624D-2CCF-0774-E131B36B66AC}" name="dec">
-        <FILE id="thCk4N" name="alpha_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/alpha_dec.c"/>
-        <FILE id="ELpgKL" name="alphai_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/alphai_dec.h"/>
-        <FILE id="Ml0Sib" name="buffer_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/buffer_dec.c"/>
-        <FILE id="y55xYO" name="common_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/common_dec.h"/>
-        <FILE id="HgwwWt" name="frame_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/frame_dec.c"/>
-        <FILE id="TaclzP" name="idec_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/idec_dec.c"/>
-        <FILE id="wi8mZo" name="io_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/io_dec.c"/>
-        <FILE id="HBSFqL" name="quant_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/quant_dec.c"/>
-        <FILE id="yoQPPI" name="tree_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/tree_dec.c"/>
-        <FILE id="wqL6TH" name="vp8_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/vp8_dec.c"/>
-        <FILE id="pNXqSU" name="vp8_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/vp8_dec.h"/>
-        <FILE id="IW8qln" name="vp8i_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/vp8i_dec.h"/>
-        <FILE id="XeFqN3" name="vp8l_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/vp8l_dec.c"/>
-        <FILE id="uEiF5f" name="vp8li_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/vp8li_dec.h"/>
-        <FILE id="vg5MhJ" name="webp_dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dec/webp_dec.c"/>
-        <FILE id="E2eqJ1" name="webpi_dec.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dec/webpi_dec.h"/>
+        <FILE id="thCk4N" name="alpha_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/alpha_dec.c"/>
+        <FILE id="ELpgKL" name="alphai_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/alphai_dec.h"/>
+        <FILE id="Ml0Sib" name="buffer_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/buffer_dec.c"/>
+        <FILE id="y55xYO" name="common_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/common_dec.h"/>
+        <FILE id="HgwwWt" name="frame_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/frame_dec.c"/>
+        <FILE id="TaclzP" name="idec_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/idec_dec.c"/>
+        <FILE id="wi8mZo" name="io_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/io_dec.c"/>
+        <FILE id="HBSFqL" name="quant_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/quant_dec.c"/>
+        <FILE id="yoQPPI" name="tree_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/tree_dec.c"/>
+        <FILE id="wqL6TH" name="vp8_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/vp8_dec.c"/>
+        <FILE id="pNXqSU" name="vp8_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8_dec.h"/>
+        <FILE id="IW8qln" name="vp8i_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8i_dec.h"/>
+        <FILE id="XeFqN3" name="vp8l_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/vp8l_dec.c"/>
+        <FILE id="uEiF5f" name="vp8li_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8li_dec.h"/>
+        <FILE id="vg5MhJ" name="webp_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/webp_dec.c"/>
+        <FILE id="E2eqJ1" name="webpi_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/webpi_dec.h"/>
       </GROUP>
       <GROUP id="{C2E418AB-274E-737F-5853-40DAE2652FF9}" name="dsp">
         <FILE id="LzpVPE" name="alpha_processing.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/alpha_processing.c"/>
+              file="../libwebp-1.3.2/src/dsp/alpha_processing.c"/>
         <FILE id="pGG71W" name="alpha_processing_mips_dsp_r2.c" compile="1"
-              resource="0" file="../libwebp-1.2.4/src/dsp/alpha_processing_mips_dsp_r2.c"/>
+              resource="0" file="../libwebp-1.3.2/src/dsp/alpha_processing_mips_dsp_r2.c"/>
         <FILE id="M3rIFu" name="alpha_processing_neon.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/alpha_processing_neon.c"/>
+              file="../libwebp-1.3.2/src/dsp/alpha_processing_neon.c"/>
         <FILE id="odYPpk" name="alpha_processing_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/alpha_processing_sse2.c"/>
+              file="../libwebp-1.3.2/src/dsp/alpha_processing_sse2.c"/>
         <FILE id="vapeA5" name="alpha_processing_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/alpha_processing_sse41.c"/>
-        <FILE id="kpH9wa" name="common_sse2.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/common_sse2.h"/>
-        <FILE id="UUuAht" name="common_sse41.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/common_sse41.h"/>
-        <FILE id="XVT1RN" name="cost.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/cost.c"/>
+              file="../libwebp-1.3.2/src/dsp/alpha_processing_sse41.c"/>
+        <FILE id="kpH9wa" name="common_sse2.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/common_sse2.h"/>
+        <FILE id="UUuAht" name="common_sse41.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/common_sse41.h"/>
+        <FILE id="XVT1RN" name="cost.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost.c"/>
         <FILE id="lzu9SZ" name="cost_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/cost_mips_dsp_r2.c"/>
-        <FILE id="wWiG8j" name="cost_mips32.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/cost_mips32.c"/>
-        <FILE id="yOYl3C" name="cost_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/cost_neon.c"/>
-        <FILE id="X55AQd" name="cost_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/cost_sse2.c"/>
-        <FILE id="PgUPme" name="cpu.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/cpu.c"/>
-        <FILE id="ppA6B1" name="cpu.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/cpu.h"/>
-        <FILE id="NF8uc0" name="dec.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec.c"/>
+              file="../libwebp-1.3.2/src/dsp/cost_mips_dsp_r2.c"/>
+        <FILE id="wWiG8j" name="cost_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_mips32.c"/>
+        <FILE id="yOYl3C" name="cost_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_neon.c"/>
+        <FILE id="X55AQd" name="cost_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_sse2.c"/>
+        <FILE id="PgUPme" name="cpu.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cpu.c"/>
+        <FILE id="ppA6B1" name="cpu.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/cpu.h"/>
+        <FILE id="NF8uc0" name="dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec.c"/>
         <FILE id="Z3LZij" name="dec_clip_tables.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/dec_clip_tables.c"/>
+              file="../libwebp-1.3.2/src/dsp/dec_clip_tables.c"/>
         <FILE id="MIOMEu" name="dec_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/dec_mips_dsp_r2.c"/>
-        <FILE id="cPJzRR" name="dec_mips32.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec_mips32.c"/>
-        <FILE id="WJJ0CM" name="dec_msa.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec_msa.c"/>
-        <FILE id="Pco445" name="dec_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec_neon.c"/>
-        <FILE id="zB2iD0" name="dec_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec_sse2.c"/>
-        <FILE id="Xmp8D9" name="dec_sse41.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/dec_sse41.c"/>
-        <FILE id="Ymhh00" name="dsp.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/dsp.h"/>
-        <FILE id="XIFyyJ" name="enc.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc.c"/>
+              file="../libwebp-1.3.2/src/dsp/dec_mips_dsp_r2.c"/>
+        <FILE id="cPJzRR" name="dec_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_mips32.c"/>
+        <FILE id="WJJ0CM" name="dec_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_msa.c"/>
+        <FILE id="Pco445" name="dec_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_neon.c"/>
+        <FILE id="zB2iD0" name="dec_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_sse2.c"/>
+        <FILE id="Xmp8D9" name="dec_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_sse41.c"/>
+        <FILE id="Ymhh00" name="dsp.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/dsp.h"/>
+        <FILE id="XIFyyJ" name="enc.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc.c"/>
         <FILE id="ot3b0e" name="enc_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/enc_mips_dsp_r2.c"/>
-        <FILE id="pS3vVA" name="enc_mips32.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc_mips32.c"/>
-        <FILE id="nfb8Le" name="enc_msa.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc_msa.c"/>
-        <FILE id="Q75ilD" name="enc_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc_neon.c"/>
-        <FILE id="QU1vQH" name="enc_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc_sse2.c"/>
-        <FILE id="yqa1XS" name="enc_sse41.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/enc_sse41.c"/>
-        <FILE id="p70NMD" name="filters.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/filters.c"/>
+              file="../libwebp-1.3.2/src/dsp/enc_mips_dsp_r2.c"/>
+        <FILE id="pS3vVA" name="enc_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_mips32.c"/>
+        <FILE id="nfb8Le" name="enc_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_msa.c"/>
+        <FILE id="Q75ilD" name="enc_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_neon.c"/>
+        <FILE id="QU1vQH" name="enc_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_sse2.c"/>
+        <FILE id="yqa1XS" name="enc_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_sse41.c"/>
+        <FILE id="p70NMD" name="filters.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters.c"/>
         <FILE id="o7bzca" name="filters_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/filters_mips_dsp_r2.c"/>
-        <FILE id="q1WE79" name="filters_msa.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/filters_msa.c"/>
-        <FILE id="bOqywn" name="filters_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/filters_neon.c"/>
-        <FILE id="skQ0Oa" name="filters_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/filters_sse2.c"/>
-        <FILE id="kb8qng" name="lossless.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/lossless.c"/>
-        <FILE id="YpVaBZ" name="lossless.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/lossless.h"/>
+              file="../libwebp-1.3.2/src/dsp/filters_mips_dsp_r2.c"/>
+        <FILE id="q1WE79" name="filters_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_msa.c"/>
+        <FILE id="bOqywn" name="filters_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_neon.c"/>
+        <FILE id="skQ0Oa" name="filters_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_sse2.c"/>
+        <FILE id="kb8qng" name="lossless.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless.c"/>
+        <FILE id="YpVaBZ" name="lossless.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/lossless.h"/>
         <FILE id="jwjd7F" name="lossless_common.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_common.h"/>
-        <FILE id="M2cb7l" name="lossless_enc.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/lossless_enc.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_common.h"/>
+        <FILE id="M2cb7l" name="lossless_enc.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_enc.c"/>
         <FILE id="tZdJ1C" name="lossless_enc_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_mips_dsp_r2.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_mips_dsp_r2.c"/>
         <FILE id="ptNRaU" name="lossless_enc_mips32.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_mips32.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_mips32.c"/>
         <FILE id="wvTQ5U" name="lossless_enc_msa.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_msa.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_msa.c"/>
         <FILE id="omTmHB" name="lossless_enc_neon.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_neon.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_neon.c"/>
         <FILE id="yT4qpi" name="lossless_enc_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_sse2.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_sse2.c"/>
         <FILE id="S0qPBI" name="lossless_enc_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_enc_sse41.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_enc_sse41.c"/>
         <FILE id="OWuTIC" name="lossless_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_mips_dsp_r2.c"/>
-        <FILE id="A8JLuC" name="lossless_msa.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/lossless_msa.c"/>
-        <FILE id="IsQ7O4" name="lossless_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/lossless_neon.c"/>
-        <FILE id="FqoPMp" name="lossless_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/lossless_sse2.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_mips_dsp_r2.c"/>
+        <FILE id="A8JLuC" name="lossless_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_msa.c"/>
+        <FILE id="IsQ7O4" name="lossless_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_neon.c"/>
+        <FILE id="FqoPMp" name="lossless_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_sse2.c"/>
         <FILE id="CvsOaV" name="lossless_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/lossless_sse41.c"/>
-        <FILE id="IMw5UP" name="mips_macro.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/mips_macro.h"/>
-        <FILE id="vs1sPb" name="msa_macro.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/msa_macro.h"/>
-        <FILE id="m1VVgX" name="neon.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/neon.h"/>
-        <FILE id="NHepOP" name="quant.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/quant.h"/>
-        <FILE id="sjugnz" name="rescaler.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/rescaler.c"/>
+              file="../libwebp-1.3.2/src/dsp/lossless_sse41.c"/>
+        <FILE id="IMw5UP" name="mips_macro.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/mips_macro.h"/>
+        <FILE id="vs1sPb" name="msa_macro.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/msa_macro.h"/>
+        <FILE id="m1VVgX" name="neon.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/neon.h"/>
+        <FILE id="NHepOP" name="quant.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/quant.h"/>
+        <FILE id="sjugnz" name="rescaler.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler.c"/>
         <FILE id="YXMxvB" name="rescaler_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/rescaler_mips_dsp_r2.c"/>
+              file="../libwebp-1.3.2/src/dsp/rescaler_mips_dsp_r2.c"/>
         <FILE id="D2mT78" name="rescaler_mips32.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/rescaler_mips32.c"/>
-        <FILE id="YZOB08" name="rescaler_msa.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/rescaler_msa.c"/>
-        <FILE id="gpIrhw" name="rescaler_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/rescaler_neon.c"/>
-        <FILE id="c5xvWE" name="rescaler_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/rescaler_sse2.c"/>
-        <FILE id="SRAOkv" name="ssim.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/ssim.c"/>
-        <FILE id="FjOssJ" name="ssim_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/ssim_sse2.c"/>
-        <FILE id="iNb0HO" name="upsampling.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/upsampling.c"/>
+              file="../libwebp-1.3.2/src/dsp/rescaler_mips32.c"/>
+        <FILE id="YZOB08" name="rescaler_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_msa.c"/>
+        <FILE id="gpIrhw" name="rescaler_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_neon.c"/>
+        <FILE id="c5xvWE" name="rescaler_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_sse2.c"/>
+        <FILE id="SRAOkv" name="ssim.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/ssim.c"/>
+        <FILE id="FjOssJ" name="ssim_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/ssim_sse2.c"/>
+        <FILE id="iNb0HO" name="upsampling.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/upsampling.c"/>
         <FILE id="ZQKhdP" name="upsampling_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/upsampling_mips_dsp_r2.c"/>
+              file="../libwebp-1.3.2/src/dsp/upsampling_mips_dsp_r2.c"/>
         <FILE id="X6rNVB" name="upsampling_msa.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/upsampling_msa.c"/>
+              file="../libwebp-1.3.2/src/dsp/upsampling_msa.c"/>
         <FILE id="AqwDxd" name="upsampling_neon.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/upsampling_neon.c"/>
+              file="../libwebp-1.3.2/src/dsp/upsampling_neon.c"/>
         <FILE id="Fhhw7a" name="upsampling_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/upsampling_sse2.c"/>
+              file="../libwebp-1.3.2/src/dsp/upsampling_sse2.c"/>
         <FILE id="F6Gwl8" name="upsampling_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/upsampling_sse41.c"/>
-        <FILE id="zNotlD" name="yuv.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/yuv.c"/>
-        <FILE id="aQUJh0" name="yuv.h" compile="0" resource="0" file="../libwebp-1.2.4/src/dsp/yuv.h"/>
+              file="../libwebp-1.3.2/src/dsp/upsampling_sse41.c"/>
+        <FILE id="zNotlD" name="yuv.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv.c"/>
+        <FILE id="aQUJh0" name="yuv.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/yuv.h"/>
         <FILE id="Hwgmer" name="yuv_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/dsp/yuv_mips_dsp_r2.c"/>
-        <FILE id="NB3Cq9" name="yuv_mips32.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/yuv_mips32.c"/>
-        <FILE id="zcj8Rq" name="yuv_neon.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/yuv_neon.c"/>
-        <FILE id="zXzzKm" name="yuv_sse2.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/yuv_sse2.c"/>
-        <FILE id="ihjOod" name="yuv_sse41.c" compile="1" resource="0" file="../libwebp-1.2.4/src/dsp/yuv_sse41.c"/>
+              file="../libwebp-1.3.2/src/dsp/yuv_mips_dsp_r2.c"/>
+        <FILE id="NB3Cq9" name="yuv_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_mips32.c"/>
+        <FILE id="zcj8Rq" name="yuv_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_neon.c"/>
+        <FILE id="zXzzKm" name="yuv_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_sse2.c"/>
+        <FILE id="ihjOod" name="yuv_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_sse41.c"/>
       </GROUP>
       <GROUP id="{D2DA6C12-EF61-8D22-975F-913E3E68F25A}" name="utils">
         <FILE id="F0wucg" name="bit_reader_inl_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/bit_reader_inl_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/bit_reader_inl_utils.h"/>
         <FILE id="Zc5Gce" name="bit_reader_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/bit_reader_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/bit_reader_utils.c"/>
         <FILE id="DLacgI" name="bit_reader_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/bit_reader_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/bit_reader_utils.h"/>
         <FILE id="ex5n1c" name="bit_writer_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/bit_writer_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/bit_writer_utils.c"/>
         <FILE id="O1iH5H" name="bit_writer_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/bit_writer_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/bit_writer_utils.h"/>
         <FILE id="PbKVQ6" name="color_cache_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/color_cache_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/color_cache_utils.c"/>
         <FILE id="OZlc2D" name="color_cache_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/color_cache_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/color_cache_utils.h"/>
         <FILE id="TyXpuZ" name="endian_inl_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/endian_inl_utils.h"/>
-        <FILE id="ipeOQg" name="filters_utils.c" compile="1" resource="0" file="../libwebp-1.2.4/src/utils/filters_utils.c"/>
-        <FILE id="BfWTck" name="filters_utils.h" compile="0" resource="0" file="../libwebp-1.2.4/src/utils/filters_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/endian_inl_utils.h"/>
+        <FILE id="ipeOQg" name="filters_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/filters_utils.c"/>
+        <FILE id="BfWTck" name="filters_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/filters_utils.h"/>
         <FILE id="gqZVDA" name="huffman_encode_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/huffman_encode_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/huffman_encode_utils.c"/>
         <FILE id="sNNlNh" name="huffman_encode_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/huffman_encode_utils.h"/>
-        <FILE id="Kq01qB" name="huffman_utils.c" compile="1" resource="0" file="../libwebp-1.2.4/src/utils/huffman_utils.c"/>
-        <FILE id="ZAwRte" name="huffman_utils.h" compile="0" resource="0" file="../libwebp-1.2.4/src/utils/huffman_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/huffman_encode_utils.h"/>
+        <FILE id="Kq01qB" name="huffman_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/huffman_utils.c"/>
+        <FILE id="ZAwRte" name="huffman_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/huffman_utils.h"/>
         <FILE id="o91VnE" name="quant_levels_dec_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/quant_levels_dec_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/quant_levels_dec_utils.c"/>
         <FILE id="BDfDvZ" name="quant_levels_dec_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/quant_levels_dec_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/quant_levels_dec_utils.h"/>
         <FILE id="xusy7t" name="quant_levels_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/quant_levels_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/quant_levels_utils.c"/>
         <FILE id="VZiBqn" name="quant_levels_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/quant_levels_utils.h"/>
-        <FILE id="ymeYYC" name="random_utils.c" compile="1" resource="0" file="../libwebp-1.2.4/src/utils/random_utils.c"/>
-        <FILE id="WosVOH" name="random_utils.h" compile="0" resource="0" file="../libwebp-1.2.4/src/utils/random_utils.h"/>
+              file="../libwebp-1.3.2/src/utils/quant_levels_utils.h"/>
+        <FILE id="ymeYYC" name="random_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/random_utils.c"/>
+        <FILE id="WosVOH" name="random_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/random_utils.h"/>
         <FILE id="vrou3S" name="rescaler_utils.c" compile="1" resource="0"
-              file="../libwebp-1.2.4/src/utils/rescaler_utils.c"/>
+              file="../libwebp-1.3.2/src/utils/rescaler_utils.c"/>
         <FILE id="sCJ5iQ" name="rescaler_utils.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/utils/rescaler_utils.h"/>
-        <FILE id="aP1FFU" name="thread_utils.c" compile="1" resource="0" file="../libwebp-1.2.4/src/utils/thread_utils.c"/>
-        <FILE id="OyfZro" name="thread_utils.h" compile="0" resource="0" file="../libwebp-1.2.4/src/utils/thread_utils.h"/>
-        <FILE id="OgxU25" name="utils.c" compile="1" resource="0" file="../libwebp-1.2.4/src/utils/utils.c"/>
-        <FILE id="S7I4xo" name="utils.h" compile="0" resource="0" file="../libwebp-1.2.4/src/utils/utils.h"/>
+              file="../libwebp-1.3.2/src/utils/rescaler_utils.h"/>
+        <FILE id="aP1FFU" name="thread_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/thread_utils.c"/>
+        <FILE id="OyfZro" name="thread_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/thread_utils.h"/>
+        <FILE id="OgxU25" name="utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/utils.c"/>
+        <FILE id="S7I4xo" name="utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/utils.h"/>
       </GROUP>
       <GROUP id="{103016F7-032A-19F9-394F-DC4120CA9432}" name="webp">
-        <FILE id="dGjt4Y" name="decode.h" compile="0" resource="0" file="../libwebp-1.2.4/src/webp/decode.h"/>
+        <FILE id="dGjt4Y" name="decode.h" compile="0" resource="0" file="../libwebp-1.3.2/src/webp/decode.h"/>
         <FILE id="z1wFd0" name="format_constants.h" compile="0" resource="0"
-              file="../libwebp-1.2.4/src/webp/format_constants.h"/>
-        <FILE id="fYmuKi" name="types.h" compile="0" resource="0" file="../libwebp-1.2.4/src/webp/types.h"/>
+              file="../libwebp-1.3.2/src/webp/format_constants.h"/>
+        <FILE id="fYmuKi" name="types.h" compile="0" resource="0" file="../libwebp-1.3.2/src/webp/types.h"/>
       </GROUP>
     </GROUP>
     <GROUP id="{05F38623-6988-2488-0672-48CAD8E99FCC}" name="openjpeg">
@@ -690,9 +690,9 @@
                 userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h"
                 smallIcon="cCtoK8" bigIcon="cCtoK8">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2"
                        userNotes="make CONFIG=Debug"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.2.4"
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2"
                        userNotes="make CONFIG=Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -709,9 +709,9 @@
             userNotes="Installation de la LibJpeg (jpeg-9e) : copier jconfig.vc en jconfig.h"
             smallIcon="cCtoK8" bigIcon="cCtoK8">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.2.4"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"
                        postbuildCommand="MKDIR .\x64\Debug\App\Images&#10;COPY ..\..\Images\*.* .\x64\Debug\App\Images&#10;"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.2.4"
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"
                        postbuildCommand="MKDIR .\x64\Release\App\Images&#10;COPY ..\..\Images\*.* .\x64\Release\App\Images&#10;"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

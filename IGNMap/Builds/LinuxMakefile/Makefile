@@ -39,7 +39,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=1" "-DJUCE_USE_DARK_SPLASH_SCREEN=1" "-DJUCE_PROJUCER_VERSION=0x70009" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DOPJ_STATIC" "-DLASZIPDLL_EXPORTS" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.2.4 $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=1" "-DJUCE_USE_DARK_SPLASH_SCREEN=1" "-DJUCE_PROJUCER_VERSION=0x70009" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DOPJ_STATIC" "-DLASZIPDLL_EXPORTS" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=1" "-DJUCE_USE_DARK_SPLASH_SCREEN=1" "-DJUCE_PROJUCER_VERSION=0x70009" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DOPJ_STATIC" "-DLASZIPDLL_EXPORTS" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.2.4 $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=1" "-DJUCE_USE_DARK_SPLASH_SCREEN=1" "-DJUCE_PROJUCER_VERSION=0x70009" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DOPJ_STATIC" "-DLASZIPDLL_EXPORTS" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -138,92 +138,92 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/laszip_f8e72c40.o \
   $(JUCE_OBJDIR)/laszip_dll_ad018865.o \
   $(JUCE_OBJDIR)/mydefs_619244b7.o \
-  $(JUCE_OBJDIR)/alpha_dec_84673aaf.o \
-  $(JUCE_OBJDIR)/buffer_dec_1cdb307f.o \
-  $(JUCE_OBJDIR)/frame_dec_5193ab7e.o \
-  $(JUCE_OBJDIR)/idec_dec_f5bb7238.o \
-  $(JUCE_OBJDIR)/io_dec_7ad7e065.o \
-  $(JUCE_OBJDIR)/quant_dec_15a252d4.o \
-  $(JUCE_OBJDIR)/tree_dec_fa6dd71d.o \
-  $(JUCE_OBJDIR)/vp8_dec_b7d74c4f.o \
-  $(JUCE_OBJDIR)/vp8l_dec_ea2e96ed.o \
-  $(JUCE_OBJDIR)/webp_dec_5e118c9b.o \
-  $(JUCE_OBJDIR)/alpha_processing_f35b13f1.o \
-  $(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_bc7fcd50.o \
-  $(JUCE_OBJDIR)/alpha_processing_neon_2d72beee.o \
-  $(JUCE_OBJDIR)/alpha_processing_sse2_36bad625.o \
-  $(JUCE_OBJDIR)/alpha_processing_sse41_a0a0dc74.o \
-  $(JUCE_OBJDIR)/cost_dee548ea.o \
-  $(JUCE_OBJDIR)/cost_mips_dsp_r2_43cd54c9.o \
-  $(JUCE_OBJDIR)/cost_mips32_b5cb4e7d.o \
-  $(JUCE_OBJDIR)/cost_neon_4d0fbd95.o \
-  $(JUCE_OBJDIR)/cost_sse2_5657d4cc.o \
-  $(JUCE_OBJDIR)/cpu_b49c7e35.o \
-  $(JUCE_OBJDIR)/dec_b4a5520f.o \
-  $(JUCE_OBJDIR)/dec_clip_tables_13424e44.o \
-  $(JUCE_OBJDIR)/dec_mips_dsp_r2_8db7ce6e.o \
-  $(JUCE_OBJDIR)/dec_mips32_d62aa1b8.o \
-  $(JUCE_OBJDIR)/dec_msa_b2dfcccb.o \
-  $(JUCE_OBJDIR)/dec_neon_aa10a390.o \
-  $(JUCE_OBJDIR)/dec_sse2_b358bac7.o \
-  $(JUCE_OBJDIR)/dec_sse41_b7bf8c12.o \
-  $(JUCE_OBJDIR)/enc_b4b780e7.o \
-  $(JUCE_OBJDIR)/enc_mips_dsp_r2_cc827946.o \
-  $(JUCE_OBJDIR)/enc_mips32_19e68fe0.o \
-  $(JUCE_OBJDIR)/enc_msa_ee0ecfa3.o \
-  $(JUCE_OBJDIR)/enc_neon_d4c1fbb8.o \
-  $(JUCE_OBJDIR)/enc_sse2_de0a12ef.o \
-  $(JUCE_OBJDIR)/enc_sse41_e33938ea.o \
-  $(JUCE_OBJDIR)/filters_7a6a4bc8.o \
-  $(JUCE_OBJDIR)/filters_mips_dsp_r2_9b7efaa7.o \
-  $(JUCE_OBJDIR)/filters_msa_b5af4204.o \
-  $(JUCE_OBJDIR)/filters_neon_12fd577.o \
-  $(JUCE_OBJDIR)/filters_sse2_a77ecae.o \
-  $(JUCE_OBJDIR)/lossless_b3b02499.o \
-  $(JUCE_OBJDIR)/lossless_enc_b3574ff4.o \
-  $(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_e38b1cd3.o \
-  $(JUCE_OBJDIR)/lossless_enc_mips32_941f2833.o \
-  $(JUCE_OBJDIR)/lossless_enc_msa_eae65030.o \
-  $(JUCE_OBJDIR)/lossless_enc_neon_72da8ccb.o \
-  $(JUCE_OBJDIR)/lossless_enc_sse2_7c22a402.o \
-  $(JUCE_OBJDIR)/lossless_enc_sse41_832ca37.o \
-  $(JUCE_OBJDIR)/lossless_mips_dsp_r2_5bb921f8.o \
-  $(JUCE_OBJDIR)/lossless_msa_b3ca4a55.o \
-  $(JUCE_OBJDIR)/lossless_neon_c675d746.o \
-  $(JUCE_OBJDIR)/lossless_sse2_cfbdee7d.o \
-  $(JUCE_OBJDIR)/lossless_sse41_2800cf1c.o \
-  $(JUCE_OBJDIR)/rescaler_41efb5f8.o \
-  $(JUCE_OBJDIR)/rescaler_mips_dsp_r2_3cc69cd7.o \
-  $(JUCE_OBJDIR)/rescaler_mips32_41ecb5af.o \
-  $(JUCE_OBJDIR)/rescaler_msa_b141434.o \
-  $(JUCE_OBJDIR)/rescaler_neon_58654947.o \
-  $(JUCE_OBJDIR)/rescaler_sse2_61ad607e.o \
-  $(JUCE_OBJDIR)/ssim_fa668ae1.o \
-  $(JUCE_OBJDIR)/ssim_sse2_d3f43535.o \
-  $(JUCE_OBJDIR)/upsampling_96f1255f.o \
-  $(JUCE_OBJDIR)/upsampling_mips_dsp_r2_ded129be.o \
-  $(JUCE_OBJDIR)/upsampling_msa_1971781b.o \
-  $(JUCE_OBJDIR)/upsampling_neon_15b46240.o \
-  $(JUCE_OBJDIR)/upsampling_sse2_1efc7977.o \
-  $(JUCE_OBJDIR)/upsampling_sse41_c093a362.o \
-  $(JUCE_OBJDIR)/yuv_b5d4cce7.o \
-  $(JUCE_OBJDIR)/yuv_mips_dsp_r2_f00dc546.o \
-  $(JUCE_OBJDIR)/yuv_mips32_e77bc3e0.o \
-  $(JUCE_OBJDIR)/yuv_neon_ae142fb8.o \
-  $(JUCE_OBJDIR)/yuv_sse2_b75c46ef.o \
-  $(JUCE_OBJDIR)/yuv_sse41_342d84ea.o \
-  $(JUCE_OBJDIR)/bit_reader_utils_1bed8754.o \
-  $(JUCE_OBJDIR)/bit_writer_utils_2dc22304.o \
-  $(JUCE_OBJDIR)/color_cache_utils_f87e62d5.o \
-  $(JUCE_OBJDIR)/filters_utils_93273a2a.o \
-  $(JUCE_OBJDIR)/huffman_encode_utils_a3a2307.o \
-  $(JUCE_OBJDIR)/huffman_utils_636937dc.o \
-  $(JUCE_OBJDIR)/quant_levels_dec_utils_2a4b91cd.o \
-  $(JUCE_OBJDIR)/quant_levels_utils_b0347b0a.o \
-  $(JUCE_OBJDIR)/random_utils_d887b9e2.o \
-  $(JUCE_OBJDIR)/rescaler_utils_b6985b7a.o \
-  $(JUCE_OBJDIR)/thread_utils_4317ac29.o \
-  $(JUCE_OBJDIR)/utils_56d1a26e.o \
+  $(JUCE_OBJDIR)/alpha_dec_b566e8ee.o \
+  $(JUCE_OBJDIR)/buffer_dec_bd14a20.o \
+  $(JUCE_OBJDIR)/frame_dec_829359bd.o \
+  $(JUCE_OBJDIR)/idec_dec_acfd8019.o \
+  $(JUCE_OBJDIR)/io_dec_d955f286.o \
+  $(JUCE_OBJDIR)/quant_dec_46a20113.o \
+  $(JUCE_OBJDIR)/tree_dec_b1afe4fe.o \
+  $(JUCE_OBJDIR)/vp8_dec_291b7e4e.o \
+  $(JUCE_OBJDIR)/vp8l_dec_a170a4ce.o \
+  $(JUCE_OBJDIR)/webp_dec_15539a7c.o \
+  $(JUCE_OBJDIR)/alpha_processing_1265b0d2.o \
+  $(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_15a920b1.o \
+  $(JUCE_OBJDIR)/alpha_processing_neon_989c06ad.o \
+  $(JUCE_OBJDIR)/alpha_processing_sse2_a1e41de4.o \
+  $(JUCE_OBJDIR)/alpha_processing_sse41_9aa08c95.o \
+  $(JUCE_OBJDIR)/cost_e0536f4b.o \
+  $(JUCE_OBJDIR)/cost_mips_dsp_r2_62d7f1aa.o \
+  $(JUCE_OBJDIR)/cost_mips32_a59868fc.o \
+  $(JUCE_OBJDIR)/cost_neon_7e0f6bd4.o \
+  $(JUCE_OBJDIR)/cost_sse2_8757830b.o \
+  $(JUCE_OBJDIR)/cpu_518f87b4.o \
+  $(JUCE_OBJDIR)/dec_51985b8e.o \
+  $(JUCE_OBJDIR)/dec_clip_tables_c9f01143.o \
+  $(JUCE_OBJDIR)/dec_mips_dsp_r2_4465916d.o \
+  $(JUCE_OBJDIR)/dec_mips32_c520bb59.o \
+  $(JUCE_OBJDIR)/dec_msa_2423feca.o \
+  $(JUCE_OBJDIR)/dec_neon_6152b171.o \
+  $(JUCE_OBJDIR)/dec_sse2_6a9ac8a8.o \
+  $(JUCE_OBJDIR)/dec_sse41_e8bf3a51.o \
+  $(JUCE_OBJDIR)/enc_51aa8a66.o \
+  $(JUCE_OBJDIR)/enc_mips_dsp_r2_83303c45.o \
+  $(JUCE_OBJDIR)/enc_mips32_8dca981.o \
+  $(JUCE_OBJDIR)/enc_msa_5f5301a2.o \
+  $(JUCE_OBJDIR)/enc_neon_8c040999.o \
+  $(JUCE_OBJDIR)/enc_sse2_954c20d0.o \
+  $(JUCE_OBJDIR)/enc_sse41_1438e729.o \
+  $(JUCE_OBJDIR)/filters_ebae7dc7.o \
+  $(JUCE_OBJDIR)/filters_mips_dsp_r2_ef852626.o \
+  $(JUCE_OBJDIR)/filters_msa_a57c5c83.o \
+  $(JUCE_OBJDIR)/filters_neon_b060ad8.o \
+  $(JUCE_OBJDIR)/filters_sse2_144e220f.o \
+  $(JUCE_OBJDIR)/lossless_6af2327a.o \
+  $(JUCE_OBJDIR)/lossless_enc_bd2d8555.o \
+  $(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_5c5f48b4.o \
+  $(JUCE_OBJDIR)/lossless_enc_mips32_e82553b2.o \
+  $(JUCE_OBJDIR)/lossless_enc_msa_9f0ed11.o \
+  $(JUCE_OBJDIR)/lossless_enc_neon_35238c0a.o \
+  $(JUCE_OBJDIR)/lossless_enc_sse2_3e6ba341.o \
+  $(JUCE_OBJDIR)/lossless_enc_sse41_8f09b2d8.o \
+  $(JUCE_OBJDIR)/lossless_mips_dsp_r2_88786659.o \
+  $(JUCE_OBJDIR)/lossless_msa_bda07fb6.o \
+  $(JUCE_OBJDIR)/lossless_neon_f7664e05.o \
+  $(JUCE_OBJDIR)/lossless_sse2_ae653c.o \
+  $(JUCE_OBJDIR)/lossless_sse41_151f303d.o \
+  $(JUCE_OBJDIR)/rescaler_f931c3d9.o \
+  $(JUCE_OBJDIR)/rescaler_mips_dsp_r2_6985e138.o \
+  $(JUCE_OBJDIR)/rescaler_mips32_f89a78ae.o \
+  $(JUCE_OBJDIR)/rescaler_msa_14ea4995.o \
+  $(JUCE_OBJDIR)/rescaler_neon_8955c006.o \
+  $(JUCE_OBJDIR)/rescaler_sse2_929dd73d.o \
+  $(JUCE_OBJDIR)/ssim_fbd4b142.o \
+  $(JUCE_OBJDIR)/ssim_sse2_4f3e374.o \
+  $(JUCE_OBJDIR)/upsampling_85e73f00.o \
+  $(JUCE_OBJDIR)/upsampling_mips_dsp_r2_d8d0d9df.o \
+  $(JUCE_OBJDIR)/upsampling_msa_68fd93c.o \
+  $(JUCE_OBJDIR)/upsampling_neon_cc62253f.o \
+  $(JUCE_OBJDIR)/upsampling_sse2_d5aa3c76.o \
+  $(JUCE_OBJDIR)/upsampling_sse41_df9e4043.o \
+  $(JUCE_OBJDIR)/yuv_52c7d666.o \
+  $(JUCE_OBJDIR)/yuv_mips_dsp_r2_a6bb8845.o \
+  $(JUCE_OBJDIR)/yuv_mips32_d671dd81.o \
+  $(JUCE_OBJDIR)/yuv_neon_65563d99.o \
+  $(JUCE_OBJDIR)/yuv_sse2_6e9e54d0.o \
+  $(JUCE_OBJDIR)/yuv_sse41_652d3329.o \
+  $(JUCE_OBJDIR)/bit_reader_utils_a2c46ff5.o \
+  $(JUCE_OBJDIR)/bit_writer_utils_b4990ba5.o \
+  $(JUCE_OBJDIR)/color_cache_utils_4c848e54.o \
+  $(JUCE_OBJDIR)/filters_utils_49d4fd29.o \
+  $(JUCE_OBJDIR)/huffman_encode_utils_439d328.o \
+  $(JUCE_OBJDIR)/huffman_utils_1a16fadb.o \
+  $(JUCE_OBJDIR)/quant_levels_dec_utils_a31fbdae.o \
+  $(JUCE_OBJDIR)/quant_levels_utils_dcf3bf6b.o \
+  $(JUCE_OBJDIR)/random_utils_c5a61b03.o \
+  $(JUCE_OBJDIR)/rescaler_utils_d5a2f85b.o \
+  $(JUCE_OBJDIR)/thread_utils_30360d4a.o \
+  $(JUCE_OBJDIR)/utils_c815d46d.o \
   $(JUCE_OBJDIR)/bio_2615f04d.o \
   $(JUCE_OBJDIR)/cio_262407ce.o \
   $(JUCE_OBJDIR)/dwt_26388f46.o \
@@ -691,432 +691,432 @@ $(JUCE_OBJDIR)/mydefs_619244b7.o: ../../../LASzip/src/mydefs.cpp
 	@echo "Compiling mydefs.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_dec_84673aaf.o: ../../../libwebp-1.2.4/src/dec/alpha_dec.c
+$(JUCE_OBJDIR)/alpha_dec_b566e8ee.o: ../../../libwebp-1.3.2/src/dec/alpha_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/buffer_dec_1cdb307f.o: ../../../libwebp-1.2.4/src/dec/buffer_dec.c
+$(JUCE_OBJDIR)/buffer_dec_bd14a20.o: ../../../libwebp-1.3.2/src/dec/buffer_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling buffer_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/frame_dec_5193ab7e.o: ../../../libwebp-1.2.4/src/dec/frame_dec.c
+$(JUCE_OBJDIR)/frame_dec_829359bd.o: ../../../libwebp-1.3.2/src/dec/frame_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling frame_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/idec_dec_f5bb7238.o: ../../../libwebp-1.2.4/src/dec/idec_dec.c
+$(JUCE_OBJDIR)/idec_dec_acfd8019.o: ../../../libwebp-1.3.2/src/dec/idec_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling idec_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/io_dec_7ad7e065.o: ../../../libwebp-1.2.4/src/dec/io_dec.c
+$(JUCE_OBJDIR)/io_dec_d955f286.o: ../../../libwebp-1.3.2/src/dec/io_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling io_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_dec_15a252d4.o: ../../../libwebp-1.2.4/src/dec/quant_dec.c
+$(JUCE_OBJDIR)/quant_dec_46a20113.o: ../../../libwebp-1.3.2/src/dec/quant_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/tree_dec_fa6dd71d.o: ../../../libwebp-1.2.4/src/dec/tree_dec.c
+$(JUCE_OBJDIR)/tree_dec_b1afe4fe.o: ../../../libwebp-1.3.2/src/dec/tree_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling tree_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/vp8_dec_b7d74c4f.o: ../../../libwebp-1.2.4/src/dec/vp8_dec.c
+$(JUCE_OBJDIR)/vp8_dec_291b7e4e.o: ../../../libwebp-1.3.2/src/dec/vp8_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling vp8_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/vp8l_dec_ea2e96ed.o: ../../../libwebp-1.2.4/src/dec/vp8l_dec.c
+$(JUCE_OBJDIR)/vp8l_dec_a170a4ce.o: ../../../libwebp-1.3.2/src/dec/vp8l_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling vp8l_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/webp_dec_5e118c9b.o: ../../../libwebp-1.2.4/src/dec/webp_dec.c
+$(JUCE_OBJDIR)/webp_dec_15539a7c.o: ../../../libwebp-1.3.2/src/dec/webp_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling webp_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_f35b13f1.o: ../../../libwebp-1.2.4/src/dsp/alpha_processing.c
+$(JUCE_OBJDIR)/alpha_processing_1265b0d2.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_bc7fcd50.o: ../../../libwebp-1.2.4/src/dsp/alpha_processing_mips_dsp_r2.c
+$(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_15a920b1.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_neon_2d72beee.o: ../../../libwebp-1.2.4/src/dsp/alpha_processing_neon.c
+$(JUCE_OBJDIR)/alpha_processing_neon_989c06ad.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_sse2_36bad625.o: ../../../libwebp-1.2.4/src/dsp/alpha_processing_sse2.c
+$(JUCE_OBJDIR)/alpha_processing_sse2_a1e41de4.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_sse41_a0a0dc74.o: ../../../libwebp-1.2.4/src/dsp/alpha_processing_sse41.c
+$(JUCE_OBJDIR)/alpha_processing_sse41_9aa08c95.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_dee548ea.o: ../../../libwebp-1.2.4/src/dsp/cost.c
+$(JUCE_OBJDIR)/cost_e0536f4b.o: ../../../libwebp-1.3.2/src/dsp/cost.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_mips_dsp_r2_43cd54c9.o: ../../../libwebp-1.2.4/src/dsp/cost_mips_dsp_r2.c
+$(JUCE_OBJDIR)/cost_mips_dsp_r2_62d7f1aa.o: ../../../libwebp-1.3.2/src/dsp/cost_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_mips32_b5cb4e7d.o: ../../../libwebp-1.2.4/src/dsp/cost_mips32.c
+$(JUCE_OBJDIR)/cost_mips32_a59868fc.o: ../../../libwebp-1.3.2/src/dsp/cost_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_neon_4d0fbd95.o: ../../../libwebp-1.2.4/src/dsp/cost_neon.c
+$(JUCE_OBJDIR)/cost_neon_7e0f6bd4.o: ../../../libwebp-1.3.2/src/dsp/cost_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_sse2_5657d4cc.o: ../../../libwebp-1.2.4/src/dsp/cost_sse2.c
+$(JUCE_OBJDIR)/cost_sse2_8757830b.o: ../../../libwebp-1.3.2/src/dsp/cost_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cpu_b49c7e35.o: ../../../libwebp-1.2.4/src/dsp/cpu.c
+$(JUCE_OBJDIR)/cpu_518f87b4.o: ../../../libwebp-1.3.2/src/dsp/cpu.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cpu.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_b4a5520f.o: ../../../libwebp-1.2.4/src/dsp/dec.c
+$(JUCE_OBJDIR)/dec_51985b8e.o: ../../../libwebp-1.3.2/src/dsp/dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_clip_tables_13424e44.o: ../../../libwebp-1.2.4/src/dsp/dec_clip_tables.c
+$(JUCE_OBJDIR)/dec_clip_tables_c9f01143.o: ../../../libwebp-1.3.2/src/dsp/dec_clip_tables.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_clip_tables.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_mips_dsp_r2_8db7ce6e.o: ../../../libwebp-1.2.4/src/dsp/dec_mips_dsp_r2.c
+$(JUCE_OBJDIR)/dec_mips_dsp_r2_4465916d.o: ../../../libwebp-1.3.2/src/dsp/dec_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_mips32_d62aa1b8.o: ../../../libwebp-1.2.4/src/dsp/dec_mips32.c
+$(JUCE_OBJDIR)/dec_mips32_c520bb59.o: ../../../libwebp-1.3.2/src/dsp/dec_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_msa_b2dfcccb.o: ../../../libwebp-1.2.4/src/dsp/dec_msa.c
+$(JUCE_OBJDIR)/dec_msa_2423feca.o: ../../../libwebp-1.3.2/src/dsp/dec_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_neon_aa10a390.o: ../../../libwebp-1.2.4/src/dsp/dec_neon.c
+$(JUCE_OBJDIR)/dec_neon_6152b171.o: ../../../libwebp-1.3.2/src/dsp/dec_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_sse2_b358bac7.o: ../../../libwebp-1.2.4/src/dsp/dec_sse2.c
+$(JUCE_OBJDIR)/dec_sse2_6a9ac8a8.o: ../../../libwebp-1.3.2/src/dsp/dec_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_sse41_b7bf8c12.o: ../../../libwebp-1.2.4/src/dsp/dec_sse41.c
+$(JUCE_OBJDIR)/dec_sse41_e8bf3a51.o: ../../../libwebp-1.3.2/src/dsp/dec_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_b4b780e7.o: ../../../libwebp-1.2.4/src/dsp/enc.c
+$(JUCE_OBJDIR)/enc_51aa8a66.o: ../../../libwebp-1.3.2/src/dsp/enc.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_mips_dsp_r2_cc827946.o: ../../../libwebp-1.2.4/src/dsp/enc_mips_dsp_r2.c
+$(JUCE_OBJDIR)/enc_mips_dsp_r2_83303c45.o: ../../../libwebp-1.3.2/src/dsp/enc_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_mips32_19e68fe0.o: ../../../libwebp-1.2.4/src/dsp/enc_mips32.c
+$(JUCE_OBJDIR)/enc_mips32_8dca981.o: ../../../libwebp-1.3.2/src/dsp/enc_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_msa_ee0ecfa3.o: ../../../libwebp-1.2.4/src/dsp/enc_msa.c
+$(JUCE_OBJDIR)/enc_msa_5f5301a2.o: ../../../libwebp-1.3.2/src/dsp/enc_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_neon_d4c1fbb8.o: ../../../libwebp-1.2.4/src/dsp/enc_neon.c
+$(JUCE_OBJDIR)/enc_neon_8c040999.o: ../../../libwebp-1.3.2/src/dsp/enc_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_sse2_de0a12ef.o: ../../../libwebp-1.2.4/src/dsp/enc_sse2.c
+$(JUCE_OBJDIR)/enc_sse2_954c20d0.o: ../../../libwebp-1.3.2/src/dsp/enc_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_sse41_e33938ea.o: ../../../libwebp-1.2.4/src/dsp/enc_sse41.c
+$(JUCE_OBJDIR)/enc_sse41_1438e729.o: ../../../libwebp-1.3.2/src/dsp/enc_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_7a6a4bc8.o: ../../../libwebp-1.2.4/src/dsp/filters.c
+$(JUCE_OBJDIR)/filters_ebae7dc7.o: ../../../libwebp-1.3.2/src/dsp/filters.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_mips_dsp_r2_9b7efaa7.o: ../../../libwebp-1.2.4/src/dsp/filters_mips_dsp_r2.c
+$(JUCE_OBJDIR)/filters_mips_dsp_r2_ef852626.o: ../../../libwebp-1.3.2/src/dsp/filters_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_msa_b5af4204.o: ../../../libwebp-1.2.4/src/dsp/filters_msa.c
+$(JUCE_OBJDIR)/filters_msa_a57c5c83.o: ../../../libwebp-1.3.2/src/dsp/filters_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_neon_12fd577.o: ../../../libwebp-1.2.4/src/dsp/filters_neon.c
+$(JUCE_OBJDIR)/filters_neon_b060ad8.o: ../../../libwebp-1.3.2/src/dsp/filters_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_sse2_a77ecae.o: ../../../libwebp-1.2.4/src/dsp/filters_sse2.c
+$(JUCE_OBJDIR)/filters_sse2_144e220f.o: ../../../libwebp-1.3.2/src/dsp/filters_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_b3b02499.o: ../../../libwebp-1.2.4/src/dsp/lossless.c
+$(JUCE_OBJDIR)/lossless_6af2327a.o: ../../../libwebp-1.3.2/src/dsp/lossless.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_b3574ff4.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc.c
+$(JUCE_OBJDIR)/lossless_enc_bd2d8555.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_e38b1cd3.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_mips_dsp_r2.c
+$(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_5c5f48b4.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_mips32_941f2833.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_mips32.c
+$(JUCE_OBJDIR)/lossless_enc_mips32_e82553b2.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_msa_eae65030.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_msa.c
+$(JUCE_OBJDIR)/lossless_enc_msa_9f0ed11.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_neon_72da8ccb.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_neon.c
+$(JUCE_OBJDIR)/lossless_enc_neon_35238c0a.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_sse2_7c22a402.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_sse2.c
+$(JUCE_OBJDIR)/lossless_enc_sse2_3e6ba341.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_sse41_832ca37.o: ../../../libwebp-1.2.4/src/dsp/lossless_enc_sse41.c
+$(JUCE_OBJDIR)/lossless_enc_sse41_8f09b2d8.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_mips_dsp_r2_5bb921f8.o: ../../../libwebp-1.2.4/src/dsp/lossless_mips_dsp_r2.c
+$(JUCE_OBJDIR)/lossless_mips_dsp_r2_88786659.o: ../../../libwebp-1.3.2/src/dsp/lossless_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_msa_b3ca4a55.o: ../../../libwebp-1.2.4/src/dsp/lossless_msa.c
+$(JUCE_OBJDIR)/lossless_msa_bda07fb6.o: ../../../libwebp-1.3.2/src/dsp/lossless_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_neon_c675d746.o: ../../../libwebp-1.2.4/src/dsp/lossless_neon.c
+$(JUCE_OBJDIR)/lossless_neon_f7664e05.o: ../../../libwebp-1.3.2/src/dsp/lossless_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_sse2_cfbdee7d.o: ../../../libwebp-1.2.4/src/dsp/lossless_sse2.c
+$(JUCE_OBJDIR)/lossless_sse2_ae653c.o: ../../../libwebp-1.3.2/src/dsp/lossless_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_sse41_2800cf1c.o: ../../../libwebp-1.2.4/src/dsp/lossless_sse41.c
+$(JUCE_OBJDIR)/lossless_sse41_151f303d.o: ../../../libwebp-1.3.2/src/dsp/lossless_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_41efb5f8.o: ../../../libwebp-1.2.4/src/dsp/rescaler.c
+$(JUCE_OBJDIR)/rescaler_f931c3d9.o: ../../../libwebp-1.3.2/src/dsp/rescaler.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_mips_dsp_r2_3cc69cd7.o: ../../../libwebp-1.2.4/src/dsp/rescaler_mips_dsp_r2.c
+$(JUCE_OBJDIR)/rescaler_mips_dsp_r2_6985e138.o: ../../../libwebp-1.3.2/src/dsp/rescaler_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_mips32_41ecb5af.o: ../../../libwebp-1.2.4/src/dsp/rescaler_mips32.c
+$(JUCE_OBJDIR)/rescaler_mips32_f89a78ae.o: ../../../libwebp-1.3.2/src/dsp/rescaler_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_msa_b141434.o: ../../../libwebp-1.2.4/src/dsp/rescaler_msa.c
+$(JUCE_OBJDIR)/rescaler_msa_14ea4995.o: ../../../libwebp-1.3.2/src/dsp/rescaler_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_neon_58654947.o: ../../../libwebp-1.2.4/src/dsp/rescaler_neon.c
+$(JUCE_OBJDIR)/rescaler_neon_8955c006.o: ../../../libwebp-1.3.2/src/dsp/rescaler_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_sse2_61ad607e.o: ../../../libwebp-1.2.4/src/dsp/rescaler_sse2.c
+$(JUCE_OBJDIR)/rescaler_sse2_929dd73d.o: ../../../libwebp-1.3.2/src/dsp/rescaler_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ssim_fa668ae1.o: ../../../libwebp-1.2.4/src/dsp/ssim.c
+$(JUCE_OBJDIR)/ssim_fbd4b142.o: ../../../libwebp-1.3.2/src/dsp/ssim.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ssim.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ssim_sse2_d3f43535.o: ../../../libwebp-1.2.4/src/dsp/ssim_sse2.c
+$(JUCE_OBJDIR)/ssim_sse2_4f3e374.o: ../../../libwebp-1.3.2/src/dsp/ssim_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ssim_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_96f1255f.o: ../../../libwebp-1.2.4/src/dsp/upsampling.c
+$(JUCE_OBJDIR)/upsampling_85e73f00.o: ../../../libwebp-1.3.2/src/dsp/upsampling.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_mips_dsp_r2_ded129be.o: ../../../libwebp-1.2.4/src/dsp/upsampling_mips_dsp_r2.c
+$(JUCE_OBJDIR)/upsampling_mips_dsp_r2_d8d0d9df.o: ../../../libwebp-1.3.2/src/dsp/upsampling_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_msa_1971781b.o: ../../../libwebp-1.2.4/src/dsp/upsampling_msa.c
+$(JUCE_OBJDIR)/upsampling_msa_68fd93c.o: ../../../libwebp-1.3.2/src/dsp/upsampling_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_neon_15b46240.o: ../../../libwebp-1.2.4/src/dsp/upsampling_neon.c
+$(JUCE_OBJDIR)/upsampling_neon_cc62253f.o: ../../../libwebp-1.3.2/src/dsp/upsampling_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_sse2_1efc7977.o: ../../../libwebp-1.2.4/src/dsp/upsampling_sse2.c
+$(JUCE_OBJDIR)/upsampling_sse2_d5aa3c76.o: ../../../libwebp-1.3.2/src/dsp/upsampling_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_sse41_c093a362.o: ../../../libwebp-1.2.4/src/dsp/upsampling_sse41.c
+$(JUCE_OBJDIR)/upsampling_sse41_df9e4043.o: ../../../libwebp-1.3.2/src/dsp/upsampling_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_b5d4cce7.o: ../../../libwebp-1.2.4/src/dsp/yuv.c
+$(JUCE_OBJDIR)/yuv_52c7d666.o: ../../../libwebp-1.3.2/src/dsp/yuv.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_mips_dsp_r2_f00dc546.o: ../../../libwebp-1.2.4/src/dsp/yuv_mips_dsp_r2.c
+$(JUCE_OBJDIR)/yuv_mips_dsp_r2_a6bb8845.o: ../../../libwebp-1.3.2/src/dsp/yuv_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_mips32_e77bc3e0.o: ../../../libwebp-1.2.4/src/dsp/yuv_mips32.c
+$(JUCE_OBJDIR)/yuv_mips32_d671dd81.o: ../../../libwebp-1.3.2/src/dsp/yuv_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_neon_ae142fb8.o: ../../../libwebp-1.2.4/src/dsp/yuv_neon.c
+$(JUCE_OBJDIR)/yuv_neon_65563d99.o: ../../../libwebp-1.3.2/src/dsp/yuv_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_sse2_b75c46ef.o: ../../../libwebp-1.2.4/src/dsp/yuv_sse2.c
+$(JUCE_OBJDIR)/yuv_sse2_6e9e54d0.o: ../../../libwebp-1.3.2/src/dsp/yuv_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_sse41_342d84ea.o: ../../../libwebp-1.2.4/src/dsp/yuv_sse41.c
+$(JUCE_OBJDIR)/yuv_sse41_652d3329.o: ../../../libwebp-1.3.2/src/dsp/yuv_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/bit_reader_utils_1bed8754.o: ../../../libwebp-1.2.4/src/utils/bit_reader_utils.c
+$(JUCE_OBJDIR)/bit_reader_utils_a2c46ff5.o: ../../../libwebp-1.3.2/src/utils/bit_reader_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling bit_reader_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/bit_writer_utils_2dc22304.o: ../../../libwebp-1.2.4/src/utils/bit_writer_utils.c
+$(JUCE_OBJDIR)/bit_writer_utils_b4990ba5.o: ../../../libwebp-1.3.2/src/utils/bit_writer_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling bit_writer_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/color_cache_utils_f87e62d5.o: ../../../libwebp-1.2.4/src/utils/color_cache_utils.c
+$(JUCE_OBJDIR)/color_cache_utils_4c848e54.o: ../../../libwebp-1.3.2/src/utils/color_cache_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling color_cache_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_utils_93273a2a.o: ../../../libwebp-1.2.4/src/utils/filters_utils.c
+$(JUCE_OBJDIR)/filters_utils_49d4fd29.o: ../../../libwebp-1.3.2/src/utils/filters_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/huffman_encode_utils_a3a2307.o: ../../../libwebp-1.2.4/src/utils/huffman_encode_utils.c
+$(JUCE_OBJDIR)/huffman_encode_utils_439d328.o: ../../../libwebp-1.3.2/src/utils/huffman_encode_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling huffman_encode_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/huffman_utils_636937dc.o: ../../../libwebp-1.2.4/src/utils/huffman_utils.c
+$(JUCE_OBJDIR)/huffman_utils_1a16fadb.o: ../../../libwebp-1.3.2/src/utils/huffman_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling huffman_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_levels_dec_utils_2a4b91cd.o: ../../../libwebp-1.2.4/src/utils/quant_levels_dec_utils.c
+$(JUCE_OBJDIR)/quant_levels_dec_utils_a31fbdae.o: ../../../libwebp-1.3.2/src/utils/quant_levels_dec_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_levels_dec_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_levels_utils_b0347b0a.o: ../../../libwebp-1.2.4/src/utils/quant_levels_utils.c
+$(JUCE_OBJDIR)/quant_levels_utils_dcf3bf6b.o: ../../../libwebp-1.3.2/src/utils/quant_levels_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_levels_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/random_utils_d887b9e2.o: ../../../libwebp-1.2.4/src/utils/random_utils.c
+$(JUCE_OBJDIR)/random_utils_c5a61b03.o: ../../../libwebp-1.3.2/src/utils/random_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling random_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_utils_b6985b7a.o: ../../../libwebp-1.2.4/src/utils/rescaler_utils.c
+$(JUCE_OBJDIR)/rescaler_utils_d5a2f85b.o: ../../../libwebp-1.3.2/src/utils/rescaler_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/thread_utils_4317ac29.o: ../../../libwebp-1.2.4/src/utils/thread_utils.c
+$(JUCE_OBJDIR)/thread_utils_30360d4a.o: ../../../libwebp-1.3.2/src/utils/thread_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling thread_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/utils_56d1a26e.o: ../../../libwebp-1.2.4/src/utils/utils.c
+$(JUCE_OBJDIR)/utils_c815d46d.o: ../../../libwebp-1.3.2/src/utils/utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"

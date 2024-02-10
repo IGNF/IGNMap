@@ -60,6 +60,31 @@ juce::String AppUtil::OpenFile(juce::String optionName, juce::String mes, juce::
 }
 
 //==============================================================================
+// Sauvegarde d'un fichier
+//==============================================================================
+juce::String AppUtil::SaveFile(juce::String optionName, juce::String mes, juce::String filter)
+{
+	juce::String path = optionName, message = mes, filters = filter;
+	if (!optionName.isEmpty())
+		path = GetAppOption(optionName);
+	if (mes.isEmpty())
+		message = juce::translate("Save a file...");
+	if (filter.isEmpty())
+		filters = "*";
+
+	juce::FileChooser fc(message, path, filters, true);
+	if (fc.browseForFileToSave(true)) {
+		auto result = fc.getURLResult();
+		auto name = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
+
+		if (!optionName.isEmpty())
+			SaveAppOption(optionName, name);
+		return name;
+	}
+	return "";
+}
+
+//==============================================================================
 // Gestion des options de l'application
 //==============================================================================
 juce::String AppUtil::GetAppOption(juce::String name)

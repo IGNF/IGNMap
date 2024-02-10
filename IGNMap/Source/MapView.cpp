@@ -452,6 +452,7 @@ void MapView::SelectFeatures(const double& X0, const double& Y0, const double& X
 	F += XPt2D(X0, Y0);
 	F += XPt2D(X1, Y1);
 	m_GeoBase->SelectFeatures(&F);
+	m_SelectionFrame = F;
 	sendActionMessage("UpdateSelectFeatures");
 }
 

@@ -630,12 +630,20 @@ static const unsigned char temp_binary_data_15[] =
 "\"Scale\"=\"Echelle\"\r\n"
 "\"Import a vector file\"=\"Import d'un fichier vectoriel\"\r\n"
 "\"Import a vector folder\"=\"Import d'un r\xc3\xa9pertoire de fichiers vectoriels\"\r\n"
-"\"Import a image file\"=\"Import d'un fichier image\"\r\n"
-"\"Import a image folder\"=\"Import d'un r\xc3\xa9pertoire d'images\"\r\n"
+"\"Import an image file\"=\"Import d'un fichier image\"\r\n"
+"\"Import an image folder\"=\"Import d'un r\xc3\xa9pertoire d'images\"\r\n"
 "\"Import a DTM file\"=\"Import d'un fichier MNT\"\r\n"
 "\"Import a DTM folder\"=\"Import d'un r\xc3\xa9pertoire de MNT\"\r\n"
 "\"Import a LAS/LAZ file\"=\"Import d'un fichier LAS/LAZ\"\r\n"
 "\"Import a LAS/LAZ folder\"=\"Import d'un r\xc3\xa9pertoire de LAS/LAZ\"\r\n"
+"\"Import OSM data\"=\"Import de la cartographie OSM\"\r\n"
+"\"Historic Orthophoto\"=\"Orthophoto historique\"\r\n"
+"\"Cartography\"=\"Cartographie\"\r\n"
+"\"Historic Scan50\"=\"Scan50 historique\"\r\n"
+"\"Tools\"=\"Outils\"\r\n"
+"\"Synchronize\"=\"Synchroniser\r\n"
+"\"View 3D Viewer\"=\"Afficher la vue 3D\"\r\n"
+"\"Select 3D view\"=\"S\xc3\xa9lection pour la vue 3D\"\r\n"
 "\"Panels\"=\"Panneaux\"\r\n"
 "\"Vector Layers\"=\"Couches vectorielles\"\r\n"
 "\"RGB channels :\"=\"Canaux RVB :\"\r\n"
@@ -643,7 +651,8 @@ static const unsigned char temp_binary_data_15[] =
 "\"Double-click for copying\"=\"Double-cliquer pour copier\"\r\n"
 "\"Layer Center\"=\"Centre de la couche\"\r\n"
 "\"Layer Frame\"=\"Cadre de la couche\"\r\n"
-"\"Remove\"=\"Supprimer\"";
+"\"Remove\"=\"Supprimer\"\r\n"
+"\"New Window\"=\"Nouvelle fen\xc3\xaatre\"\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_15;
 
@@ -674,7 +683,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 2072; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 2409; return Translation_fr_txt;
         default: break;
     }
 

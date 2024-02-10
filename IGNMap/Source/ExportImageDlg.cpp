@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "ExportImageDlg.h"
+#include "AppUtil.h"
 #include "../../XToolImage/XTiffWriter.h"
 
 //==============================================================================
@@ -119,7 +120,9 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
   m_dProgress = 0.;
 
   // Creation du fichier TIFF
-  m_strFilename = "D:\\Test_export.tif";
+  m_strFilename = AppUtil::SaveFile("ExportImageFile", juce::translate("File to save"), "*.tif");
+  if (m_strFilename.isEmpty())
+    return;
   XTiffWriter tiff;
   tiff.SetGeoTiff(m_dX0, m_dY0, m_dGSD);
   tiff.Write(m_strFilename.toStdString().c_str(), m_nW, m_nH, 3, 8);
@@ -147,6 +150,9 @@ void ExportImageDlg::StartNextThread()
     m_btnExport.setButtonText(juce::translate("Export"));
     juce::File file(m_strFilename);
     file.revealToUser();
+    juce::Component* parent = getParentComponent();
+    if (parent != nullptr)
+      delete parent;
     return;
   }
  
