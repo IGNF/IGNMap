@@ -37,7 +37,7 @@ public:
   void Pixel2Ground(double& X, double& Y);
   void Ground2Pixel(double& X, double& Y);
   void SetGeoBase(XGeoBase* base) { m_MapThread.stopThread(-1); m_GeoBase = base; resized(); }
-  void StopThread() { m_MapThread.stopThread(-1); m_Image.clear(m_Image.getBounds()); RenderMap(); }
+  void StopThread() { m_MapThread.signalThreadShouldExit(); if (m_MapThread.isThreadRunning()) m_MapThread.stopThread(-1);}
   void RenderMap(bool overlay = true, bool raster = true, bool dtm = true, bool vector = true, bool las = true, bool totalUpdate = false);
   void SelectFeatures(juce::Point<int>);
   void SelectFeatures(const double& X0, const double& Y0, const double& X1, const double& Y1);
@@ -87,6 +87,7 @@ private:
 
   void timerCallback() override { repaint(); }
 
+  void EndMouseAction();
   void AddAnnotationPoint(juce::Point<int>&);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MapView)

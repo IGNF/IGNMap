@@ -51,8 +51,9 @@ class DtmRangeModel : public juce::TableListBoxModel,
 	public juce::Slider::Listener,
 	public juce::ActionBroadcaster {
 public:
-	typedef enum { Altitude = 1, Colour = 2 } Column;
-	DtmRangeModel() { m_ActiveRow = m_ActiveColumn = -1; }
+	typedef enum { Altitude = 1, Colour = 2, Options = 3 } Column;
+	DtmRangeModel() { m_ActiveRow = m_ActiveColumn = -1; m_Base = nullptr; }
+	void SetBase(XGeoBase* base) { m_Base = base; }
 
 	int getNumRows() override;
 	void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
@@ -63,6 +64,7 @@ public:
 	void sliderValueChanged(juce::Slider* slider) override;
 
 private:
+	XGeoBase* m_Base;
 	int										m_ActiveRow;
 	int										m_ActiveColumn;
 };
@@ -81,7 +83,7 @@ public:
 	DtmLayersViewer();
 	virtual ~DtmLayersViewer() { m_Cache.deleteRecursively(); }
 
-	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_TableDtm.updateContent(); }
+	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_ModelRange.SetBase(base); m_TableDtm.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener) 
 		{ addActionListener(listener); m_ModelDtm.addActionListener(listener); m_ModelRange.addActionListener(listener); }
 	void UpdateColumnName();

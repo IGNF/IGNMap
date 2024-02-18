@@ -433,8 +433,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 	switch (info.commandID)
 	{
 	case CommandIDs::menuNew:
-		Clear();
-		sendActionMessage("NewWindow");
+		NewWindow();
 		break;
 	case CommandIDs::menuQuit:
 		juce::JUCEApplication::quit();
@@ -601,6 +600,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(false, false, false, false, false);
 		return;
 	}
+	if (message == "StopMapThread") {
+		m_MapView.get()->StopThread();
+		return;
+	}
 	if (message == "UpdateSelectFeatures") {
 		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 		m_ImageOptionsViewer.get()->SetGeoBase(&m_GeoBase);
@@ -663,6 +666,17 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			sendMessage(block);
 		}
 	}
+	if (T[0] == "RemoveLasClass") {
+		if (((T.size() - 1) % 2 != 0)||(T.size() == 1))
+			return;
+		m_MapView.get()->StopThread();
+		m_GeoBase.ClearSelection();
+		for (int i = 0; i < (T.size() - 1)/2; i++)
+			m_GeoBase.RemoveClass(T[2*i + 1].getCharPointer(), T[2*i + 2].getCharPointer());
+
+		actionListenerCallback("UpdateSelectFeatures");
+		actionListenerCallback("UpdateLas");
+	}
 }
 
 //==============================================================================
@@ -713,12 +727,28 @@ void MainComponent::Clear()
 }
 
 //==============================================================================
+// Retire tous les jeux de donnees charges
+//==============================================================================
+void MainComponent::NewWindow()
+{
+	juce::ToolbarButton* button;
+	Clear();
+	sendActionMessage("NewWindow");
+	juce::Component* component = m_Toolbar.get()->getChildComponent(MainComponentToolbarFactory::Move);
+	if (component != nullptr) {
+		juce::ToolbarButton* button = dynamic_cast<juce::ToolbarButton*>(component);
+		if (button != nullptr)
+			button->triggerClick();
+	}
+}
+
+//==============================================================================
 // A propos
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.0.1";
-	juce::String info = "04/02/2024";
+	juce::String version = "0.0.2";
+	juce::String info = "18/02/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);

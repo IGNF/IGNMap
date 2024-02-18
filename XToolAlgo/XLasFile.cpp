@@ -57,7 +57,7 @@ bool XLasFile::Close()
 //-----------------------------------------------------------------------------
 // Calcul d'un MNT/MNS a parti d'un fichier LAS
 //-----------------------------------------------------------------------------
-bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, XError* error)
+bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool classif_visibility[256], XError* error)
 {
 	if (m_strFilename.empty())	// Le fichier LAS n'a pas ete ouvert
 		return false;
@@ -88,6 +88,9 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, XError
 	laszip_seek_point(m_Reader, 0);
 	for (laszip_I64 i = 0; i < NbLasPoints(); i++) {
 		laszip_read_point(m_Reader);
+		if (classif_visibility != nullptr)
+			if (!classif_visibility[m_Point->classification])
+				continue;
 		
 		X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;
 		Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;

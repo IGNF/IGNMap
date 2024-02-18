@@ -106,6 +106,7 @@ private:
   XGeoBase m_GeoBase;
 
   void Clear();
+  void NewWindow();
   void AboutIGNMap();
   void Translate();
   void ShowHidePanel(juce::Component* component);

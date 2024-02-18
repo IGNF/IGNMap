@@ -40,4 +40,5 @@ public:
 
   static bool AddAltitude(double z);
   static juce::Colour Colour(double z);
+  static void AutomaticRange(double zmin, double zmax);
 };

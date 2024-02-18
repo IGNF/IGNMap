@@ -231,6 +231,7 @@ void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, in
 {
 	if (rowNumber > DtmShader::m_Z.size())
 		return;
+	juce::Image icone;
 	switch (columnId) {
 	case Column::Altitude:
 		if (rowNumber == 0) g.drawText(juce::String(DtmShader::m_Z[rowNumber]), 0, 0, width, height, juce::Justification::centred);
@@ -243,6 +244,12 @@ void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, in
 	case Column::Colour:
 		g.setColour(DtmShader::m_Colour[rowNumber]);
 		g.fillRect(0, 0, width, height);
+		break;
+	case Column::Options:// Options
+		if (rowNumber == 0) {
+			icone = getImageFromAssets("Options.png");
+			g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
+		}
 		break;
 	}
 }
@@ -309,6 +316,20 @@ void DtmRangeModel::cellClicked(int rowNumber, int columnId, const juce::MouseEv
 
 		juce::CallOutBox::launchAsynchronously(std::move(colourSelector), bounds, nullptr);
 		return;
+	}
+
+	// Options
+	if (columnId == Column::Options) { // Creation d'un popup menu
+
+		std::function< void() > AutomaticRange = [=]() {	// Echelle automatique
+			if (m_Base == nullptr) return;
+			DtmShader::AutomaticRange(m_Base->ZMin(), m_Base->ZMax());
+			sendActionMessage("UpdateDtm");
+			};
+
+		juce::PopupMenu menu;
+		menu.addItem(juce::translate("Automatic Range"), AutomaticRange);
+		menu.showMenuAsync(juce::PopupMenu::Options());
 	}
 }
 
@@ -380,6 +401,7 @@ DtmLayersViewer::DtmLayersViewer()
 	// Ajout des colonnes
 	m_TableRange.getHeader().addColumn(juce::translate("Altitude"), DtmRangeModel::Column::Altitude, 50);
 	m_TableRange.getHeader().addColumn(juce::translate("Colour"), DtmRangeModel::Column::Colour, 50);
+	m_TableRange.getHeader().addColumn(juce::translate(" "), DtmRangeModel::Column::Options, 25);
 	m_TableRange.setModel(&m_ModelRange);
 	addAndMakeVisible(m_TableRange);
 

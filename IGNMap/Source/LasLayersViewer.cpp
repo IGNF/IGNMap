@@ -503,13 +503,12 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableLas.repaint();
 	}
 	if (message == "RemoveLasClass") {
-		m_Base->ClearSelection();
+		juce::String removeLas = "RemoveLasClass";
 		for (int i = 0; i < T.size(); i++)
-			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+			removeLas += (juce::String(":") + T[i]->Layer()->Name().c_str() + juce::String(":") + T[i]->Name().c_str());
+		sendActionMessage(removeLas);
 		m_TableLas.deselectAllRows();
 		m_TableLas.repaint();
-		sendActionMessage("UpdateSelectFeatures");
-		sendActionMessage("UpdateLas");
 	}
 	if (message == "ComputeDtm")
 		ComputeDtm(T);
@@ -612,8 +611,12 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	public:
 		double GSD = 1.;
 		XLasFile::AlgoDtm algo = XLasFile::ZMinimum;
+		bool classif_visibility[256];
 
-		MyTask() : ThreadClassProcessor(juce::translate("Compute DTM/DSM ..."), true) { ; }
+		MyTask() : ThreadClassProcessor(juce::translate("Compute DTM/DSM ..."), true) 
+		{ LasShader shader;
+		for (int i = 0; i < 256; i++) classif_visibility[i] = shader.ClassificationVisibility(i);
+		}
 
 		virtual bool Process(XGeoVector* V)
 		{
@@ -625,7 +628,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 			juce::File file(V->Filename());
 			juce::String file_out = m_strFolderOut + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".tif";
 			setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
-			return las.ComputeDtm(file_out.toStdString(), GSD, algo);
+			return las.ComputeDtm(file_out.toStdString(), GSD, algo, classif_visibility);
 		}
 	};
 

@@ -55,6 +55,7 @@ protected:
   void ReinitDtm();
   void DrawLas(GeoLAS* las);
   void DrawDtm(GeoDTM* dtm);
+  void DrawDtm();
   void DrawPolyVector(XGeoVector* V);
   void DrawLineVector(XGeoVector* V);
   void Select(int u, int v);

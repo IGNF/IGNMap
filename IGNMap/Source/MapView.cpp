@@ -23,11 +23,12 @@ MapView::MapView(juce::String name) : m_MapThread(name)
 
 MapView::~MapView()
 {
-	m_MapThread.stopThread(5000);
+	StopThread();
 }
 
 void MapView::Clear()
 {
+	StopThread();
 	m_dX0 = m_dY0 = m_dX = m_dY = m_dZ = 0.;
 	m_dScale = 1.0;
 	m_bDrag = m_bZoom = m_bSelect = m_bDrawing = false;
@@ -191,10 +192,11 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	Pixel2Ground(X0, Y0);
 	Pixel2Ground(X1, Y1);
 
-	if ((abs(m_DragPt.x) > 1) || (abs(m_DragPt.y) > 1)) {
+	if ((abs(m_DragPt.x) > 1) || (abs(m_DragPt.y) > 1)) {	// Drag avec la souris : action zonale
 		auto b = getLocalBounds();
 		if (m_bZoom) {
 			m_dScale /= ((b.getWidth() / m_DragPt.x + b.getHeight() / m_DragPt.y) * 0.5);
+			if (m_dScale < 0.05) m_dScale = 0.05;
 			CenterView((X0 + X1) * 0.5, (Y0 + Y1) * 0.5);
 		}
 		if (m_bSelect) {
@@ -207,25 +209,32 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 			m_dX0 -= m_DragPt.x * m_dScale;
 			m_dY0 += m_DragPt.y * m_dScale;
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
-			//RenderMap();
 			CenterView(m_dX0 + b.getWidth() * m_dScale * 0.5, m_dY0 - b.getHeight() * m_dScale * 0.5);
 		}
+		EndMouseAction();
+		return;
 	}
-	else {
-		if (event.mods.isShiftDown() || (m_nMouseMode == Select))
-			SelectFeatures(event.getPosition());
-		else {
-			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
-			sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
-			if (event.mods.isAltDown()) {
-				double x = event.getPosition().x, y = event.getPosition().y;
-				Pixel2Ground(x, y);
-				SetTarget(x, y);
-			}
-		}
+
+	double x = event.getPosition().x, y = event.getPosition().y;
+	Pixel2Ground(x, y);
+	if (m_bZoom) {	// Clic pour zoomer
+			if (event.mods.isRightButtonDown()) m_dScale *= (2.0);
+			if (event.mods.isLeftButtonDown()) m_dScale *= (0.5);
+			CenterView(x, y);
+			EndMouseAction();
+			return;
 	}
-	m_bDrag = m_bZoom = m_bSelect = false;
-	m_DragPt = juce::Point<int>(0, 0);
+	if (event.mods.isShiftDown() || (m_nMouseMode == Select)) { // Clic pour selectionner
+		SelectFeatures(event.getPosition());
+		EndMouseAction();
+		return;
+	}
+		
+	setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+	sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
+	if (event.mods.isAltDown())
+		SetTarget(x, y);
+	EndMouseAction();
 }
 
 void MapView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
@@ -244,6 +253,12 @@ void MapView::mouseDoubleClick(const juce::MouseEvent& event)
 	double X = event.getPosition().x, Y = event.getPosition().y;
 	Pixel2Ground(X, Y);
 	CenterView(X, Y);
+}
+
+void MapView::EndMouseAction()
+{
+	m_bDrag = m_bZoom = m_bSelect = false;
+	m_DragPt = juce::Point<int>(0, 0);
 }
 
 //==============================================================================
@@ -464,11 +479,7 @@ void MapView::Update3DView(const double& X0, const double& Y0, const double& X1,
 	XFrame F;
 	F += XPt2D(X0, Y0);
 	F += XPt2D(X1, Y1);
-	m_MapThread.signalThreadShouldExit();
-	if (m_MapThread.isThreadRunning()) { // On arrete le thread de dessin pour privilegier la vue 3D
-		if (!m_MapThread.stopThread(-1))
-			return;
-	}
+	StopThread();
 	sendActionMessage("Update3DView:" + juce::String(F.Xmin) + ":" + juce::String(F.Xmax) + ":" +
 		juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
 }

@@ -63,6 +63,10 @@ LasShader::LasShader()
   m_ClassifColors[21] = juce::Colours::snow; // Snow
   m_ClassifColors[22] = juce::Colours::black; // Temporal Exclusion
 
+  m_ClassifColors[64] = juce::Colours::purple;  // Si jamais il y une classification etendue ...
+  m_ClassifColors[65] = juce::Colours::mintcream;
+  m_ClassifColors[66] = juce::Colours::teal;
+
   for (int i = 0; i < 256; i++)
     m_ClassifVisibility[i] = m_ClassifSelectable[i] = true;
 

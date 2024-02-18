@@ -41,15 +41,16 @@ OGLWidget::OGLWidget()
   fragmentShader = nullptr;
   m_nNbLasVertex = m_nNbPolyVertex = m_nNbLineVertex = m_nNbDtmVertex = 0;
   m_nNbPoly = m_nNbLine = 0;
-  m_LasBufferID = m_RepereID = 0;
+  m_LasBufferID = m_RepereID = m_PtBufferID = 0;
   m_DtmBufferID = m_DtmVertexArrayID = m_DtmElementID = 0;
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
+  m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
   m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
-  m_dX0 = m_dY0 = m_dGsd = 0.;
+  m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
   m_S = XPt3D(1., 1., 1.);
   m_LasPointSize = 4.f;
   m_VectorWidth = 2.f;
@@ -530,11 +531,12 @@ void OGLWidget::UpdateBase()
       continue;
     if ( (C->IsLAS()) && (C->Visible()) )
       LoadLasClass(C);
-    if ((C->IsDTM()) && (C->Visible()))
-      LoadDtmClass(C);
+    //if ((C->IsDTM()) && (C->Visible()))
+    //  LoadDtmClass(C);
     if ((C->IsVector()) && (C->Visible()))
       LoadVectorClass(C);
   }
+  DrawDtm();
   m_bNeedUpdate = false;
   openGLContext.setContinuousRepainting(true);
   openGLContext.triggerRepaint();
@@ -592,10 +594,17 @@ void OGLWidget::DrawLas(GeoLAS* las)
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
   uint8_t* ptr = nullptr;
+  uint8_t classification;
+  bool classif_newtype = true;
+  if (header->version_minor < 4) classif_newtype = false;
   LasShader shader;
   for (laszip_I64 i = 0; i < npoints; i++) {
     laszip_read_point(reader);
-    if (!shader.ClassificationVisibility(point->classification)) continue;
+    if (classif_newtype)
+      classification = point->extended_classification;
+    else
+      classification = point->classification;
+    if (!shader.ClassificationVisibility(classification)) continue;
     if (point->X <= Xmin) continue;
     if (point->X >= Xmax) continue;
     if (point->Y <= Ymin) continue;
@@ -628,7 +637,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
       // data[3] = 255; // deja fixe dans l'initialisation de data
       break;
     case LasShader::ShaderMode::Classification:
-      col = shader.ClassificationColor(point->classification);
+      col = shader.ClassificationColor(classification);
       *data_ptr = (uint32_t)col.getARGB();
       break;
     case LasShader::ShaderMode::Intensity:
@@ -700,6 +709,7 @@ void OGLWidget::DrawDtm(GeoDTM* dtm)
 
   juce::Colour colour;
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
+  /*
   for (uint32_t i = 0; i < m_nDtmH; i++) {
     Y = m_Frame.Ymax - i * deltaY;
     for (uint32_t j = 0; j < m_nDtmW; j++) {
@@ -718,7 +728,121 @@ void OGLWidget::DrawDtm(GeoDTM* dtm)
       }
       ptr_vertex++;
     }
+  }*/
+  juce::Image rawImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
+  juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::readWrite);
+  for (int i = 0; i < bitmap.height; i++) {
+    Y = m_Frame.Ymax - i * deltaY;
+    float* ptr_Z = (float*)bitmap.getLinePointer(i);
+    for (int j = 0; j < bitmap.width; j++) {
+      X = m_Frame.Xmin + j * deltaX;
+      Z = dtm->Z(X, Y);
+      *ptr_Z = (float)Z;
+      ptr_Z++;
+    }
   }
+  juce::Image rgbImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
+  shader.ConvertImage(&rawImage, &rgbImage);
+  juce::Image::BitmapData colors(rgbImage, juce::Image::BitmapData::readWrite);
+
+  for (uint32_t i = 0; i < m_nDtmH; i++) {
+    Y = m_Frame.Ymax - i * deltaY;
+    float* ptr_Z = (float*)bitmap.getLinePointer(i);
+    juce::uint32* ptr_colour = (juce::uint32*)colors.getLinePointer(i);
+    for (uint32_t j = 0; j < m_nDtmW; j++) {
+      X = m_Frame.Xmin + j * deltaX;
+      Z = *ptr_Z;
+      ptr_Z++;
+      colour = juce::Colour(*ptr_colour);
+      ptr_colour++;
+      if (Z >= m_dZ0) {
+        ptr_vertex->position[0] = (float)((X - m_dX0) / m_dGsd);
+        ptr_vertex->position[1] = (float)((Y - m_dY0) / m_dGsd);
+        ptr_vertex->position[2] = (float)((Z - m_dZ0) / m_dGsd);
+        ptr_vertex->colour[0] = colour.getFloatRed();
+        ptr_vertex->colour[1] = colour.getFloatGreen();
+        ptr_vertex->colour[2] = colour.getFloatBlue();
+        ptr_vertex->colour[3] = opacity;
+        m_nNbDtmVertex++;
+      }
+      ptr_vertex++;
+    }
+  }
+
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+}
+
+//==============================================================================
+// Dessin du MNT
+//==============================================================================
+void OGLWidget::DrawDtm()
+{
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+  DtmShader shader;
+
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+  double deltaX = m_Frame.Width() / m_nDtmW;
+  double deltaY = m_Frame.Height() / m_nDtmH;
+  XPt3D P;
+  double Zmin = m_Base->ZMin();
+  if (m_dZ0 <= XGEO_NO_DATA)
+    m_dZ0 = Zmin;
+
+  juce::Colour colour;
+  float opacity = (float)(DtmShader::m_dOpacity * 0.01);
+ 
+  juce::Image rawImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
+  juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::readWrite);
+  for (int i = 0; i < bitmap.height; i++) {
+    P.Y = m_Frame.Ymax - i * deltaY;
+    float* ptr_Z = (float*)bitmap.getLinePointer(i);
+    for (int j = 0; j < bitmap.width; j++) {
+      P.X = m_Frame.Xmin + j * deltaX;
+      P.Z = m_Base->Z(P);
+      *ptr_Z = (float)P.Z;
+      ptr_Z++;
+    }
+  }
+  juce::Image rgbImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
+  shader.ConvertImage(&rawImage, &rgbImage);
+  juce::Image::BitmapData colors(rgbImage, juce::Image::BitmapData::readWrite);
+
+  for (uint32_t i = 0; i < m_nDtmH; i++) {
+    P.Y = m_Frame.Ymax - i * deltaY;
+    float* ptr_Z = (float*)bitmap.getLinePointer(i);
+    juce::uint32* ptr_colour = (juce::uint32*)colors.getLinePointer(i);
+    for (uint32_t j = 0; j < m_nDtmW; j++) {
+      P.X = m_Frame.Xmin + j * deltaX;
+      P.Z = *ptr_Z;
+      ptr_Z++;
+      colour = juce::Colour(*ptr_colour);
+      ptr_colour++;
+      if (P.Z >= Zmin) {
+        ptr_vertex->position[0] = (float)((P.X - m_dX0) / m_dGsd);
+        ptr_vertex->position[1] = (float)((P.Y - m_dY0) / m_dGsd);
+        ptr_vertex->position[2] = (float)((P.Z - m_dZ0) / m_dGsd);
+        ptr_vertex->colour[0] = colour.getFloatRed();
+        ptr_vertex->colour[1] = colour.getFloatGreen();
+        ptr_vertex->colour[2] = colour.getFloatBlue();
+        ptr_vertex->colour[3] = opacity;
+        m_nNbDtmVertex++;
+      }
+      else {
+        ptr_vertex->position[0] = (float)((P.X - m_dX0) / m_dGsd);
+        ptr_vertex->position[1] = (float)((P.Y - m_dY0) / m_dGsd);
+        ptr_vertex->position[2] = (float)((Zmin - m_dZ0) / m_dGsd);
+        ptr_vertex->colour[0] = 0.f; 
+        ptr_vertex->colour[1] = 0.f;
+        ptr_vertex->colour[2] = 0.f;
+        ptr_vertex->colour[3] = -1.f; // NoData -> completement transparent
+      }
+      ptr_vertex++;
+    }
+  }
+
   glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 

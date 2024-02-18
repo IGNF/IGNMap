@@ -569,7 +569,7 @@ uint32_t XGeoProjection::EPSGCode(XProjCode proj)
     case NC_RGNC91_UTM58: return 3170;
     case NC_RGNC91_UTM59: return 3171;
 
-		default : return 0;
+		//default : return 0;
 	}
 	return 0;
 }

@@ -60,7 +60,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
     return ConvertClassRaster(classe, folder);
 
 	// Nombre de vecteurs a exporter
-	uint32_t i, nb_att, nb_vector = classe->NbVector();
+	uint32_t nb_att, nb_vector = classe->NbVector();
 	if (m_bVisibleOnly)
 		for (uint32_t i = 0; i < classe->NbVector(); i++) {
 			vector = classe->Vector(i);
@@ -79,7 +79,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 		vector = classe->Vector((uint32_t)0);
 		vector->ReadAttributes(V);
 		nb_att = V.size() / 2;
-		for (i = 0; i < nb_att; i++)
+		for (uint32_t i = 0; i < nb_att; i++)
 			dbase.AddField(V[i* 2].c_str(), 'C', 80);
 		if ((nb_att == 0)&&(vector->Name().size() > 0)) {
 			dbase.AddField("NOM", 'C', 80);
@@ -88,7 +88,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 		}
 	} else {
 		nb_att = schema->NbAttribut();
-		for (i = 0; i < nb_att; i++) {
+		for (uint32_t i = 0; i < nb_att; i++) {
 			switch(schema->AttributType(i)) {
 				case XGeoAttribut::Bool : dbase.AddField(schema->AttributShortName(i).c_str(), 'C', 8); break;
 				case XGeoAttribut::Int16 : dbase.AddField(schema->AttributShortName(i).c_str(), 'N', 8); break;
@@ -108,7 +108,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 	
 	dbase.SetNbRecord(nb_vector);
 	dbase.WriteHeader((filename + ".dbf").c_str());
-	for (i = 0; i < classe->NbVector(); i++) {
+	for (uint32_t i = 0; i < classe->NbVector(); i++) {
 		vector = classe->Vector(i);
 		if (m_bVisibleOnly)
 			if (!vector->Visible())
@@ -128,7 +128,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 	}
 
 	// Ecriture des geometries
-	for (i = 0; i < classe->NbVector(); i++) {
+	for (uint32_t i = 0; i < classe->NbVector(); i++) {
 		vector = classe->Vector(i);
 		if (m_bVisibleOnly)
 			if (!vector->Visible())
@@ -153,12 +153,11 @@ bool XShapefileConverter::ConvertClassRaster(XGeoClass* classe, const char* fold
 {
 	XShapefile shapefile;
 	XGeoVector* vector;
-	XGeoRaster* raster;
 	XDBaseFile dbase;
   std::string filename = (std::string)folder + "/" + classe->Name();
 
 	// Nombre de vecteurs a exporter
-	uint32_t i, nb_vector = classe->NbVector();
+	uint32_t nb_vector = classe->NbVector();
 	if (m_bVisibleOnly)
 		for (uint32_t i = 0; i < classe->NbVector(); i++) {
 			vector = classe->Vector(i);
@@ -173,7 +172,7 @@ bool XShapefileConverter::ConvertClassRaster(XGeoClass* classe, const char* fold
 	dbase.AddField("LOCATION", 'C', 255);	
 	dbase.SetNbRecord(nb_vector);
 	dbase.WriteHeader((filename + ".dbf").c_str());
-	for (i = 0; i < classe->NbVector(); i++) {
+	for (uint32_t i = 0; i < classe->NbVector(); i++) {
 		vector = classe->Vector(i);
     if (m_bVisibleOnly)
 			if (!vector->Visible())
@@ -185,7 +184,7 @@ bool XShapefileConverter::ConvertClassRaster(XGeoClass* classe, const char* fold
 	}
 
 	// Ecriture des geometries
-	for (i = 0; i < classe->NbVector(); i++) {
+	for (uint32_t i = 0; i < classe->NbVector(); i++) {
 		vector = classe->Vector(i);
 		if (m_bVisibleOnly)
 			if (!vector->Visible())

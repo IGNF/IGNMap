@@ -844,10 +844,17 @@ bool MapThread::DrawLas(GeoLAS* las)
 	uint8_t data[4] = { 0, 0, 0, 255 };
 	uint32_t* data_ptr = (uint32_t*) & data;
 	uint8_t* ptr = nullptr;
+	uint8_t classification;
+	bool classif_newtype = true;
+	if (header->version_minor < 4) classif_newtype = false;
 	LasShader shader;
 	for (laszip_I64 i = 0; i < npoints; i++) {
 		laszip_read_point(reader);
-		if (!shader.ClassificationVisibility(point->classification)) continue;
+		if (classif_newtype)
+			classification = point->extended_classification;
+		else
+			classification = point->classification;
+		if (!shader.ClassificationVisibility(classification)) continue;
 		if (point->X <= Xmin) continue;
 		if (point->X >= Xmax) continue;
 		if (point->Y <= Ymin) continue;
@@ -880,7 +887,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 			// data[3] = 255; // deja fixe dans l'initialisation de data
 			break;
 		case LasShader::ShaderMode::Classification:
-			col = shader.ClassificationColor(point->classification);
+			col = shader.ClassificationColor(classification);
 			*data_ptr = (uint32_t)col.getARGB();
 			break;
 		case LasShader::ShaderMode::Intensity:

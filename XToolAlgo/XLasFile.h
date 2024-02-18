@@ -30,7 +30,7 @@ public:
 		return (m_Header->number_of_point_records ? m_Header->number_of_point_records : m_Header->extended_number_of_point_records);
 	}
 
-	bool ComputeDtm(std::string file_out, double gsd, AlgoDtm algo = ZMinimum, XError* error = nullptr);
+	bool ComputeDtm(std::string file_out, double gsd, AlgoDtm algo = ZMinimum, bool classif_visibility[256] = nullptr, XError* error = nullptr);
 
 protected:
 	std::string m_strFilename;

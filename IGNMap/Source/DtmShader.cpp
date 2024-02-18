@@ -348,7 +348,7 @@ bool DtmShader::ConvertImage(juce::Image* rawImage, juce::Image* rgbImage)
 //-----------------------------------------------------------------------------
 // Renvoie la couleur associee a une altitude
 //-----------------------------------------------------------------------------
-juce::Colour  DtmShader::Colour(double val)
+juce::Colour DtmShader::Colour(double val)
 {
   if (m_Z.size() != (m_Colour.size() - 1))
     return juce::Colours::red;
@@ -376,4 +376,16 @@ juce::Colour  DtmShader::Colour(double val)
   }
 
   return m_Colour[m_Colour.size() - 1];
+}
+
+//-----------------------------------------------------------------------------
+// Calcul des intervals altimetriques optimaux
+//-----------------------------------------------------------------------------
+void DtmShader::AutomaticRange(double zmin, double zmax)
+{
+  if (m_Z.size() <= 1)
+    return;
+  double delta = (zmax - zmin) / (m_Z.size() - 1);
+  for (int i = 1; i < m_Z.size(); i++)
+    m_Z[i] = zmin + (i - 1) * delta;
 }

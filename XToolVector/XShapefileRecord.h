@@ -61,7 +61,7 @@ protected:
 	double* m_MRange;
 	int*		m_Parts;
 	ePartType*	m_PartTypes;
-	uint32_t					m_Pos;						// Position de la geometrie dans le fichier
+	std::streamoff		m_Pos;						// Position de la geometrie dans le fichier
 	uint32_t					m_nIndex;					// Index dans le fichier
 	XShapefile*			m_File;
 

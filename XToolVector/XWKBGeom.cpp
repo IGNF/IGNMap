@@ -93,7 +93,7 @@ bool XWKBGeom::Read(uint8_t* geom)
     case wkbMultiPolygonZM :
       return ReadMultiPolygonZM(geom);
 
-    default : return false;
+    //default : return false;
   }
 
 	return false;

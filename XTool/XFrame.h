@@ -24,7 +24,7 @@ public:
 	double	Ymax;
 
 	XFrame(double xmin=0, double ymin=0, double xmax=0, double ymax=0) :
-																	Xmin(xmin), Ymin(ymin), Xmax(xmax), Ymax(ymax) {;}
+																	Xmin(xmin), Ymin(ymin), Xmax(xmax), Ymax(ymax) {}
 
 	// Operations
 	XFrame& operator+=(XFrame r);

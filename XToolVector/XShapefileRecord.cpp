@@ -20,7 +20,7 @@ XEndian XShapefileRecordHeader::m_Endian;
 //-----------------------------------------------------------------------------
 // Lecture dans un fichier
 //-----------------------------------------------------------------------------
-bool XShapefileRecordHeader::Read(std::ifstream* in, XError* error)
+bool XShapefileRecordHeader::Read(std::ifstream* in, XError*)
 {
   m_Endian.Read(in, false, &m_nNumber, 4);
   m_Endian.Read(in, false, &m_nLength, 4);
@@ -31,7 +31,7 @@ bool XShapefileRecordHeader::Read(std::ifstream* in, XError* error)
 //-----------------------------------------------------------------------------
 // Ecriture dans un fichier
 //-----------------------------------------------------------------------------
-bool XShapefileRecordHeader::Write(std::ofstream* out, XError* error)
+bool XShapefileRecordHeader::Write(std::ofstream* out, XError*)
 {
   m_Endian.Write(out, false, &m_nNumber, 4);
   m_Endian.Write(out, false, &m_nLength, 4);
@@ -151,7 +151,7 @@ uint32_t XShapefileRecord::ByteSize() const
 //-----------------------------------------------------------------------------
 bool XShapefileRecord::Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error)
 {
-  int pos = in->tellg();
+  std::streamoff pos = in->tellg();
   XEndian endian;
   endian.Read(in, true, &m_eShapeType, 4);
 
@@ -411,7 +411,7 @@ bool XShapefileRecord::ReadMultiPatch(std::ifstream* in, XEndian* endian, XShape
 //-----------------------------------------------------------------------------
 // Lecture du rectangle englobant
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::ReadFrame(std::ifstream* in, XEndian* endian, XError* error)
+bool XShapefileRecord::ReadFrame(std::ifstream* in, XEndian* endian, XError*)
 {
 	endian->Read(in, true, &m_Frame.Xmin, 8);
 	endian->Read(in, true, &m_Frame.Ymin, 8);
@@ -614,13 +614,13 @@ bool XShapefileRecord::Write(std::ofstream* out, XError* error)
 		default:
 			return XErrorAlert(error,"XShapefileRecord::Read", XError::eBadFormat);
 	}
-	return out->good();
+	//return out->good();
 }
 
 //-----------------------------------------------------------------------------
 // Ecriture des points 2D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WritePoint2D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WritePoint2D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -630,7 +630,7 @@ bool XShapefileRecord::WritePoint2D(std::ofstream* out, XEndian* endian, XError*
 //-----------------------------------------------------------------------------
 // Ecriture des multi-points 2D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WriteMultiPoint2D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WriteMultiPoint2D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -647,7 +647,7 @@ bool XShapefileRecord::WriteMultiPoint2D(std::ofstream* out, XEndian* endian, XE
 //-----------------------------------------------------------------------------
 // Ecriture des polylignes et des polygones 2D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WritePolyLine2D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WritePolyLine2D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -717,7 +717,7 @@ bool XShapefileRecord::WritePolyLine2DM(std::ofstream* out, XEndian* endian, XEr
 //-----------------------------------------------------------------------------
 // Ecriture des points 3D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WritePoint3D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WritePoint3D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -734,7 +734,7 @@ bool XShapefileRecord::WritePoint3D(std::ofstream* out, XEndian* endian, XError*
 //-----------------------------------------------------------------------------
 // Ecriture des multi-points 2D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WriteMultiPoint3D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WriteMultiPoint3D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -765,7 +765,7 @@ bool XShapefileRecord::WriteMultiPoint3D(std::ofstream* out, XEndian* endian, XE
 //-----------------------------------------------------------------------------
 // Ecriture des polylignes et des polygones 3D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WritePolyLine3D(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WritePolyLine3D(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -802,7 +802,7 @@ bool XShapefileRecord::WritePolyLine3D(std::ofstream* out, XEndian* endian, XErr
 //-----------------------------------------------------------------------------
 // Ecriture des multi-patch
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::WriteMultiPatch(std::ofstream* out, XEndian* endian, XError* error)
+bool XShapefileRecord::WriteMultiPatch(std::ofstream* out, XEndian* endian, XError*)
 {
 	endian->Write(out, true, &m_Frame.Xmin, 8);
 	endian->Write(out, true, &m_Frame.Ymin, 8);
@@ -1137,7 +1137,7 @@ bool XShapefileRecord::Convert(XGeoVector* V)
 
     default : return ConvertVector(V);
   }
-	return false;
+	//return false;
 }
 
 //-----------------------------------------------------------------------------
