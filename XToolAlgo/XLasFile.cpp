@@ -138,3 +138,153 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 
 	return true;
 }
+
+//-----------------------------------------------------------------------------
+// Calcul des statistiques
+//-----------------------------------------------------------------------------
+bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* mid)
+{
+  if (m_strFilename.empty())	// Le fichier LAS n'a pas ete ouvert
+    return false;
+
+  std::ofstream out;
+  out.open(file_out);
+  if (!out.good())
+    return false;
+  out.setf(std::ios::fixed);
+  out.precision(3);
+  out << "Statistiques fichier : " << m_strFilename << std::endl;
+  out << "===================================================================" << std::endl;
+  out << std::endl << "Donnees d'entete : " << std::endl;
+  out << "Software : " << m_Header->generating_software << std::endl;
+  out << "SystemID : " << m_Header->system_identifier << std::endl;
+  out << "Global encoding : " << m_Header->global_encoding << std::endl;
+  out << "Version : " << (int)m_Header->version_major << "." << (int)m_Header->version_minor << std::endl;
+  out << "Format des points : " << (int)m_Header->point_data_format << std::endl;
+  out << "Date : " << m_Header->file_creation_day << "/" << m_Header->file_creation_year << std::endl;
+  out << "XMin entete : " << m_Header->min_x << std::endl;
+  out << "XMax entete : " << m_Header->max_x << std::endl;
+  out << "YMin entete : " << m_Header->min_y << std::endl;
+  out << "YMax entete : " << m_Header->max_y << std::endl;
+  out << "ZMin entete : " << m_Header->min_z << std::endl;
+  out << "ZMax entete : " << m_Header->max_z << std::endl;
+
+  laszip_seek_point(m_Reader, 0);
+  laszip_I64 count = 0;
+  double X, Y, Z, zmin = 0., zmax = 0.;
+  laszip_F64 gps_time_min = 0., gps_time_max = 0., gps_time;
+  laszip_U8 classification;
+  unsigned int TClassif[256];
+  memset(TClassif, 0, 256 * sizeof(unsigned int));
+  double Xmin, Xmax, Ymin, Ymax;
+  for (laszip_I64 i = 0; i < NbLasPoints(); i++) {
+    laszip_read_point(m_Reader);
+    X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;
+    Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;
+    Z = m_Point->Z * m_Header->z_scale_factor + m_Header->z_offset;
+    classification = m_Point->classification;
+    if (m_Header->version_minor >= 4)
+      classification = m_Point->extended_classification;
+    gps_time = m_Point->gps_time;
+
+    if (count == 0) { // Debut d'un nouveau lot
+      Xmin = Xmax = X;
+      Ymin = Ymax = Y;
+      zmin = zmax = Z;
+      gps_time_min = gps_time_max = gps_time;
+      TClassif[classification]++;
+      count++;
+      continue;
+    }
+
+    Xmin = XMin(Xmin, X);
+    Xmax = XMax(Xmax, X);
+    Ymin = XMin(Ymin, Y);
+    Ymax = XMax(Ymax, Y);
+    zmin = XMin(zmin, Z);
+    zmax = XMax(zmax, Z);
+    gps_time_min = XMin(gps_time_min, gps_time);
+    gps_time_max = XMax(gps_time_max, gps_time);
+    TClassif[classification]++;
+    count++;
+  }
+
+  out << std::endl;
+  out << "Lecture du fichier : " << m_strFilename << std::endl;
+  out << "===================================================================" << std::endl;
+  out << "Nombre de points dans le fichier : " << NbLasPoints() << std::endl;
+  out << "Nombre de points lus: " << count << std::endl;
+
+  out << "===================================================================" << std::endl;
+  out << "Xmin = " << Xmin << std::endl;
+  out << "Xmax = " << Xmax << std::endl;
+  out << "Ymin = " << Ymin << std::endl;
+  out << "Ymax = " << Ymax << std::endl;
+  out << "Zmin = " << zmin << std::endl;
+  out << "Zmax = " << zmax << std::endl;
+  out << "GPS Time Min = " << gps_time_min << std::endl;
+  out << "GPS Time Max = " << gps_time_max << std::endl;
+
+  out << "===================================================================" << std::endl;
+  out << "Classifications : " << std::endl;
+  out << "0 : Created, Never Classified : " << TClassif[0] << std::endl;
+  out << "1 : Unclassified : " << TClassif[1] << std::endl;
+  out << "2 : Ground : " << TClassif[2] << std::endl;
+  out << "3 : Low Vegetation : " << TClassif[3] << std::endl;
+  out << "4 : Medium Vegetation : " << TClassif[4] << std::endl;
+  out << "5 : High Vegetation : " << TClassif[5] << std::endl;
+  out << "6 : Building : " << TClassif[6] << std::endl;
+  out << "7 : Low Point (Noise) : " << TClassif[7] << std::endl;
+  out << "8 : Reserved : " << TClassif[8] << std::endl;
+  out << "9 : Water : " << TClassif[9] << std::endl;
+  out << "10 : Rail : " << TClassif[10] << std::endl;
+  out << "11 : Road Surface : " << TClassif[11] << std::endl;
+  out << "12 : " << TClassif[12] << std::endl;
+  out << "13 : Wire – Guard (Shield) : " << TClassif[13] << std::endl;
+  out << "14 : Wire – Conductor (Phase) : " << TClassif[14] << std::endl;
+  out << "15 : Transmission Tower : " << TClassif[15] << std::endl;
+  out << "16 : Wire-Structure Connector : " << TClassif[16] << std::endl;
+  out << "17 : Bridge Deck : " << TClassif[17] << std::endl;
+  out << "18 : High Noise : " << TClassif[18] << std::endl;
+  out << "19 : Overhead Structure : " << TClassif[19] << std::endl;
+  out << "20 : Ignored Ground : " << TClassif[20] << std::endl;
+  out << "21 : Snow : " << TClassif[21] << std::endl;
+  out << "22 : Temporal Exclusion : " << TClassif[22] << std::endl;
+
+  out << "===================================================================" << std::endl;
+  out << "Classifications etendues : " << std::endl;
+  for (int i = 23; i < 256; i++) {
+    if (TClassif[i] > 0)
+      out << i << " : " << TClassif[i] << std::endl;
+  }
+
+  if ((mif == nullptr) || (mid == nullptr))
+    return true;
+
+  *mif << "REGION 1" << std::endl;
+  *mif << "5" << std::endl;
+  *mif << Xmin << " " << Ymin << std::endl;
+  *mif << Xmin << " " << Ymax << std::endl;
+  *mif << Xmax << " " << Ymax << std::endl;
+  *mif << Xmax << " " << Ymin << std::endl;
+  *mif << Xmin << " " << Ymin << std::endl;
+
+  unsigned int classif_autre = TClassif[7] + TClassif[8];
+  for (unsigned int i = 10; i < 17; i++)
+    classif_autre += TClassif[i];
+  for (unsigned int i = 18; i < 64; i++)
+    classif_autre += TClassif[i];
+  for (unsigned int i = 68; i < 256; i++)
+    classif_autre += TClassif[i];
+  std::string name = m_strFilename.substr(m_strFilename.rfind('\\') + 1);
+
+  *mid << name << "\t" << zmin << "\t" << zmax << "\t"
+    << TClassif[0] << "\t" << TClassif[1] << "\t" << TClassif[2] << "\t"
+    << TClassif[3] << "\t" << TClassif[4] << "\t" << TClassif[5] << "\t"
+    << TClassif[6] << "\t" << TClassif[9] << "\t" << TClassif[17] << "\t"
+    << TClassif[64] << "\t" << TClassif[65] << "\t" << TClassif[66] << "\t"
+    << TClassif[67] << "\t" << classif_autre
+    << std::endl;
+
+  return true;
+}

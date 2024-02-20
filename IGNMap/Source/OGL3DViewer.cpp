@@ -55,7 +55,7 @@ OGLWidget::OGLWidget()
   m_LasPointSize = 4.f;
   m_VectorWidth = 2.f;
   m_DtmLineWidth = 1.f;
-  m_nDtmW = m_nDtmH = 100;
+  m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
 }
 
@@ -462,8 +462,11 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_S = XPt3D(1., 1., 1.);
     m_LasPointSize = 4;
   }
-  if ((key.getTextCharacter() == 'A') || (key.getTextCharacter() == 'a'))
+  if ((key.getTextCharacter() == 'A') || (key.getTextCharacter() == 'a')) {
+    if (m_bAutoRotation)
+      m_R.Z += ((float)getFrameCounter() * 0.01f);
     m_bAutoRotation = (!m_bAutoRotation);
+  }
   if ((key.getTextCharacter() == 'Q') || (key.getTextCharacter() == 'q'))
     m_LasPointSize += 1.f;
   if ((key.getTextCharacter() == 'S') || (key.getTextCharacter() == 's'))

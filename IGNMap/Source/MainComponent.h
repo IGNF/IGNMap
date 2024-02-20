@@ -37,7 +37,8 @@ class MainComponent  : public juce::Component,
   public juce::ActionListener,
   public juce::ActionBroadcaster,
   public juce::Button::Listener,
-  public juce::InterprocessConnection
+  public juce::InterprocessConnection,
+  public juce::FileDragAndDropTarget
 {
 public:
   // Liste des commandes de l'application
@@ -84,6 +85,10 @@ public:
 
   // Reponse aux boutons
   void buttonClicked(juce::Button*) override;
+
+  // Drag&Drop de fichiers
+  bool isInterestedInFileDrag(const juce::StringArray&) override { return true; }
+  void filesDropped(const juce::StringArray& filenames, int /*x*/, int /*y*/) override;
 
 private:
   juce::ApplicationCommandManager m_CommandManager;

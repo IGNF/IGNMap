@@ -1271,3 +1271,23 @@ void MainComponent::messageReceived(const juce::MemoryBlock& message)
 	}
 
 }
+
+//==============================================================================
+// Gestion du Drag&Drop de fichiers externes
+//==============================================================================
+void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, int /*y*/)
+{
+	for (int i = 0; i < filenames.size(); i++) {
+		juce::String filename = filenames[i];
+		juce::File file(filename);
+		juce::String ext = file.getFileExtension();
+		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog"))
+			ImportImageFile(filename);
+		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
+			ImportLasFile(filename);
+		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg"))
+			ImportVectorFile(filename);
+		if (ext.equalsIgnoreCase(".asc"))
+			ImportDtmFile(filename);
+	}
+}

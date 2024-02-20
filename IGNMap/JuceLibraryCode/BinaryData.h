@@ -24,7 +24,7 @@ namespace BinaryData
     const int            NoView_pngSize = 1295;
 
     extern const char*   Options_png;
-    const int            Options_pngSize = 4937;
+    const int            Options_pngSize = 5176;
 
     extern const char*   Polygone_png;
     const int            Polygone_pngSize = 609;

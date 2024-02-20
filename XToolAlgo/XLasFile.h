@@ -9,6 +9,9 @@
 // Date de creation : 03/01/2024
 //-----------------------------------------------------------------------------
 
+#ifndef XLASFILE_H
+#define XLASFILE_H
+
 #include <string>
 #include "../XTool/XBase.h"
 #include "../LASzip/src/laszip_api.h"
@@ -31,6 +34,7 @@ public:
 	}
 
 	bool ComputeDtm(std::string file_out, double gsd, AlgoDtm algo = ZMinimum, bool classif_visibility[256] = nullptr, XError* error = nullptr);
+	bool StatLas(std::string file_out, std::ofstream* mif = nullptr, std::ofstream* mid = nullptr);
 
 protected:
 	std::string m_strFilename;
@@ -38,3 +42,5 @@ protected:
 	laszip_header* m_Header;
 	laszip_point* m_Point;
 };
+
+#endif //XLASFILE_H

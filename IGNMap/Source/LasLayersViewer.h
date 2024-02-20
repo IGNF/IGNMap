@@ -83,7 +83,6 @@ public:
 	{
 		addActionListener(listener);
 		m_ModelLas.addActionListener(listener); 
-		m_ModelClassif.addActionListener(listener);
 	}
 	void UpdateColumnName();
 	void resized() override;
@@ -101,6 +100,7 @@ public:
 
 	// Algorithmes
 	void ComputeDtm(std::vector< XGeoClass*>);
+	void ComputeStat(std::vector<XGeoClass*>);
 
 private:
 	XGeoBase* m_Base;

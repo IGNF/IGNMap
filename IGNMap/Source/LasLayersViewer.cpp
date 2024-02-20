@@ -14,6 +14,7 @@
 #include "AppUtil.h"
 #include "LasShader.h"
 #include "ThreadClassProcessor.h"
+#include "GeoBase.h"
 #include "../XTool/XGeoVector.h"
 #include "../XToolAlgo/XLasFile.h"
 
@@ -145,12 +146,16 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			sendActionMessage("RemoveLasClass"); };
 		std::function< void() > ComputeDtm = [=]() { // Calcul d'un MNT
 			sendActionMessage("ComputeDtm"); };
+		std::function< void() > ComputeStat = [=]() { // Statistiques
+			sendActionMessage("ComputeStat"); };
+
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute DTM"), ComputeDtm);
+		menu.addItem(juce::translate("Statistics"), ComputeStat);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -256,14 +261,12 @@ void ClassifModel::cellClicked(int rowNumber, int columnId, const juce::MouseEve
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		LasShader::ClassificationVisibility(!LasShader::ClassificationVisibility(rowNumber), rowNumber);
-		sendActionMessage("UpdateLas");
+		sendActionMessage("UpdateLasClassificationVisibility");
 		return;
 	}
 	// Selectable
 	if (columnId == Column::Selectable) {
-		LasShader::ClassificationSelectable(!LasShader::ClassificationSelectable(rowNumber), rowNumber);
-		sendActionMessage("UpdateLas");
+		sendActionMessage("UpdateLasClassificationSelectable");
 		return;
 	}
 	if (columnId == Column::Colour) {
@@ -294,7 +297,7 @@ void ClassifModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 		if (auto* cs = dynamic_cast<juce::ColourSelector*> (source)) {
 			juce::Colour color = cs->getCurrentColour();
 			LasShader::ClassificationColor(color, m_ActiveRow);
-			sendActionMessage("UpdateLas");
+			sendActionMessage("UpdateLasClassificationColor");
 		}
 	}
 }
@@ -383,6 +386,7 @@ LasLayersViewer::LasLayersViewer()
 	// Bordure
 	m_TableClassif.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_TableClassif.setOutlineThickness(1);
+	m_TableClassif.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
 	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Visibility, 25);
 	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Selectable, 25);
@@ -471,8 +475,13 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableLas.updateContent();
 		m_TableLas.repaint();
 		return;
-	}	if (message == "UpdateLas") {
+	}
+	if (message == "UpdateLas") {
 		repaint();
+		return;
+	}
+	if (message == "UpdateLasClassificationColor") {
+		sendActionMessage("UpdateLas");
 		return;
 	}
 
@@ -510,8 +519,26 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableLas.deselectAllRows();
 		m_TableLas.repaint();
 	}
+	if (message == "UpdateLasClassificationVisibility") {
+		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
+		for (int i = 0; i < S.size(); i++) {
+			LasShader::ClassificationVisibility(!LasShader::ClassificationVisibility(S[i]), S[i]);
+		}
+		m_TableClassif.repaint();
+		sendActionMessage("UpdateLas");
+	}
+	if (message == "UpdateLasClassificationSelectable") {
+		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
+		for (int i = 0; i < S.size(); i++) {
+			LasShader::ClassificationVisibility(!LasShader::ClassificationSelectable(S[i]), S[i]);
+		}
+		m_TableClassif.repaint();
+		sendActionMessage("UpdateLas");
+	}
 	if (message == "ComputeDtm")
 		ComputeDtm(T);
+	if (message == "ComputeStat")
+		ComputeStat(T);
 }
 
 //==============================================================================
@@ -638,4 +665,63 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	M.m_strFolderOut = foldername;
 	M.algo = (XLasFile::AlgoDtm)(algoIndexChosen + 1);
 	M.runThread();
+}
+
+//==============================================================================
+// Calcul des statistiques des fichiers LAS
+//==============================================================================
+void LasLayersViewer::ComputeStat(std::vector<XGeoClass*> T)
+{
+	juce::String foldername = AppUtil::OpenFolder("Statistics", juce::translate("Choose a directory..."));
+	if (foldername.isEmpty())
+		return;
+
+	// Thread de traitement
+	class MyTask : public ThreadClassProcessor {
+	public:
+
+		MyTask() : ThreadClassProcessor(juce::translate("Compute LAS Statistics ..."), true)
+		{
+			
+		}
+
+		virtual bool Process(XGeoVector* V)
+		{
+			if (V->TypeVector() != XGeoVector::LAS)
+				return false;
+			XLasFile las;
+			if (!las.Open(V->Filename()))
+				return false;
+			juce::File file(V->Filename());
+			juce::String file_out = m_strFolderOut + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".txt";
+			setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
+			std::ofstream mif, mid;
+			mif.open(m_strMifFile.toStdString(), std::ios::out | std::ios::app);
+			mid.open(m_strMidFile.toStdString(), std::ios::out | std::ios::app);
+			mif.setf(std::ios::fixed); mif.precision(2);
+			mid.setf(std::ios::fixed); mid.precision(2);
+			return las.StatLas(file_out.toStdString(), &mif, &mid);
+		}
+	};
+
+	MyTask M;
+	M.m_T = T;
+	M.m_strFolderOut = foldername;
+
+	juce::StringArray Att;
+	Att.add("NAME char (255)");
+	Att.add("ZMIN decimal (10,2)"); Att.add("ZMAX decimal (10,2)");
+	Att.add("CLASS_0 Integer"); Att.add("NON_CLASS Integer");
+	Att.add("SOL Integer"); Att.add("VEG_BAS Integer");
+	Att.add("VEG_MOY Integer"); Att.add("VEG_HAU Integer");
+	Att.add("BATI Integer"); Att.add("EAU Integer");
+	Att.add("PONT Integer"); Att.add("SURSOL Integer");
+	Att.add("ARTEFACTS Integer"); Att.add("VIRTUEL Integer");
+	Att.add("DIVERS_BAT Integer"); Att.add("Autres Integer");
+
+	M.CreateMifMidFile(foldername, juce::String("StatLAS"), Att);
+	M.runThread();
+	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	GeoTools::ColorizeClasses(m_Base);
+	sendActionMessage("UpdateVector");
 }
