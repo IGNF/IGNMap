@@ -70,7 +70,7 @@ ExportImageDlg::ExportImageDlg(XGeoBase* base, double xmin, double ymin, double 
   m_edtFilename.setText("");
   m_edtFilename.setReadOnly(true);
 
-  grabKeyboardFocus();
+  getWantsKeyboardFocus();
 }
 
 //==============================================================================

@@ -14,6 +14,7 @@
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
 #include "ExportImageDlg.h"
+#include "ExportLasDlg.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 
@@ -195,6 +196,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 
 		juce::PopupMenu ExportSubMenu;
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportImage);
+		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportLas);
 		menu.addSubMenu(juce::translate("Export"), ExportSubMenu);
 
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuQuit);
@@ -261,7 +263,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuImportVectorFile, CommandIDs::menuImportVectorFolder, 
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
-		CommandIDs::menuExportImage,
+		CommandIDs::menuExportImage, CommandIDs::menuExportLas,
 		CommandIDs::menuZoomTotal, CommandIDs::menuZoomLevel,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
@@ -351,6 +353,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuExportImage:
 		result.setInfo(juce::translate("Export image"), juce::translate("Export image"), "Menu", 0);
+		break;
+	case CommandIDs::menuExportLas:
+		result.setInfo(juce::translate("Export LAS"), juce::translate("Export LAS"), "Menu", 0);
 		break;
 	case CommandIDs::menuZoomTotal:
 		result.setInfo(juce::translate("Zoom total"), juce::translate("Zoom total"), "Menu", 0);
@@ -500,6 +505,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuExportImage:
 		ExportImage();
+		break;
+	case CommandIDs::menuExportLas:
+		ExportLas();
 		break;
 	case CommandIDs::menuZoomTotal:
 		m_MapView.get()->ZoomWorld();
@@ -747,8 +755,8 @@ void MainComponent::NewWindow()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.0.2";
-	juce::String info = "18/02/2024";
+	juce::String version = "0.0.3";
+	juce::String info = "28/02/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
@@ -1011,7 +1019,7 @@ void MainComponent::ImportLasFolder()
 	juce::String folderName = AppUtil::OpenFolder("LasFolderPath");
 	if (folderName.isEmpty())
 		return;
-	XGeoClass* C = ImportDataFolder(folderName, XGeoVector::LAS);
+	ImportDataFolder(folderName, XGeoVector::LAS);
 	m_LasViewer.get()->SetBase(&m_GeoBase);
 	m_MapView.get()->RenderMap(false, false, false, false, true, true);
 }
@@ -1121,6 +1129,7 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 //==============================================================================
 bool MainComponent::ExportImage()
 {
+	m_MapView.get()->StopThread();
 	XFrame F = m_MapView.get()->GetSelectionFrame();
 	double gsd = m_MapView.get()->GetGsd();
 	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), XRint(gsd));
@@ -1131,6 +1140,31 @@ bool MainComponent::ExportImage()
 
 	options.content->setSize(area.getWidth(), area.getHeight());
 	options.dialogTitle = juce::translate("Export Image");
+	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.escapeKeyTriggersCloseButton = true;
+	options.useNativeTitleBar = false;
+	options.resizable = false;
+
+	options.runModal();
+	return true;
+}
+
+//==============================================================================
+// Export sous forme d'un nuage de points LAS
+//==============================================================================
+bool MainComponent::ExportLas()
+{
+	m_MapView.get()->StopThread();
+	XFrame F = m_MapView.get()->GetSelectionFrame();
+	double gsd = m_MapView.get()->GetGsd();
+	ExportLasDlg* dlg = new ExportLasDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax));
+	juce::DialogWindow::LaunchOptions options;
+	options.content.setOwned(dlg);
+
+	juce::Rectangle<int> area(0, 0, 410, 300);
+
+	options.content->setSize(area.getWidth(), area.getHeight());
+	options.dialogTitle = juce::translate("Export LAS");
 	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
 	options.escapeKeyTriggersCloseButton = true;
 	options.useNativeTitleBar = false;

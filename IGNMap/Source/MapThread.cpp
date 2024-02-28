@@ -815,7 +815,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 		int W = (int)round(F.Width() / m_dGsd);
 		int H = (int)round(F.Height() / m_dGsd);
 		juce::Graphics g(m_Las);
-		g.setColour(juce::Colours::mediumvioletred);
+		g.setColour(juce::Colours::lightpink);
 		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
 		m_nNumObjects++;
 		return true;

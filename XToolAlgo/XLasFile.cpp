@@ -22,17 +22,18 @@ bool XLasFile::Open(std::string filename)
 	m_strFilename = "";
 	if (laszip_create(&m_Reader))
 		return false;
-	laszip_BOOL compress;
+	laszip_BOOL compress = 0;
 	if (laszip_open_reader(m_Reader, filename.c_str(), &compress)) {
 		laszip_destroy(m_Reader);
+    m_Reader = nullptr;
 		return false;
 	}
 	if (laszip_get_header_pointer(m_Reader, &m_Header)) {
-		laszip_destroy(m_Reader);
+    Close();
 		return false;
 	}
 	if (laszip_get_point_pointer(m_Reader, &m_Point)) {
-		laszip_destroy(m_Reader);
+    Close();
 		return false;
 	}
 
@@ -50,6 +51,9 @@ bool XLasFile::Close()
 		laszip_close_reader(m_Reader);
 		laszip_destroy(m_Reader);
 	}
+  m_Reader = nullptr;
+  m_Header = nullptr;
+  m_Point = nullptr;
 	m_strFilename = "";
 	return true;
 }

@@ -250,6 +250,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
   $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
   $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
+  $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
   $(JUCE_OBJDIR)/GeoBase_343e9923.o \
   $(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o \
   $(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o \
@@ -1249,6 +1250,11 @@ $(JUCE_OBJDIR)/DtmShader_bfa70483.o: ../../Source/DtmShader.cpp
 $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o: ../../Source/ExportImageDlg.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ExportImageDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ExportLasDlg_f653953e.o: ../../Source/ExportLasDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ExportLasDlg.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/GeoBase_343e9923.o: ../../Source/GeoBase.cpp
