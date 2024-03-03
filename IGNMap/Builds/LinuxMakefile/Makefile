@@ -72,52 +72,52 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS_APP := \
-  $(JUCE_OBJDIR)/jaricom_82c7679b.o \
-  $(JUCE_OBJDIR)/jcapimin_95260b33.o \
-  $(JUCE_OBJDIR)/jcapistd_957f72c4.o \
-  $(JUCE_OBJDIR)/jcarith_def22fbb.o \
-  $(JUCE_OBJDIR)/jccoefct_28c97ef9.o \
-  $(JUCE_OBJDIR)/jccolor_43c84292.o \
-  $(JUCE_OBJDIR)/jcdctmgr_2fdd049e.o \
-  $(JUCE_OBJDIR)/jchuff_c8f92008.o \
-  $(JUCE_OBJDIR)/jcinit_ca4ce5cb.o \
-  $(JUCE_OBJDIR)/jcmainct_5a4220a5.o \
-  $(JUCE_OBJDIR)/jcmarker_697458f5.o \
-  $(JUCE_OBJDIR)/jcmaster_6ba8051d.o \
-  $(JUCE_OBJDIR)/jcomapi_ba8ea86b.o \
-  $(JUCE_OBJDIR)/jcparam_dbe3893c.o \
-  $(JUCE_OBJDIR)/jcprepct_e786319.o \
-  $(JUCE_OBJDIR)/jcsample_d07c9e65.o \
-  $(JUCE_OBJDIR)/jctrans_cb954897.o \
-  $(JUCE_OBJDIR)/jdapimin_296a7a34.o \
-  $(JUCE_OBJDIR)/jdapistd_29c3e1c5.o \
-  $(JUCE_OBJDIR)/jdarith_46d35c9a.o \
-  $(JUCE_OBJDIR)/jdatadst_eee270f3.o \
-  $(JUCE_OBJDIR)/jdatasrc_efb51d52.o \
-  $(JUCE_OBJDIR)/jdcoefct_bd0dedfa.o \
-  $(JUCE_OBJDIR)/jdcolor_aba96f71.o \
-  $(JUCE_OBJDIR)/jddctmgr_c421739f.o \
-  $(JUCE_OBJDIR)/jdhuff_fddf5b49.o \
-  $(JUCE_OBJDIR)/jdinput_e7951a18.o \
-  $(JUCE_OBJDIR)/jdmainct_ee868fa6.o \
-  $(JUCE_OBJDIR)/jdmarker_fdb8c7f6.o \
-  $(JUCE_OBJDIR)/jdmaster_ffec741e.o \
-  $(JUCE_OBJDIR)/jdmerge_abe80306.o \
-  $(JUCE_OBJDIR)/jdpostct_1c26570d.o \
-  $(JUCE_OBJDIR)/jdsample_64c10d66.o \
-  $(JUCE_OBJDIR)/jdtrans_33767576.o \
-  $(JUCE_OBJDIR)/jerror_43b00aa0.o \
-  $(JUCE_OBJDIR)/jfdctflt_ec49fa77.o \
-  $(JUCE_OBJDIR)/jfdctfst_ec4d2910.o \
-  $(JUCE_OBJDIR)/jfdctint_ec7529b8.o \
-  $(JUCE_OBJDIR)/jidctflt_a917477a.o \
-  $(JUCE_OBJDIR)/jidctfst_a91a7613.o \
-  $(JUCE_OBJDIR)/jidctint_a94276bb.o \
-  $(JUCE_OBJDIR)/jmemmgr_b9013d15.o \
-  $(JUCE_OBJDIR)/jmemnobs_6945b13f.o \
-  $(JUCE_OBJDIR)/jquant1_92828980.o \
-  $(JUCE_OBJDIR)/jquant2_92828d41.o \
-  $(JUCE_OBJDIR)/jutils_94fd4309.o \
+  $(JUCE_OBJDIR)/jaricom_17ac1a5c.o \
+  $(JUCE_OBJDIR)/jcapimin_9cd7b092.o \
+  $(JUCE_OBJDIR)/jcapistd_9d311823.o \
+  $(JUCE_OBJDIR)/jcarith_73d6e27c.o \
+  $(JUCE_OBJDIR)/jccoefct_307b2458.o \
+  $(JUCE_OBJDIR)/jccolor_d8acf553.o \
+  $(JUCE_OBJDIR)/jcdctmgr_378ea9fd.o \
+  $(JUCE_OBJDIR)/jchuff_bd429127.o \
+  $(JUCE_OBJDIR)/jcinit_be9656ea.o \
+  $(JUCE_OBJDIR)/jcmainct_61f3c604.o \
+  $(JUCE_OBJDIR)/jcmarker_7125fe54.o \
+  $(JUCE_OBJDIR)/jcmaster_7359aa7c.o \
+  $(JUCE_OBJDIR)/jcomapi_4f735b2c.o \
+  $(JUCE_OBJDIR)/jcparam_70c83bfd.o \
+  $(JUCE_OBJDIR)/jcprepct_162a0878.o \
+  $(JUCE_OBJDIR)/jcsample_d82e43c4.o \
+  $(JUCE_OBJDIR)/jctrans_6079fb58.o \
+  $(JUCE_OBJDIR)/jdapimin_311c1f93.o \
+  $(JUCE_OBJDIR)/jdapistd_31758724.o \
+  $(JUCE_OBJDIR)/jdarith_dbb80f5b.o \
+  $(JUCE_OBJDIR)/jdatadst_f6941652.o \
+  $(JUCE_OBJDIR)/jdatasrc_f766c2b1.o \
+  $(JUCE_OBJDIR)/jdcoefct_c4bf9359.o \
+  $(JUCE_OBJDIR)/jdcolor_408e2232.o \
+  $(JUCE_OBJDIR)/jddctmgr_cbd318fe.o \
+  $(JUCE_OBJDIR)/jdhuff_f228cc68.o \
+  $(JUCE_OBJDIR)/jdinput_7c79ccd9.o \
+  $(JUCE_OBJDIR)/jdmainct_f6383505.o \
+  $(JUCE_OBJDIR)/jdmarker_56a6d55.o \
+  $(JUCE_OBJDIR)/jdmaster_79e197d.o \
+  $(JUCE_OBJDIR)/jdmerge_40ccb5c7.o \
+  $(JUCE_OBJDIR)/jdpostct_23d7fc6c.o \
+  $(JUCE_OBJDIR)/jdsample_6c72b2c5.o \
+  $(JUCE_OBJDIR)/jdtrans_c85b2837.o \
+  $(JUCE_OBJDIR)/jerror_37f97bbf.o \
+  $(JUCE_OBJDIR)/jfdctflt_f3fb9fd6.o \
+  $(JUCE_OBJDIR)/jfdctfst_f3fece6f.o \
+  $(JUCE_OBJDIR)/jfdctint_f426cf17.o \
+  $(JUCE_OBJDIR)/jidctflt_b0c8ecd9.o \
+  $(JUCE_OBJDIR)/jidctfst_b0cc1b72.o \
+  $(JUCE_OBJDIR)/jidctint_b0f41c1a.o \
+  $(JUCE_OBJDIR)/jmemmgr_4de5efd6.o \
+  $(JUCE_OBJDIR)/jmemnobs_70f7569e.o \
+  $(JUCE_OBJDIR)/jquant1_27673c41.o \
+  $(JUCE_OBJDIR)/jquant2_27674002.o \
+  $(JUCE_OBJDIR)/jutils_8946b428.o \
   $(JUCE_OBJDIR)/arithmeticdecoder_9f9abec7.o \
   $(JUCE_OBJDIR)/arithmeticencoder_cb146b9f.o \
   $(JUCE_OBJDIR)/arithmeticmodel_63af2eac.o \
@@ -362,232 +362,232 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(JUCE_OBJDIR)/execinfo.cmd $
 	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
 	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(OBJECTS_APP) $(JUCE_LDFLAGS) $(shell cat $(JUCE_OBJDIR)/execinfo.cmd) $(JUCE_LDFLAGS_APP) $(RESOURCES) $(TARGET_ARCH)
 
-$(JUCE_OBJDIR)/jaricom_82c7679b.o: ../../../jpeg-9e/jaricom.c
+$(JUCE_OBJDIR)/jaricom_17ac1a5c.o: ../../../jpeg-9f/jaricom.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jaricom.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcapimin_95260b33.o: ../../../jpeg-9e/jcapimin.c
+$(JUCE_OBJDIR)/jcapimin_9cd7b092.o: ../../../jpeg-9f/jcapimin.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcapimin.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcapistd_957f72c4.o: ../../../jpeg-9e/jcapistd.c
+$(JUCE_OBJDIR)/jcapistd_9d311823.o: ../../../jpeg-9f/jcapistd.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcapistd.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcarith_def22fbb.o: ../../../jpeg-9e/jcarith.c
+$(JUCE_OBJDIR)/jcarith_73d6e27c.o: ../../../jpeg-9f/jcarith.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcarith.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jccoefct_28c97ef9.o: ../../../jpeg-9e/jccoefct.c
+$(JUCE_OBJDIR)/jccoefct_307b2458.o: ../../../jpeg-9f/jccoefct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jccoefct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jccolor_43c84292.o: ../../../jpeg-9e/jccolor.c
+$(JUCE_OBJDIR)/jccolor_d8acf553.o: ../../../jpeg-9f/jccolor.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jccolor.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcdctmgr_2fdd049e.o: ../../../jpeg-9e/jcdctmgr.c
+$(JUCE_OBJDIR)/jcdctmgr_378ea9fd.o: ../../../jpeg-9f/jcdctmgr.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcdctmgr.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jchuff_c8f92008.o: ../../../jpeg-9e/jchuff.c
+$(JUCE_OBJDIR)/jchuff_bd429127.o: ../../../jpeg-9f/jchuff.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jchuff.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcinit_ca4ce5cb.o: ../../../jpeg-9e/jcinit.c
+$(JUCE_OBJDIR)/jcinit_be9656ea.o: ../../../jpeg-9f/jcinit.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcinit.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcmainct_5a4220a5.o: ../../../jpeg-9e/jcmainct.c
+$(JUCE_OBJDIR)/jcmainct_61f3c604.o: ../../../jpeg-9f/jcmainct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcmainct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcmarker_697458f5.o: ../../../jpeg-9e/jcmarker.c
+$(JUCE_OBJDIR)/jcmarker_7125fe54.o: ../../../jpeg-9f/jcmarker.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcmarker.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcmaster_6ba8051d.o: ../../../jpeg-9e/jcmaster.c
+$(JUCE_OBJDIR)/jcmaster_7359aa7c.o: ../../../jpeg-9f/jcmaster.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcmaster.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcomapi_ba8ea86b.o: ../../../jpeg-9e/jcomapi.c
+$(JUCE_OBJDIR)/jcomapi_4f735b2c.o: ../../../jpeg-9f/jcomapi.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcomapi.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcparam_dbe3893c.o: ../../../jpeg-9e/jcparam.c
+$(JUCE_OBJDIR)/jcparam_70c83bfd.o: ../../../jpeg-9f/jcparam.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcparam.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcprepct_e786319.o: ../../../jpeg-9e/jcprepct.c
+$(JUCE_OBJDIR)/jcprepct_162a0878.o: ../../../jpeg-9f/jcprepct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcprepct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jcsample_d07c9e65.o: ../../../jpeg-9e/jcsample.c
+$(JUCE_OBJDIR)/jcsample_d82e43c4.o: ../../../jpeg-9f/jcsample.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jcsample.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jctrans_cb954897.o: ../../../jpeg-9e/jctrans.c
+$(JUCE_OBJDIR)/jctrans_6079fb58.o: ../../../jpeg-9f/jctrans.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jctrans.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdapimin_296a7a34.o: ../../../jpeg-9e/jdapimin.c
+$(JUCE_OBJDIR)/jdapimin_311c1f93.o: ../../../jpeg-9f/jdapimin.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdapimin.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdapistd_29c3e1c5.o: ../../../jpeg-9e/jdapistd.c
+$(JUCE_OBJDIR)/jdapistd_31758724.o: ../../../jpeg-9f/jdapistd.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdapistd.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdarith_46d35c9a.o: ../../../jpeg-9e/jdarith.c
+$(JUCE_OBJDIR)/jdarith_dbb80f5b.o: ../../../jpeg-9f/jdarith.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdarith.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdatadst_eee270f3.o: ../../../jpeg-9e/jdatadst.c
+$(JUCE_OBJDIR)/jdatadst_f6941652.o: ../../../jpeg-9f/jdatadst.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdatadst.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdatasrc_efb51d52.o: ../../../jpeg-9e/jdatasrc.c
+$(JUCE_OBJDIR)/jdatasrc_f766c2b1.o: ../../../jpeg-9f/jdatasrc.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdatasrc.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdcoefct_bd0dedfa.o: ../../../jpeg-9e/jdcoefct.c
+$(JUCE_OBJDIR)/jdcoefct_c4bf9359.o: ../../../jpeg-9f/jdcoefct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdcoefct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdcolor_aba96f71.o: ../../../jpeg-9e/jdcolor.c
+$(JUCE_OBJDIR)/jdcolor_408e2232.o: ../../../jpeg-9f/jdcolor.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdcolor.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jddctmgr_c421739f.o: ../../../jpeg-9e/jddctmgr.c
+$(JUCE_OBJDIR)/jddctmgr_cbd318fe.o: ../../../jpeg-9f/jddctmgr.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jddctmgr.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdhuff_fddf5b49.o: ../../../jpeg-9e/jdhuff.c
+$(JUCE_OBJDIR)/jdhuff_f228cc68.o: ../../../jpeg-9f/jdhuff.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdhuff.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdinput_e7951a18.o: ../../../jpeg-9e/jdinput.c
+$(JUCE_OBJDIR)/jdinput_7c79ccd9.o: ../../../jpeg-9f/jdinput.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdinput.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdmainct_ee868fa6.o: ../../../jpeg-9e/jdmainct.c
+$(JUCE_OBJDIR)/jdmainct_f6383505.o: ../../../jpeg-9f/jdmainct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdmainct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdmarker_fdb8c7f6.o: ../../../jpeg-9e/jdmarker.c
+$(JUCE_OBJDIR)/jdmarker_56a6d55.o: ../../../jpeg-9f/jdmarker.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdmarker.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdmaster_ffec741e.o: ../../../jpeg-9e/jdmaster.c
+$(JUCE_OBJDIR)/jdmaster_79e197d.o: ../../../jpeg-9f/jdmaster.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdmaster.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdmerge_abe80306.o: ../../../jpeg-9e/jdmerge.c
+$(JUCE_OBJDIR)/jdmerge_40ccb5c7.o: ../../../jpeg-9f/jdmerge.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdmerge.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdpostct_1c26570d.o: ../../../jpeg-9e/jdpostct.c
+$(JUCE_OBJDIR)/jdpostct_23d7fc6c.o: ../../../jpeg-9f/jdpostct.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdpostct.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdsample_64c10d66.o: ../../../jpeg-9e/jdsample.c
+$(JUCE_OBJDIR)/jdsample_6c72b2c5.o: ../../../jpeg-9f/jdsample.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdsample.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jdtrans_33767576.o: ../../../jpeg-9e/jdtrans.c
+$(JUCE_OBJDIR)/jdtrans_c85b2837.o: ../../../jpeg-9f/jdtrans.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jdtrans.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jerror_43b00aa0.o: ../../../jpeg-9e/jerror.c
+$(JUCE_OBJDIR)/jerror_37f97bbf.o: ../../../jpeg-9f/jerror.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jerror.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jfdctflt_ec49fa77.o: ../../../jpeg-9e/jfdctflt.c
+$(JUCE_OBJDIR)/jfdctflt_f3fb9fd6.o: ../../../jpeg-9f/jfdctflt.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jfdctflt.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jfdctfst_ec4d2910.o: ../../../jpeg-9e/jfdctfst.c
+$(JUCE_OBJDIR)/jfdctfst_f3fece6f.o: ../../../jpeg-9f/jfdctfst.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jfdctfst.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jfdctint_ec7529b8.o: ../../../jpeg-9e/jfdctint.c
+$(JUCE_OBJDIR)/jfdctint_f426cf17.o: ../../../jpeg-9f/jfdctint.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jfdctint.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jidctflt_a917477a.o: ../../../jpeg-9e/jidctflt.c
+$(JUCE_OBJDIR)/jidctflt_b0c8ecd9.o: ../../../jpeg-9f/jidctflt.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jidctflt.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jidctfst_a91a7613.o: ../../../jpeg-9e/jidctfst.c
+$(JUCE_OBJDIR)/jidctfst_b0cc1b72.o: ../../../jpeg-9f/jidctfst.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jidctfst.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jidctint_a94276bb.o: ../../../jpeg-9e/jidctint.c
+$(JUCE_OBJDIR)/jidctint_b0f41c1a.o: ../../../jpeg-9f/jidctint.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jidctint.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jmemmgr_b9013d15.o: ../../../jpeg-9e/jmemmgr.c
+$(JUCE_OBJDIR)/jmemmgr_4de5efd6.o: ../../../jpeg-9f/jmemmgr.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jmemmgr.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jmemnobs_6945b13f.o: ../../../jpeg-9e/jmemnobs.c
+$(JUCE_OBJDIR)/jmemnobs_70f7569e.o: ../../../jpeg-9f/jmemnobs.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jmemnobs.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jquant1_92828980.o: ../../../jpeg-9e/jquant1.c
+$(JUCE_OBJDIR)/jquant1_27673c41.o: ../../../jpeg-9f/jquant1.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jquant1.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jquant2_92828d41.o: ../../../jpeg-9e/jquant2.c
+$(JUCE_OBJDIR)/jquant2_27674002.o: ../../../jpeg-9f/jquant2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jquant2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/jutils_94fd4309.o: ../../../jpeg-9e/jutils.c
+$(JUCE_OBJDIR)/jutils_8946b428.o: ../../../jpeg-9f/jutils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling jutils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"

@@ -5,14 +5,14 @@
     <Filter Include="IGNMap\Images">
       <UniqueIdentifier>{CA232CF6-0625-1D95-0BF7-1CE6C450FA1E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\jpeg-9e\Header">
-      <UniqueIdentifier>{6D87FD17-02A4-03B4-D147-5BC117E000CE}</UniqueIdentifier>
+    <Filter Include="IGNMap\jpeg-9f\Header">
+      <UniqueIdentifier>{35CF197B-657B-722B-6E08-ED879B4DCD3D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\jpeg-9e\Source">
-      <UniqueIdentifier>{C0DB3373-79DF-5084-09E1-D8866930E187}</UniqueIdentifier>
+    <Filter Include="IGNMap\jpeg-9f\Source">
+      <UniqueIdentifier>{9373FFA2-99F5-4181-F579-5978D5EBE25C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\jpeg-9e">
-      <UniqueIdentifier>{F69E5385-C521-59A1-9BA7-ADD81055E32A}</UniqueIdentifier>
+    <Filter Include="IGNMap\jpeg-9f">
+      <UniqueIdentifier>{06D1CF39-2007-48D1-A528-18CFE4F72F59}</UniqueIdentifier>
     </Filter>
     <Filter Include="IGNMap\LASzip">
       <UniqueIdentifier>{BF0F2160-1A82-4839-E288-CC32441A5656}</UniqueIdentifier>
@@ -56,14 +56,14 @@
     <Filter Include="IGNMap\XToolVector">
       <UniqueIdentifier>{8A79BB63-0CBB-9191-2BA3-D02572D157BD}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\zlib-1.2.11\Header">
-      <UniqueIdentifier>{C1592F64-600E-D652-D9C9-1429D96D4928}</UniqueIdentifier>
+    <Filter Include="IGNMap\zlib-1.3.1\Header">
+      <UniqueIdentifier>{8582550C-5CD6-4706-B721-7805686E80B2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\zlib-1.2.11\Source">
-      <UniqueIdentifier>{9B6DF7B7-0640-CDAC-0B37-96A95D562CEC}</UniqueIdentifier>
+    <Filter Include="IGNMap\zlib-1.3.1\Source">
+      <UniqueIdentifier>{0331C764-6E24-5BA4-0BAB-A773DEBA9993}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IGNMap\zlib-1.2.11">
-      <UniqueIdentifier>{C55FFCE2-E08F-B286-E3AA-95384CAD97DE}</UniqueIdentifier>
+    <Filter Include="IGNMap\zlib-1.3.1">
+      <UniqueIdentifier>{7060CAA2-BD13-71E2-0680-1436359CF919}</UniqueIdentifier>
     </Filter>
     <Filter Include="IGNMap">
       <UniqueIdentifier>{544AE4AF-031B-D87C-5CE9-62709C2DECA9}</UniqueIdentifier>
@@ -313,143 +313,143 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\jpeg-9e\jaricom.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jaricom.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcapimin.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcapimin.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcapistd.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcapistd.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcarith.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcarith.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jccoefct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jccoefct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jccolor.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jccolor.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcdctmgr.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcdctmgr.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jchuff.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jchuff.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcinit.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcinit.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcmainct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcmainct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcmarker.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcmarker.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcmaster.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcmaster.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcomapi.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcomapi.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcparam.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcparam.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcprepct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcprepct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jcsample.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jcsample.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jctrans.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jctrans.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdapimin.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdapimin.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdapistd.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdapistd.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdarith.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdarith.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdatadst.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdatadst.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdatasrc.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdatasrc.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdcoefct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdcoefct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdcolor.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdcolor.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jddctmgr.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jddctmgr.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdhuff.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdhuff.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdinput.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdinput.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdmainct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdmainct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdmarker.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdmarker.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdmaster.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdmaster.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdmerge.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdmerge.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdpostct.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdpostct.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdsample.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdsample.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jdtrans.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jdtrans.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jerror.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jerror.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jfdctflt.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jfdctflt.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jfdctfst.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jfdctfst.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jfdctint.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jfdctint.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jidctflt.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jidctflt.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jidctfst.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jidctfst.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jidctint.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jidctint.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jmemmgr.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jmemmgr.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jmemnobs.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jmemnobs.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jquant1.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jquant1.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jquant2.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jquant2.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jpeg-9e\jutils.c">
-      <Filter>IGNMap\jpeg-9e\Source</Filter>
+    <ClCompile Include="..\..\..\jpeg-9f\jutils.c">
+      <Filter>IGNMap\jpeg-9f\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\LASzip\src\arithmeticdecoder.cpp">
       <Filter>IGNMap\LASzip</Filter>
@@ -1073,49 +1073,49 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\adler32.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\compress.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\crc32.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\deflate.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\gzclose.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\gzlib.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\gzread.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\gzwrite.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\infback.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\inffast.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\inflate.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\inftrees.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\trees.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\uncompr.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\zlib-1.3.1\zutil.c">
-      <Filter>IGNMap\zlib-1.2.11\Source</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\JUCE\modules\juce_core\containers\juce_AbstractFifo.cpp">
       <Filter>JUCE Modules\juce_core\containers</Filter>
@@ -2607,32 +2607,32 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\jpeg-9e\jconfig.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jconfig.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jdct.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jdct.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jerror.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jerror.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jinclude.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jinclude.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jmemsys.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jmemsys.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jmorecfg.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jmorecfg.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jpegint.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jpegint.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jpeglib.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jpeglib.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\jpeg-9e\jversion.h">
-      <Filter>IGNMap\jpeg-9e\Header</Filter>
+    <ClInclude Include="..\..\..\jpeg-9f\jversion.h">
+      <Filter>IGNMap\jpeg-9f\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\LASzip\src\arithmeticdecoder.hpp">
       <Filter>IGNMap\LASzip</Filter>
@@ -3205,37 +3205,37 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\crc32.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\deflate.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\gzguts.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\inffast.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\inffixed.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\inflate.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\inftrees.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\trees.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\zconf.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\zlib.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\zlib-1.3.1\zutil.h">
-      <Filter>IGNMap\zlib-1.2.11\Header</Filter>
+      <Filter>IGNMap\zlib-1.3.1\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\JUCE\modules\juce_core\containers\juce_AbstractFifo.h">
       <Filter>JUCE Modules\juce_core\containers</Filter>
