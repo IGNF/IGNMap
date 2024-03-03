@@ -217,7 +217,7 @@ bool XFileImage::AnalyzeCog()
   if (!m_File.Open(m_strFilename.c_str(), std::ios::in | std::ios::binary))
     return false;
   XCogImage* image = new XCogImage;
-  if (image == NULL) {
+  if (image == nullptr) {
     m_File.Close();
     return false;
   }
@@ -254,12 +254,12 @@ bool XFileImage::AnalyzeWebP()
 //-----------------------------------------------------------------------------
 bool XFileImage::GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
 {
-  if (m_Image == NULL)
+  if (m_Image == nullptr)
     return false;
-  if (m_Palette == NULL)
+  if (m_Palette == nullptr)
     m_Image->SetChannelHints(m_RGBChannel);
   else
-    m_Image->SetChannelHints(NULL);
+    m_Image->SetChannelHints(nullptr);
 
   if (m_Image->ColorMapSize() == 0) {
     if ((m_Image->NbBits() <= 8) && (m_Image->NbSample() == 1)) {  // Niveaux de gris
@@ -291,12 +291,12 @@ bool XFileImage::GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t
 //-----------------------------------------------------------------------------
 bool XFileImage::GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
 {
-  if (m_Image == NULL)
+  if (m_Image == nullptr)
     return false;
-  if (m_Palette == NULL)
+  if (m_Palette == nullptr)
     m_Image->SetChannelHints(m_RGBChannel);
   else
-    m_Image->SetChannelHints(NULL);
+    m_Image->SetChannelHints(nullptr);
 
   if (m_Image->ColorMapSize() == 0) {
     if ((m_Image->NbBits() <= 8) && (m_Image->NbSample() == 1)) { // Niveaux de gris
@@ -420,7 +420,7 @@ bool XFileImage::PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_
 //-----------------------------------------------------------------------------
 bool XFileImage::GetRawArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, float* pix, uint32_t* nb_sample, uint32_t factor)
 {
-  if (m_Image == NULL)
+  if (m_Image == nullptr)
     return false;
   m_Image->SetChannelHints(nullptr);
   return m_Image->GetRawArea(&m_File, x, y, w, h, pix, nb_sample, factor);
@@ -428,7 +428,7 @@ bool XFileImage::GetRawArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, floa
 
 bool XFileImage::GetRawPixel(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample)
 {
-  if (m_Image == NULL)
+  if (m_Image == nullptr)
     return false;
   m_Image->SetChannelHints(nullptr);
   return m_Image->GetRawPixel(&m_File, x, y, win, pix, nb_sample);
@@ -439,7 +439,7 @@ bool XFileImage::GetRawPixel(uint32_t x, uint32_t y, uint32_t win, double* pix, 
 //-----------------------------------------------------------------------------
 bool XFileImage::GetStat(double minVal[4], double maxVal[4], double meanVal[4], uint32_t noData[4], double no_data)
 {
-  if (m_Image == NULL)
+  if (m_Image == nullptr)
     return false;
   return m_Image->GetStat(&m_File, minVal, maxVal, meanVal, noData, no_data);
 }
@@ -502,15 +502,15 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
 
   // Allocation des tableaux
   typedef uint8_t* byteptr;
-  buf = new byteptr[lg * 2];
-  for (int i = 0; i < lg * 2; i++)
+  buf = new byteptr[2 * lg];
+  for (int i = 0; i < 2 * lg; i++)
     buf[i] = new uint8_t[Width() * nb_canal];
   out = new uint8_t[W * nb_canal];
   val = new double[2 * lg];
   inter = new double[2 * lg];
 
   // Gestion
-  if (wait != NULL)
+  if (wait != nullptr)
     wait->SetRange(0, H);
 
   // Debut de l'iteration ligne par ligne de l'image finale
@@ -541,8 +541,8 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
       xcur = (int)xi;
       for (int canal = 0; canal < nb_canal; canal++) {
         // Gestion des pixels hors zone
-        if ((xcur < lg - 1) || (xcur > (int)Width() - lg) ||
-          (ycur < lg - 1) || (ycur > (int)Height() - lg)) {
+        if ((xcur < lg - 1) || (xcur >= (int)Width() - lg) ||
+          (ycur < lg - 1) || (ycur >= (int)Height() - lg)) {
           out[nb_canal * col + canal] = white;
           continue;
         }

@@ -325,21 +325,21 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XShapefileRecord_3816b976.o \
   $(JUCE_OBJDIR)/XShapefileVector_d626568.o \
   $(JUCE_OBJDIR)/XWKBGeom_ed139392.o \
-  $(JUCE_OBJDIR)/adler32_5cf31f67.o \
-  $(JUCE_OBJDIR)/compress_39994dba.o \
-  $(JUCE_OBJDIR)/crc32_7e889e65.o \
-  $(JUCE_OBJDIR)/deflate_4f5cde1d.o \
-  $(JUCE_OBJDIR)/gzclose_f3b4fc57.o \
-  $(JUCE_OBJDIR)/gzlib_60606424.o \
-  $(JUCE_OBJDIR)/gzread_b5b12661.o \
-  $(JUCE_OBJDIR)/gzwrite_1f9a987e.o \
-  $(JUCE_OBJDIR)/infback_ca8582fa.o \
-  $(JUCE_OBJDIR)/inffast_d1604d2f.o \
-  $(JUCE_OBJDIR)/inflate_db9d9cf9.o \
-  $(JUCE_OBJDIR)/inftrees_5b77db2c.o \
-  $(JUCE_OBJDIR)/trees_2066b47.o \
-  $(JUCE_OBJDIR)/uncompr_35e6227c.o \
-  $(JUCE_OBJDIR)/zutil_455f706e.o \
+  $(JUCE_OBJDIR)/adler32_7f36c161.o \
+  $(JUCE_OBJDIR)/compress_5fc9eb00.o \
+  $(JUCE_OBJDIR)/crc32_776076df.o \
+  $(JUCE_OBJDIR)/deflate_71a08017.o \
+  $(JUCE_OBJDIR)/gzclose_15f89e51.o \
+  $(JUCE_OBJDIR)/gzlib_59383c9e.o \
+  $(JUCE_OBJDIR)/gzread_d7d45d27.o \
+  $(JUCE_OBJDIR)/gzwrite_41de3a78.o \
+  $(JUCE_OBJDIR)/infback_ecc924f4.o \
+  $(JUCE_OBJDIR)/inffast_f3a3ef29.o \
+  $(JUCE_OBJDIR)/inflate_fde13ef3.o \
+  $(JUCE_OBJDIR)/inftrees_81a87872.o \
+  $(JUCE_OBJDIR)/trees_fade43c1.o \
+  $(JUCE_OBJDIR)/uncompr_5829c476.o \
+  $(JUCE_OBJDIR)/zutil_3e3748e8.o \
   $(JUCE_OBJDIR)/BinaryData_ce4232d4.o \
   $(JUCE_OBJDIR)/include_juce_core_f26d17db.o \
   $(JUCE_OBJDIR)/include_juce_data_structures_7471b1e3.o \
@@ -1627,77 +1627,77 @@ $(JUCE_OBJDIR)/XWKBGeom_ed139392.o: ../../../XToolVector/XWKBGeom.cpp
 	@echo "Compiling XWKBGeom.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/adler32_5cf31f67.o: ../../../zlib-1.2.11/adler32.c
+$(JUCE_OBJDIR)/adler32_7f36c161.o: ../../../zlib-1.3.1/adler32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling adler32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/compress_39994dba.o: ../../../zlib-1.2.11/compress.c
+$(JUCE_OBJDIR)/compress_5fc9eb00.o: ../../../zlib-1.3.1/compress.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling compress.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/crc32_7e889e65.o: ../../../zlib-1.2.11/crc32.c
+$(JUCE_OBJDIR)/crc32_776076df.o: ../../../zlib-1.3.1/crc32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling crc32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/deflate_4f5cde1d.o: ../../../zlib-1.2.11/deflate.c
+$(JUCE_OBJDIR)/deflate_71a08017.o: ../../../zlib-1.3.1/deflate.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling deflate.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzclose_f3b4fc57.o: ../../../zlib-1.2.11/gzclose.c
+$(JUCE_OBJDIR)/gzclose_15f89e51.o: ../../../zlib-1.3.1/gzclose.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzclose.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzlib_60606424.o: ../../../zlib-1.2.11/gzlib.c
+$(JUCE_OBJDIR)/gzlib_59383c9e.o: ../../../zlib-1.3.1/gzlib.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzlib.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzread_b5b12661.o: ../../../zlib-1.2.11/gzread.c
+$(JUCE_OBJDIR)/gzread_d7d45d27.o: ../../../zlib-1.3.1/gzread.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzread.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzwrite_1f9a987e.o: ../../../zlib-1.2.11/gzwrite.c
+$(JUCE_OBJDIR)/gzwrite_41de3a78.o: ../../../zlib-1.3.1/gzwrite.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzwrite.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/infback_ca8582fa.o: ../../../zlib-1.2.11/infback.c
+$(JUCE_OBJDIR)/infback_ecc924f4.o: ../../../zlib-1.3.1/infback.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling infback.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inffast_d1604d2f.o: ../../../zlib-1.2.11/inffast.c
+$(JUCE_OBJDIR)/inffast_f3a3ef29.o: ../../../zlib-1.3.1/inffast.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inffast.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inflate_db9d9cf9.o: ../../../zlib-1.2.11/inflate.c
+$(JUCE_OBJDIR)/inflate_fde13ef3.o: ../../../zlib-1.3.1/inflate.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inflate.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inftrees_5b77db2c.o: ../../../zlib-1.2.11/inftrees.c
+$(JUCE_OBJDIR)/inftrees_81a87872.o: ../../../zlib-1.3.1/inftrees.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inftrees.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/trees_2066b47.o: ../../../zlib-1.2.11/trees.c
+$(JUCE_OBJDIR)/trees_fade43c1.o: ../../../zlib-1.3.1/trees.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling trees.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/uncompr_35e6227c.o: ../../../zlib-1.2.11/uncompr.c
+$(JUCE_OBJDIR)/uncompr_5829c476.o: ../../../zlib-1.3.1/uncompr.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling uncompr.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/zutil_455f706e.o: ../../../zlib-1.2.11/zutil.c
+$(JUCE_OBJDIR)/zutil_3e3748e8.o: ../../../zlib-1.3.1/zutil.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling zutil.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"

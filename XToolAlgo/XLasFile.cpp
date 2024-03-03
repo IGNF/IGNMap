@@ -180,7 +180,7 @@ bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* 
   laszip_U8 classification;
   unsigned int TClassif[256];
   memset(TClassif, 0, 256 * sizeof(unsigned int));
-  double Xmin, Xmax, Ymin, Ymax;
+  double Xmin = 0., Xmax = 0., Ymin = 0., Ymax = 0.;
   for (laszip_I64 i = 0; i < NbLasPoints(); i++) {
     laszip_read_point(m_Reader);
     X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;

@@ -647,34 +647,34 @@
     </GROUP>
     <GROUP id="{A273CE02-EFD1-8AFF-D671-CA5CD6195B4C}" name="zlib-1.2.11">
       <GROUP id="{607F6CAE-E104-22C2-BE86-D0938DC2F23E}" name="Header">
-        <FILE id="xBwc32" name="crc32.h" compile="0" resource="0" file="../zlib-1.2.11/crc32.h"/>
-        <FILE id="ug1CSi" name="deflate.h" compile="0" resource="0" file="../zlib-1.2.11/deflate.h"/>
-        <FILE id="oIk5TY" name="gzguts.h" compile="0" resource="0" file="../zlib-1.2.11/gzguts.h"/>
-        <FILE id="Rzasrl" name="inffast.h" compile="0" resource="0" file="../zlib-1.2.11/inffast.h"/>
-        <FILE id="sQAEb6" name="inffixed.h" compile="0" resource="0" file="../zlib-1.2.11/inffixed.h"/>
-        <FILE id="qlXuFZ" name="inflate.h" compile="0" resource="0" file="../zlib-1.2.11/inflate.h"/>
-        <FILE id="cqpJDA" name="inftrees.h" compile="0" resource="0" file="../zlib-1.2.11/inftrees.h"/>
-        <FILE id="yDGgB3" name="trees.h" compile="0" resource="0" file="../zlib-1.2.11/trees.h"/>
-        <FILE id="JgYlgq" name="zconf.h" compile="0" resource="0" file="../zlib-1.2.11/zconf.h"/>
-        <FILE id="rEgr6c" name="zlib.h" compile="0" resource="0" file="../zlib-1.2.11/zlib.h"/>
-        <FILE id="baZD2Q" name="zutil.h" compile="0" resource="0" file="../zlib-1.2.11/zutil.h"/>
+        <FILE id="xBwc32" name="crc32.h" compile="0" resource="0" file="../zlib-1.3.1/crc32.h"/>
+        <FILE id="ug1CSi" name="deflate.h" compile="0" resource="0" file="../zlib-1.3.1/deflate.h"/>
+        <FILE id="oIk5TY" name="gzguts.h" compile="0" resource="0" file="../zlib-1.3.1/gzguts.h"/>
+        <FILE id="Rzasrl" name="inffast.h" compile="0" resource="0" file="../zlib-1.3.1/inffast.h"/>
+        <FILE id="sQAEb6" name="inffixed.h" compile="0" resource="0" file="../zlib-1.3.1/inffixed.h"/>
+        <FILE id="qlXuFZ" name="inflate.h" compile="0" resource="0" file="../zlib-1.3.1/inflate.h"/>
+        <FILE id="cqpJDA" name="inftrees.h" compile="0" resource="0" file="../zlib-1.3.1/inftrees.h"/>
+        <FILE id="yDGgB3" name="trees.h" compile="0" resource="0" file="../zlib-1.3.1/trees.h"/>
+        <FILE id="JgYlgq" name="zconf.h" compile="0" resource="0" file="../zlib-1.3.1/zconf.h"/>
+        <FILE id="rEgr6c" name="zlib.h" compile="0" resource="0" file="../zlib-1.3.1/zlib.h"/>
+        <FILE id="baZD2Q" name="zutil.h" compile="0" resource="0" file="../zlib-1.3.1/zutil.h"/>
       </GROUP>
       <GROUP id="{40B1CBAB-6280-B76D-2AFD-23878AFBA0AA}" name="Source">
-        <FILE id="XltgNG" name="adler32.c" compile="1" resource="0" file="../zlib-1.2.11/adler32.c"/>
-        <FILE id="ZRk6QU" name="compress.c" compile="1" resource="0" file="../zlib-1.2.11/compress.c"/>
-        <FILE id="WGtHll" name="crc32.c" compile="1" resource="0" file="../zlib-1.2.11/crc32.c"/>
-        <FILE id="CRIjA0" name="deflate.c" compile="1" resource="0" file="../zlib-1.2.11/deflate.c"/>
-        <FILE id="TknJFf" name="gzclose.c" compile="1" resource="0" file="../zlib-1.2.11/gzclose.c"/>
-        <FILE id="J0lJcP" name="gzlib.c" compile="1" resource="0" file="../zlib-1.2.11/gzlib.c"/>
-        <FILE id="pShJY1" name="gzread.c" compile="1" resource="0" file="../zlib-1.2.11/gzread.c"/>
-        <FILE id="gkGQaJ" name="gzwrite.c" compile="1" resource="0" file="../zlib-1.2.11/gzwrite.c"/>
-        <FILE id="wJi704" name="infback.c" compile="1" resource="0" file="../zlib-1.2.11/infback.c"/>
-        <FILE id="qvLNdI" name="inffast.c" compile="1" resource="0" file="../zlib-1.2.11/inffast.c"/>
-        <FILE id="Orz7jf" name="inflate.c" compile="1" resource="0" file="../zlib-1.2.11/inflate.c"/>
-        <FILE id="vBqQUZ" name="inftrees.c" compile="1" resource="0" file="../zlib-1.2.11/inftrees.c"/>
-        <FILE id="JvmScD" name="trees.c" compile="1" resource="0" file="../zlib-1.2.11/trees.c"/>
-        <FILE id="peWeJD" name="uncompr.c" compile="1" resource="0" file="../zlib-1.2.11/uncompr.c"/>
-        <FILE id="DAMhmu" name="zutil.c" compile="1" resource="0" file="../zlib-1.2.11/zutil.c"/>
+        <FILE id="XltgNG" name="adler32.c" compile="1" resource="0" file="../zlib-1.3.1/adler32.c"/>
+        <FILE id="ZRk6QU" name="compress.c" compile="1" resource="0" file="../zlib-1.3.1/compress.c"/>
+        <FILE id="WGtHll" name="crc32.c" compile="1" resource="0" file="../zlib-1.3.1/crc32.c"/>
+        <FILE id="CRIjA0" name="deflate.c" compile="1" resource="0" file="../zlib-1.3.1/deflate.c"/>
+        <FILE id="TknJFf" name="gzclose.c" compile="1" resource="0" file="../zlib-1.3.1/gzclose.c"/>
+        <FILE id="J0lJcP" name="gzlib.c" compile="1" resource="0" file="../zlib-1.3.1/gzlib.c"/>
+        <FILE id="pShJY1" name="gzread.c" compile="1" resource="0" file="../zlib-1.3.1/gzread.c"/>
+        <FILE id="gkGQaJ" name="gzwrite.c" compile="1" resource="0" file="../zlib-1.3.1/gzwrite.c"/>
+        <FILE id="wJi704" name="infback.c" compile="1" resource="0" file="../zlib-1.3.1/infback.c"/>
+        <FILE id="qvLNdI" name="inffast.c" compile="1" resource="0" file="../zlib-1.3.1/inffast.c"/>
+        <FILE id="Orz7jf" name="inflate.c" compile="1" resource="0" file="../zlib-1.3.1/inflate.c"/>
+        <FILE id="vBqQUZ" name="inftrees.c" compile="1" resource="0" file="../zlib-1.3.1/inftrees.c"/>
+        <FILE id="JvmScD" name="trees.c" compile="1" resource="0" file="../zlib-1.3.1/trees.c"/>
+        <FILE id="peWeJD" name="uncompr.c" compile="1" resource="0" file="../zlib-1.3.1/uncompr.c"/>
+        <FILE id="DAMhmu" name="zutil.c" compile="1" resource="0" file="../zlib-1.3.1/zutil.c"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

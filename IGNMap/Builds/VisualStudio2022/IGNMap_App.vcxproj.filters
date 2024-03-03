@@ -1072,49 +1072,49 @@
     <ClCompile Include="..\..\..\XToolVector\XWKBGeom.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\adler32.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\adler32.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\compress.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\compress.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\crc32.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\crc32.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\deflate.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\deflate.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\gzclose.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\gzclose.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\gzlib.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\gzlib.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\gzread.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\gzread.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\gzwrite.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\gzwrite.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\infback.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\infback.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\inffast.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\inffast.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\inflate.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\inflate.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\inftrees.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\inftrees.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\trees.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\trees.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\uncompr.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\uncompr.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\zlib-1.2.11\zutil.c">
+    <ClCompile Include="..\..\..\zlib-1.3.1\zutil.c">
       <Filter>IGNMap\zlib-1.2.11\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\JUCE\modules\juce_core\containers\juce_AbstractFifo.cpp">
@@ -3204,37 +3204,37 @@
     <ClInclude Include="..\..\..\XToolVector\XWKBGeom.h">
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\crc32.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\crc32.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\deflate.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\deflate.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\gzguts.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\gzguts.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\inffast.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\inffast.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\inffixed.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\inffixed.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\inflate.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\inflate.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\inftrees.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\inftrees.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\trees.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\trees.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\zconf.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\zconf.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\zlib.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\zlib.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\zlib-1.2.11\zutil.h">
+    <ClInclude Include="..\..\..\zlib-1.3.1\zutil.h">
       <Filter>IGNMap\zlib-1.2.11\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\JUCE\modules\juce_core\containers\juce_AbstractFifo.h">

@@ -22,25 +22,25 @@ public:
   ~XFileImage() { Close(); }
 
   virtual bool AnalyzeImage(std::string path);
+  virtual bool IsValid() { if (m_Image == nullptr) return false; return true; }
+  void Close();
 
-  uint32_t Width() { if (m_Image != NULL) return m_Image->W(); return 0; }
-  uint32_t Height() { if (m_Image != NULL) return m_Image->H(); return 0; }
+  uint32_t Width() { if (m_Image != nullptr) return m_Image->W(); return 0; }
+  uint32_t Height() { if (m_Image != nullptr) return m_Image->H(); return 0; }
   bool GetGeoref(double* xmin, double* ymax, double* gsd)
   {
-    if (m_Image == NULL) return false; *xmin = m_Image->X0(); *ymax = m_Image->Y0(); *gsd = m_Image->GSD(); if (*gsd <= 0.) return false; return true;
+    if (m_Image == nullptr) return false; *xmin = m_Image->X0(); *ymax = m_Image->Y0(); *gsd = m_Image->GSD(); if (*gsd <= 0.) return false; return true;
   }
   void SetGeoref(double xmin, double ymax, double gsd)
   {
-    if (m_Image != NULL) m_Image->SetGeoref(xmin, ymax, gsd);
+    if (m_Image != nullptr) m_Image->SetGeoref(xmin, ymax, gsd);
   }
 
   int NbByte();
   //int NbChannel();
-  uint16_t NbBits() { if (m_Image == NULL) return 0; return m_Image->NbBits(); }
-  uint16_t NbSample() { if (m_Image == NULL) return 0; return m_Image->NbSample(); }
-  std::string Format() { if (m_Image == NULL) return ""; return m_Image->Format(); }
-
-  void Close();
+  uint16_t NbBits() { if (m_Image == nullptr) return 0; return m_Image->NbBits(); }
+  uint16_t NbSample() { if (m_Image == nullptr) return 0; return m_Image->NbSample(); }
+  std::string Format() { if (m_Image == nullptr) return ""; return m_Image->Format(); }
 
   std::string GetMetadata() { if (m_Image == NULL) return ""; return m_Image->Metadata(); }
   std::string GetXmlMetadata() { if (m_Image == NULL) return ""; return m_Image->XmlMetadata(); }
@@ -66,7 +66,7 @@ public:
   void SetPalette(uint8_t* palette);
 
   // Fonction de reechantillonnage
-  bool Resample(std::string file_out, XTransfo* transfo, XInterpol* inter, XWait* wait = NULL);
+  bool Resample(std::string file_out, XTransfo* transfo, XInterpol* inter, XWait* wait = nullptr);
 
 protected:
   XBaseImage*   m_Image;
