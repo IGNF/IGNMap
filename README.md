@@ -60,10 +60,11 @@ Pour pouvoir compiler le projet, il est nécessaire de récupérer les biblioth�
 un même répertoire :
 
 * `IGNMap/` : dossier contenant les sources du projet ;
-* `jpeg-9e/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
+* `jpeg-9f/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
+* `zlib-1.3.1/` : dossier contenant la bibliothèque [ZLib](https://www.zlib.net/) ;
 * `JUCE/` : dossier contenant [JUCE](https://juce.com/) ;
 * `LASzip/` : dossier contenant la bibliothèque [LASzip](https://github.com/LASzip/LASzip) ;
-* `libwebp-1.2.4/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
+* `libwebp-1.3.2/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
 * `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
 * `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
 * `XTool/` : bibliothèque de base pour la gestion de données géographiques ;

@@ -1890,7 +1890,6 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_includes.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_intmath.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_malloc.h"/>
-    <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_stdint.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\pi.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\sparse_array.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\t1.h"/>

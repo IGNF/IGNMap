@@ -405,7 +405,6 @@
       <FILE id="l5zFvY" name="opj_intmath.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/opj_intmath.h"/>
       <FILE id="i6ehGP" name="opj_malloc.c" compile="1" resource="0" file="../openjpeg/src/lib/openjp2/opj_malloc.c"/>
       <FILE id="egIHMq" name="opj_malloc.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/opj_malloc.h"/>
-      <FILE id="nNSLrQ" name="opj_stdint.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/opj_stdint.h"/>
       <FILE id="KTmyz4" name="pi.c" compile="1" resource="0" file="../openjpeg/src/lib/openjp2/pi.c"/>
       <FILE id="I316j2" name="pi.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/pi.h"/>
       <FILE id="mhLqE4" name="sparse_array.c" compile="1" resource="0" file="../openjpeg/src/lib/openjp2/sparse_array.c"/>

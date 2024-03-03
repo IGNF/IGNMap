@@ -2919,9 +2919,6 @@
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_malloc.h">
       <Filter>IGNMap\openjpeg</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\opj_stdint.h">
-      <Filter>IGNMap\openjpeg</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\pi.h">
       <Filter>IGNMap\openjpeg</Filter>
     </ClInclude>
