@@ -9,7 +9,7 @@
 
 
 #include "XZlibCodec.h"
-#include "../zlib-1.2.11/zlib.h"
+#include "../zlib-1.3.1/zlib.h"
 
 
 bool XZlibCodec::Decompress(uint8_t* lzw, uint32_t size_in, uint8_t* out, uint32_t size_out)

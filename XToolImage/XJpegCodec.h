@@ -14,7 +14,7 @@
 #include <iostream>
 
 extern "C" {
-#include "../jpeg-9e/jpeglib.h"
+#include "../jpeg-9f/jpeglib.h"
 }
 
 #include "../XTool/XBase.h"
