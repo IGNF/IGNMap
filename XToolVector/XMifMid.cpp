@@ -63,17 +63,17 @@ void XMifMid::Class(XGeoClass* C)
 		if ((type == "smallint")||(type == "Smallint")) attType = XGeoAttribut::Int16;
 		if ((type == "float")||(type == "Float")) attType = XGeoAttribut::Double;
 		if ((strncmp(type.c_str(), "decimal", 7)==0)||(strncmp(type.c_str(), "Decimal", 7)==0)) {
-			int pos = type.find('(');
+			size_t pos = type.find('(');
 			if (pos > 0) {
-				sscanf(type.substr(pos+1).c_str(),"%d", &length);
+				(void)sscanf(type.substr(pos+1).c_str(),"%d", &length);
 				pos = type.find(',');
-				sscanf(type.substr(pos+1).c_str(),"%d", &dec);
+				(void)sscanf(type.substr(pos+1).c_str(),"%d", &dec);
 				attType = XGeoAttribut::NumericN;
 			} else
 				length = 20;
 		}
 		if ((strncmp(type.c_str(), "char", 4)==0)||(strncmp(type.c_str(), "Char", 4)==0)) {
-			int pos = type.find('(');
+			size_t pos = type.find('(');
 			if (pos > 0) {
 				sscanf(type.substr(pos+1).c_str(),"%d", &length);
 				attType = XGeoAttribut::String;
@@ -207,7 +207,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 			return true;
 
 		if (type == "point") {
-			point = new XMifMidPoint2D(this, m_Data.size());
+			point = new XMifMidPoint2D(this, (uint32_t)m_Data.size());
 			point->Read(&m_In, error);
 			m_Data.push_back(point);
 			m_Frame += point->Frame();
@@ -224,7 +224,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 		}
 
 		if (type == "line") {
-			line = new XMifMidLine2D(this, m_Data.size());
+			line = new XMifMidLine2D(this, (uint32_t)m_Data.size());
 			line->Read(&m_In, error);
 			m_Data.push_back(line);
 			m_Frame += line->Frame();
@@ -251,7 +251,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 				else
 					m_In.seekg(pos);
 			}
-			lineM = new XMifMidMLine2D(this, m_Data.size());
+			lineM = new XMifMidMLine2D(this, (uint32_t)m_Data.size());
 			lineM->Read(&m_In, num, error);
 			m_Data.push_back(lineM);
 			m_Frame += lineM->Frame();
@@ -268,7 +268,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 		}
 
 		if (type == "region") {
-			poly = new XMifMidMPoly2D(this, m_Data.size());
+			poly = new XMifMidMPoly2D(this, (uint32_t)m_Data.size());
 			poly->Read(&m_In, error);
 			m_Data.push_back(poly);
 			m_Frame += poly->Frame();
@@ -295,9 +295,9 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 		if (extract_repres) {
 			if (type == "symbol") {
 				m_In.get(buf, 1024);
-				sscanf(buf,"(%u,%u,%u)", &symbol, &fill, &width);
+				(void)sscanf(buf,"(%u,%u,%u)", &symbol, &fill, &width);
 				if (repres == NULL) repres = new XGeoRepres;
-				repres->Size(width);
+				repres->Size((uint8_t)width);
 				repres->Color(MifColor(fill));
 				repres->Symbol(symbol);
 				continue;
@@ -305,9 +305,9 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 
 			if (type == "pen") {
 				m_In.get(buf, 1024);
-				sscanf(buf,"(%u,%u,%u)", &width, &pattern, &fill);
+				(void)sscanf(buf,"(%u,%u,%u)", &width, &pattern, &fill);
 				if (repres == NULL) repres = new XGeoRepres;
-				repres->Size(width);
+				repres->Size((uint8_t)width);
 				repres->Color(MifColor(fill));
 				continue;
 			}
@@ -319,9 +319,9 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
           if (buf[k] == ',') nb_elt++;
 				back = 0;
 				if (nb_elt >= 2)
-					sscanf(buf,"(%u,%u,%u)", &pattern, &fill, &back);
+					(void)sscanf(buf,"(%u,%u,%u)", &pattern, &fill, &back);
 				else
-					sscanf(buf,"(%u,%u)", &pattern, &fill);
+					(void)sscanf(buf,"(%u,%u)", &pattern, &fill);
 				if (repres == NULL) repres = new XGeoRepres;
 				repres->FillColor(MifColor(fill));
 				if (pattern == 1)
@@ -502,8 +502,8 @@ bool XMifMid::ReadRepres(XGeoRepres* repres)
 
 		if (type == "symbol") {
 			m_In.get(buf, 1024);
-			sscanf(buf,"(%u,%u,%u)", &symbol, &fill, &width);
-			repres->Size(width);
+			(void)sscanf(buf,"(%u,%u,%u)", &symbol, &fill, &width);
+			repres->Size((uint8_t)width);
 			repres->Color(MifColor(fill));
 			repres->Symbol(symbol);
 			return true;
@@ -586,7 +586,8 @@ bool XMifMid::Convert(const char* file_in, const char* file_out, XGeodConverter*
 	double xi, yi, xf, yf, a, b;
 	std::string type, token;
 	char sep;
-	uint32_t num, pos, nb;
+	uint32_t num, nb;
+	std::streampos pos;
 	char buf[1024];
 
 	mif << "DATA" << std::endl;
@@ -772,7 +773,7 @@ XGeoClass* XMifMid::ImportMifMid(XGeoBase* base, const char* path, XGeoMap* map)
 //-----------------------------------------------------------------------------
 // Lecture d'un point
 //-----------------------------------------------------------------------------
-bool XMifMidPoint2D::Read(std::ifstream* in, XError* error)
+bool XMifMidPoint2D::Read(std::ifstream* in, XError* /*error*/)
 {
 	*in >> m_Frame.Xmin >> m_Frame.Ymax;
 	m_Frame.Xmax = m_Frame.Xmin;
@@ -783,7 +784,7 @@ bool XMifMidPoint2D::Read(std::ifstream* in, XError* error)
 //-----------------------------------------------------------------------------
 // Lecture d'une ligne simple
 //-----------------------------------------------------------------------------
-bool XMifMidLine2D::Read(std::ifstream* in, XError* error)
+bool XMifMidLine2D::Read(std::ifstream* in, XError* /*error*/)
 {
 	m_Pos = in->tellg();
 	double x1, x2, y1, y2;
@@ -821,7 +822,7 @@ bool XMifMidLine2D::LoadGeom()
 //-----------------------------------------------------------------------------
 // Lecture d'une ligne multiple
 //-----------------------------------------------------------------------------
-bool XMifMidMLine2D::Read(std::ifstream* in, uint32_t num, XError* error)
+bool XMifMidMLine2D::Read(std::ifstream* in, uint32_t num, XError* /*error*/)
 {
 	m_Pos = in->tellg();
 	m_nNumParts = num;
@@ -882,7 +883,7 @@ bool XMifMidMLine2D::LoadGeom()
 //-----------------------------------------------------------------------------
 // Lecture d'un polygone multiple
 //-----------------------------------------------------------------------------
-bool XMifMidMPoly2D::Read(std::ifstream* in, XError* error)
+bool XMifMidMPoly2D::Read(std::ifstream* in, XError* /*error*/)
 {
 	m_Pos = in->tellg();
 	*in >> m_nNumParts;

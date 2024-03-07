@@ -156,7 +156,7 @@ juce::StringArray MainComponent::getMenuBarNames()
 	return { juce::translate("File"), juce::translate("Edit"), juce::translate("Tools"), juce::translate("View"), "?" };
 }
 
-juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String& menuName)
+juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String& /*menuName*/)
 {
 	juce::PopupMenu menu;
 
@@ -242,7 +242,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	return menu;
 }
 
-void MainComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
+void MainComponent::menuItemSelected(int menuItemID, int /*topLevelMenuIndex*/)
 {
 	if (menuItemID == 1000)
 		Test();
@@ -739,7 +739,6 @@ void MainComponent::Clear()
 //==============================================================================
 void MainComponent::NewWindow()
 {
-	juce::ToolbarButton* button;
 	Clear();
 	sendActionMessage("NewWindow");
 	juce::Component* component = m_Toolbar.get()->getChildComponent(MainComponentToolbarFactory::Move);
@@ -755,8 +754,8 @@ void MainComponent::NewWindow()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.0.3";
-	juce::String info = "28/02/2024";
+	juce::String version = "0.0.4";
+	juce::String info = "07/03/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
@@ -874,7 +873,7 @@ void MainComponent::ImportDtmFolder()
 	juce::String folderName = AppUtil::OpenFolder("DtmFolderPath");
 	if (folderName.isEmpty())
 		return;
-	XGeoClass* C = ImportDataFolder(folderName, XGeoVector::DTM);
+	ImportDataFolder(folderName, XGeoVector::DTM);
 	m_DtmViewer.get()->SetBase(&m_GeoBase);
 	m_MapView.get()->RenderMap(false, false, true, false, false, true);
 }
@@ -973,6 +972,7 @@ XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::
 						continue;
 					}
 					V = las;
+					las->CloseIfNeeded();	// Pour eviter d'utiliser trop de descripteurs de fichiers
 				}
 				if (type == XGeoVector::DTM) {
 					GeoDTM* dtm = new GeoDTM;
@@ -1051,9 +1051,9 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 		return false;
 	}
 
+	m_LasViewer.get()->SetBase(&m_GeoBase); 
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->RenderMap(false, false, false, false, true, true);
-	m_LasViewer.get()->SetBase(&m_GeoBase);
 
 	return true;
 }
@@ -1156,7 +1156,6 @@ bool MainComponent::ExportLas()
 {
 	m_MapView.get()->StopThread();
 	XFrame F = m_MapView.get()->GetSelectionFrame();
-	double gsd = m_MapView.get()->GetGsd();
 	ExportLasDlg* dlg = new ExportLasDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax));
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);

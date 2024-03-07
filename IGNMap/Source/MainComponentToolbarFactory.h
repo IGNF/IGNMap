@@ -36,7 +36,7 @@ public:
     slider->setSize(400, 50);
     slider->setChangeNotificationOnlyOnRelease(true);
     slider->addListener(this);
-    juce::CallOutBox& box = juce::CallOutBox::launchAsynchronously(std::move(slider), getScreenBounds(), nullptr);
+    juce::CallOutBox::launchAsynchronously(std::move(slider), getScreenBounds(), nullptr);
   }
 
   void sliderValueChanged(juce::Slider* slider) 

@@ -71,7 +71,7 @@ public:
 class XMifMidPoint2D : public XGeoPoint2D {
 protected :
 	uint32_t				m_nId;						// Numero d'ordre dans le fichier
-	XMifMid*			m_File;
+	XMifMid*				m_File;
 
 public:
 	XMifMidPoint2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id;}
@@ -80,7 +80,7 @@ public:
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* out, XError* error = NULL);
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return m_File->ReadAttributes(m_nId, V);}
 	virtual std::string FindAttribute(std::string att_name) { return m_File->FindAttribute(m_nId, att_name);}
@@ -92,17 +92,17 @@ public:
 class XMifMidLine2D : public XGeoLine2D {
 protected :
 	uint32_t				m_nId;						// Numero d'ordre dans le fichier
-	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XMifMid*			m_File;
+	std::streampos	m_Pos;						// Position de la geometrie dans le fichier
+	XMifMid*				m_File;
 
 public:
-	XMifMidLine2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id;}
+	XMifMidLine2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id; m_Pos = 0; }
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* out, XError* error = NULL);
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
 
 	virtual bool LoadGeom();
 
@@ -116,17 +116,17 @@ public:
 class XMifMidMLine2D : public XGeoMLine2D {
 protected :
 	uint32_t				m_nId;						// Numero d'ordre dans le fichier
-	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XMifMid*			m_File;
+	std::streampos	m_Pos;						// Position de la geometrie dans le fichier
+	XMifMid*				m_File;
 
 public:
-	XMifMidMLine2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id;}
+	XMifMidMLine2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id; m_Pos = 0; }
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, uint32_t num = 1, XError* error = NULL);
-	bool Write(std::ofstream* out, XError* error = NULL);
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
 
 	virtual bool LoadGeom();
 
@@ -140,12 +140,12 @@ public:
 class XMifMidMPoly2D : public XGeoMPoly2D {
 protected :
 	uint32_t				m_nId;						// Numero d'ordre dans le fichier
-	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XMifMid*			m_File;
+	std::streampos	m_Pos;						// Position de la geometrie dans le fichier
+	XMifMid*				m_File;
 //	XPt2D					m_Centroide;			// Centroide optionnel
 
 public:
-	XMifMidMPoly2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id;}
+	XMifMidMPoly2D(XMifMid* file = NULL, uint32_t id = 0) { m_File = file; m_nId = id; m_Pos = 0; }
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
@@ -154,7 +154,7 @@ public:
 //	void Centroide(double x, double y) { m_Centroide = XPt2D(x, y);}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* out, XError* error = NULL);
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
 
 	virtual bool LoadGeom();
 

@@ -410,7 +410,9 @@ void MapView::SetFrame(XFrame F)
 		ComputeCartoScale(10000);
 	}
 	m_Frame = F;
-	CenterView(X, Y);
+	m_dX0 = X - b.getWidth() * 0.5 * m_dScale;
+	m_dY0 = Y + b.getHeight() * 0.5 * m_dScale;
+	//CenterView(X, Y);
 }
 
 //==============================================================================

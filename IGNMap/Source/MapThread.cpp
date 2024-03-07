@@ -231,9 +231,9 @@ bool MapThread::Draw(juce::Graphics& g, int x0, int y0)
 	g.fillAll(juce::Colours::white);
 	g.drawImageAt(m_Raster, x0, y0);
 
-	g.setOpacity(DtmShader::m_dOpacity * 0.01f);
+	g.setOpacity((float)DtmShader::m_dOpacity * 0.01f);
 	g.drawImageAt(m_Dtm, x0, y0);
-	g.setOpacity(LasShader::Opacity() * 0.01f);
+	g.setOpacity((float)LasShader::Opacity() * 0.01f);
 	g.drawImageAt(m_Las, x0, y0);
 	g.drawImageAt(m_Vector, x0, y0);
 	g.drawImageAt(m_Overlay, x0, y0);
@@ -355,9 +355,9 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 bool MapThread::DrawPoint(XGeoVector* G)
 {
 	XPt2D P = G->Pt(0);
-	double X = (P.X - m_dX0) / m_dGsd;
-	double Y = (m_dY0 - P.Y) / m_dGsd;
-	double d = 3;
+	float X = (float)((P.X - m_dX0) / m_dGsd);
+	float Y = (float)((m_dY0 - P.Y) / m_dGsd);
+	float d = 3.f;
 	m_Path.startNewSubPath(X, Y);
 	m_Path.addEllipse(X - d, Y - d, 2 * d, 2 * d);
 	return true;
@@ -373,9 +373,9 @@ bool MapThread::DrawPolyline(XGeoVector* G)
 	XPt* P = G->Pt();
 	if (P == nullptr)
 		return false;
-	m_Path.startNewSubPath((P[0].X - m_dX0) / m_dGsd, (m_dY0 - P[0].Y) / m_dGsd);
+	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
 	for (uint32_t i = 1; i < G->NbPt(); i++)
-		m_Path.lineTo((P[i].X - m_dX0) / m_dGsd, (m_dY0 - P[i].Y) / m_dGsd);
+		m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
 	return true;
 }
 
@@ -402,7 +402,7 @@ bool MapThread::DrawMultiLine(XGeoVector* G)
 	if ((P == nullptr) || (Parts == nullptr))
 		return false;
 
-	m_Path.startNewSubPath((P[0].X - m_dX0) / m_dGsd, (m_dY0 - P[0].Y) / m_dGsd);
+	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
 	bool new_ring = false;
 	for (uint32_t i = 1; i < G->NbPt(); i++) {
 		for (uint32_t j = 1; j < G->NbPart(); j++) {
@@ -410,9 +410,9 @@ bool MapThread::DrawMultiLine(XGeoVector* G)
 				new_ring = true;
 		}
 		if (new_ring) 
-			m_Path.startNewSubPath((P[i].X - m_dX0) / m_dGsd, (m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.startNewSubPath((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
 		else {
-			m_Path.lineTo((P[i].X - m_dX0) / m_dGsd, (m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
 		}
 		new_ring = false;
 	}
@@ -431,7 +431,7 @@ bool MapThread::DrawMultiPolygon(XGeoVector* G)
 	if ((P == nullptr)||(Parts == nullptr))
 		return false;
 
-	m_Path.startNewSubPath((P[0].X - m_dX0) / m_dGsd, (m_dY0 - P[0].Y) / m_dGsd);
+	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
 	bool new_ring = false;
 	for (uint32_t i = 1; i < G->NbPt(); i++) {
 		for (uint32_t j = 1; j < G->NbPart(); j++) {
@@ -440,9 +440,9 @@ bool MapThread::DrawMultiPolygon(XGeoVector* G)
 		}
 		if (new_ring) {
 			m_Path.closeSubPath();
-			m_Path.startNewSubPath((P[i].X - m_dX0) / m_dGsd, (m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.startNewSubPath((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
 		} else {
-			m_Path.lineTo((P[i].X - m_dX0) / m_dGsd, (m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
 		}
 		new_ring = false;
 	}
@@ -457,18 +457,18 @@ bool MapThread::DrawMultiPoint(XGeoVector* G)
 {
 	XPt* P = G->Pt();
 	XPt M, N;
-	double d = 3.;
+	float d = 3.f;
 	M.X = (P[0].X - m_dX0) / m_dGsd;
 	M.Y = (m_dY0 - P[0].Y) / m_dGsd;
-	m_Path.startNewSubPath(M.X, M.Y);
-	m_Path.addEllipse(M.X - d, M.Y - d, 2 * d, 2 * d);
+	m_Path.startNewSubPath((float)M.X, (float)M.Y);
+	m_Path.addEllipse((float)M.X - d, (float)M.Y - d, 2 * d, 2 * d);
 	for (uint32_t i = 1; i < G->NbPt(); i++) {
 		N.X = (P[i].X - m_dX0) / m_dGsd;
 		N.Y = (m_dY0 - P[i].Y) / m_dGsd;
 		if ((fabs(N.X - M.X) < 2.) && (fabs(N.Y - M.Y) < 2.))
 			continue;
-		m_Path.startNewSubPath(N.X, N.Y);
-		m_Path.addEllipse(N.X - d, N.Y - d, 2 * d, 2 * d);
+		m_Path.startNewSubPath((float)N.X, (float)N.Y);
+		m_Path.addEllipse((float)N.X - d, (float)N.Y - d, 2 * d, 2 * d);
 		M = N;
 	}
 	return true;
@@ -528,7 +528,7 @@ void MapThread::DrawSelection()
 				float last_text_X = 0., last_text_Y = 0.;
 				while (iter.next()) {
 					numPoint++;
-					if (!clipR.contains(iter.x1, iter.y1))
+					if (!clipR.contains((int)iter.x1, (int)iter.y1))
 						continue;
 					g.setColour(juce::Colours::black);
 					g.drawRect(iter.x1 - dim, iter.y1 - dim, 2.f * dim, 2.f * dim);
@@ -538,12 +538,12 @@ void MapThread::DrawSelection()
 						if ((fabs(last_text_X - iter.x1) < 10) && (fabs(last_text_Y - iter.y1) < 10))
 							continue;
 						if ((!m_bFill) || (iter.elementType != juce::Path::Iterator::startNewSubPath)) {
-							g.drawSingleLineText(juce::String(numPoint), iter.x1 + 4, iter.y1);
-							g.drawSingleLineText(juce::String(numPoint), iter.x1 + 6, iter.y1);
-							g.drawSingleLineText(juce::String(numPoint), iter.x1 + 5, iter.y1 + 1);
-							g.drawSingleLineText(juce::String(numPoint), iter.x1 + 5, iter.y1 - 1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 4, (int)iter.y1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 6, (int)iter.y1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1 + 1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1 - 1);
 							g.setColour(juce::Colours::black);
-							g.drawSingleLineText(juce::String(numPoint), iter.x1 + 5, iter.y1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1);
 							last_text_X = iter.x1;
 							last_text_Y = iter.y1;
 						}
@@ -817,12 +817,16 @@ bool MapThread::DrawLas(GeoLAS* las)
 		juce::Graphics g(m_Las);
 		g.setColour(juce::Colours::lightpink);
 		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
+		g.setColour(juce::Colours::mediumvioletred);
+		g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
 		m_nNumObjects++;
 		return true;
 	}
 
 	juce::Image::BitmapData bitmap(m_Las, juce::Image::BitmapData::readWrite);
 
+	if (!las->ReOpen())
+		return false;
 	laszip_I64 npoints = las->NbLasPoints();
 	laszip_POINTER reader = las->GetReader();
 	laszip_header* header = las->GetHeader();
@@ -871,19 +875,19 @@ bool MapThread::DrawLas(GeoLAS* las)
 		switch (shader.Mode()) {
 		case LasShader::ShaderMode::Altitude :
 			Z = point->Z * header->z_scale_factor + header->z_offset;
-			col = shader.AltiColor( (Z - Z0) * 255 / deltaZ );
+			col = shader.AltiColor( (uint8_t)((Z - Z0) * 255 / deltaZ));
 			*data_ptr = (uint32_t)col.getARGB();
 			break;
 		case LasShader::ShaderMode::RGB:
-			data[0] = point->rgb[2] / 256;
-			data[1] = point->rgb[1] / 256;
-			data[2] = point->rgb[0] / 256;
+			data[0] = (uint8_t)(point->rgb[2] / 256);
+			data[1] = (uint8_t)(point->rgb[1] / 256);
+			data[2] = (uint8_t)(point->rgb[0] / 256);
 			// data[3] = 255; // deja fixe dans l'initialisation de data
 			break;
 		case LasShader::ShaderMode::IRC:
-			data[0] = point->rgb[1] / 256;
-			data[1] = point->rgb[0] / 256;
-			data[2] = point->rgb[3] / 256;
+			data[0] = (uint8_t)(point->rgb[1] / 256);
+			data[1] = (uint8_t)(point->rgb[0] / 256);
+			data[2] = (uint8_t)(point->rgb[3] / 256);
 			// data[3] = 255; // deja fixe dans l'initialisation de data
 			break;
 		case LasShader::ShaderMode::Classification:
@@ -896,19 +900,19 @@ bool MapThread::DrawLas(GeoLAS* las)
 			break;
 		case LasShader::ShaderMode::Angle:
 			if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
-				data[2] = 255 - point->extended_scan_angle * (-0.0085);	 // Normalise sur [0; 255]
+				data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
 				data[1] = 0;
-				data[0] = 255 - data[0];
+				data[0] = (uint8_t)(255 - data[0]);
 			}
 			else {
 				data[2] = 0;
-				data[1] = 255 - point->extended_scan_angle * (0.0085);	 // Normalise sur [0; 255]
-				data[0] = 255 - data[1];
+				data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
+				data[0] = (uint8_t)(255 - data[1]);
 			}
 			break;
 		}
 
-		ptr = bitmap.getPixelPointer(X, Y);
+		ptr = bitmap.getPixelPointer((int)X, (int)Y);
 		memcpy(ptr, &data, sizeof(uint32_t));
 		//bitmap.setPixelColour(X, Y, col);
 		//g.drawRect((float)X-1.f, (float)Y-1.f, 2.f, 2.f);
@@ -917,6 +921,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 	}
 	laszip_seek_point(reader, 0);
 	m_nNumObjects++;
+	las->CloseIfNeeded();
 
 	return true;
 }

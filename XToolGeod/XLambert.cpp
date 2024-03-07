@@ -189,8 +189,8 @@ bool XLambert::Interpol(double lambda, double phi, double* tx, double* ty, doubl
 	if (phi > m_dLatMax)
 		return false;
 
-	uint32_t nb_long = (lambda - m_dLongMin) / m_dLongStep;
-	uint32_t nb_lat = (phi - m_dLatMin) /  m_dLatStep;
+	uint32_t nb_long = (uint32_t)((lambda - m_dLongMin) / m_dLongStep);
+	uint32_t nb_lat = (uint32_t)((phi - m_dLatMin) /  m_dLatStep);
 	double x = (lambda - (nb_long * m_dLongStep + m_dLongMin)) / m_dLongStep;
 	double y = (phi - (nb_lat * m_dLatStep + m_dLatMin)) / m_dLatStep;
 

@@ -25,7 +25,7 @@ public:
 	~PixelValuesModel() { ClearPixels(); }
 
 	virtual void paintCell(juce::Graphics&, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-	virtual void paintRowBackground(juce::Graphics&, int rowNumber, int width, int height, bool rowIsSelected) override { ; }
+	virtual void paintRowBackground(juce::Graphics&, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/) override { ; }
 	virtual int getNumRows() override { return 2 * WinSize + 1; }
 	virtual void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
 	virtual juce::String getCellTooltip(int rowNumber, int columnId) override { return GetText(rowNumber, columnId); }

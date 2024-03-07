@@ -657,8 +657,10 @@ void XBaseImage::OffsetArea(uint8_t* buf, uint32_t w, uint32_t h, uint32_t lineW
 //-----------------------------------------------------------------------------
 bool XBaseImage::RotateArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t nbbyte, uint32_t rot)
 {
-	if (rot == 0)		// Pas de rotation
-		return true;
+  if (rot == 0) {		// Pas de rotation
+    ::memcpy(out, in, win * hin * nbbyte);
+    return true;
+  }
 	if (rot > 3)
 		return false;
 

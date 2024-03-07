@@ -170,7 +170,7 @@ bool XGpkgMap::ReadPrimaryKey()
 //-----------------------------------------------------------------------------
 // Lecture de la base
 //-----------------------------------------------------------------------------
-bool XGpkgMap::Read(XGeoBase* base, XWait* wait)
+bool XGpkgMap::Read(XGeoBase* base, XWait* /*wait*/)
 {
   if (m_DB == NULL)
     return false;

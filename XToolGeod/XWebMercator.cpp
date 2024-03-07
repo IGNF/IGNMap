@@ -56,7 +56,7 @@ bool XWebMercator::ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, doub
 //-----------------------------------------------------------------------------
 // Conversion normale
 //-----------------------------------------------------------------------------
-bool XWebMercator::Convert(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XWebMercator::Convert(double Xi, double Yi, double& Xf, double& Yf, double /*Z*/)
 {
   double a = 6378137;
   if ((m_StartProjection == RGF93)&&(m_EndProjection == WebMercator)) {

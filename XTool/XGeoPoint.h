@@ -49,7 +49,7 @@ public:
 
 	virtual eTypeVector TypeVector () const { return PointZ;}
 
-	virtual double Z(uint32_t i) { return m_Z;}
+	virtual double Z(uint32_t /*i*/) { return m_Z; }
 	virtual bool Is3D() const { return true;}
 
 	virtual inline double Zmin() const { return m_Z;}

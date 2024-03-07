@@ -84,7 +84,7 @@ protected:
 public:
   XGpkgVector() { m_Map = NULL; m_Id = 0; }
   virtual inline XGeoClass* GeoClass() const { return NULL;}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts) {;}
+  virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/) { ; }
 };
 
 //-----------------------------------------------------------------------------
@@ -211,7 +211,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts)
+  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts)
                         { m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;}
 };
 
@@ -294,7 +294,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts)
+  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts)
                         { m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;}
 };
 

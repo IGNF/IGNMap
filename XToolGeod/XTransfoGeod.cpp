@@ -28,7 +28,7 @@ void XTransfoGeod::Direct(double x, double y, double *u, double *v)
 //-----------------------------------------------------------------------------
 // Dimension de l'image de sortie
 //-----------------------------------------------------------------------------
-void XTransfoGeod::Dimension(int w, int h, int* wout, int* hout)
+void XTransfoGeod::Dimension(int /*w*/, int /*h*/, int* wout, int* hout)
 {
   *wout = XRint(m_Ff.Width() / m_dResol);
   *hout = XRint(m_Ff.Height() / m_dResol);

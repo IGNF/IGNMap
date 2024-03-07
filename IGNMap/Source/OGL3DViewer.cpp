@@ -568,6 +568,8 @@ void OGLWidget::DrawLas(GeoLAS* las)
 {
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
+  if (!las->ReOpen())
+    return;
 
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -673,6 +675,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
       break;
   }
   laszip_seek_point(reader, 0);
+  las->CloseIfNeeded();
   glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 

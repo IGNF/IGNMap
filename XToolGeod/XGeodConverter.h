@@ -30,14 +30,14 @@ public:
 	XProjCode EndProjection() { return m_EndProjection;}
 
 	// Conversion avec passage en degree decimaux
-	virtual bool ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.) 
+	virtual bool ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double /*Z*/ = 0.)
 									{ Xf = Xi; Yf = Yi; return true;}
 	// Conversion normale
-	virtual bool Convert(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.)
+	virtual bool Convert(double Xi, double Yi, double& Xf, double& Yf, double /*Z*/ = 0.)
 									{ Xf = Xi; Yf = Yi; return true;}
 
   // Alteration lineaire
-  virtual double AltLin(XProjCode start_proj, double Xi, double Yi) { return 0;}
+  virtual double AltLin(XProjCode /*start_proj*/, double /*Xi*/, double /*Yi*/) { return 0; }
 };
 
 #endif //_XGEODCONVERTER_H

@@ -24,7 +24,9 @@ public:
 	typedef enum { ZMinimum = 1, ZAverage = 2, ZMaximum = 3 } AlgoDtm;
 
 	bool Open(std::string filename);
+	bool ReOpen();
 	bool Close();
+	bool CloseIfNeeded(int maxLasFile = 10);
 	laszip_POINTER GetReader() { return m_Reader; }
 	laszip_header* GetHeader() { return m_Header; }
 	laszip_point* GetPoint() { return m_Point; }
@@ -41,6 +43,8 @@ protected:
 	laszip_POINTER m_Reader;
 	laszip_header* m_Header;
 	laszip_point* m_Point;
+
+	static int m_LasNbOpenFile;		// Nombre de fichiers LAS ouverts
 };
 
 #endif //XLASFILE_H

@@ -55,12 +55,12 @@ public:
   double AltLin(XProjCode start_proj, double Xi, double Yi);
 
   // Preferences Internet
-  inline uint16_t GoogleMode() { return m_nGoogleMode;}
-  void GoogleMode(uint16_t mode) { m_nGoogleMode = mode;}
-  inline uint16_t VEMode() { return m_nVEMode;}
-  void VEMode(uint16_t mode) { m_nVEMode = mode;}
-  inline uint16_t GeoportMode() { return m_nGeoportMode;}
-  void GeoportMode(uint16_t mode) { m_nGeoportMode = mode;}
+  inline uint8_t GoogleMode() { return m_nGoogleMode;}
+  void GoogleMode(uint8_t mode) { m_nGoogleMode = mode;}
+  inline uint8_t VEMode() { return m_nVEMode;}
+  void VEMode(uint8_t mode) { m_nVEMode = mode;}
+  inline uint8_t GeoportMode() { return m_nGeoportMode;}
+  void GeoportMode(uint8_t mode) { m_nGeoportMode = mode;}
   inline bool AutoSynchro() { return m_bAutoSynchro;}
   void AutoSynchro(bool flag) { m_bAutoSynchro = flag;}
   inline bool Cadastre() { return m_bCadastre;}

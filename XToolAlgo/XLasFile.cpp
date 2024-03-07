@@ -14,6 +14,8 @@
 #include "../XTool/XFrame.h"
 #include "../XToolImage/XTiffWriter.h"
 
+int XLasFile::m_LasNbOpenFile = 0;
+
 //==============================================================================
 // Ouverture d'un fichier LAS
 //==============================================================================
@@ -38,8 +40,20 @@ bool XLasFile::Open(std::string filename)
 	}
 
 	m_strFilename = filename;
-
+  m_LasNbOpenFile++;
 	return true;
+}
+
+//==============================================================================
+// Reouverture d'un fichier LAS
+//==============================================================================
+bool XLasFile::ReOpen()
+{
+  if (m_strFilename.empty())  // Le fichier n'a jamais ete ouvert
+    return false;
+  if (m_Reader != nullptr)    // Le fichier est deja ouvert
+    return true;
+  return Open(m_strFilename);
 }
 
 //==============================================================================
@@ -54,8 +68,18 @@ bool XLasFile::Close()
   m_Reader = nullptr;
   m_Header = nullptr;
   m_Point = nullptr;
-	m_strFilename = "";
+  m_LasNbOpenFile--;
 	return true;
+}
+
+//==============================================================================
+// Fermerture eventuel d'un fichier LAS
+//==============================================================================
+bool XLasFile::CloseIfNeeded(int maxLasFile)
+{
+  if (m_LasNbOpenFile < maxLasFile)
+    return true;
+  return Close();
 }
 
 //-----------------------------------------------------------------------------
@@ -63,7 +87,7 @@ bool XLasFile::Close()
 //-----------------------------------------------------------------------------
 bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool classif_visibility[256], XError* error)
 {
-	if (m_strFilename.empty())	// Le fichier LAS n'a pas ete ouvert
+	if (!ReOpen())	// Le fichier LAS n'a pas ete ouvert
 		return false;
 
 	XFrame F = XFrame(m_Header->min_x, m_Header->min_y, m_Header->max_x, m_Header->max_y);
@@ -139,6 +163,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 
 	delete[] area;
 	delete[] count;
+  CloseIfNeeded();
 
 	return true;
 }
@@ -148,7 +173,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 //-----------------------------------------------------------------------------
 bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* mid)
 {
-  if (m_strFilename.empty())	// Le fichier LAS n'a pas ete ouvert
+  if (!ReOpen())	// Le fichier LAS n'a pas ete ouvert
     return false;
 
   std::ofstream out;
@@ -290,5 +315,6 @@ bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* 
     << TClassif[67] << "\t" << classif_autre
     << std::endl;
 
+  CloseIfNeeded();
   return true;
 }

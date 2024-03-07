@@ -927,9 +927,9 @@ void XDomGeod::ConvertUTMLocalToWGS(double x2e, double y2e, double* x93, double*
 // Conversion systemes mondiaux (RRAF, RGFG95)
 // vers le WGS84
 //-----------------------------------------------------------------------------
-void XDomGeod::ConvertUTMWorldToWGS(double x2e, double y2e, double* x93, double* y93, double Z)
+void XDomGeod::ConvertUTMWorldToWGS(double x2e, double y2e, double* x93, double* y93, double /*Z*/)
 {
-  double lambda, phi, h = Z;
+  double lambda, phi;
   double epsilon_phi = 0.000000001;
 
   // Transformation UTM -> Geographique
@@ -942,7 +942,7 @@ void XDomGeod::ConvertUTMWorldToWGS(double x2e, double y2e, double* x93, double*
 //-----------------------------------------------------------------------------
 // Conversion du WGS84 vers les systemes mondiaux (RRAF, RGFG95)
 //-----------------------------------------------------------------------------
-void XDomGeod::ConvertWGSToUTMWorld(double lambda, double phi, double* x93, double* y93, double Z)
+void XDomGeod::ConvertWGSToUTMWorld(double lambda, double phi, double* x93, double* y93, double /*Z*/)
 {
   // Transformation Geographique -> UTM
   XAlgoGeod::GeoMercTr(m_W.Lambda0, m_W.N, m_W.Xs, m_W.Ys,
