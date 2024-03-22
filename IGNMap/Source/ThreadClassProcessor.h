@@ -50,7 +50,7 @@ public:
 				break;
 			if ((m_bOnlyVisible)&&(!m_T[i]->Visible()))
 				continue;
-			for (int j = 0; j < m_T[i]->NbVector(); j++) {
+			for (uint32_t j = 0; j < m_T[i]->NbVector(); j++) {
 				if (threadShouldExit())
 					break;
 				setProgress((double)count / (double)nb_file);

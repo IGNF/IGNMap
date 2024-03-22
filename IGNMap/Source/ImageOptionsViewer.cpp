@@ -147,7 +147,7 @@ void ImageOptionsViewer::SetGeoBase(XGeoBase* base)
     return;
   }
   GeoFileImage* image = nullptr;
-  for (int i = 0; i < base->NbSelection(); i++) {
+  for (uint32_t i = 0; i < base->NbSelection(); i++) {
     XGeoVector* V = base->Selection(i);
     if (V->TypeVector() == XGeoVector::Raster) {
       image = dynamic_cast<GeoFileImage*>(V);
@@ -247,7 +247,7 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
 {
   if (m_Image == nullptr)
     return;
-  if ((X < 0) || (Y < 0) || (X >= m_Image->XFileImage::Width()) || (Y >= m_Image->XFileImage::Height())) {
+  if ((X < 0) || (Y < 0) || (X >= (int)m_Image->XFileImage::Width()) || (Y >= (int)m_Image->XFileImage::Height())) {
     m_PixModel.ClearPixels();  // Hors image
     m_tblPixels.updateContent();
     m_tblPixels.repaint();
@@ -268,7 +268,7 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
   if (m_PixModel.PixY >= (m_Image->XFileImage::Height() - m_PixModel.WinSize))
     m_PixModel.PixY = m_Image->XFileImage::Height() - m_PixModel.WinSize - 1;
 
-  m_PixModel.NbBits = m_Image->NbBits();
+  m_PixModel.NbBits = (uint8_t)m_Image->NbBits();
   if (!m_PixModel.AllocPixels(m_Image->NbSample()))
     return;
 
@@ -285,7 +285,7 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void PixelValuesModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void PixelValuesModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
   if (PixValue == nullptr) {
     g.drawText("no data", 0, 0, width, height, juce::Justification::centred);
@@ -294,9 +294,9 @@ void PixelValuesModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
   double factor = 1.;
   if (NbBits == 16)
     factor = 256;
-  uint8_t red = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + R_channel] / factor;
-  uint8_t green = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + G_channel] / factor;
-  uint8_t blue = PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + B_channel] / factor;
+  uint8_t red = (uint8_t)(PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + R_channel] / factor);
+  uint8_t green = (uint8_t)(PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + G_channel] / factor);
+  uint8_t blue = (uint8_t)(PixValue[rowNumber * (2 * WinSize + 1) * NbSample + (columnId - 1) * NbSample + B_channel] / factor);
   if (NbSample == 1)
     blue = green = red;
 

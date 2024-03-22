@@ -27,18 +27,21 @@ LasShader::LasShader()
 	if (m_Init)
 		return;
 	// Initialisation de la palette d'altitude
+  InitAltiColor(128);
+  /*
   for (int i = 0; i < 64; i++)
-    m_AltiColors[i] = juce::Colour((juce::uint8)0, 0, 255 - i * 2, 1.0f);
+    m_AltiColors[i] = juce::Colour((juce::uint8)0, 0, (juce::uint8)(i * 2), 1.0f);
   for (int i = 64; i < 128; i++)
-    m_AltiColors[i] = juce::Colour((juce::uint8)0, (i - 64) * 4, 255 - i * 2, 1.0f);
+    m_AltiColors[i] = juce::Colour((juce::uint8)0, (juce::uint8)((i - 64) * 4), (juce::uint8)(255 - i * 2), 1.0f);
   for (int i = 128; i < 192; i++)
-    m_AltiColors[i] = juce::Colour((juce::uint8)((i - 128) * 2), 255 - (i - 128) * 4, 0, 1.0f);
+    m_AltiColors[i] = juce::Colour((juce::uint8)((i - 128) * 2), (juce::uint8)(255 - (i - 128) * 4), 0, 1.0f);
   for (int i = 192; i < 256; i++)
     m_AltiColors[i] = juce::Colour((juce::uint8)((i - 128) * 2), 0, 0, 1.0f);
+    */
 
   // Palette des classifications
   for (int i = 0; i < 256; i++)
-    m_ClassifColors[i] = juce::Colour((juce::uint8)i, i, i, 1.0f);  // Par defaut gris ...
+    m_ClassifColors[i] = juce::Colour((juce::uint8)i, (juce::uint8)i, (juce::uint8)i, 1.0f);  // Par defaut gris ...
   m_ClassifColors[0] = juce::Colours::black;  // Created, Never Classified
   m_ClassifColors[1] = juce::Colours::lightgrey;  // Unclassified
   m_ClassifColors[2] = juce::Colours::sandybrown;  // Ground
@@ -71,13 +74,31 @@ LasShader::LasShader()
     m_ClassifVisibility[i] = m_ClassifSelectable[i] = true;
 
   m_Init = true;
-  
+}
+
+//==============================================================================
+// Initialisation de la palette des altitudes
+//==============================================================================
+void LasShader::InitAltiColor(uint8_t middle)
+{
+  int half = middle, quart = (int)(middle / 2), troisquart = middle + (int)((256 - middle) / 2);
+  if (half == 0) half = 1;
+  if (quart == 0) quart = 1;
+  if (troisquart == 0) troisquart = 1;
+  for (int i = 0; i < quart; i++)
+    m_AltiColors[i] = juce::Colour((juce::uint8)0, 0, (juce::uint8)((i * 255) / quart), 1.0f);
+  for (int i = quart; i < half; i++)
+    m_AltiColors[i] = juce::Colour((juce::uint8)0, (juce::uint8)((i - quart) * 255 / (half - quart)), (juce::uint8)(255 - (i - quart) * 255 / (half - quart)), 1.0f);
+  for (int i = half; i < troisquart; i++)
+    m_AltiColors[i] = juce::Colour((juce::uint8)((i - half) * 128 / (troisquart - half)), (juce::uint8)(255 - (i - half) * 255 / (troisquart - half)), 0, 1.0f);
+  for (int i = troisquart; i < 256; i++)
+    m_AltiColors[i] = juce::Colour((juce::uint8)(128 + (i - troisquart) * 127/(256 - troisquart)), 0, 0, 1.0f);
 }
 
 //==============================================================================
 // Nom des classification ASPRS
 //==============================================================================
-juce::String LasShader::ClassificationName(unsigned char classif)
+juce::String LasShader::ClassificationName(uint8_t classif)
 {
   switch (classif) {
   case 0: return "Created, Never Classified";

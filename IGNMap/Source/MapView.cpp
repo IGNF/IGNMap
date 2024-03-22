@@ -33,8 +33,9 @@ void MapView::Clear()
 	m_dScale = 1.0;
 	m_bDrag = m_bZoom = m_bSelect = m_bDrawing = false;
 	m_GeoBase = nullptr;
-	m_Frame = XFrame();
+	m_Frame = m_SelectionFrame = m_3DFrame = XFrame();
 	m_nMouseMode = Move;
+	m_nFrameCounter = 0;
 	m_Annotation.Clear();
 }
 
@@ -59,6 +60,7 @@ void MapView::paint(juce::Graphics& g)
 	m_MapThread.Draw(g);
 	if (!m_MapThread.isThreadRunning())
 		DrawAnnotation(g);
+	DrawFrames(g);
 	DrawTarget(g);
 	DrawDecoration(g);
 }
@@ -441,6 +443,36 @@ void MapView::DrawTarget(juce::Graphics& g, int deltaX, int deltaY)
 }
 
 //==============================================================================
+// Dessin des cadres de selection
+//==============================================================================
+void MapView::DrawFrames(juce::Graphics& g, int deltaX, int deltaY)
+{
+	XFrame F = m_3DFrame;
+	if (!F.IsEmpty()) {
+		Ground2Pixel(F.Xmin, F.Ymax);
+		Ground2Pixel(F.Xmax, F.Ymin);
+		F.Xmin += deltaX; F.Xmax += deltaX;
+		F.Ymin += deltaY; F.Ymax += deltaY;
+		g.setColour(juce::Colours::deepskyblue);
+		g.setOpacity(0.5f + (m_nFrameCounter % 21) * 0.025f);
+		g.drawRect((float)F.Xmin, (float)F.Ymax, (float)fabs(F.Width()), (float)fabs(F.Height()), 2.f);
+	}
+
+	F = m_SelectionFrame;
+	if (!F.IsEmpty()) {
+		Ground2Pixel(F.Xmin, F.Ymax);
+		Ground2Pixel(F.Xmax, F.Ymin);
+		F.Xmin += deltaX; F.Xmax += deltaX;
+		F.Ymin += deltaY; F.Ymax += deltaY;
+		g.setColour(juce::Colours::deeppink);
+		g.setOpacity(0.5f + (m_nFrameCounter % 21) * 0.025f);
+		g.drawRect((float)F.Xmin, (float)F.Ymax, (float)fabs(F.Width()), (float)fabs(F.Height()), 2.f);
+	}
+
+	m_nFrameCounter++;
+}
+
+//==============================================================================
 // Selection des vecteurs se trouvant proche du point P (coordoonees pixel)
 //==============================================================================
 void MapView::SelectFeatures(juce::Point<int> P)
@@ -478,12 +510,12 @@ void MapView::SelectFeatures(const double& X0, const double& Y0, const double& X
 //==============================================================================
 void MapView::Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1)
 {
-	XFrame F;
-	F += XPt2D(X0, Y0);
-	F += XPt2D(X1, Y1);
+	m_3DFrame = XFrame();;
+	m_3DFrame += XPt2D(X0, Y0);
+	m_3DFrame += XPt2D(X1, Y1);
 	StopThread();
-	sendActionMessage("Update3DView:" + juce::String(F.Xmin) + ":" + juce::String(F.Xmax) + ":" +
-		juce::String(F.Ymin) + ":" + juce::String(F.Ymax));
+	sendActionMessage("Update3DView:" + juce::String(m_3DFrame.Xmin) + ":" + juce::String(m_3DFrame.Xmax) + ":" +
+		juce::String(m_3DFrame.Ymin) + ":" + juce::String(m_3DFrame.Ymax));
 }
 
 //==============================================================================

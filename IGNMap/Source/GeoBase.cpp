@@ -178,10 +178,10 @@ bool GeoInternetImage::Resample(XTransfo* transfo)
 				if (result[k] > 255) result[k] = 255;
 			}
 
-			pix_out[0] = result[0];
-			pix_out[1] = result[1];
-			pix_out[2] = result[2];
-			pix_out[3] = result[3];
+			pix_out[0] = (juce::uint8)result[0];
+			pix_out[1] = (juce::uint8)result[1];
+			pix_out[2] = (juce::uint8)result[2];
+			pix_out[3] = (juce::uint8)result[3];
 		}
 	}
 	delete[] value;
@@ -333,6 +333,8 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 	Att.push_back("Global encoding"); Att.push_back(std::to_string(m_Header->global_encoding));
 	Att.push_back("Date"); Att.push_back(std::to_string(m_Header->file_creation_day) + "/" + std::to_string(m_Header->file_creation_year));
 	Att.push_back("Nb Points"); Att.push_back(std::to_string(NbLasPoints()));
+	Att.push_back("Zmin"); Att.push_back(std::to_string(Zmin()));
+	Att.push_back("Zmax"); Att.push_back(std::to_string(Zmax()));
 	
 	CloseIfNeeded();
 	return true;
@@ -507,9 +509,9 @@ void GeoTools::ColorizeClasses(XGeoBase* base)
 			if (repres == nullptr)
 				continue;
 			if (*repres == defaut_repres) {
-				auto& random = juce::Random::getSystemRandom();
-				repres->Color(juce::Colour(random.nextInt(256), random.nextInt(256), random.nextInt(256)).getARGB());
-				repres->FillColor(juce::Colour(random.nextInt(256), random.nextInt(256), random.nextInt(256)).getARGB());
+				auto& rd = juce::Random::getSystemRandom();
+				repres->Color(juce::Colour((juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256)).getARGB());
+				repres->FillColor(juce::Colour((juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256)).getARGB());
 			}
 
 		}
@@ -526,7 +528,7 @@ bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName
 	XGeoClass* raster_class = base->AddClass(layerName.c_str(), className.c_str());
 	if (raster_class == nullptr)
 		return false;
-	raster_class->Repres()->Transparency(transparency);
+	raster_class->Repres()->Transparency((uint8_t)transparency);
 	raster_class->Repres()->Color(color);
 	raster_class->Repres()->FillColor(fill);
 	raster_class->Repres()->ZOrder(zorder);

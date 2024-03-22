@@ -136,8 +136,8 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
     return m_ProjImage;
   m_LastFrame = F;
   m_LastGsd = gsd;
-  uint32_t wout = F.Width() / gsd;
-  uint32_t hout = F.Height() / gsd;
+  uint32_t wout = (uint32_t)(F.Width() / gsd);
+  uint32_t hout = (uint32_t)(F.Height() / gsd);
 
   // Caclul du niveau de zoom OSM
   XGeoPref pref;
@@ -145,7 +145,7 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
   int osm_zoom = m_nMaxZoom;
   pref.Convert(pref.Projection(), XGeoProjection::RGF93, F.Center().X, F.Center().Y, longitude, latitude);
 
-  for (int zoom = 0; zoom <= m_nMaxZoom; zoom++) {
+  for (int zoom = 0; zoom <= (int)m_nMaxZoom; zoom++) {
     S = 6378137. * cos(latitude) * 2 * XPI / pow(2, (zoom + 8));  // GSD a l'Equateur x cos(latitude)
     if (S < gsd + gsd * 0.5) {
       osm_zoom = zoom;

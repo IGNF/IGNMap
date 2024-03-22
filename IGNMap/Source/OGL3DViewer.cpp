@@ -180,9 +180,9 @@ juce::Matrix3D<float> OGLWidget::getViewMatrix() const
   auto rotationMatrix = juce::Matrix3D<float>::rotation({ (float)m_R.X, (float)m_R.Y, (float)m_R.Z + autoRot });
  
   juce::Matrix3D<float> scaleMatrix;
-  scaleMatrix.mat[0] = m_S.X;
-  scaleMatrix.mat[5] = m_S.Y;
-  scaleMatrix.mat[10] = m_S.Z;
+  scaleMatrix.mat[0] = (float)m_S.X;
+  scaleMatrix.mat[5] = (float)m_S.Y;
+  scaleMatrix.mat[10] = (float)m_S.Z;
 
   return viewMatrix * rotationMatrix * scaleMatrix;
 }
@@ -374,7 +374,7 @@ void OGLWidget::render()
 
   // Gestion des selections de points
   if (m_bNeedLasPoint)
-    Select(m_LastPos.x, m_LastPos.y);
+    Select((int)m_LastPos.x, (int)m_LastPos.y);
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
   m_Attributes->enable();
   glPointSize(6.f);
@@ -411,7 +411,7 @@ void OGLWidget::mouseDown(const juce::MouseEvent& event)
   m_LastPos = event.position;
 }
 
-void OGLWidget::mouseMove(const juce::MouseEvent& event)
+void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
 {
   
 }
@@ -426,14 +426,14 @@ void OGLWidget::mouseDrag(const juce::MouseEvent& event)
   repaint();  // Pour l'affichage des informations
 }
 
-void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
+void OGLWidget::mouseWheelMove(const juce::MouseEvent& /*event*/, const juce::MouseWheelDetails& wheel)
 {
   double scale = wheel.deltaY / 10.;
   m_S += XPt3D(scale, scale, scale);
   repaint();
 }
 
-void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
+void OGLWidget::mouseDoubleClick(const juce::MouseEvent& /*event*/)
 {
   m_bNeedLasPoint = true;
   repaint();
@@ -598,7 +598,6 @@ void OGLWidget::DrawLas(GeoLAS* las)
   juce::Colour col = juce::Colours::orchid;
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
-  uint8_t* ptr = nullptr;
   uint8_t classification;
   bool classif_newtype = true;
   if (header->version_minor < 4) classif_newtype = false;
@@ -626,19 +625,19 @@ void OGLWidget::DrawLas(GeoLAS* las)
 
     switch (shader.Mode()) {
     case LasShader::ShaderMode::Altitude:
-      col = shader.AltiColor((Z - Z0) * 255 / deltaZ);
+      col = shader.AltiColor((uint8_t)((Z - Z0) * 255 / deltaZ));
       *data_ptr = (uint32_t)col.getARGB();
       break;
     case LasShader::ShaderMode::RGB:
-      data[0] = point->rgb[2] / 256;
-      data[1] = point->rgb[1] / 256;
-      data[2] = point->rgb[0] / 256;
+      data[0] = (uint8_t)(point->rgb[2] / 256);
+      data[1] = (uint8_t)(point->rgb[1] / 256);
+      data[2] = (uint8_t)(point->rgb[0] / 256);
       // data[3] = 255; // deja fixe dans l'initialisation de data
       break;
     case LasShader::ShaderMode::IRC:
-      data[0] = point->rgb[1] / 256;
-      data[1] = point->rgb[0] / 256;
-      data[2] = point->rgb[3] / 256;
+      data[0] = (uint8_t)(point->rgb[1] / 256);
+      data[1] = (uint8_t)(point->rgb[0] / 256);
+      data[2] = (uint8_t)(point->rgb[3] / 256);
       // data[3] = 255; // deja fixe dans l'initialisation de data
       break;
     case LasShader::ShaderMode::Classification:
@@ -651,13 +650,13 @@ void OGLWidget::DrawLas(GeoLAS* las)
       break;
     case LasShader::ShaderMode::Angle:
       if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
-        data[2] = 255 - point->extended_scan_angle * (-0.0085);	 // Normalise sur [0; 255]
+        data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
         data[1] = 0;
         data[0] = 255 - data[0];
       }
       else {
         data[2] = 0;
-        data[1] = 255 - point->extended_scan_angle * (0.0085);	 // Normalise sur [0; 255]
+        data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
         data[0] = 255 - data[1];
       }
       break;
@@ -1136,7 +1135,7 @@ int glhProjectf(float objx, float objy, float objz, float* modelview, float* pro
   // The result normalizes between -1 and 1
   if (fTempo[7] == 0.0) // The w value
     return 0;
-  fTempo[7] = 1.0 / fTempo[7];
+  fTempo[7] = (float)(1.0 / fTempo[7]);
   // Perspective division
   fTempo[4] *= fTempo[7];
   fTempo[5] *= fTempo[7];

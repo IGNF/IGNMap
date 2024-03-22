@@ -183,7 +183,7 @@ double XGeoFDtm::Z(const XPt2D& P)
 					distance = dist2(P, M);
 					if (distance < 1.e-6)
 						return *ptr;
-					*wptr = 1. / distance;
+					*wptr = (float)(1. / distance);
 				}
 			} else {
 				*ptr = (float)m_dNoData;
@@ -263,7 +263,7 @@ bool XGeoFDtm::Ground2Pix(double x, double y, uint32_t& u, uint32_t& v)
 //-----------------------------------------------------------------------------
 // Lecture des meta-donnees en XML
 //-----------------------------------------------------------------------------
-bool XGeoFDtm::XmlRead(XParserXML* parser, uint32_t num, XError* error)
+bool XGeoFDtm::XmlRead(XParserXML* parser, uint32_t /*num*/, XError* /*error*/)
 {
 	m_bValid = false;
 	m_strName = parser->ReadNode("/xgeofdtm/name");

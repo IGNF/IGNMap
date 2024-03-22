@@ -56,7 +56,7 @@ int LasViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void LasViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void LasViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -67,7 +67,7 @@ void LasViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int wi
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void LasViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void LasViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	XGeoClass* lasClass = FindLasClass(rowNumber);
 	if (lasClass == nullptr)
@@ -165,7 +165,7 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void LasViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void LasViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* lasClass = FindLasClass(rowNumber);
 	if (lasClass == nullptr)
@@ -194,7 +194,7 @@ juce::var LasViewerModel::getDragSourceDescription(const juce::SparseSet<int>& s
 //==============================================================================
 // LasViewerModel : changeListenerCallback
 //==============================================================================
-void LasViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
+void LasViewerModel::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
 	if (m_Base == nullptr)
 		return;
@@ -206,7 +206,7 @@ void LasViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 //==============================================================================
 // ClassifModel : paintRowBackground
 //==============================================================================
-void ClassifModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void ClassifModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -217,19 +217,19 @@ void ClassifModel::paintRowBackground(juce::Graphics& g, int rowNumber, int widt
 //==============================================================================
 // ClassifModel : paintCell
 //==============================================================================
-void ClassifModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void ClassifModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	juce::Image icone;
 	switch (columnId) {
 	case Column::Visibility:
-		if (LasShader::ClassificationVisibility(rowNumber))
+		if (LasShader::ClassificationVisibility((uint8_t)rowNumber))
 			icone = getImageFromAssets("View.png");
 		else
 			icone = getImageFromAssets("NoView.png");
 		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
 		break;
 	case Column::Selectable:
-		if (LasShader::ClassificationSelectable(rowNumber))
+		if (LasShader::ClassificationSelectable((uint8_t)rowNumber))
 			icone = getImageFromAssets("Selectable.png");
 		else
 			icone = getImageFromAssets("NoSelectable.png");
@@ -239,10 +239,10 @@ void ClassifModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int
 		g.drawText(juce::String(rowNumber), 0, 0, width, height, juce::Justification::centredLeft);
 		break;
 	case Column::Name:
-		g.drawText(LasShader::ClassificationName(rowNumber), 0, 0, width, height, juce::Justification::centredLeft);
+		g.drawText(LasShader::ClassificationName((uint8_t)rowNumber), 0, 0, width, height, juce::Justification::centredLeft);
 		break;
 	case Column::Colour:
-		g.setColour(LasShader::ClassificationColor(rowNumber));
+		g.setColour(LasShader::ClassificationColor((uint8_t)rowNumber));
 		g.fillRect(0, 0, width, height);
 		break;
 	}
@@ -276,8 +276,8 @@ void ClassifModel::cellClicked(int rowNumber, int columnId, const juce::MouseEve
 			| juce::ColourSelector::showSliders
 			| juce::ColourSelector::showColourspace);
 
-		colourSelector->setName("LAS color " + LasShader::ClassificationName(m_ActiveRow));
-		colourSelector->setCurrentColour(LasShader::ClassificationColor(m_ActiveRow));
+		colourSelector->setName("LAS color " + LasShader::ClassificationName((uint8_t)m_ActiveRow));
+		colourSelector->setCurrentColour(LasShader::ClassificationColor((uint8_t)m_ActiveRow));
 		colourSelector->addChangeListener(this);
 		colourSelector->setColour(juce::ColourSelector::backgroundColourId, juce::Colours::transparentBlack);
 		colourSelector->setSize(400, 300);
@@ -296,7 +296,7 @@ void ClassifModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 	if (m_ActiveColumn == Column::Colour) {
 		if (auto* cs = dynamic_cast<juce::ColourSelector*> (source)) {
 			juce::Colour color = cs->getCurrentColour();
-			LasShader::ClassificationColor(color, m_ActiveRow);
+			LasShader::ClassificationColor(color, (uint8_t)m_ActiveRow);
 			sendActionMessage("UpdateLasClassificationColor");
 		}
 	}
@@ -360,25 +360,22 @@ LasLayersViewer::LasLayersViewer()
 	addAndMakeVisible(m_MaxGsd);
 
 	// Sliders ZMin et ZMax
-	m_sldZmin.setRange(-10000., 10000., 1.);
-	m_sldZmin.setValue(LasShader::Zmin());
-	m_sldZmin.setSliderStyle(juce::Slider::LinearBar);
-	m_sldZmin.setNumDecimalPlacesToDisplay(0);
-	m_sldZmin.setTextValueSuffix(" Zmin");
-	m_sldZmin.addListener(this);
-	m_sldZmin.setChangeNotificationOnlyOnRelease(true);
-	m_sldZmax.setRange(-10000., 10000., 1.);
-	m_sldZmax.setValue(LasShader::Zmax());
-	m_sldZmax.setSliderStyle(juce::Slider::LinearBar);
-	m_sldZmax.setNumDecimalPlacesToDisplay(0);
-	m_sldZmax.setTextValueSuffix(" Zmax");
-	m_sldZmax.addListener(this);
-	m_sldZmax.setChangeNotificationOnlyOnRelease(true);
-	addAndMakeVisible(m_sldZmin);
-	addAndMakeVisible(m_sldZmax);
+	m_sldZRange.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+	m_sldZRange.setSliderStyle(juce::Slider::ThreeValueHorizontal);
+	m_sldZRange.setRange(LasShader::Zmin(), LasShader::Zmax(), 1.);
+	m_sldZRange.setMinAndMaxValues(LasShader::Zmin(), LasShader::Zmax());
+	m_sldZRange.setPopupDisplayEnabled(true, false, this);
+	m_sldZRange.addListener(this);
+	m_sldZRange.setChangeNotificationOnlyOnRelease(true);
+	addAndMakeVisible(m_sldZRange);
+	m_lblZRange.setText(juce::translate("Min / Max :"), juce::dontSendNotification);
+	addAndMakeVisible(m_lblZRange);
+	m_lblZRange.attachToComponent(&m_sldZRange, true);
+	addAndMakeVisible(m_drwZRect);
 	if (LasShader::Mode() == LasShader::ShaderMode::Classification) {
-		m_sldZmin.setVisible(false);
-		m_sldZmax.setVisible(false);
+		m_sldZRange.setVisible(false);
+		m_lblZRange.setVisible(false);
+		m_drwZRect.setVisible(false);
 	}
 
 	// Couleurs des classifications
@@ -425,10 +422,9 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 	zmax = ceil(zmax);
 	LasShader::Zmin(zmin);
 	LasShader::Zmax(zmax);
-	m_sldZmin.setRange(zmin, zmax, 1.);
-	m_sldZmax.setRange(zmin, zmax, 1.);
-	m_sldZmin.setValue(LasShader::Zmin());
-	m_sldZmax.setValue(LasShader::Zmax());
+	m_sldZRange.setMinAndMaxValues(zmin, zmax);
+	m_sldZRange.setRange(zmin, zmax, 1.);
+	m_sldZRange.setValue((zmax + zmin) * 0.5, juce::dontSendNotification);
 }
 
 //==============================================================================
@@ -442,6 +438,19 @@ void LasLayersViewer::UpdateColumnName()
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Number, juce::translate("Number"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Name, juce::translate("Name"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Colour, juce::translate("Color"));
+}
+
+//==============================================================================
+// LayerViewer : mise a jour du gradient altimetrique
+//==============================================================================
+void LasLayersViewer::UpdateAltiColors()
+{
+	auto b = getLocalBounds();
+	juce::ColourGradient gradient = juce::ColourGradient::horizontal(LasShader::AltiColor((uint8_t)0), 0.f,
+		LasShader::AltiColor((uint8_t)255), (float)b.getWidth());
+	for (int i = 1; i < 255; i++)
+		gradient.addColour((double)i / 255, LasShader::AltiColor((uint8_t)i));
+	m_drwZRect.setFill(juce::FillType(gradient));
 }
 
 //==============================================================================
@@ -460,10 +469,11 @@ void LasLayersViewer::resized()
 	m_Mode.setSize(b.getWidth(), 24);
 	m_TableClassif.setTopLeftPosition(0, b.getHeight() / 2 + 90);
 	m_TableClassif.setSize(b.getWidth(), 200);
-	m_sldZmin.setTopLeftPosition(0, b.getHeight() / 2 + 90);
-	m_sldZmin.setSize(b.getWidth(), 24);
-	m_sldZmax.setTopLeftPosition(0, b.getHeight() / 2 + 120);
-	m_sldZmax.setSize(b.getWidth(), 24);
+	m_sldZRange.setTopLeftPosition(100, b.getHeight() / 2 + 90);
+	m_sldZRange.setSize(b.getWidth() - 100, 24);
+	// Palette coloree des altitudes
+	UpdateAltiColors();
+	m_drwZRect.setRectangle(juce::Parallelogram<float>(juce::Rectangle<float>(0.f, b.getHeight() / 2 + 120.f, (float)b.getWidth(), 24.f)));
 }
 
 //==============================================================================
@@ -522,7 +532,7 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 	if (message == "UpdateLasClassificationVisibility") {
 		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
 		for (int i = 0; i < S.size(); i++) {
-			LasShader::ClassificationVisibility(!LasShader::ClassificationVisibility(S[i]), S[i]);
+			LasShader::ClassificationVisibility(!LasShader::ClassificationVisibility((uint8_t)S[i]), (uint8_t)S[i]);
 		}
 		m_TableClassif.repaint();
 		sendActionMessage("UpdateLas");
@@ -530,7 +540,7 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 	if (message == "UpdateLasClassificationSelectable") {
 		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
 		for (int i = 0; i < S.size(); i++) {
-			LasShader::ClassificationVisibility(!LasShader::ClassificationSelectable(S[i]), S[i]);
+			LasShader::ClassificationVisibility(!LasShader::ClassificationSelectable((uint8_t)S[i]), (uint8_t)S[i]);
 		}
 		m_TableClassif.repaint();
 		sendActionMessage("UpdateLas");
@@ -550,16 +560,13 @@ void LasLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		LasShader shader;
 		shader.Mode((LasShader::ShaderMode)(m_Mode.getSelectedId()));
 		m_ModelLas.sendActionMessage("UpdateLas");
-		if (LasShader::Mode() != LasShader::ShaderMode::Classification) {
-			m_TableClassif.setVisible(false);
-			m_sldZmin.setVisible(true);
-			m_sldZmax.setVisible(true);
-		}
-		else {
-			m_TableClassif.setVisible(true);
-			m_sldZmin.setVisible(false);
-			m_sldZmax.setVisible(false);
-		}
+		bool ZRangeVisible = true;
+		if (LasShader::Mode() == LasShader::ShaderMode::Classification) 
+			ZRangeVisible = false;
+		m_TableClassif.setVisible(!ZRangeVisible);
+		m_sldZRange.setVisible(ZRangeVisible);
+		m_lblZRange.setVisible(ZRangeVisible);
+		m_drwZRect.setVisible(ZRangeVisible);
 	}
 }
 
@@ -572,10 +579,15 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 		LasShader::Opacity(slider->getValue());
 	if (slider == &m_MaxGsd)
 		LasShader::MaxGsd(slider->getValue());
-	if (slider == &m_sldZmin)
-		LasShader::Zmin(slider->getValue());
-	if (slider == &m_sldZmax)
-		LasShader::Zmax(slider->getValue());
+	if (slider == &m_sldZRange) {
+		LasShader::Zmin(slider->getMinValue());
+		LasShader::Zmax(slider->getMaxValue());
+		double value = (slider->getValue() - slider->getMinValue()) / (slider->getMaxValue() - slider->getMinValue());
+		uint8_t middle = (uint8_t)(value * 255.);
+		LasShader::InitAltiColor(middle);
+		m_drwZRect.repaint();
+		UpdateAltiColors();
+	}
 
 	m_ModelLas.sendActionMessage("UpdateLas");
 }
@@ -583,20 +595,20 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 //==============================================================================
 // Drag&Drop
 //==============================================================================
-void LasLayersViewer::itemDropped(const SourceDetails& details)
+void LasLayersViewer::itemDropped(const SourceDetails& /*details*/)
 {
-	juce::String message = details.description.toString();
-	juce::StringArray T;
-	T.addTokens(message, ":", "");
-	if (T.size() < 1)
-		return;
-	int i;
-	i = T[0].getIntValue();
-	int row = m_TableLas.getRowContainingPosition(details.localPosition.x, details.localPosition.y);
-	//m_Base->ReorderDtmLayer(i, row);
-	//m_Table.updateContent();
-	//m_Table.repaint();
-	m_ModelLas.sendActionMessage("UpdateLas");
+	//juce::String message = details.description.toString();
+	//juce::StringArray T;
+	//T.addTokens(message, ":", "");
+	//if (T.size() < 1)
+	//	return;
+	//int i;
+	//i = T[0].getIntValue();
+	//int row = m_TableLas.getRowContainingPosition(details.localPosition.x, details.localPosition.y);
+	////m_Base->ReorderDtmLayer(i, row);
+	////m_Table.updateContent();
+	////m_Table.repaint();
+	//m_ModelLas.sendActionMessage("UpdateLas");
 }
 
 bool LasLayersViewer::isInterestedInDragSource(const SourceDetails& details)
@@ -642,7 +654,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 
 		MyTask() : ThreadClassProcessor(juce::translate("Compute DTM/DSM ..."), true) 
 		{ LasShader shader;
-		for (int i = 0; i < 256; i++) classif_visibility[i] = shader.ClassificationVisibility(i);
+		for (int i = 0; i < 256; i++) classif_visibility[i] = shader.ClassificationVisibility((uint8_t)i);
 		}
 
 		virtual bool Process(XGeoVector* V)

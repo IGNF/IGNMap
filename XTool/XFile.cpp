@@ -149,7 +149,7 @@ unsigned int XFile::Read(char* data, unsigned int maxSize)
   if (IStream() == NULL)
     return 0;
   m_In->read(data, maxSize);
-  return m_In->gcount();
+  return (unsigned int)m_In->gcount();
 }
 
 //-----------------------------------------------------------------------------

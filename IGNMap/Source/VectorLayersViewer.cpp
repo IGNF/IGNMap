@@ -62,7 +62,7 @@ int LayerViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void LayerViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void LayerViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -73,7 +73,7 @@ void LayerViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int 
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void LayerViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void LayerViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	XGeoClass* geoLayer = FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -206,7 +206,7 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void LayerViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void LayerViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* geoLayer = FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -267,7 +267,7 @@ void LayerViewerModel::sliderValueChanged(juce::Slider* slider)
 	// Choix d'une epaisseur
 	if (m_ActiveColumn == Column::PenWidth) {
 		if (geoLayer->Repres()->Size() != (int)slider->getValue()) {
-			geoLayer->Repres()->Size((int)slider->getValue());
+			geoLayer->Repres()->Size((uint8_t)slider->getValue());
 			sendActionMessage("UpdateVector");
 		}
 	}

@@ -85,6 +85,7 @@ public:
 		m_ModelLas.addActionListener(listener); 
 	}
 	void UpdateColumnName();
+	void UpdateAltiColors();
 	void resized() override;
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;
@@ -109,8 +110,9 @@ private:
 	juce::ComboBox			m_Mode;
 	juce::Slider				m_Opacity;
 	juce::Slider				m_MaxGsd;
-	juce::Slider				m_sldZmin;
-	juce::Slider				m_sldZmax;
+	juce::Slider				m_sldZRange;
+	juce::Label					m_lblZRange;
+	juce::DrawableRectangle m_drwZRect;
 	juce::TableListBox	m_TableClassif;
 	ClassifModel				m_ModelClassif;
 

@@ -33,8 +33,8 @@ void LasExportThread::run()
   strncpy(m_Header->system_identifier, "Export LAS IGNMap", 32);
   strncpy(m_Header->generating_software, "IGNMap v3", 32);
   juce::Time time = juce::Time::getCurrentTime();
-  m_Header->file_creation_day = time.getDayOfYear();
-  m_Header->file_creation_year = time.getYear();
+  m_Header->file_creation_day = (laszip_U16)time.getDayOfYear();
+  m_Header->file_creation_year = (laszip_U16)time.getYear();
   m_Header->header_size = 375;
   m_Header->offset_to_point_data = 375;
   m_Header->point_data_format = 6;

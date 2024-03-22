@@ -60,7 +60,7 @@ int ImageViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void ImageViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void ImageViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -71,7 +71,7 @@ void ImageViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int 
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void ImageViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void ImageViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	XGeoClass* geoLayer = FindRasterClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -192,7 +192,7 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void ImageViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void ImageViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* geoLayer = FindRasterClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -251,7 +251,7 @@ void ImageViewerModel::sliderValueChanged(juce::Slider* slider)
 	// Choix d'une opacite
 	if (m_ActiveColumn == Column::Opacity) {
 		if (geoLayer->Repres()->Transparency() != (100 - (int)slider->getValue())) {
-			geoLayer->Repres()->Transparency(100 - (int)slider->getValue());
+			geoLayer->Repres()->Transparency((uint8_t)(100 - (int)slider->getValue()));
 			sendActionMessage("UpdateRaster");
 		}
 	}

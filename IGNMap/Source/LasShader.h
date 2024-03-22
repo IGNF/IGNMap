@@ -15,6 +15,7 @@
 class LasShader {
 public:
 	LasShader();
+	static void InitAltiColor(uint8_t middle = 128);
 
 	enum class ShaderMode { Null = 0, Altitude = 1, RGB = 2, IRC = 3, Classification = 4, Intensity = 5, Angle = 6 };
 
@@ -28,15 +29,15 @@ public:
 	static void Zmin(double z) { m_Zmin = z; }
 	static double Zmax() { return m_Zmax; }
 	static void Zmax(double z) { m_Zmax = z; }
-	static juce::Colour ClassificationColor(unsigned char classif) { return m_ClassifColors[classif]; }
-	static juce::Colour AltiColor(unsigned char alti) { return m_AltiColors[alti]; }
-	static juce::String ClassificationName(unsigned char classif);
-	static bool ClassificationVisibility(unsigned char classif) { return m_ClassifVisibility[classif]; }
-	static bool ClassificationSelectable(unsigned char classif) { return m_ClassifSelectable[classif]; }
+	static juce::Colour ClassificationColor(uint8_t classif) { return m_ClassifColors[classif]; }
+	static juce::Colour AltiColor(uint8_t alti) { return m_AltiColors[alti]; }
+	static juce::String ClassificationName(uint8_t classif);
+	static bool ClassificationVisibility(uint8_t classif) { return m_ClassifVisibility[classif]; }
+	static bool ClassificationSelectable(uint8_t classif) { return m_ClassifSelectable[classif]; }
 
-	static void ClassificationColor(juce::Colour color, unsigned char classif) { m_ClassifColors[classif] = color; }
-	static void ClassificationVisibility(bool flag, unsigned char classif) { m_ClassifVisibility[classif] = flag; }
-	static void ClassificationSelectable(bool flag, unsigned char classif) { m_ClassifSelectable[classif] = flag; }
+	static void ClassificationColor(juce::Colour color, uint8_t classif) { m_ClassifColors[classif] = color; }
+	static void ClassificationVisibility(bool flag, uint8_t classif) { m_ClassifVisibility[classif] = flag; }
+	static void ClassificationSelectable(bool flag, uint8_t classif) { m_ClassifSelectable[classif] = flag; }
 
 protected:
 	static bool m_Init;

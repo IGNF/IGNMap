@@ -112,8 +112,8 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
   double ymin = m_edtYmin.getText().getDoubleValue();
   double ymax = m_edtYmax.getText().getDoubleValue();
   double gsd = m_edtGsd.getText().getDoubleValue();
-  m_nW = (xmax - xmin) / gsd;
-  m_nH = (ymax - ymin) / gsd;
+  m_nW = (int)((xmax - xmin) / gsd);
+  m_nH = (int)((ymax - ymin) / gsd);
   m_dX0 = xmin;
   m_dY0 = ymax;
   m_dGSD = gsd;
@@ -186,7 +186,7 @@ void ExportImageDlg::timerCallback()
   std::ofstream file;
   file.open(m_strFilename.toStdString().c_str(), std::ios::out | std::ios::binary | std::ios::app);
   file.seekp(0, std::ios_base::end);
-  for (int i = 0; i < m_MapThread.ImageHeight(); i++) {
+  for (int i = 0; i < (int)m_MapThread.ImageHeight(); i++) {
     uint8_t* line = bitmap.getLinePointer(i);
     XBaseImage::SwitchRGB2BGR(line, m_MapThread.ImageWidth());
     file.write((char*)line, m_MapThread.ImageWidth() * 3);

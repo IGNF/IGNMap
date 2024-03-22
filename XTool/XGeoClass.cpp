@@ -82,7 +82,7 @@ bool XGeoAttribut::XmlRead(XParserXML* parser, uint32_t num, XError* error)
 	m_strShortName = att.ReadNode("/xgeoattribut/short_name");
 	m_strDescription = att.ReadNode("/xgeoattribut/description");
 	m_nLength = att.ReadNodeAsUInt32("/xgeoattribut/length");
-	m_nDecCount = att.ReadNodeAsUInt32("/xgeoattribut/dec_count");
+	m_nDecCount = (uint8_t)att.ReadNodeAsUInt32("/xgeoattribut/dec_count");
 	std::string type = att.ReadNode("/xgeoattribut/type");
 	m_Type = String2Type(type.c_str());
 	return true;

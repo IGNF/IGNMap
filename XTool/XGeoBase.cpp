@@ -147,10 +147,10 @@ XGeoClass* XGeoBase::AddClass(const char* layer_name, const char* class_name)
 			return layer->AddClass(class_name);
 		}
 	if (layer == NULL) {
-		XGeoLayer* layer = new XGeoLayer;
-		layer->Name(layer_name);
-		XGeoClass* C = layer->AddClass(class_name);
-		m_Layer.push_back(layer);
+		XGeoLayer* newLayer = new XGeoLayer;
+		newLayer->Name(layer_name);
+		XGeoClass* C = newLayer->AddClass(class_name);
+		m_Layer.push_back(newLayer);
 		return C;
 	}
 	return NULL;

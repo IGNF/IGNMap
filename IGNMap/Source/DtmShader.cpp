@@ -147,7 +147,7 @@ int DtmShader::Isohypse(float altC, float altH, float altD)
   int nb_isoC = (int)ceil(altC / step);
   int nb_isoH = (int)ceil(altH / step);
   int nb_isoD = (int)ceil(altD / step);
-  int nb_iso = round(altC / step);
+  int nb_iso = (int)round(altC / step);
 
   if (nb_isoC != nb_isoH)
     return nb_iso;
@@ -205,7 +205,7 @@ bool DtmShader::EstompLine(float* lineR, float* lineS, float* lineT, uint32_t W,
     }
 
     if (val > m_Z[m_Z.size() - 1]) {
-      index = m_Z.size();
+      index = (int)m_Z.size();
       r = m_Colour[index].getRed();
       g = m_Colour[index].getGreen();
       b = m_Colour[index].getBlue();
@@ -309,7 +309,8 @@ bool DtmShader::EstompLine(float* lineR, float* lineS, float* lineT, uint32_t W,
 
     }
 
-    pix_col = juce::Colour(juce::Colour::fromRGBA(round(r* coef), round(g* coef), round(b* coef), round(a))).getARGB();
+    pix_col = juce::Colour(juce::Colour::fromRGBA((juce::uint8)round(r* coef), (juce::uint8)round(g* coef), 
+                                                  (juce::uint8)round(b* coef), (juce::uint8)round(a))).getARGB();
     ::memcpy(&rgba[4 * i], &pix_col, 4 * sizeof(uint8_t));
     
     ptr++;
@@ -336,7 +337,7 @@ bool DtmShader::ConvertImage(juce::Image* rawImage, juce::Image* rgbImage)
 
   EstompLine((float*)rawData.getLinePointer(0), (float*)rawData.getLinePointer(0), (float*)rawData.getLinePointer(1), 
               w, rgbData.getLinePointer(0), 0);
-  for (uint32_t i = 1; i < h - 1; i++) {
+  for (int i = 1; i < h - 1; i++) {
     EstompLine((float*)rawData.getLinePointer(i - 1), (float*)rawData.getLinePointer(i), (float*)rawData.getLinePointer(i + 1), 
                 w, rgbData.getLinePointer(i), i);
   }

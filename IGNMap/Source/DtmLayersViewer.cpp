@@ -62,7 +62,7 @@ int DtmViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void DtmViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void DtmViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -73,7 +73,7 @@ void DtmViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int wi
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void DtmViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void DtmViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	XGeoClass* dtmClass = FindDtmClass(rowNumber);
 	if (dtmClass == nullptr)
@@ -167,7 +167,7 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void DtmViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void DtmViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* dtmClass = FindDtmClass(rowNumber);
 	if (dtmClass == nullptr)
@@ -196,7 +196,7 @@ juce::var DtmViewerModel::getDragSourceDescription(const juce::SparseSet<int>& s
 //==============================================================================
 // LayerViewer : constructeur
 //==============================================================================
-void DtmViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
+void DtmViewerModel::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
 	if (m_Base == nullptr)
 		return;
@@ -210,13 +210,13 @@ void DtmViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 //==============================================================================
 int DtmRangeModel::getNumRows()
 {
-	return DtmShader::m_Z.size() + 1;
+	return (int)(DtmShader::m_Z.size() + 1);
 }
 
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void DtmRangeModel::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void DtmRangeModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -227,7 +227,7 @@ void DtmRangeModel::paintRowBackground(juce::Graphics& g, int rowNumber, int wid
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	if (rowNumber > DtmShader::m_Z.size())
 		return;
@@ -429,7 +429,7 @@ DtmLayersViewer::DtmLayersViewer()
 	m_Azimuth.setRange(0., 360., 1.);
 	m_Azimuth.setValue(DtmShader::m_dSolarAzimuth);
 	m_Azimuth.setSliderStyle(juce::Slider::Rotary);
-	m_Azimuth.setRotaryParameters((float)juce::MathConstants<double>::pi, 3.f*juce::MathConstants<double>::pi, false);
+	m_Azimuth.setRotaryParameters((float)juce::MathConstants<double>::pi, (float)(3.*juce::MathConstants<double>::pi), false);
 	m_Azimuth.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 20);
 	m_Azimuth.addListener(this);
 	m_Azimuth.setChangeNotificationOnlyOnRelease(true);

@@ -810,15 +810,26 @@ bool MapThread::DrawLasClass(XGeoClass* C)
 //==============================================================================
 bool MapThread::DrawLas(GeoLAS* las)
 {
+	double Z0 = LasShader::Zmin();// m_GeoBase->ZMin();
+	double deltaZ = LasShader::Zmax() - Z0; // m_GeoBase->ZMax() - Z0;
+	if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
+	deltaZ = (255. / deltaZ);
+
 	if (m_dGsd > LasShader::MaxGsd()) {
 		XFrame F = las->Frame();
-		int W = (int)round(F.Width() / m_dGsd);
-		int H = (int)round(F.Height() / m_dGsd);
+		float W = (float)round(F.Width() / m_dGsd);
+		float H = (float)round(F.Height() / m_dGsd);
 		juce::Graphics g(m_Las);
+		/*
 		g.setColour(juce::Colours::lightpink);
-		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
+		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);*/
+		float x1 = (float)floor((F.Xmin - m_dX0) / m_dGsd), y1 = (float)floor((m_dY0 - F.Ymax) / m_dGsd);
+		juce::ColourGradient gradient(LasShader::AltiColor((uint8_t)((las->Zmax() - Z0)*deltaZ)), x1 + W / 2, y1 + H / 2, 
+																	LasShader::AltiColor((uint8_t)((las->Zmin() - Z0)*deltaZ)), x1 + W, y1 + H, true);
+		g.setGradientFill(gradient);
+		g.fillRect(x1, y1, W, H);
 		g.setColour(juce::Colours::mediumvioletred);
-		g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
+		g.drawRect(x1, y1, W, H);
 		m_nNumObjects++;
 		return true;
 	}
@@ -839,9 +850,6 @@ bool MapThread::DrawLas(GeoLAS* las)
 	double Ymax = (m_Frame.Ymax - header->y_offset) / header->y_scale_factor;
 	double Zmin = (LasShader::Zmin() - header->z_offset) / header->z_scale_factor;
 	double Zmax = (LasShader::Zmax() - header->z_offset) / header->z_scale_factor;
-	double Z0 = LasShader::Zmin();// m_GeoBase->ZMin();
-	double deltaZ = LasShader::Zmax() - Z0; // m_GeoBase->ZMax() - Z0;
-	if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
 
 	double X, Y, Z;
 	juce::Colour col = juce::Colours::orchid;
@@ -851,14 +859,14 @@ bool MapThread::DrawLas(GeoLAS* las)
 	uint8_t classification;
 	bool classif_newtype = true;
 	if (header->version_minor < 4) classif_newtype = false;
-	LasShader shader;
+
 	for (laszip_I64 i = 0; i < npoints; i++) {
 		laszip_read_point(reader);
 		if (classif_newtype)
 			classification = point->extended_classification;
 		else
 			classification = point->classification;
-		if (!shader.ClassificationVisibility(classification)) continue;
+		if (!LasShader::ClassificationVisibility(classification)) continue;
 		if (point->X <= Xmin) continue;
 		if (point->X >= Xmax) continue;
 		if (point->Y <= Ymin) continue;
@@ -872,10 +880,10 @@ bool MapThread::DrawLas(GeoLAS* las)
 		Y = (m_dY0 - Y) / m_dGsd;
 		if (m_ClipLas.contains((int)X, (int)Y))
 			continue;
-		switch (shader.Mode()) {
+		switch (LasShader::Mode()) {
 		case LasShader::ShaderMode::Altitude :
 			Z = point->Z * header->z_scale_factor + header->z_offset;
-			col = shader.AltiColor( (uint8_t)((Z - Z0) * 255 / deltaZ));
+			col = LasShader::AltiColor( (uint8_t)((Z - Z0) * deltaZ));
 			*data_ptr = (uint32_t)col.getARGB();
 			break;
 		case LasShader::ShaderMode::RGB:
@@ -891,7 +899,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 			// data[3] = 255; // deja fixe dans l'initialisation de data
 			break;
 		case LasShader::ShaderMode::Classification:
-			col = shader.ClassificationColor(classification);
+			col = LasShader::ClassificationColor(classification);
 			*data_ptr = (uint32_t)col.getARGB();
 			break;
 		case LasShader::ShaderMode::Intensity:

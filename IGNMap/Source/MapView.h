@@ -47,6 +47,7 @@ public:
   double ComputeCartoScale(double cartoscale = 0.);
   void SetTarget(double x, double y, bool notify = true);
   void DrawTarget(juce::Graphics&, int deltaX = 0, int deltaY = 0);
+  void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetSelectionFrame() { return m_SelectionFrame; }
   double GetGsd() const { return m_dScale; }
 
@@ -84,6 +85,8 @@ private:
   XAnnotation   m_Annotation; // Annotation en cours d'edition
   XPt2D         m_Target;     // Point cible
   XFrame        m_SelectionFrame;  // Rectangle de selection
+  XFrame        m_3DFrame;         // Rectangle de vue 3D
+  uint64_t      m_nFrameCounter;
 
   void timerCallback() override { repaint(); }
 
