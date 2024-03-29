@@ -958,6 +958,9 @@
     <ClCompile Include="..\..\..\XTool\XPt3D.cpp">
       <Filter>IGNMap\XTool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XToolAlgo\XInternetMap.cpp">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolAlgo\XLasFile.cpp">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClCompile>
@@ -3082,6 +3085,9 @@
       <Filter>IGNMap\XTool</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolAlgo\XColor.h">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolAlgo\XInternetMap.h">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolAlgo\XLasFile.h">

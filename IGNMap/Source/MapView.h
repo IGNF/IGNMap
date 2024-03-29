@@ -46,6 +46,7 @@ public:
   void DrawAnnotation(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   double ComputeCartoScale(double cartoscale = 0.);
   void SetTarget(double x, double y, bool notify = true);
+  XPt2D GetTarget() const { return m_Target; }
   void DrawTarget(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetSelectionFrame() { return m_SelectionFrame; }

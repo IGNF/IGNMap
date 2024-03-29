@@ -17,6 +17,7 @@
 #include "ExportLasDlg.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
+#include "../../XToolAlgo/XInternetMap.h"
 
 
 //==============================================================================
@@ -112,6 +113,12 @@ MainComponent::MainComponent()
           " may be inaccessible.");
       }
     });
+
+	// Geodesie ...
+	XGeoPref pref;
+	pref.Projection(XGeoProjection::Lambert93);
+	pref.GoogleMode(3); // Streetview
+	pref.VEMode(1);
 }
 
 MainComponent::~MainComponent()
@@ -233,6 +240,9 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale100k);
 		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale250k);
 		menu.addSubMenu(juce::translate("Scale"), ScaleSubMenu);
+		menu.addSeparator();
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuGoogle);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuBing);
 	}
 	else if (menuIndex == 4) // Help
 	{
@@ -274,7 +284,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailSCAN50Histo,
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
-		CommandIDs::menuAbout };
+		CommandIDs::menuGoogle, CommandIDs::menuBing, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
 
@@ -420,6 +430,12 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuSynchronize:
 		result.setInfo(juce::translate("Synchronize"), juce::translate("Synchronize with another IGNMap"), "Menu", 0);
+		break;
+	case CommandIDs::menuGoogle:
+		result.setInfo(juce::translate("Google Maps"), juce::translate("Google Maps"), "Menu", 0);
+		break;
+	case CommandIDs::menuBing:
+		result.setInfo(juce::translate("Bing Maps"), juce::translate("Bing Maps"), "Menu", 0);
 		break;
 	case CommandIDs::menuAbout:
 		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
@@ -570,6 +586,12 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuSynchronize:
 		Synchronize();
+		break;
+	case CommandIDs::menuGoogle:
+		juce::URL(XInternetMap::GoogleMapsUrl(m_MapView.get()->GetTarget(), m_MapView.get()->GetGsd())).launchInDefaultBrowser();
+		break;
+	case CommandIDs::menuBing:
+		juce::URL(XInternetMap::BingMapsUrl(m_MapView.get()->GetTarget(), m_MapView.get()->GetGsd())).launchInDefaultBrowser();
 		break;
 	case CommandIDs::menuAbout:
 		AboutIGNMap();
@@ -1064,7 +1086,6 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 bool MainComponent::AddOSMServer()
 {
 	XGeoPref pref;
-	pref.Projection(XGeoProjection::Lambert93);
 	XFrame F = XGeoProjection::FrameProj(pref.Projection());
 
 	OsmLayer* osm = new OsmLayer("tile.openstreetmap.org");
@@ -1108,7 +1129,6 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 																	uint32_t tileW, uint32_t tileH, uint32_t max_zoom, std::string apikey)
 {
 	XGeoPref pref;
-	pref.Projection(XGeoProjection::Lambert93);
 	XFrame F = XGeoProjection::FrameProj(pref.Projection());
 
 	WmtsLayer* wmts = new WmtsLayer(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);

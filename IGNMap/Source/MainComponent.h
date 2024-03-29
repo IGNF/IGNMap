@@ -58,7 +58,7 @@ public:
     menuAddGeoportailOrthophoto, menuAddGeoportailOrthophotoIRC, menuAddGeoportailOrthohisto, menuAddGeoportailSatellite,
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
-    menuSynchronize,
+    menuSynchronize, menuGoogle, menuBing,
     menuAbout
   };
 

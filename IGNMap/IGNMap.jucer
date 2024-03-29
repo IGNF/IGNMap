@@ -536,6 +536,9 @@
     </GROUP>
     <GROUP id="{922568F6-A5F8-F969-4DAF-930F4E8FE4E7}" name="XToolAlgo">
       <FILE id="nQypig" name="XColor.h" compile="0" resource="0" file="../XToolAlgo/XColor.h"/>
+      <FILE id="k0Tuq4" name="XInternetMap.cpp" compile="1" resource="0"
+            file="../XToolAlgo/XInternetMap.cpp"/>
+      <FILE id="wfXTdH" name="XInternetMap.h" compile="0" resource="0" file="../XToolAlgo/XInternetMap.h"/>
       <FILE id="v2dLJ0" name="XLasFile.cpp" compile="1" resource="0" file="../XToolAlgo/XLasFile.cpp"/>
       <FILE id="aLJf7D" name="XLasFile.h" compile="0" resource="0" file="../XToolAlgo/XLasFile.h"/>
     </GROUP>

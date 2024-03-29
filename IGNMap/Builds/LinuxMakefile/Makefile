@@ -287,6 +287,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XPolygone2D_17ca3d3c.o \
   $(JUCE_OBJDIR)/XPt2D_5979b195.o \
   $(JUCE_OBJDIR)/XPt3D_5b2e8a34.o \
+  $(JUCE_OBJDIR)/XInternetMap_ca70d833.o \
   $(JUCE_OBJDIR)/XLasFile_52021412.o \
   $(JUCE_OBJDIR)/XAlgoGeod_b79ba2f8.o \
   $(JUCE_OBJDIR)/XDomGeod_f9f0910d.o \
@@ -1435,6 +1436,11 @@ $(JUCE_OBJDIR)/XPt2D_5979b195.o: ../../../XTool/XPt2D.cpp
 $(JUCE_OBJDIR)/XPt3D_5b2e8a34.o: ../../../XTool/XPt3D.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XPt3D.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XInternetMap_ca70d833.o: ../../../XToolAlgo/XInternetMap.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XInternetMap.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XLasFile_52021412.o: ../../../XToolAlgo/XLasFile.cpp
