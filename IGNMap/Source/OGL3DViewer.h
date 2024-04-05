@@ -51,6 +51,7 @@ protected:
   void LoadLasClass(XGeoClass* C);
   void LoadDtmClass(XGeoClass* C);
   void LoadVectorClass(XGeoClass* C);
+  void FindZminLas();
   void UpdateBase();
   void ReinitDtm();
   void DrawLas(GeoLAS* las);

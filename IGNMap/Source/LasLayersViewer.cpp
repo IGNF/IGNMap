@@ -92,6 +92,9 @@ void LasViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, i
 	case Column::Name:
 		g.drawText(juce::String(lasClass->Name()), 0, 0, width, height, juce::Justification::centredLeft);
 		break;
+	case Column::NbElem:
+		g.drawText(juce::String(lasClass->NbVector()), 0, 0, width, height, juce::Justification::centred);
+		break;
 	case Column::Zmin:
 		g.drawText(juce::String(lasClass->Zmin()), 0, 0, width, height, juce::Justification::centred);
 		break;
@@ -319,6 +322,7 @@ LasLayersViewer::LasLayersViewer()
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Visibility, 25);
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Selectable, 25);
 	m_TableLas.getHeader().addColumn(juce::translate("Name"), LasViewerModel::Column::Name, 200);
+	m_TableLas.getHeader().addColumn(juce::translate("Nb. Elem"), LasViewerModel::Column::NbElem, 50);
 	m_TableLas.getHeader().addColumn(juce::translate("Zmin"), LasViewerModel::Column::Zmin, 50);
 	m_TableLas.getHeader().addColumn(juce::translate("Zmax"), LasViewerModel::Column::Zmax, 50);
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Options, 50);
@@ -433,6 +437,7 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 void LasLayersViewer::UpdateColumnName()
 {
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Name, juce::translate("Name"));
+	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmin, juce::translate("Nb. Elem"));
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmin, juce::translate("Zmin"));
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmax, juce::translate("Zmax"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Number, juce::translate("Number"));

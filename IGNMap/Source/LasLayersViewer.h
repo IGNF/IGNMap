@@ -22,7 +22,7 @@ class LasViewerModel : public juce::TableListBoxModel,
 	public juce::ChangeListener,
 	public juce::ActionBroadcaster {
 public:
-	typedef enum { Visibility = 1, Selectable = 2, Name = 3, Zmin = 4, Zmax = 5, Options = 6 } Column;
+	typedef enum { Visibility = 1, Selectable = 2, Name = 3, NbElem = 4, Zmin = 5, Zmax = 6, Options = 7 } Column;
 	LasViewerModel() { m_Base = nullptr; m_ActiveRow = m_ActiveColumn = -1;}
 
 	int getNumRows() override;

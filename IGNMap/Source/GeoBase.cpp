@@ -327,6 +327,7 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 	Att.clear();
 	if (!ReOpen())
 		return false;
+	Att.push_back("Filename");  Att.push_back(Filename());
 	Att.push_back("Software");  Att.push_back(m_Header->generating_software);
 	Att.push_back("Version"); Att.push_back(std::to_string(m_Header->version_major) + "." + std::to_string(m_Header->version_minor));
 	Att.push_back("Point format"); Att.push_back(std::to_string(m_Header->point_data_format));

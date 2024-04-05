@@ -528,6 +528,7 @@ void OGLWidget::UpdateBase()
     return;
   const juce::ScopedLock lock(m_Mutex);
   openGLContext.setContinuousRepainting(false);
+  FindZminLas();
   for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
     XGeoClass* C = m_Base->Class(i);
     if (C == nullptr)
@@ -543,6 +544,32 @@ void OGLWidget::UpdateBase()
   m_bNeedUpdate = false;
   openGLContext.setContinuousRepainting(true);
   openGLContext.triggerRepaint();
+}
+
+//==============================================================================
+// Trouve le Zmin de la zone a partir des fichiers LAS
+//==============================================================================
+void OGLWidget::FindZminLas()
+{
+  for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+    XGeoClass* C = m_Base->Class(i);
+    if (C == nullptr)
+      continue;
+    if ((!C->IsLAS()) || (!C->Visible()))
+      continue;
+    if (!m_Frame.Intersect(C->Frame()))
+      continue;
+    for (uint32_t j = 0; j < C->NbVector(); j++) {
+      GeoLAS* las = dynamic_cast<GeoLAS*>(C->Vector(j));
+      XFrame F = las->Frame();
+      if (!m_Frame.Intersect(F))
+        continue;
+      if (m_dZ0 <= XGEO_NO_DATA)
+        m_dZ0 = las->Zmin();
+      else
+        m_dZ0 = XMin(m_dZ0, las->Zmin());
+    }
+  }
 }
 
 //==============================================================================
