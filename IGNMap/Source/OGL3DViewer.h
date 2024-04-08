@@ -54,6 +54,7 @@ protected:
   void FindZminLas();
   void UpdateBase();
   void ReinitDtm();
+  void MoveZ(float dZ);
   void DrawLas(GeoLAS* las);
   void DrawDtm(GeoDTM* dtm);
   void DrawDtm();
@@ -115,6 +116,7 @@ private:
   bool      m_bViewVector;      // Affichages des donnees vectorielles
   uint32_t  m_nDtmW;
   uint32_t  m_nDtmH;
+  double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   
 
   juce::Point<float>  m_LastPos;  // Position souris pour les drags

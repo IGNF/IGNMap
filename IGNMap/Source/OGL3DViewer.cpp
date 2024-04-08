@@ -57,6 +57,7 @@ OGLWidget::OGLWidget()
   m_DtmLineWidth = 1.f;
   m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
+  m_dDeltaZ = 0.;
 }
 
 //==============================================================================
@@ -124,7 +125,7 @@ void OGLWidget::initialise()
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_RepereID);
   openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
-  // Creation du buffer de points (du repere)pour la selection)
+  // Creation du buffer de points pour la selection
   openGLContext.extensions.glGenBuffers(1, &m_PtBufferID);
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
   openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 1 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
@@ -491,6 +492,15 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if ((key.getTextCharacter() == 'M') || (key.getTextCharacter() == 'm'))
     m_bViewDtm = (!m_bViewDtm);
 
+  if ((key.getTextCharacter() == 'T') || (key.getTextCharacter() == 't')) {
+    m_dDeltaZ = 1.;
+    m_bNeedUpdate = true;
+  }
+  if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
+    m_dDeltaZ = -1.;
+    m_bNeedUpdate = true;
+  }
+
   repaint();
   return true;
 }
@@ -519,6 +529,11 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
 //==============================================================================
 void OGLWidget::UpdateBase()
 {
+  if (m_dDeltaZ != 0.) {
+    MoveZ((float)m_dDeltaZ);
+    m_dDeltaZ = 0.;
+    return;
+  }
   m_nNbLasVertex = 0;
   m_nNbDtmVertex = 0;
   m_nNbPolyVertex = m_nNbLineVertex = 0;
@@ -541,6 +556,9 @@ void OGLWidget::UpdateBase()
       LoadVectorClass(C);
   }
   DrawDtm();
+  if (m_dDeltaZ != 0.)
+    MoveZ((float)m_dDeltaZ);
+  m_dDeltaZ = 0.;
   m_bNeedUpdate = false;
   openGLContext.setContinuousRepainting(true);
   openGLContext.triggerRepaint();
@@ -649,6 +667,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
     ptr_vertex->position[0] = (float) ((X - m_dX0) / m_dGsd);
     ptr_vertex->position[1] = (float) ((Y - m_dY0) / m_dGsd);
     ptr_vertex->position[2] = (float) ((Z - m_dZ0) / m_dGsd);
+    m_dDeltaZ += ptr_vertex->position[2];
 
     switch (shader.Mode()) {
     case LasShader::ShaderMode::Altitude:
@@ -703,6 +722,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
   laszip_seek_point(reader, 0);
   las->CloseIfNeeded();
   glUnmapBuffer(GL_ARRAY_BUFFER);
+  m_dDeltaZ = -(m_dDeltaZ / m_nNbLasVertex);
 }
 
 //==============================================================================
@@ -909,6 +929,61 @@ void OGLWidget::ReinitDtm()
   }
   glUnmapBuffer(GL_ARRAY_BUFFER);
   m_nNbDtmVertex = 0;
+}
+
+//==============================================================================
+// Translation en Z de tous les points
+//==============================================================================
+void OGLWidget::MoveZ(float dZ)
+{
+  const juce::ScopedLock lock(m_Mutex);
+  openGLContext.setContinuousRepainting(false);
+  using namespace ::juce::gl;
+
+  // Points LAS
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points MNT
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbDtmVertex; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points Polygones
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PolyBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbPolyVertex; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points Polylignes
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LineBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbLineVertex; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points selectionnes
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < 1; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+
+  m_bNeedUpdate = false;
+  openGLContext.setContinuousRepainting(true);
+  openGLContext.triggerRepaint();
 }
 
 //==============================================================================

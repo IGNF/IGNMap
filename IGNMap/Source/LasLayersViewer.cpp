@@ -426,8 +426,8 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 	zmax = ceil(zmax);
 	LasShader::Zmin(zmin);
 	LasShader::Zmax(zmax);
-	m_sldZRange.setMinAndMaxValues(zmin, zmax);
 	m_sldZRange.setRange(zmin, zmax, 1.);
+	m_sldZRange.setMinAndMaxValues(zmin, zmax);
 	m_sldZRange.setValue((zmax + zmin) * 0.5, juce::dontSendNotification);
 }
 
