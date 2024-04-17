@@ -176,7 +176,7 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
   FwebMerc.Ymax = XMax(y1, y2);
 
   LoadFrame(FwebMerc, osm_zoom);
-  m_SourceImage = m_SourceImage.rescaled(FwebMerc.Width() / gsd, FwebMerc.Height() / gsd);
+  m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));
 
   // Reechantillonage dans la projection souhaitee
   XTransfoGeodInterpol transfo(&geod);

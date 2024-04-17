@@ -808,6 +808,7 @@ bool MapThread::DrawLasClass(XGeoClass* C)
 //==============================================================================
 // Dessin d'un LAS
 //==============================================================================
+/*
 bool MapThread::DrawLas(GeoLAS* las)
 {
 	double Z0 = LasShader::Zmin();// m_GeoBase->ZMin();
@@ -820,9 +821,9 @@ bool MapThread::DrawLas(GeoLAS* las)
 		float W = (float)round(F.Width() / m_dGsd);
 		float H = (float)round(F.Height() / m_dGsd);
 		juce::Graphics g(m_Las);
-		/*
-		g.setColour(juce::Colours::lightpink);
-		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);*/
+		
+		//g.setColour(juce::Colours::lightpink);
+		//g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);
 		float x1 = (float)floor((F.Xmin - m_dX0) / m_dGsd), y1 = (float)floor((m_dY0 - F.Ymax) / m_dGsd);
 		juce::ColourGradient gradient(LasShader::AltiColor((uint8_t)((las->Zmax() - Z0)*deltaZ)), x1 + W / 2, y1 + H / 2, 
 																	LasShader::AltiColor((uint8_t)((las->Zmin() - Z0)*deltaZ)), x1 + W, y1 + H, true);
@@ -838,12 +839,11 @@ bool MapThread::DrawLas(GeoLAS* las)
 
 	if (!las->ReOpen())
 		return false;
-	laszip_I64 npoints = las->NbLasPoints();
+	uint64_t npoints = las->NbLasPoints();
 	laszip_POINTER reader = las->GetReader();
 	laszip_header* header = las->GetHeader();
 	laszip_point* point = las->GetPoint(); 
 
-	laszip_seek_point(reader, 0);
 	double Xmin = (m_Frame.Xmin - header->x_offset) / header->x_scale_factor;
 	double Xmax = (m_Frame.Xmax - header->x_offset) / header->x_scale_factor;
 	double Ymin = (m_Frame.Ymin - header->y_offset) / header->y_scale_factor;
@@ -857,10 +857,10 @@ bool MapThread::DrawLas(GeoLAS* las)
 	uint32_t* data_ptr = (uint32_t*) & data;
 	uint8_t* ptr = nullptr;
 	uint8_t classification;
-	bool classif_newtype = true;
-	if (header->version_minor < 4) classif_newtype = false;
+	bool classif_newtype = las->IsNewClassification();
 
-	for (laszip_I64 i = 0; i < npoints; i++) {
+	laszip_seek_point(reader, 0);
+	for (uint64_t i = 0; i < npoints; i++) {
 		laszip_read_point(reader);
 		if (classif_newtype)
 			classification = point->extended_classification;
@@ -928,6 +928,110 @@ bool MapThread::DrawLas(GeoLAS* las)
 			break;
 	}
 	laszip_seek_point(reader, 0);
+	m_nNumObjects++;
+	las->CloseIfNeeded();
+
+	return true;
+}*/
+
+bool MapThread::DrawLas(GeoLAS* las)
+{
+	double Z0 = LasShader::Zmin();// m_GeoBase->ZMin();
+	double deltaZ = LasShader::Zmax() - Z0; // m_GeoBase->ZMax() - Z0;
+	if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
+	deltaZ = (255. / deltaZ);
+
+	if (m_dGsd > LasShader::MaxGsd()) {
+		XFrame F = las->Frame();
+		float W = (float)round(F.Width() / m_dGsd);
+		float H = (float)round(F.Height() / m_dGsd);
+		juce::Graphics g(m_Las);
+		/*
+		g.setColour(juce::Colours::lightpink);
+		g.fillRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H);*/
+		float x1 = (float)floor((F.Xmin - m_dX0) / m_dGsd), y1 = (float)floor((m_dY0 - F.Ymax) / m_dGsd);
+		juce::ColourGradient gradient(LasShader::AltiColor((uint8_t)((las->Zmax() - Z0) * deltaZ)), x1 + W / 2, y1 + H / 2,
+			LasShader::AltiColor((uint8_t)((las->Zmin() - Z0) * deltaZ)), x1 + W, y1 + H, true);
+		g.setGradientFill(gradient);
+		g.fillRect(x1, y1, W, H);
+		g.setColour(juce::Colours::mediumvioletred);
+		g.drawRect(x1, y1, W, H);
+		m_nNumObjects++;
+		return true;
+	}
+
+	juce::Image::BitmapData bitmap(m_Las, juce::Image::BitmapData::readWrite);
+
+	if (!las->ReOpen())
+		return false;
+	if (!las->SetWorld(m_Frame, LasShader::Zmin(), LasShader::Zmax(), m_dGsd))
+		return false;
+	laszip_point* point = las->GetPoint();
+
+	double X, Y, Z;
+	juce::Colour col = juce::Colours::orchid;
+	uint8_t data[4] = { 0, 0, 0, 255 };
+	uint32_t* data_ptr = (uint32_t*)&data;
+	uint8_t* ptr = nullptr;
+	uint8_t classification;
+	bool classif_newtype = las->IsNewClassification();
+
+	while(las->GetNextPoint(&X, &Y, &Z)) {
+		if (classif_newtype)
+			classification = point->extended_classification;
+		else
+			classification = point->classification;
+		if (!LasShader::ClassificationVisibility(classification)) continue;
+		X = (X - m_dX0) / m_dGsd;
+		Y = (m_dY0 - Y) / m_dGsd;
+		if (m_ClipLas.contains((int)X, (int)Y))
+			continue;
+		switch (LasShader::Mode()) {
+		case LasShader::ShaderMode::Altitude:
+			col = LasShader::AltiColor((uint8_t)((Z - Z0) * deltaZ));
+			*data_ptr = (uint32_t)col.getARGB();
+			break;
+		case LasShader::ShaderMode::RGB:
+			data[0] = (uint8_t)(point->rgb[2] / 256);
+			data[1] = (uint8_t)(point->rgb[1] / 256);
+			data[2] = (uint8_t)(point->rgb[0] / 256);
+			// data[3] = 255; // deja fixe dans l'initialisation de data
+			break;
+		case LasShader::ShaderMode::IRC:
+			data[0] = (uint8_t)(point->rgb[1] / 256);
+			data[1] = (uint8_t)(point->rgb[0] / 256);
+			data[2] = (uint8_t)(point->rgb[3] / 256);
+			// data[3] = 255; // deja fixe dans l'initialisation de data
+			break;
+		case LasShader::ShaderMode::Classification:
+			col = LasShader::ClassificationColor(classification);
+			*data_ptr = (uint32_t)col.getARGB();
+			break;
+		case LasShader::ShaderMode::Intensity:
+			//data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
+			memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+			break;
+		case LasShader::ShaderMode::Angle:
+			if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
+				data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
+				data[1] = 0;
+				data[0] = (uint8_t)(255 - data[0]);
+			}
+			else {
+				data[2] = 0;
+				data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
+				data[0] = (uint8_t)(255 - data[1]);
+			}
+			break;
+		}
+
+		ptr = bitmap.getPixelPointer((int)X, (int)Y);
+		memcpy(ptr, &data, sizeof(uint32_t));
+		//bitmap.setPixelColour(X, Y, col);
+		//g.drawRect((float)X-1.f, (float)Y-1.f, 2.f, 2.f);
+		if (threadShouldExit())
+			break;
+	}
 	m_nNumObjects++;
 	las->CloseIfNeeded();
 

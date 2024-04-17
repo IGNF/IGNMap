@@ -336,6 +336,9 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 	Att.push_back("Nb Points"); Att.push_back(std::to_string(NbLasPoints()));
 	Att.push_back("Zmin"); Att.push_back(std::to_string(Zmin()));
 	Att.push_back("Zmax"); Att.push_back(std::to_string(Zmax()));
+	if (m_bCopc) { // Fichier COPC
+		Att.push_back("COPC spacing"); Att.push_back(std::to_string(m_CopcReader.m_dSpacing));
+	}
 	
 	CloseIfNeeded();
 	return true;

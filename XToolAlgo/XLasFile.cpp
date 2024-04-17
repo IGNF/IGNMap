@@ -10,11 +10,25 @@
 //-----------------------------------------------------------------------------
 
 #include <cstring>
+#include <algorithm>
 #include "XLasFile.h"
 #include "../XTool/XFrame.h"
 #include "../XToolImage/XTiffWriter.h"
 
 int XLasFile::m_LasNbOpenFile = 0;
+
+//==============================================================================
+// Constructeur
+//==============================================================================
+XLasFile::XLasFile()
+{ 
+  m_Reader = nullptr; 
+  m_Header = nullptr; 
+  m_Point = nullptr; 
+  m_dXmin = m_dXmax = m_dYmin = m_dYmax = m_dZmin = m_dZmax = 0.;
+  m_nNbPoint = m_nIndex = 0;
+  m_bCopc = false;
+}
 
 //==============================================================================
 // Ouverture d'un fichier LAS
@@ -41,6 +55,7 @@ bool XLasFile::Open(std::string filename)
 
 	m_strFilename = filename;
   m_LasNbOpenFile++;
+  m_bCopc = IsCopc();
 	return true;
 }
 
@@ -82,6 +97,104 @@ bool XLasFile::CloseIfNeeded(int maxLasFile)
   return Close();
 }
 
+//==============================================================================
+// Emprise a traiter
+//==============================================================================
+bool XLasFile::SetWorld(const XFrame& F, const double& zmin, const double& zmax, const double& gsd)
+{
+  if ((m_Header == nullptr)||(m_Reader == nullptr)||(m_Point == nullptr))
+    return false;
+  m_WorldFrame = F;
+  m_dWorldGsd = gsd;
+  m_dXmin = (F.Xmin - m_Header->x_offset) / m_Header->x_scale_factor;
+  m_dXmax = (F.Xmax - m_Header->x_offset) / m_Header->x_scale_factor;
+  m_dYmin = (F.Ymin - m_Header->y_offset) / m_Header->y_scale_factor;
+  m_dYmax = (F.Ymax - m_Header->y_offset) / m_Header->y_scale_factor;
+  m_dZmin = (zmin - m_Header->z_offset) / m_Header->z_scale_factor;
+  m_dZmax = (zmax - m_Header->z_offset) / m_Header->z_scale_factor;
+
+  m_nNbPoint = NbLasPoints();
+  m_nIndex = 0;
+  if (m_bCopc) {
+    m_CopcReader.m_nActiveEntry = 0;
+    m_CopcReader.m_bStarted = false;
+  } else
+    laszip_seek_point(m_Reader, 0);
+  return true;
+}
+
+//==============================================================================
+// Recuperation du prochain point de l'emprise a traiter
+//==============================================================================
+bool XLasFile::GetNextPoint(double* X, double* Y, double* Z)
+{
+  if (!m_bCopc) {
+    do {
+      laszip_read_point(m_Reader);
+      m_nIndex++;
+      if (m_Point->X <= m_dXmin) continue;
+      if (m_Point->X >= m_dXmax) continue;
+      if (m_Point->Y <= m_dYmin) continue;
+      if (m_Point->Y >= m_dYmax) continue;
+      if (m_Point->Z < m_dZmin) continue;
+      if (m_Point->Z > m_dZmax) continue;
+      *X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;
+      *Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;
+      *Z = m_Point->Z * m_Header->z_scale_factor + m_Header->z_offset;
+      return true;
+    } while (m_nIndex < m_nNbPoint);
+    laszip_seek_point(m_Reader, 0);
+    return false;
+  }
+
+  if (!m_CopcReader.m_bStarted) {
+    while (m_CopcReader.m_nActiveEntry < m_CopcReader.m_Entries.size()) {
+      CopcReader::Entry entry = m_CopcReader.m_Entries[m_CopcReader.m_nActiveEntry];
+      if (m_CopcReader.m_dSpacing / pow(2, entry.key.level) < m_dWorldGsd) {
+        m_CopcReader.m_nActiveEntry++;
+        continue;
+      }
+      double w = (m_Header->max_x - m_Header->min_x) / pow(2, entry.key.level);
+      double h = (m_Header->max_y - m_Header->min_y) / pow(2, entry.key.level);
+      XFrame F;
+      F.Xmin = m_Header->min_x + entry.key.x * w;
+      F.Xmax = m_Header->min_x + (entry.key.x + 1) * w;
+      F.Ymin = m_Header->min_y + entry.key.y * h;
+      F.Ymax = m_Header->min_y + (entry.key.y + 1) * h;
+      if (!F.Intersect(m_WorldFrame)) {
+        m_CopcReader.m_nActiveEntry++;
+        continue;
+      }
+      m_CopcReader.m_bStarted = true;
+      m_CopcReader.m_nIndex = 0;
+      m_CopcReader.m_nIndexMax = entry.pointCount;
+      laszip_seek_point(m_Reader, entry.offset);
+      break;
+    }
+    if (!m_CopcReader.m_bStarted)
+      return false;
+  }
+  while (m_CopcReader.m_nIndex < m_CopcReader.m_nIndexMax) {
+    laszip_read_point(m_Reader);
+    m_CopcReader.m_nIndex++;
+    if (m_Point->X <= m_dXmin) continue;
+    if (m_Point->X >= m_dXmax) continue;
+    if (m_Point->Y <= m_dYmin) continue;
+    if (m_Point->Y >= m_dYmax) continue;
+    if (m_Point->Z < m_dZmin) continue;
+    if (m_Point->Z > m_dZmax) continue;
+    *X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;
+    *Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;
+    *Z = m_Point->Z * m_Header->z_scale_factor + m_Header->z_offset;
+    return true;
+  }
+  m_CopcReader.m_bStarted = false;
+  m_CopcReader.m_nActiveEntry++;
+  if (m_CopcReader.m_nActiveEntry >= m_CopcReader.m_Entries.size())
+    return false;
+  return GetNextPoint(X, Y, Z);
+}
+
 //-----------------------------------------------------------------------------
 // Calcul d'un MNT/MNS a parti d'un fichier LAS
 //-----------------------------------------------------------------------------
@@ -114,7 +227,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 	double X = 0., Y = 0., Z = 0.;
 	int u = 0, v = 0;
 	laszip_seek_point(m_Reader, 0);
-	for (laszip_I64 i = 0; i < NbLasPoints(); i++) {
+	for (uint64_t i = 0; i < NbLasPoints(); i++) {
 		laszip_read_point(m_Reader);
 		if (classif_visibility != nullptr)
 			if (!classif_visibility[m_Point->classification])
@@ -132,17 +245,17 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 			continue;
 
 		if (count[v * W + u] == 0) {	// Premier Z dans la cellule
-			area[v * W + u] = Z;
+			area[v * W + u] = (float)Z;
 			count[v * W + u] += 1;
 			continue;
 		}
 
 		switch (algo) {
-			case ZAverage: area[v * W + u] += Z;
+			case ZAverage: area[v * W + u] += (float)Z;
 				break;
-			case ZMinimum: if (area[v * W + u] > Z) area[v * W + u] = Z;
+			case ZMinimum: if (area[v * W + u] > Z) area[v * W + u] = (float)Z;
 				break;
-			case ZMaximum: if (area[v * W + u] < Z) area[v * W + u] = Z;
+			case ZMaximum: if (area[v * W + u] < Z) area[v * W + u] = (float)Z;
 				break;
 			}
 		count[v * W + u] += 1;
@@ -206,7 +319,7 @@ bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* 
   unsigned int TClassif[256];
   memset(TClassif, 0, 256 * sizeof(unsigned int));
   double Xmin = 0., Xmax = 0., Ymin = 0., Ymax = 0.;
-  for (laszip_I64 i = 0; i < NbLasPoints(); i++) {
+  for (uint64_t i = 0; i < NbLasPoints(); i++) {
     laszip_read_point(m_Reader);
     X = m_Point->X * m_Header->x_scale_factor + m_Header->x_offset;
     Y = m_Point->Y * m_Header->y_scale_factor + m_Header->y_offset;
@@ -316,5 +429,62 @@ bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* 
     << std::endl;
 
   CloseIfNeeded();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Gestion du COPC
+//-----------------------------------------------------------------------------
+bool XLasFile::IsCopc()
+{
+  if (m_Header->number_of_extended_variable_length_records < 1)
+    return false;
+  if (m_Header->vlrs[0].record_id != 1)
+    return false;
+  m_CopcReader.SetInfo(m_Header->vlrs[0].data, m_strFilename);
+  return true;
+}
+
+bool PredEntriesOffset(CopcReader::Entry A, CopcReader::Entry B) { if (A.offset < B.offset) return true; return false; }
+bool PredEntriesDepth(CopcReader::Entry A, CopcReader::Entry B)
+{
+  if (A.key.level < B.key.level) return true;
+  if (A.key.level > B.key.level) return false;
+  if (A.key.x < B.key.x) return true;
+  if (A.key.x > B.key.x) return false;
+  if (A.key.y < B.key.y) return true;
+  if (A.key.y > B.key.y) return false;
+  if (A.key.z < B.key.z) return true;
+  if (A.key.z > B.key.z) return false;
+  return false;
+}
+
+bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
+{
+  CopcInfo* info = (CopcInfo*)data;
+  int nb_entries = info->root_hier_size / 32;
+  if (nb_entries < 1)
+    return false;
+  m_dSpacing = info->spacing;
+  Entry* entries = new Entry[nb_entries];
+  std::ifstream in;
+  in.open(filename, std::ios_base::in | std::ios_base::binary);
+  if (!in.good())
+    return false;
+  in.seekg(info->root_hier_offset);
+  in.read((char*)entries, info->root_hier_size);
+
+  for (int i = 0; i < nb_entries; i++)
+    m_Entries.push_back(entries[i]);
+  delete[] entries;
+
+  std::sort(m_Entries.begin(), m_Entries.end(), PredEntriesOffset);
+  uint64_t count = 0;
+  for (int i = 0; i < m_Entries.size(); i++) {
+    m_Entries[i].offset = i + count;
+    count += m_Entries[i].pointCount;
+  }
+  std::sort(m_Entries.begin(), m_Entries.end(), PredEntriesDepth);
+
   return true;
 }

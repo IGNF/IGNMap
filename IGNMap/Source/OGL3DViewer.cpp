@@ -620,12 +620,11 @@ void OGLWidget::DrawLas(GeoLAS* las)
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   ptr_vertex += m_nNbLasVertex;
 
-  laszip_I64 npoints = las->NbLasPoints();
+  uint64_t npoints = las->NbLasPoints();
   laszip_POINTER reader = las->GetReader();
   laszip_header* header = las->GetHeader();
   laszip_point* point = las->GetPoint();
 
-  laszip_seek_point(reader, 0);
   double Xmin = (m_Frame.Xmin - header->x_offset) / header->x_scale_factor;
   double Xmax = (m_Frame.Xmax - header->x_offset) / header->x_scale_factor;
   double Ymin = (m_Frame.Ymin - header->y_offset) / header->y_scale_factor;
@@ -644,10 +643,11 @@ void OGLWidget::DrawLas(GeoLAS* las)
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
   uint8_t classification;
-  bool classif_newtype = true;
-  if (header->version_minor < 4) classif_newtype = false;
+  bool classif_newtype = las->IsNewClassification();
+
   LasShader shader;
-  for (laszip_I64 i = 0; i < npoints; i++) {
+  laszip_seek_point(reader, 0);
+  for (uint64_t i = 0; i < npoints; i++) {
     laszip_read_point(reader);
     if (classif_newtype)
       classification = point->extended_classification;
