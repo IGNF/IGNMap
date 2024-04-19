@@ -57,7 +57,7 @@ OGLWidget::OGLWidget()
   m_DtmLineWidth = 1.f;
   m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
-  m_dDeltaZ = 0.;
+  m_dDeltaZ = m_dOffsetZ = 0.;
 }
 
 //==============================================================================
@@ -522,6 +522,7 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
   else
     m_dGsd = F->Height() / 4.;
   m_dZ0 = base->Z(F->Center());
+  m_dDeltaZ = m_dOffsetZ = 0.;
 }
 
 //==============================================================================
@@ -609,6 +610,101 @@ void OGLWidget::LoadLasClass(XGeoClass* C)
 //==============================================================================
 // Dessin d'un fichier LAS
 //==============================================================================
+void OGLWidget::DrawLas(GeoLAS* las)
+{
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+  if (!las->ReOpen())
+    return;
+  if (!las->SetWorld(m_Frame, LasShader::Zmin(), LasShader::Zmax()))
+    return;
+  laszip_point* point = las->GetPoint();
+
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  ptr_vertex += m_nNbLasVertex;
+
+  double Z0 = LasShader::Zmin();
+  double deltaZ = LasShader::Zmax() - Z0;
+  if (deltaZ <= 0) deltaZ = 1.;	// Pour eviter les divisions par 0
+  if (m_dZ0 <= XGEO_NO_DATA)
+    m_dZ0 = LasShader::Zmin();
+
+  double X, Y, Z;
+  juce::Colour col = juce::Colours::orchid;
+  uint8_t data[4] = { 0, 0, 0, 255 };
+  uint32_t* data_ptr = (uint32_t*)&data;
+  uint8_t classification;
+  bool classif_newtype = las->IsNewClassification();
+
+  LasShader shader;
+  while (las->GetNextPoint(&X, &Y, &Z)) {
+    if (classif_newtype)
+      classification = point->extended_classification;
+    else
+      classification = point->classification;
+    if (!shader.ClassificationVisibility(classification)) continue;
+    
+    ptr_vertex->position[0] = (float) ((X - m_dX0) / m_dGsd);
+    ptr_vertex->position[1] = (float) ((Y - m_dY0) / m_dGsd);
+    ptr_vertex->position[2] = (float) ((Z - m_dZ0) / m_dGsd);
+    m_dDeltaZ += ptr_vertex->position[2];
+
+    switch (shader.Mode()) {
+    case LasShader::ShaderMode::Altitude:
+      col = shader.AltiColor((uint8_t)((Z - Z0) * 255 / deltaZ));
+      *data_ptr = (uint32_t)col.getARGB();
+      break;
+    case LasShader::ShaderMode::RGB:
+      data[0] = (uint8_t)(point->rgb[2] / 256);
+      data[1] = (uint8_t)(point->rgb[1] / 256);
+      data[2] = (uint8_t)(point->rgb[0] / 256);
+      // data[3] = 255; // deja fixe dans l'initialisation de data
+      break;
+    case LasShader::ShaderMode::IRC:
+      data[0] = (uint8_t)(point->rgb[1] / 256);
+      data[1] = (uint8_t)(point->rgb[0] / 256);
+      data[2] = (uint8_t)(point->rgb[3] / 256);
+      // data[3] = 255; // deja fixe dans l'initialisation de data
+      break;
+    case LasShader::ShaderMode::Classification:
+      col = shader.ClassificationColor(classification);
+      *data_ptr = (uint32_t)col.getARGB();
+      break;
+    case LasShader::ShaderMode::Intensity:
+      //data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
+      memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+      break;
+    case LasShader::ShaderMode::Angle:
+      if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
+        data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
+        data[1] = 0;
+        data[0] = 255 - data[0];
+      }
+      else {
+        data[2] = 0;
+        data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
+        data[0] = 255 - data[1];
+      }
+      break;
+    }
+    ptr_vertex->colour[0] = (float)data[2] / 255.f;
+    ptr_vertex->colour[1] = (float)data[1] / 255.f;
+    ptr_vertex->colour[2] = (float)data[0] / 255.f;
+    ptr_vertex->colour[3] = (float)data[3] / 255.f;
+
+    //memcpy(&ptr_vertex[(0+m_nNbVertex) * 7], vertex, sizeof(vertex));
+    //openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, (6 + m_nNbVertex) * 7 * sizeof(float), sizeof(vertex), vertex);
+    ptr_vertex++;
+    m_nNbLasVertex++;
+    if (m_nNbLasVertex >= m_nMaxLasPt)
+      break;
+  }
+  las->CloseIfNeeded();
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  m_dDeltaZ = -(m_dDeltaZ / m_nNbLasVertex);
+}
+/*
 void OGLWidget::DrawLas(GeoLAS* las)
 {
   const juce::ScopedLock lock(m_Mutex);
@@ -723,7 +819,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
   las->CloseIfNeeded();
   glUnmapBuffer(GL_ARRAY_BUFFER);
   m_dDeltaZ = -(m_dDeltaZ / m_nNbLasVertex);
-}
+}*/
 
 //==============================================================================
 // Chargement d'un fichier MNT
@@ -939,7 +1035,7 @@ void OGLWidget::MoveZ(float dZ)
   const juce::ScopedLock lock(m_Mutex);
   openGLContext.setContinuousRepainting(false);
   using namespace ::juce::gl;
-
+  m_dOffsetZ += dZ;
   // Points LAS
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
@@ -1201,14 +1297,14 @@ void OGLWidget::Select(int u, int v)
   winY = (GLfloat)(viewport[3] - v);
 
   // Z du DEPTH buffer
-  glReadPixels(winX, winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+  glReadPixels((GLint)winX, (GLint)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
 
   // Passage en coordonnees normalisees
   Vertex M;
-  M.colour[0] = M.colour[3] = 1.f;
-  M.colour[1] = M.colour[2] = 0.f;
+  M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
+  M.colour[1] = 0.f;
   glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
-  m_LastPt = XPt3D(M.position[0], M.position[1], M.position[2]);
+  m_LastPt = XPt3D(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
   m_LastPt *= m_dGsd;
   m_LastPt += XPt3D(m_dX0, m_dY0, m_dZ0);
   m_bNeedLasPoint = false;
@@ -1244,10 +1340,10 @@ int glhProjectf(float objx, float objy, float objz, float* modelview, float* pro
   fTempo[6] *= fTempo[7];
   // Window coordinates
   // Map x, y to range 0-1
-  windowCoordinate[0] = (fTempo[4] * 0.5 + 0.5) * viewport[2] + viewport[0];
-  windowCoordinate[1] = (fTempo[5] * 0.5 + 0.5) * viewport[3] + viewport[1];
+  windowCoordinate[0] = (fTempo[4] * 0.5f + 0.5f) * viewport[2] + viewport[0];
+  windowCoordinate[1] = (fTempo[5] * 0.5f + 0.5f) * viewport[3] + viewport[1];
   // This is only correct when glDepthRange(0.0, 1.0)
-  windowCoordinate[2] = (1.0 + fTempo[6]) * 0.5;	// Between 0 and 1
+  windowCoordinate[2] = (1.0f + fTempo[6]) * 0.5f;	// Between 0 and 1
   return 1;
 }
 
@@ -1263,15 +1359,15 @@ int glhUnProjectf(float winx, float winy, float winz, float* modelview, float* p
   if (glhInvertMatrixf2(A, m) == 0)
     return 0;
   // Transformation of normalized coordinates between -1 and 1
-  in[0] = (winx - (float)viewport[0]) / (float)viewport[2] * 2.0 - 1.0;
-  in[1] = (winy - (float)viewport[1]) / (float)viewport[3] * 2.0 - 1.0;
-  in[2] = 2.0 * winz - 1.0;
-  in[3] = 1.0;
+  in[0] = (winx - (float)viewport[0]) / (float)viewport[2] * 2.0f - 1.0f;
+  in[1] = (winy - (float)viewport[1]) / (float)viewport[3] * 2.0f - 1.0f;
+  in[2] = 2.0f * winz - 1.0f;
+  in[3] = 1.0f;
   // Objects coordinates
   MultiplyMatrixByVector4by4OpenGL_FLOAT(out, m, in);
   if (out[3] == 0.0)
     return 0;
-  out[3] = 1.0 / out[3];
+  out[3] = 1.0f / out[3];
   objectCoordinate[0] = out[0] * out[3];
   objectCoordinate[1] = out[1] * out[3];
   objectCoordinate[2] = out[2] * out[3];
@@ -1472,13 +1568,13 @@ int glhInvertMatrixf2(float* m, float* out)
   /* last check */
   if (0.0 == r3[3])
     return 0;
-  s = 1.0 / r3[3];		/* now back substitute row 3 */
+  s = 1.0f / r3[3];		/* now back substitute row 3 */
   r3[4] *= s;
   r3[5] *= s;
   r3[6] *= s;
   r3[7] *= s;
   m2 = r2[3];			/* now back substitute row 2 */
-  s = 1.0 / r2[2];
+  s = 1.0f / r2[2];
   r2[4] = s * (r2[4] - r3[4] * m2), r2[5] = s * (r2[5] - r3[5] * m2),
     r2[6] = s * (r2[6] - r3[6] * m2), r2[7] = s * (r2[7] - r3[7] * m2);
   m1 = r1[3];
@@ -1488,14 +1584,14 @@ int glhInvertMatrixf2(float* m, float* out)
   r0[4] -= r3[4] * m0, r0[5] -= r3[5] * m0,
     r0[6] -= r3[6] * m0, r0[7] -= r3[7] * m0;
   m1 = r1[2];			/* now back substitute row 1 */
-  s = 1.0 / r1[1];
+  s = 1.0f / r1[1];
   r1[4] = s * (r1[4] - r2[4] * m1), r1[5] = s * (r1[5] - r2[5] * m1),
     r1[6] = s * (r1[6] - r2[6] * m1), r1[7] = s * (r1[7] - r2[7] * m1);
   m0 = r0[2];
   r0[4] -= r2[4] * m0, r0[5] -= r2[5] * m0,
     r0[6] -= r2[6] * m0, r0[7] -= r2[7] * m0;
   m0 = r0[1];			/* now back substitute row 0 */
-  s = 1.0 / r0[0];
+  s = 1.0f / r0[0];
   r0[4] = s * (r0[4] - r1[4] * m0), r0[5] = s * (r0[5] - r1[5] * m0),
     r0[6] = s * (r0[6] - r1[6] * m0), r0[7] = s * (r0[7] - r1[7] * m0);
   MAT(out, 0, 0) = r0[4];

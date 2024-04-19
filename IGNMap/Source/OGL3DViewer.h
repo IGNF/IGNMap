@@ -117,6 +117,7 @@ private:
   uint32_t  m_nDtmW;
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
+  double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
   
 
   juce::Point<float>  m_LastPos;  // Position souris pour les drags

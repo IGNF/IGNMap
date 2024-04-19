@@ -54,11 +54,15 @@ public:
 		int32_t pointCount;
 	};
 
-	CopcReader() { m_dSpacing = 0.; m_nActiveEntry = 0; m_nIndex = m_nIndexMax = 0; m_bStarted = false; }
+	CopcReader() { m_dSpacing = m_dHalfSize = 0.; m_nActiveEntry = 0; m_nIndex = m_nIndexMax = 0; m_bStarted = false; m_dXmin = m_dYmin = 0.; }
 	bool SetInfo(laszip_U8* data, std::string filename);
+	bool ReadSubPages(std::ifstream* in, Entry* entries, int nb_entries);
+	int MaxLevel() { if (m_Entries.size() == 0) return -1; return m_Entries[m_Entries.size() - 1].key.level; }
 
 	std::vector<Entry> m_Entries;
 	double m_dSpacing;
+	double m_dHalfSize;
+	double m_dXmin, m_dYmin;
 	int m_nActiveEntry;
 	int32_t m_nIndex, m_nIndexMax;
 	bool m_bStarted;

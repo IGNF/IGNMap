@@ -151,16 +151,16 @@ bool XLasFile::GetNextPoint(double* X, double* Y, double* Z)
     while (m_CopcReader.m_nActiveEntry < m_CopcReader.m_Entries.size()) {
       CopcReader::Entry entry = m_CopcReader.m_Entries[m_CopcReader.m_nActiveEntry];
       if (m_CopcReader.m_dSpacing / pow(2, entry.key.level) < m_dWorldGsd) {
+        m_CopcReader.m_bStarted = false;
         m_CopcReader.m_nActiveEntry++;
-        continue;
+        return false; 
       }
-      double w = (m_Header->max_x - m_Header->min_x) / pow(2, entry.key.level);
-      double h = (m_Header->max_y - m_Header->min_y) / pow(2, entry.key.level);
+      double cell_size = (m_CopcReader.m_dHalfSize * 2.) / pow(2, entry.key.level);
       XFrame F;
-      F.Xmin = m_Header->min_x + entry.key.x * w;
-      F.Xmax = m_Header->min_x + (entry.key.x + 1) * w;
-      F.Ymin = m_Header->min_y + entry.key.y * h;
-      F.Ymax = m_Header->min_y + (entry.key.y + 1) * h;
+      F.Xmin = m_CopcReader.m_dXmin + entry.key.x * cell_size;
+      F.Xmax = m_CopcReader.m_dXmin + (entry.key.x + 1) * cell_size;
+      F.Ymin = m_CopcReader.m_dYmin + entry.key.y * cell_size;
+      F.Ymax = m_CopcReader.m_dYmin + (entry.key.y + 1) * cell_size;
       if (!F.Intersect(m_WorldFrame)) {
         m_CopcReader.m_nActiveEntry++;
         continue;
@@ -441,10 +441,15 @@ bool XLasFile::IsCopc()
     return false;
   if (m_Header->vlrs[0].record_id != 1)
     return false;
+  if (m_CopcReader.MaxLevel() >= 0) // Le CopcReader a deja ete lu
+    return true;
   m_CopcReader.SetInfo(m_Header->vlrs[0].data, m_strFilename);
   return true;
 }
 
+//-----------------------------------------------------------------------------
+// Predicats pour le tri des Entry
+//-----------------------------------------------------------------------------
 bool PredEntriesOffset(CopcReader::Entry A, CopcReader::Entry B) { if (A.offset < B.offset) return true; return false; }
 bool PredEntriesDepth(CopcReader::Entry A, CopcReader::Entry B)
 {
@@ -459,6 +464,9 @@ bool PredEntriesDepth(CopcReader::Entry A, CopcReader::Entry B)
   return false;
 }
 
+//-----------------------------------------------------------------------------
+// Lecteure des informations COPC
+//-----------------------------------------------------------------------------
 bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
 {
   CopcInfo* info = (CopcInfo*)data;
@@ -466,6 +474,9 @@ bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
   if (nb_entries < 1)
     return false;
   m_dSpacing = info->spacing;
+  m_dHalfSize = info->halfsize;
+  m_dXmin = info->center_x - info->halfsize;
+  m_dYmin = info->center_y - info->halfsize;
   Entry* entries = new Entry[nb_entries];
   std::ifstream in;
   in.open(filename, std::ios_base::in | std::ios_base::binary);
@@ -474,17 +485,39 @@ bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
   in.seekg(info->root_hier_offset);
   in.read((char*)entries, info->root_hier_size);
 
-  for (int i = 0; i < nb_entries; i++)
-    m_Entries.push_back(entries[i]);
+  ReadSubPages(&in, entries, nb_entries);
   delete[] entries;
-
+  // Passage des offsets fichier en numero d'ordre pour les points LAS
   std::sort(m_Entries.begin(), m_Entries.end(), PredEntriesOffset);
   uint64_t count = 0;
   for (int i = 0; i < m_Entries.size(); i++) {
     m_Entries[i].offset = i + count;
     count += m_Entries[i].pointCount;
   }
+  // Passage en ordre de profondeur
   std::sort(m_Entries.begin(), m_Entries.end(), PredEntriesDepth);
 
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture des Hierarchy pages
+//-----------------------------------------------------------------------------
+bool CopcReader::ReadSubPages(std::ifstream* in, Entry* entries, int nb_entries)
+{
+  for (int i = 0; i < nb_entries; i++) {
+    if (entries[i].pointCount > 0) {
+      m_Entries.push_back(entries[i]);
+      continue;
+    }
+    if (entries[i].pointCount == 0)
+      continue;
+    int nb_NewEntries = entries[i].byteSize / 32;
+    Entry* newEntries = new Entry[nb_NewEntries];
+    in->seekg(entries[i].offset);
+    in->read((char*)newEntries, entries[i].byteSize);
+    ReadSubPages(in, newEntries, nb_NewEntries);
+    delete[] newEntries;
+  }
   return true;
 }
