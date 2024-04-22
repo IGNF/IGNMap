@@ -826,7 +826,7 @@ void MainComponent::ImportImageFolder()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -839,6 +839,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoTools::ImportGeoPackage(filename, &m_GeoBase);
 	if (extension == ".mif")
 		flag = GeoTools::ImportMifMid(filename, &m_GeoBase);
+	if (extension == ".dxf")
+		flag = GeoTools::ImportDxf(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");

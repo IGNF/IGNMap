@@ -1054,6 +1054,9 @@
     <ClCompile Include="..\..\..\XToolVector\XDBase.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XToolVector\XDxf.cpp">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
@@ -3184,6 +3187,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XDBase.h">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolVector\XDxf.h">
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h">

@@ -284,6 +284,7 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 						g.fillPath(m_Path);
 					}
 					m_Path.clear();
+					DrawText(&g, V);
 				}
 			}
 
@@ -347,6 +348,20 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 	}
 	V->Unload();
 	return flag;
+}
+
+//==============================================================================
+// Dessin des textes associes aux geometries
+//==============================================================================
+bool MapThread::DrawText(juce::Graphics* g, XGeoVector* V)
+{
+	if (V->Name().empty())
+		return false;
+	XPt2D P = V->Frame().Center();
+	int X = (int)((P.X - m_dX0) / m_dGsd) + 5;
+	int Y = (int)((m_dY0 - P.Y) / m_dGsd) - 5;
+	g->drawSingleLineText(V->Name(), X, Y);
+	return true;
 }
 
 //==============================================================================

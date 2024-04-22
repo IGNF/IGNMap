@@ -626,6 +626,8 @@
       <FILE id="DSzMgR" name="XAnnotation.h" compile="0" resource="0" file="../XToolVector/XAnnotation.h"/>
       <FILE id="mGDbLH" name="XDBase.cpp" compile="1" resource="0" file="../XToolVector/XDBase.cpp"/>
       <FILE id="xPl9PU" name="XDBase.h" compile="0" resource="0" file="../XToolVector/XDBase.h"/>
+      <FILE id="tRKqHO" name="XDxf.cpp" compile="1" resource="0" file="../XToolVector/XDxf.cpp"/>
+      <FILE id="Wq5s6W" name="XDxf.h" compile="0" resource="0" file="../XToolVector/XDxf.h"/>
       <FILE id="CVgyzh" name="XGpkgMap.cpp" compile="1" resource="0" file="../XToolVector/XGpkgMap.cpp"/>
       <FILE id="lzzCOk" name="XGpkgMap.h" compile="0" resource="0" file="../XToolVector/XGpkgMap.h"/>
       <FILE id="RfNpRt" name="XMifMid.cpp" compile="1" resource="0" file="../XToolVector/XMifMid.cpp"/>

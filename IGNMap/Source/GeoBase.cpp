@@ -16,6 +16,7 @@
 #include "../../XToolVector/XShapefile.h"
 #include "../../XToolVector/XGpkgMap.h"
 #include "../../XToolVector/XMifMid.h"
+#include "../../XToolVector/XDxf.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 
@@ -452,6 +453,11 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 	for (int i = 0; i < T.size(); i++)
 		ImportMifMid(T[i].getFullPathName(), base);
 
+	// Format DXF
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.dxf");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportDxf(T[i].getFullPathName(), base);
 
 	ColorizeClasses(base);
 
@@ -497,6 +503,20 @@ bool GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 	if (C == NULL)
 		return false;
 
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier DXF
+//-----------------------------------------------------------------------------
+bool GeoTools::ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return false;
+	if (!XDxf::ImportDxf(base, fileName.toStdString().c_str(), map))
+		return false;
+	base->UpdateFrame();
+	base->SortClass();
 	return true;
 }
 
