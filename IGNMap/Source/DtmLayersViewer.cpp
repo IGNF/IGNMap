@@ -447,13 +447,24 @@ DtmLayersViewer::DtmLayersViewer()
 //==============================================================================
 // LayerViewer : mise a jour du nom des colonnes (pour la traduction)
 //==============================================================================
-void DtmLayersViewer::UpdateColumnName()
+void DtmLayersViewer::Translate()
 {
 	m_TableDtm.getHeader().setColumnName(DtmViewerModel::Column::Name, juce::translate("Name"));
 	m_TableDtm.getHeader().setColumnName(DtmViewerModel::Column::Zmin, juce::translate("Zmin"));
 	m_TableDtm.getHeader().setColumnName(DtmViewerModel::Column::Zmax, juce::translate("Zmax"));
 	m_TableRange.getHeader().setColumnName(DtmRangeModel::Column::Altitude, juce::translate("Altitude"));
 	m_TableRange.getHeader().setColumnName(DtmRangeModel::Column::Colour, juce::translate("Colour"));
+
+	m_Mode.changeItemText(1, juce::translate("Altitude"));
+	m_Mode.changeItemText(2, juce::translate("Standard shading"));
+	m_Mode.changeItemText(3, juce::translate("Light shading"));
+	m_Mode.changeItemText(4, juce::translate("Free shading"));
+	m_Mode.changeItemText(5, juce::translate("Slope"));
+	m_Mode.changeItemText(6, juce::translate("Colours"));
+	m_Mode.changeItemText(7, juce::translate("Colours + Shading"));
+	m_Mode.changeItemText(8, juce::translate("Contour lines"));
+
+	m_Opacity.setTextValueSuffix(juce::translate("% opacity"));
 }
 
 //==============================================================================

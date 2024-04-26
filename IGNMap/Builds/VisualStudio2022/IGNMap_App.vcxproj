@@ -342,6 +342,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\Source\MapView.cpp"/>
     <ClCompile Include="..\..\Source\OGL3DViewer.cpp"/>
     <ClCompile Include="..\..\Source\OsmLayer.cpp"/>
+    <ClCompile Include="..\..\Source\PrefDlg.cpp"/>
     <ClCompile Include="..\..\Source\SelTreeViewer.cpp"/>
     <ClCompile Include="..\..\Source\VectorLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\WmtsLayer.cpp"/>
@@ -399,6 +400,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XToolVector\XAnnotation.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XDBase.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XDxf.cpp"/>
+    <ClCompile Include="..\..\..\XToolVector\XGeoJson.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XMifMid.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefile.cpp"/>
@@ -1915,6 +1917,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\Source\MapView.h"/>
     <ClInclude Include="..\..\Source\OGL3DViewer.h"/>
     <ClInclude Include="..\..\Source\OsmLayer.h"/>
+    <ClInclude Include="..\..\Source\PrefDlg.h"/>
     <ClInclude Include="..\..\Source\SelTreeViewer.h"/>
     <ClInclude Include="..\..\Source\ThreadClassProcessor.h"/>
     <ClInclude Include="..\..\Source\Utilities.h"/>
@@ -1981,6 +1984,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XToolVector\XAnnotation.h"/>
     <ClInclude Include="..\..\..\XToolVector\XDBase.h"/>
     <ClInclude Include="..\..\..\XToolVector\XDxf.h"/>
+    <ClInclude Include="..\..\..\XToolVector\XGeoJson.h"/>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h"/>
     <ClInclude Include="..\..\..\XToolVector\XMifMid.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefile.h"/>

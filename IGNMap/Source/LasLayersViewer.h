@@ -84,7 +84,7 @@ public:
 		addActionListener(listener);
 		m_ModelLas.addActionListener(listener); 
 	}
-	void UpdateColumnName();
+	void Translate();
 	void UpdateAltiColors();
 	void resized() override;
 	// Gestion des actions

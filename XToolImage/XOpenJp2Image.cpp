@@ -157,7 +157,7 @@ bool XOpenJp2Image::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uin
     }
   }
   
-  ClearCodec();
+  //ClearCodec();
   return true;
 }
 

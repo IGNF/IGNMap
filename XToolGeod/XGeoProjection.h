@@ -38,10 +38,10 @@ namespace XGeoProjection {
 	std::string EcwProjection(XProjCode proj);
 
 	std::string ProjectionName(XProjCode proj);
+	std::string Region(XProjCode proj);
 
 	uint32_t EPSGCode(XProjCode proj);
 	XFrame FrameGeo(XProjCode proj);
-	XFrame FrameProj(XProjCode proj);
 }
 
 

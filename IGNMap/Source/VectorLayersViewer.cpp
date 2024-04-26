@@ -301,7 +301,7 @@ VectorLayersViewer::VectorLayersViewer()
 //==============================================================================
 // LayerViewer : mise a jour du nom des colonnes (pour la traduction)
 //==============================================================================
-void VectorLayersViewer::UpdateColumnName()
+void VectorLayersViewer::Translate()
 {
 	m_Table.getHeader().setColumnName(LayerViewerModel::Column::Name, juce::translate("Name"));
 	m_Table.getHeader().setColumnName(LayerViewerModel::Column::PenWidth, juce::translate("Width"));

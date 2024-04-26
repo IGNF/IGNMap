@@ -595,6 +595,7 @@ static const unsigned char temp_binary_data_15[] =
 "countries: fr be mc ch lu\r\n"
 " \r\n"
 "\"Name\" = \"Nom\"\r\n"
+"\"Name :\" = \"Nom :\"\r\n"
 "\"Value\" = \"Valeur\"\r\n"
 "\"Quit\" = \"Quitter\"\r\n"
 "\"About IGNMap\" = \"A propos de IGNMap\"\r\n"
@@ -606,6 +607,8 @@ static const unsigned char temp_binary_data_15[] =
 "\"Width\" = \"Epaisseur\"\r\n"
 "\"Opacity\" = \"Opacit\xc3\xa9\"\r\n"
 "\"Visibility\" = \"Visibilit\xc3\xa9\"\r\n"
+"\"Background\" = \"Fond\"\r\n"
+"\"Colour\" = \"Couleur\"\r\n"
 "\" is already opened\" = \" est d\xc3\xa9j\xc3\xa0 ouvert\"\r\n"
 "\" : this file cannot be opened\" = \" : ce fichier ne peut pas \xc3\xaatre ouvert\"\r\n"
 "\"Add WMTS / TMS server\" : \"Ajout d'une couche WMTS / TMS\"\r\n"
@@ -613,6 +616,8 @@ static const unsigned char temp_binary_data_15[] =
 "\"Translate\" : \"Traduire\"\r\n"
 "\"Load a translation file\" : \"Chargement d'un fichier de traduction\"\r\n"
 "\"Translate\" = \"Traduire\"\r\n"
+"\"Preferences\" = \"Pr\xc3\xa9""f\xc3\xa9rences\"\r\n"
+"\"Application settings\" = \"Pr\xc3\xa9""f\xc3\xa9rences de l'application\"\r\n"
 "\"Layers\" = \"Couches\"\r\n"
 "\"Add OSM data\" = \"Ajout d'une couche OSM\"\r\n"
 "\"View\" = \"Afficher\"\r\n"
@@ -627,9 +632,11 @@ static const unsigned char temp_binary_data_15[] =
 "\"Colours\"=\"Aplats de couleurs\"\r\n"
 "\"Colours + Shading\"=\"Aplats + Estompage\"\r\n"
 "\"Contour lines\"=\"Isohypses\"\r\n"
+"\"Automatic Range\" = \"Intervale automatique\"\r\n"
 "\"WMTS Server\"=\"Serveur WMTS\"\r\n"
 "\"Cancel\"=\"Annuler\"\r\n"
 "\"OK\"=\"OK\"\r\n"
+"\"Apply\" = \"Appliquer\"\r\n"
 "\"Add a WMTS server\"=\"Ajouter un flux WMTS\"\r\n"
 "\"URL of the WMTS server\"=\"URL du flux WMTS\"\r\n"
 "\"Scale\"=\"Echelle\"\r\n"
@@ -657,7 +664,19 @@ static const unsigned char temp_binary_data_15[] =
 "\"Layer Center\"=\"Centre de la couche\"\r\n"
 "\"Layer Frame\"=\"Cadre de la couche\"\r\n"
 "\"Remove\"=\"Supprimer\"\r\n"
-"\"New Window\"=\"Nouvelle fen\xc3\xaatre\"\r\n";
+"\"New Window\"=\"Nouvelle fen\xc3\xaatre\"\r\n"
+"\"RGB\"=\"RVB\"\r\n"
+"\"Intensity\"=\"Intensit\xc3\xa9\"\r\n"
+"\"DTM Layers\" = \"Couches MNT\"\r\n"
+"\"LAS Layers\" = \"Couches LAS\"\r\n"
+"\"Image Layers\" = \"Couches images\"\r\n"
+"\"Image Options\" = \"Options des images\"\r\n"
+"\"% opacity\" = \"% opacit\xc3\xa9\"\r\n"
+"\"RGB channels :\" = \"Canaux RVB :\"\r\n"
+"\"World\" = \"Monde\"\r\n"
+"\"New Caledonia\" = \"Nouvelle-Cal\xc3\xa9""donie\"\r\n"
+"\"French Guiana\" = \"Guyane\"\r\n"
+"\"Reunion\" = \"R\xc3\xa9union\"";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_15;
 
@@ -688,7 +707,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 2409; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 2981; return Translation_fr_txt;
         default: break;
     }
 

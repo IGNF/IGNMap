@@ -263,6 +263,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MapView_229c9e02.o \
   $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
   $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o \
+  $(JUCE_OBJDIR)/PrefDlg_9f17261d.o \
   $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
   $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
   $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
@@ -320,6 +321,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XAnnotation_f349c011.o \
   $(JUCE_OBJDIR)/XDBase_47d5afbd.o \
   $(JUCE_OBJDIR)/XDxf_7a9b6fa.o \
+  $(JUCE_OBJDIR)/XGeoJson_9a8e4381.o \
   $(JUCE_OBJDIR)/XGpkgMap_9b3203bf.o \
   $(JUCE_OBJDIR)/XMifMid_16cf4f80.o \
   $(JUCE_OBJDIR)/XShapefile_324c5d85.o \
@@ -1319,6 +1321,11 @@ $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o: ../../Source/OsmLayer.cpp
 	@echo "Compiling OsmLayer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/PrefDlg_9f17261d.o: ../../Source/PrefDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling PrefDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o: ../../Source/SelTreeViewer.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling SelTreeViewer.cpp"
@@ -1602,6 +1609,11 @@ $(JUCE_OBJDIR)/XDBase_47d5afbd.o: ../../../XToolVector/XDBase.cpp
 $(JUCE_OBJDIR)/XDxf_7a9b6fa.o: ../../../XToolVector/XDxf.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XDxf.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XGeoJson_9a8e4381.o: ../../../XToolVector/XGeoJson.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XGeoJson.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XGpkgMap_9b3203bf.o: ../../../XToolVector/XGpkgMap.cpp

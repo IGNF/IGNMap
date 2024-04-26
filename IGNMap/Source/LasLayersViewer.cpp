@@ -434,7 +434,7 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 //==============================================================================
 // LayerViewer : mise a jour du nom des colonnes (pour la traduction)
 //==============================================================================
-void LasLayersViewer::UpdateColumnName()
+void LasLayersViewer::Translate()
 {
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Name, juce::translate("Name"));
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmin, juce::translate("Nb. Elem"));
@@ -443,6 +443,15 @@ void LasLayersViewer::UpdateColumnName()
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Number, juce::translate("Number"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Name, juce::translate("Name"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Colour, juce::translate("Color"));
+
+	m_Mode.changeItemText(1, juce::translate("Altitude"));
+	m_Mode.changeItemText(2, juce::translate("RGB"));
+	m_Mode.changeItemText(3, juce::translate("IRC"));
+	m_Mode.changeItemText(4, juce::translate("Classification"));
+	m_Mode.changeItemText(5, juce::translate("Intensity"));
+	m_Mode.changeItemText(6, juce::translate("Scan Angle"));
+
+	m_Opacity.setTextValueSuffix(juce::translate("% opacity"));
 }
 
 //==============================================================================

@@ -17,8 +17,10 @@
 #include "../../XToolVector/XGpkgMap.h"
 #include "../../XToolVector/XMifMid.h"
 #include "../../XToolVector/XDxf.h"
+#include "../../XToolVector/XGeoJson.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
+#include "../../XToolGeod/XGeoPref.h"
 
 //-----------------------------------------------------------------------------
 // Points du cadre de l'image
@@ -459,6 +461,12 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 	for (int i = 0; i < T.size(); i++)
 		ImportDxf(T[i].getFullPathName(), base);
 
+	// Format GEOJSON
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.json");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportGeoJson(T[i].getFullPathName(), base);
+
 	ColorizeClasses(base);
 
 	return true;
@@ -502,7 +510,6 @@ bool GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 	XGeoClass* C = XMifMid::ImportMifMid(base, fileName.toStdString().c_str(), map);
 	if (C == NULL)
 		return false;
-
 	return true;
 }
 
@@ -517,6 +524,19 @@ bool GeoTools::ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map)
 		return false;
 	base->UpdateFrame();
 	base->SortClass();
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier GEOJSON
+//-----------------------------------------------------------------------------
+bool GeoTools::ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return false;
+	XGeoClass* C = XGeoJson::ImportGeoJson(base, fileName.toStdString().c_str(), map);
+	if (C == NULL)
+		return false;
 	return true;
 }
 
@@ -576,4 +596,45 @@ juce::File GeoTools::CreateCacheDir(juce::String name)
 	juce::File cache = tmpDir.getNonexistentChildFile(name, "");
 	cache.createDirectory();
 	return cache;
+}
+
+//-----------------------------------------------------------------------------
+// Changement de projection de la base
+//-----------------------------------------------------------------------------
+void GeoTools::UpdateProjection(XGeoBase* base)
+{
+	// On regarde s'il y a des donnees non-Internet
+	bool no_data = true;
+	for (uint32_t k = 0; k < base->NbMap(); k++) {
+		XGeoMap* map = base->Map(k);
+		if ((map->Name() != "OSM") && (map->Name() != "WMTS")) {
+			no_data = false;
+			continue;
+		}
+	}
+	XFrame newFrame = base->Frame();
+	if (no_data) {
+		XGeoPref pref;
+		XFrame geoF = XGeoProjection::FrameGeo(pref.Projection());
+		pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, newFrame.Xmin, newFrame.Ymin);
+		pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, newFrame.Xmax, newFrame.Ymax);
+	}
+
+	// Changement de projection des couches raster Internet
+	for (uint32_t k = 0; k < base->NbMap(); k++) {
+		XGeoMap* map = base->Map(k);
+		if ((map->Name() != "OSM") && (map->Name() != "WMTS"))
+			continue;
+		for (uint32_t i = 0; i < map->NbObject(); i++) {
+			GeoInternetImage* raster = (GeoInternetImage*)map->Object(i);
+			raster->SetFrame(newFrame);
+			XGeoClass* classe = raster->Class();
+			if (classe != NULL) {
+				classe->RemoveAllVectors();
+				classe->Vector(raster);
+			}
+		}
+	}
+	if (no_data)
+		base->UpdateFrame();
 }

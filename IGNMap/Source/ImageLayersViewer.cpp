@@ -284,7 +284,7 @@ ImageLayersViewer::ImageLayersViewer()
 //==============================================================================
 // LayerViewer : mise a jour du nom des colonnes (pour la traduction)
 //==============================================================================
-void ImageLayersViewer::UpdateColumnName()
+void ImageLayersViewer::Translate()
 {
 	m_Table.getHeader().setColumnName(ImageViewerModel::Column::Name, juce::translate("Name"));
 	m_Table.getHeader().setColumnName(ImageViewerModel::Column::Opacity, juce::translate("Opacity"));

@@ -15,6 +15,7 @@
 #include "WmtsLayer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
+#include "PrefDlg.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
@@ -212,6 +213,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	{
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuPreferences);
 	}
 	else if (menuIndex == 2) // Tools
 	{ 
@@ -269,7 +271,7 @@ juce::ApplicationCommandTarget* MainComponent::getNextCommandTarget()
 void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 {
 	juce::Array<juce::CommandID> commands{ CommandIDs::menuNew,
-		CommandIDs::menuQuit, CommandIDs::menuUndo, CommandIDs::menuTranslate,
+		CommandIDs::menuQuit, CommandIDs::menuUndo, CommandIDs::menuTranslate, CommandIDs::menuPreferences,
 		CommandIDs::menuImportVectorFile, CommandIDs::menuImportVectorFolder, 
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
@@ -306,7 +308,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuTranslate:
 		result.setInfo(juce::translate("Translate"), juce::translate("Load a translation file"), "Menu", 0);
 		break;
-	break; 
+	case CommandIDs::menuPreferences:
+		result.setInfo(juce::translate("Preferences"), juce::translate("Application settings"), "Menu", 0);
+		break;
 	case CommandIDs::menuImportVectorFile:
 		result.setInfo(juce::translate("Import a vector file"), juce::translate("Import a vector file"), "Menu", 0);
 		break;
@@ -461,6 +465,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuTranslate:
 		Translate();
+		break;
+	case CommandIDs::menuPreferences:
+		Preferences();
 		break;
 	case CommandIDs::menuTest:
 		Test();
@@ -826,7 +833,7 @@ void MainComponent::ImportImageFolder()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -841,6 +848,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoTools::ImportMifMid(filename, &m_GeoBase);
 	if (extension == ".dxf")
 		flag = GeoTools::ImportDxf(filename, &m_GeoBase);
+	if (extension == ".json")
+		flag = GeoTools::ImportGeoJson(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
@@ -1088,7 +1097,9 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 bool MainComponent::AddOSMServer()
 {
 	XGeoPref pref;
-	XFrame F = XGeoProjection::FrameProj(pref.Projection());
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
 
 	OsmLayer* osm = new OsmLayer("tile.openstreetmap.org");
 	osm->SetFrame(F);
@@ -1131,7 +1142,9 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 																	uint32_t tileW, uint32_t tileH, uint32_t max_zoom, std::string apikey)
 {
 	XGeoPref pref;
-	XFrame F = XGeoProjection::FrameProj(pref.Projection());
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
 
 	WmtsLayer* wmts = new WmtsLayer(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);
 	wmts->SetFrame(F);
@@ -1167,7 +1180,7 @@ bool MainComponent::ExportImage()
 	options.useNativeTitleBar = false;
 	options.resizable = false;
 
-	options.runModal();
+	options.launchAsync();
 	return true;
 }
 
@@ -1207,13 +1220,44 @@ void MainComponent::Translate()
 	if (!file.exists())
 		return;
 	juce::LocalisedStrings::setCurrentMappings(new juce::LocalisedStrings(file, true));
-	//m_FeatureViewer.get()->UpdateColumnName();
-	//m_LayerViewer.get()->UpdateColumnName();
-	//m_RasterLayerViewer.get()->UpdateColumnName();
-	m_VectorViewer.get()->UpdateColumnName();
-	m_ImageViewer.get()->UpdateColumnName();
-	m_DtmViewer.get()->UpdateColumnName();
-	m_LasViewer.get()->UpdateColumnName();
+
+	m_VectorViewer.get()->Translate();
+	m_ImageViewer.get()->Translate();
+	m_DtmViewer.get()->Translate();
+	m_LasViewer.get()->Translate();
+	m_ImageOptionsViewer.get()->Translate();
+	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)
+		m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(i), nullptr, true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(0), new juce::TextButton(juce::translate("Vector Layers")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(1), new juce::TextButton(juce::translate("Image Layers")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(2), new juce::TextButton(juce::translate("DTM Layers")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Selection")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Image Options")), true);
+	m_Panel.get()->repaint();
+	repaint();
+}
+
+//==============================================================================
+// Preferences de l'application
+//==============================================================================
+void MainComponent::Preferences()
+{
+	PrefDlg* dlg = new PrefDlg;
+	juce::DialogWindow::LaunchOptions options;
+	options.content.setOwned(dlg);
+
+	juce::Rectangle<int> area(0, 0, 410, 300);
+	options.content->setSize(area.getWidth(), area.getHeight());
+	options.dialogTitle = juce::translate("Preferences");
+	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.escapeKeyTriggersCloseButton = true;
+	options.useNativeTitleBar = false;
+	options.resizable = false;
+	options.launchAsync();
+
+	GeoTools::UpdateProjection(&m_GeoBase);
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 }
 
 //==============================================================================

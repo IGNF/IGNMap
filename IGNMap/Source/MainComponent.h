@@ -46,7 +46,7 @@ public:
   {
     menuNew = 1, menuQuit,
     menuUndo,
-    menuTranslate, menuTest,
+    menuTranslate, menuTest, menuPreferences,
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile,
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,
     menuExportImage, menuExportLas,
@@ -114,6 +114,7 @@ private:
   void NewWindow();
   void AboutIGNMap();
   void Translate();
+  void Preferences();
   void ShowHidePanel(juce::Component* component);
 
   XGeoClass* ImportDataFolder(juce::String foldername, XGeoVector::eTypeVector type);

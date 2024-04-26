@@ -69,6 +69,7 @@ protected :
 public:
   GeoInternetImage() { m_LastGsd = 0.; }
   virtual ~GeoInternetImage() { m_Cache.deleteRecursively(); }
+  void SetFrame(const XFrame& F) { m_Frame = F; }
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double scale) = 0;
 };
@@ -131,6 +132,7 @@ namespace GeoTools {
   bool ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  bool ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
 }
 
 //==============================================================================
@@ -141,4 +143,5 @@ namespace GeoTools {
                       int transparency = 0, uint32_t color = 0xFFFFFFFF, uint32_t fill = 0xFFFFFFFF, uint32_t zorder = 0, uint8_t size = 1);
   void ColorizeClasses(XGeoBase* base);
   juce::File CreateCacheDir(juce::String name);
+  void UpdateProjection(XGeoBase* base);
 }

@@ -588,7 +588,6 @@ XFrame XGeoProjection::FrameGeo(XProjCode proj)
   XFrame Caledonie(163, -23, 169, -19);
   XFrame Monde(-180, -80, 180, 80);
 
-
 	switch(proj) {
 	// France Metropolitaine
 	case RGF93: return France;
@@ -656,27 +655,21 @@ XFrame XGeoProjection::FrameGeo(XProjCode proj)
 }
 
 //-----------------------------------------------------------------------------
-// Renvoie le cadre (en projection) de la projection
+// Renvoie le nom de la region
 //-----------------------------------------------------------------------------
-XFrame XGeoProjection::FrameProj(XProjCode proj)
+std::string XGeoProjection::Region(XProjCode proj)
 {
-  XFrame France(-300000, 6100000, 1400000, 7250000);
-  XFrame Antille(450000, 1550000, 750000, 2010000);
-	XFrame Guyane(100000, 200000, 500000, 700000);
-	XFrame Reunion(300000, 7630000, 400000, 7700000);
-	XFrame StPierre(530000, 5172000, 575000, 5228000);
-	XFrame Mayotte(495000, 8560000, 540000, 8612000);
-  XFrame WebMercatorFrance(-600000, 5000000, 1050000, 6640000);
-  XFrame Caledonie(142750, 159000, 631000, 5155000);
-
-	switch(proj) {
-	// France Metropolitaine
-  case RGF93: return France;
+	std::string France = "France", Europe = "Europe", Antille = "Antille", Guyane = "French Guiana",
+		Caledonie = "New Caledonia", World = "World", Reunion = "Reunion", StPierre = "Saint-Pierre-et-Miquelon",
+		Mayotte = "Mayotte";
+	switch (proj) {
+		// France Metropolitaine
+	case RGF93: return France;
 	case Lambert1: return France;
 	case Lambert2: return France;
 	case Lambert3: return France;
 	case Lambert4: return France;
-	case Lambert2E: return France;;
+	case Lambert2E: return France;
 	case Lambert93: return France;
 	case LambertCC42: return France;
 	case LambertCC43: return France;
@@ -688,19 +681,19 @@ XFrame XGeoProjection::FrameProj(XProjCode proj)
 	case LambertCC49: return France;
 	case LambertCC50: return France;
 
-    // Europe
-  case ETRS89LCC: return France;
-  case ETRS89LAEA: return France;
-  case ETRS89TM30: return France;
-  case ETRS89TM31: return France;
-  case ETRS89TM32: return France;
+		// Europe
+	case ETRS89LCC: return France;
+	case ETRS89LAEA: return France;
+	case ETRS89TM30: return France;
+	case ETRS89TM31: return France;
+	case ETRS89TM32: return France;
 
-    // Antilles
+		// Antilles
 	case FortDesaix: return Antille;
 	case SainteAnne: return Antille;
 	case FortMarigot: return Antille;
 	case RRAF: return Antille;
-  case RGAF09: return Antille;
+	case RGAF09: return Antille;
 
 		// Guyane
 	case CSG1967_UTM21: return Guyane;
@@ -720,18 +713,18 @@ XFrame XGeoProjection::FrameProj(XProjCode proj)
 	case Cadastre1997: return Mayotte;
 	case RGM04: return Mayotte;
 
-    // WebMercator
-  case WebMercator: return WebMercatorFrance;
+		// WebMercator
+	case WebMercator: return World;
 
-    // Nouvelle-Caledonie
-  case NC_IGN72: return Caledonie;
-  case NC_NEA74: return Caledonie;
-  case NC_RGNC91_Lambert: return Caledonie;
-  case NC_RGNC91_UTM57: return Caledonie;
-  case NC_RGNC91_UTM58: return Caledonie;
-  case NC_RGNC91_UTM59: return Caledonie;
+		// Nouvelle-Caledonie
+	case NC_IGN72: return Caledonie;
+	case NC_NEA74: return Caledonie;
+	case NC_RGNC91_Lambert: return Caledonie;
+	case NC_RGNC91_UTM57: return Caledonie;
+	case NC_RGNC91_UTM58: return Caledonie;
+	case NC_RGNC91_UTM59: return Caledonie;
 
-	default : return XFrame();
+	default: return "";
 	}
-	return XFrame();
+	return "";
 }

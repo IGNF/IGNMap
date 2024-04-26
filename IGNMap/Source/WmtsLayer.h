@@ -37,7 +37,6 @@ public:
     uint32_t tileH = 256, uint32_t max_zoom = 19, std::string apikey = "");
   virtual ~WmtsLayer() { ; }
 
-  void SetFrame(const XFrame& F) { m_Frame = F; }
   virtual	bool ReadAttributes(std::vector<std::string>& V);
   inline virtual double Resolution() const { return 6378137. * 2 * XPI / pow(2, (m_nMaxZoom + 8)); } // resolution max a l'Equateur
 

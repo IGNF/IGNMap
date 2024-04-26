@@ -86,7 +86,7 @@ public:
 	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_ModelRange.SetBase(base); m_TableDtm.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener) 
 		{ addActionListener(listener); m_ModelDtm.addActionListener(listener); m_ModelRange.addActionListener(listener); }
-	void UpdateColumnName();
+	void Translate();
 	void resized() override;
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;

@@ -886,6 +886,9 @@
     <ClCompile Include="..\..\Source\OsmLayer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\PrefDlg.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SelTreeViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -1055,6 +1058,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XDxf.cpp">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\XToolVector\XGeoJson.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XGpkgMap.cpp">
@@ -2994,6 +3000,9 @@
     <ClInclude Include="..\..\Source\OsmLayer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\PrefDlg.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\SelTreeViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
@@ -3190,6 +3199,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XDxf.h">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolVector\XGeoJson.h">
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XGpkgMap.h">

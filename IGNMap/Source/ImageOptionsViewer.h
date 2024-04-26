@@ -53,6 +53,7 @@ class ImageOptionsViewer : public juce::Component,
 	public juce::ActionBroadcaster {
 public:
 	ImageOptionsViewer();
+	void Translate();
 
 	void SetImage(GeoFileImage* image);
 	void SetGeoBase(XGeoBase* base);

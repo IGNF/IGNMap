@@ -46,7 +46,7 @@ ImageOptionsViewer::ImageOptionsViewer()
   m_txtPalette.setMultiLine(true);
 
   m_tblPixels.setModel(&m_PixModel);
-  m_tblPixels.setTooltip(juce::translate(" Double-click for copying"));
+  m_tblPixels.setTooltip(juce::translate("Double-click for copying"));
   for (int i = 1; i <= (int)(m_PixModel.WinSize * 2 + 1); i++)
     m_tblPixels.getHeader().addColumn(juce::String(i - (int)m_PixModel.WinSize - 1), i, 20, 30, -1, 
       juce::TableHeaderComponent::ColumnPropertyFlags::notSortable| juce::TableHeaderComponent::ColumnPropertyFlags::visible);
@@ -66,6 +66,15 @@ ImageOptionsViewer::ImageOptionsViewer()
   m_sldColumn.setNumDecimalPlacesToDisplay(0);
   m_sldColumn.setTextValueSuffix(" col");
   m_sldColumn.addListener(this);
+}
+
+//==============================================================================
+// Traduction
+//==============================================================================
+void ImageOptionsViewer::Translate()
+{
+  m_lblImageName.setText(juce::translate("Name :"), juce::dontSendNotification);
+  m_lblRGBChannels.setText(juce::translate("RGB channels :"), juce::dontSendNotification);
 }
 
 //==============================================================================

@@ -58,7 +58,7 @@ public:
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); }
 	void SetActionListener(juce::ActionListener* listener) { addActionListener(listener); m_Model.addActionListener(listener); }
-	void UpdateColumnName();
+	void Translate();
 	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;
