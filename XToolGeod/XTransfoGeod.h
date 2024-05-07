@@ -50,10 +50,8 @@ protected:
 
   double ErrorFrame(XFrame F);
 
-  void ComputeFrame(XFrame* F);
-
 public:
-  XTransfoGeodInterpol(XGeodConverter* geod) : XTransfoGeod(geod) {m_bInterpol = false;}
+  XTransfoGeodInterpol(XGeodConverter* geod) : XTransfoGeod(geod) { m_bInterpol = false; m_dStep = 0.; }
 
   bool AutoCalibration();
 

@@ -15,7 +15,7 @@
 
 PrefDlg::PrefDlg()
 {
-	addAndMakeVisible(m_cbxRegion);
+	addAndMakeVisible(&m_cbxRegion);
 	m_cbxRegion.addItem(juce::translate("World"), 1);
 	m_cbxRegion.addItem(juce::translate("Europe"), 2);
 	m_cbxRegion.addItem(juce::translate("France"), 3);
@@ -27,7 +27,7 @@ PrefDlg::PrefDlg()
 	m_cbxRegion.addItem(juce::translate("New Caledonia"), 9);
 	m_cbxRegion.addListener(this);
 
-	addAndMakeVisible(m_cbxProjection);
+	addAndMakeVisible(&m_cbxProjection);
 	XGeoPref pref;
 	juce::String region = juce::translate(XGeoProjection::Region(pref.Projection()));
 	juce::String projection = XGeoProjection::ProjectionName(pref.Projection());
@@ -39,21 +39,44 @@ PrefDlg::PrefDlg()
 		if (m_cbxProjection.getItemText(i) == projection)
 			m_cbxProjection.setSelectedItemIndex(i, juce::NotificationType::dontSendNotification);
 
-	addAndMakeVisible(m_lblRegion);
-	addAndMakeVisible(m_lblProjection);
+	addAndMakeVisible(& m_lblRegion);
+	addAndMakeVisible(&m_lblProjection);
 
 	m_lblRegion.setText(juce::translate("Region : "), juce::NotificationType::dontSendNotification);
 	m_lblProjection.setText(juce::translate("Projection : "), juce::NotificationType::dontSendNotification);
 
-	m_lblRegion.setBounds(10, 30, 70, 24);
-	m_cbxRegion.setBounds(90, 30, 200, 24);
-	m_lblProjection.setBounds(10, 60, 70, 24);
-	m_cbxProjection.setBounds(90, 60, 200, 24);
-
-	addAndMakeVisible(m_btnApply);
+	addAndMakeVisible(&m_btnApply);
 	m_btnApply.setButtonText(juce::translate("Apply"));
-	m_btnApply.setBounds(160, 170, 80, 30);
+
 	m_btnApply.addListener(this);
+}
+
+//==============================================================================
+// Redimensionnement du composant
+//==============================================================================
+void PrefDlg::resized()
+{
+	juce::Grid grid;
+
+	grid.rowGap = juce::Grid::Px(20);
+	grid.columnGap = juce::Grid::Px(10);
+
+	using Track = juce::Grid::TrackInfo;
+
+	grid.templateRows = { Track(juce::Grid::Px(25)) };
+	grid.templateColumns = { Track(juce::Grid::Fr(1)), Track(juce::Grid::Fr(1)), Track(juce::Grid::Fr(1)) };
+
+	grid.autoColumns = Track(juce::Grid::Fr(1));
+	grid.autoRows = Track(juce::Grid::Px(25));
+	grid.autoFlow = juce::Grid::AutoFlow::row;
+
+	grid.items.addArray({ juce::GridItem(m_lblRegion).withArea(1, 1, 2, 2), juce::GridItem(m_cbxRegion).withArea(1, 2, 2, 4),
+												juce::GridItem(m_lblProjection).withArea(2, 1, 3, 2), juce::GridItem(m_cbxProjection).withArea(2, 2, 3, 4),
+												juce::GridItem(m_btnApply).withArea(4, 2, 5, 3),
+		});
+	juce::Rectangle<int> R = getLocalBounds();
+	R.reduce(5, 5);
+	grid.performLayout(R);
 }
 
 //-----------------------------------------------------------------------------
@@ -118,9 +141,7 @@ void PrefDlg::buttonClicked(juce::Button* button)
 		XGeoPref pref;
 		pref.Projection((XGeoProjection::XProjCode)choice);
 		pref.ProjecView((XGeoProjection::XProjCode)choice);
-		juce::Component* parent = getParentComponent();
-		if (parent != nullptr)
-			delete parent;
+		sendActionMessage("UpdatePreferences");
 		return;
 	}
 }

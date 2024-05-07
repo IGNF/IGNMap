@@ -19,6 +19,7 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
+#include "AffineImage.h"
 
 
 //==============================================================================
@@ -647,6 +648,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(true, false, false, false, false);
 		return;
 	}
+	if (message == "UpdatePreferences") {
+		GeoTools::UpdateProjection(&m_GeoBase);
+		XFrame F = m_GeoBase.Frame();
+		m_MapView.get()->SetFrame(F);
+		m_MapView.get()->CenterView(F.Center().X, F.Center().Y);
+	}
 
 	juce::StringArray T;
 	T.addTokens(message, ":", "");
@@ -1244,20 +1251,18 @@ void MainComponent::Translate()
 void MainComponent::Preferences()
 {
 	PrefDlg* dlg = new PrefDlg;
+	dlg->addActionListener(this);
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);
 
-	juce::Rectangle<int> area(0, 0, 410, 300);
+	juce::Rectangle<int> area = dlg->PreferedSize();
 	options.content->setSize(area.getWidth(), area.getHeight());
 	options.dialogTitle = juce::translate("Preferences");
-	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.dialogBackgroundColour = juce::Colours::grey;
 	options.escapeKeyTriggersCloseButton = true;
 	options.useNativeTitleBar = false;
 	options.resizable = false;
 	options.launchAsync();
-
-	GeoTools::UpdateProjection(&m_GeoBase);
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 }
 
 //==============================================================================
@@ -1298,6 +1303,48 @@ void MainComponent::Test()
 	file.close();
 	delete[] area;
 	*/
+	/*
+	auto bounds = m_MapView.get()->getBounds();
+	juce::AffineTransform transfo;
+	//transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY());
+	m_MapView.get()->setTransform(transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY()));
+	*/
+
+	XGeoMap* map = m_GeoBase.Map("ROTATION");
+	if (map != NULL) {
+		for (uint32_t i = 0; i < map->NbObject(); i++) {
+			AffineImage* image = dynamic_cast<AffineImage*>(map->Object(i));
+			if (image != nullptr) {
+				image->AddRotation(XPI4 / 4);
+			}
+		}
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+		m_MapView.get()->RenderMap(false, true, false, false, false, true);
+		return;
+	}
+
+	juce::String filename;
+	filename = AppUtil::OpenFile("RasterPath");
+	if (filename.isEmpty())
+		return;
+	juce::File file(filename);
+	juce::String name = file.getFileNameWithoutExtension();
+	AffineImage* affine = new AffineImage();
+	if (!affine->AnalyzeImage(filename.toStdString())) {
+		delete affine;
+		return;
+	}
+	affine->SetPosition(668000., 6840000., 0.5);
+	affine->SetRotation(XPI4);
+	
+	if (!GeoTools::RegisterObject(&m_GeoBase, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
+		delete affine;
+		return ;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
 
 }
 

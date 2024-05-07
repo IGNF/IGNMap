@@ -633,8 +633,9 @@ void GeoTools::UpdateProjection(XGeoBase* base)
 				classe->RemoveAllVectors();
 				classe->Vector(raster);
 			}
+			classe->UpdateFrame();
 		}
+		map->UpdateFrame();
 	}
-	if (no_data)
-		base->UpdateFrame();
+	base->UpdateFrame();
 }

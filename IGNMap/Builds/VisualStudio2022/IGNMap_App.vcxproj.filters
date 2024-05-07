@@ -835,6 +835,9 @@
     <ClCompile Include="..\..\..\openjpeg\src\lib\openjp2\thread.c">
       <Filter>IGNMap\openjpeg</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\AffineImage.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\AppUtil.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -2951,6 +2954,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\thread.h">
       <Filter>IGNMap\openjpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AffineImage.h">
+      <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AppUtil.h">
       <Filter>IGNMap\Source</Filter>

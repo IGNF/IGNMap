@@ -12,10 +12,12 @@
 #pragma once
 #include <JuceHeader.h>
 
-class PrefDlg : public juce::Component, public juce::Button::Listener, public juce::ComboBox::Listener {
+class PrefDlg : public juce::Component, public juce::Button::Listener,
+								public juce::ComboBox::Listener, public juce::ActionBroadcaster {
 public:
 	PrefDlg();
 
+	juce::Rectangle<int> PreferedSize() { return juce::Rectangle<int>(0, 0, 400, 210); }
 	void buttonClicked(juce::Button*) override;
 	void comboBoxChanged(juce::ComboBox*) override;
 
@@ -27,4 +29,5 @@ private:
 	juce::TextButton m_btnApply;
 
 	void SetProjectionComboBox();
+	void resized() override;
 };
