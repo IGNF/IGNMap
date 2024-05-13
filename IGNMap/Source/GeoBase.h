@@ -133,6 +133,7 @@ namespace GeoTools {
   bool ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  bool ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
 }
 
 //==============================================================================

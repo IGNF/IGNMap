@@ -964,10 +964,16 @@
     <ClCompile Include="..\..\..\XTool\XPt3D.cpp">
       <Filter>IGNMap\XTool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XTool\XXml.cpp">
+      <Filter>IGNMap\XTool</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolAlgo\XInternetMap.cpp">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolAlgo\XLasFile.cpp">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\XToolAlgo\XTime.cpp">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolGeod\XAlgoGeod.cpp">
@@ -1082,6 +1088,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XShapefileVector.cpp">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\XToolVector\XTAChantier.cpp">
       <Filter>IGNMap\XToolVector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\XToolVector\XWKBGeom.cpp">
@@ -3102,6 +3111,9 @@
     <ClInclude Include="..\..\..\XTool\XTransfo.h">
       <Filter>IGNMap\XTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\XTool\XXml.h">
+      <Filter>IGNMap\XTool</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\XToolAlgo\XColor.h">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
@@ -3109,6 +3121,9 @@
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolAlgo\XLasFile.h">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolAlgo\XTime.h">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolGeod\XAlgoGeod.h">
@@ -3226,6 +3241,9 @@
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XShapefileVector.h">
+      <Filter>IGNMap\XToolVector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolVector\XTAChantier.h">
       <Filter>IGNMap\XToolVector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolVector\XWKBGeom.h">

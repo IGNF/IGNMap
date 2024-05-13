@@ -36,6 +36,7 @@ public:
   void CenterView(const double& X, const double& Y, double scale = -1., bool notification = true);
   void Pixel2Ground(double& X, double& Y);
   void Ground2Pixel(double& X, double& Y);
+  XFrame Pixel2Ground(const double& Xcenter, const double& Ycenter, const double& nbpix);
   void SetGeoBase(XGeoBase* base) { m_MapThread.stopThread(-1); m_GeoBase = base; resized(); }
   void StopThread() { m_MapThread.signalThreadShouldExit(); if (m_MapThread.isThreadRunning()) m_MapThread.stopThread(-1);}
   void RenderMap(bool overlay = true, bool raster = true, bool dtm = true, bool vector = true, bool las = true, bool totalUpdate = false);

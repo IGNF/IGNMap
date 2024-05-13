@@ -57,9 +57,9 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 	XDxfPoly3D* poly3D;
 
 	std::string value, layer, text;
-	uint32_t pos, code, nbpt, importance, flagbits, nbpt_spec, nbz;
+	uint32_t pos = 0, code = 0, nbpt = 0, importance = 0, flagbits = 0, nbpt_spec = 0, nbz = 0;
 	bool flag3d, closed, vertex, textflag, noread = false, entities = false, section = false, valid_line;
-	double x, y, z;
+	double x = 0., y = 0., z = 0.;
 	XFrame XYF;
 	XPt2D SI, SF;
 	XGeoClass* C;
@@ -70,7 +70,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 	while( (!m_In.eof()) && (m_In.good()) ) {
 		if (!noread) {
 			m_In.getline(m_Line, 1024);
-			sscanf(m_Line,"%u", &code);
+			std::ignore = sscanf(m_Line,"%u", &code);
 			m_In.getline(m_Line, 1024);
 		}
 
@@ -117,7 +117,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 				textflag = true;
 			while( (!m_In.eof()) && (m_In.good()) && (!noread) ) {
 				m_In.getline(m_Line, 1024);
-				sscanf(m_Line,"%u", &code);
+				std::ignore = sscanf(m_Line,"%u", &code);
 				m_In.getline(m_Line, 1024);
 				if (m_Line[strlen(m_Line)- 1] == '\r')
 					m_Line[strlen(m_Line) - 1] = 0;
@@ -126,10 +126,10 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 				case 0 : value = m_Line; noread = true; break;
 				case 1 : text = m_Line; break;
 				case 8 : layer = m_Line; break;
-				case 10 : sscanf(m_Line,"%lf", &x); break;
-				case 20 : sscanf(m_Line,"%lf", &y); break;
-				case 30 : sscanf(m_Line,"%lf", &z); flag3d = true; break;
-				case 40 : sscanf(m_Line,"%u", &importance); break;
+				case 10 : std::ignore = sscanf(m_Line,"%lf", &x); break;
+				case 20 : std::ignore = sscanf(m_Line,"%lf", &y); break;
+				case 30 : std::ignore = sscanf(m_Line,"%lf", &z); flag3d = true; break;
+				case 40 : std::ignore = sscanf(m_Line,"%u", &importance); break;
 				default : value = m_Line;
 				}
 			}
@@ -182,7 +182,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 		if (value == "polyline") {
 			while( (!m_In.eof()) && (m_In.good()) ) {
 				m_In.getline(m_Line, 1024);
-				sscanf(m_Line,"%u", &code);
+				std::ignore = sscanf(m_Line,"%u", &code);
 				m_In.getline(m_Line, 1024);
 				if (m_Line[strlen(m_Line)- 1] == '\r')
 					m_Line[strlen(m_Line) - 1] = 0;
@@ -192,22 +192,22 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 									vertex = true;
 								break;
 				case 8 : layer = m_Line; break;
-				case 10 : sscanf(m_Line,"%lf", &x); break;
-				case 20 : sscanf(m_Line,"%lf", &y);
+				case 10 : std::ignore = sscanf(m_Line,"%lf", &x); break;
+				case 20 : std::ignore = sscanf(m_Line,"%lf", &y);
 					if (vertex) {
 						XYF += XPt2D(x, y); 
 						if (nbpt == 0) SI = XPt2D(x, y); else SF = XPt2D(x,y);
 						nbpt++;
 						}
 					break;
-				case 30 : sscanf(m_Line,"%lf", &z);
+				case 30 : std::ignore = sscanf(m_Line,"%lf", &z);
 					if (vertex) {
 						if (m_dZmin == XGEO_NO_DATA) m_dZmin = z; else m_dZmin = XMin(m_dZmin, z);
 						if (m_dZmax == XGEO_NO_DATA) m_dZmax = z; else m_dZmax = XMax(m_dZmax, z);
 						flag3d = true;
 					}
 					break;
-				case 70 : sscanf(m_Line,"%u", &flagbits); 
+				case 70 : std::ignore = sscanf(m_Line,"%u", &flagbits);
 						if ((flagbits % 2) != 0)
 							closed = true;
 					break;
@@ -225,7 +225,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 		if (value == "lwpolyline") {
 			while( (!m_In.eof()) && (m_In.good()) ) {
 				m_In.getline(m_Line, 1024);
-				sscanf(m_Line,"%u", &code);
+				std::ignore = sscanf(m_Line,"%u", &code);
 				m_In.getline(m_Line, 1024);
 				if (m_Line[strlen(m_Line)- 1] == '\r')
 					m_Line[strlen(m_Line) - 1] = 0;
@@ -233,23 +233,23 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 					case 0 : value = m_Line; 
 									break;
 					case 8 : layer = m_Line; break;
-					case 10 : sscanf(m_Line,"%lf", &x); break;
-					case 20 : sscanf(m_Line,"%lf", &y);
+					case 10 : std::ignore = sscanf(m_Line,"%lf", &x); break;
+					case 20 : std::ignore = sscanf(m_Line,"%lf", &y);
 										XYF += XPt2D(x, y); 
 										if (nbpt == 0) SI = XPt2D(x, y); else SF = XPt2D(x,y);
 										nbpt++;
 										break;
-					case 30 : sscanf(m_Line,"%lf", &z);
+					case 30 : std::ignore = sscanf(m_Line,"%lf", &z);
 							if (m_dZmin == XGEO_NO_DATA) m_dZmin = z; else m_dZmin = XMin(m_dZmin, z);
 							if (m_dZmax == XGEO_NO_DATA) m_dZmax = z; else m_dZmax = XMax(m_dZmax, z);
 							flag3d = true;
 							nbz++;
 						break;
-					case 70 : sscanf(m_Line,"%u", &flagbits); 
+					case 70 : std::ignore = sscanf(m_Line,"%u", &flagbits);
 							if ((flagbits % 2) != 0)
 								closed = true;
 						break;
-					case 90 : sscanf(m_Line,"%u", &nbpt_spec);
+					case 90 : std::ignore = sscanf(m_Line,"%u", &nbpt_spec);
 						break;
 					default : value = m_Line;
 				}	// end switch
@@ -269,7 +269,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 			while( (!m_In.eof()) && (m_In.good()) ) {
 				closed = false;
 				m_In.getline(m_Line, 1024);
-				sscanf(m_Line,"%u", &code);
+				std::ignore = sscanf(m_Line,"%u", &code);
 				m_In.getline(m_Line, 1024);
 				if (m_Line[strlen(m_Line)- 1] == '\r')
 					m_Line[strlen(m_Line) - 1] = 0;
@@ -277,25 +277,25 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 					case 0 : value = m_Line; 
 									break;
 					case 8 : layer = m_Line; break;
-					case 10 : sscanf(m_Line,"%lf", &x); break;
-					case 11 : sscanf(m_Line,"%lf", &x); break;
-					case 20 : sscanf(m_Line,"%lf", &y);
+					case 10 : std::ignore = sscanf(m_Line,"%lf", &x); break;
+					case 11 : std::ignore = sscanf(m_Line,"%lf", &x); break;
+					case 20 : std::ignore = sscanf(m_Line,"%lf", &y);
 										XYF += XPt2D(x, y); 
 										SI = XPt2D(x, y);
 										nbpt++;
 										break;
-					case 21 : sscanf(m_Line,"%lf", &y);
+					case 21 : std::ignore = sscanf(m_Line,"%lf", &y);
 										XYF += XPt2D(x, y); 
 										SF = XPt2D(x,y);
 										nbpt++;
 										break;
-					case 30 : sscanf(m_Line,"%lf", &z);
+					case 30 : std::ignore = sscanf(m_Line,"%lf", &z);
 							if (m_dZmin == XGEO_NO_DATA) m_dZmin = z; else m_dZmin = XMin(m_dZmin, z);
 							if (m_dZmax == XGEO_NO_DATA) m_dZmax = z; else m_dZmax = XMax(m_dZmax, z);
 							flag3d = true;
 							nbz++;
 						break;
-					case 31 : sscanf(m_Line,"%lf", &z);
+					case 31 : std::ignore = sscanf(m_Line,"%lf", &z);
 							if (m_dZmin == XGEO_NO_DATA) m_dZmin = z; else m_dZmin = XMin(m_dZmin, z);
 							if (m_dZmax == XGEO_NO_DATA) m_dZmax = z; else m_dZmax = XMax(m_dZmax, z);
 							flag3d = true;
@@ -383,14 +383,14 @@ bool XDxf::LoadGeom(uint32_t pos, XPt* P, uint32_t nbpt, double* Z, double* ZRan
 		return false;
 	m_In.seekg(pos);
 
-	uint32_t code;
+	uint32_t code = 0;
 	uint32_t cmpt = 0;
 	bool vertex = false;
 
-	double x, y;
+	double x = 0., y = 0.;
 	while( (!m_In.eof()) && (m_In.good()) ) {
 		m_In.getline(m_Line, 1024);
-		sscanf(m_Line,"%u", &code);
+		std::ignore = sscanf(m_Line,"%u", &code);
 		m_In.getline(m_Line, 1024);
 		switch(code) {
 		case 0 : 
@@ -437,9 +437,10 @@ bool XDxf::LoadGeom(uint32_t pos, XPt* P, uint32_t nbpt, double* Z, double* ZRan
 				} else
 					return false;
 //			}
-		case 10 : sscanf(m_Line, "%lf", &x);	break;
-		case 11 : sscanf(m_Line, "%lf", &x);	break;
-		case 20 : sscanf(m_Line, "%lf", &y);
+				break;
+		case 10 : std::ignore = sscanf(m_Line, "%lf", &x);	break;
+		case 11 : std::ignore = sscanf(m_Line, "%lf", &x);	break;
+		case 20 : std::ignore = sscanf(m_Line, "%lf", &y);
 			if ((x != 0.)&&(y != 0.)) {
 					vertex = true;
 					P[cmpt].X = x;
@@ -447,7 +448,7 @@ bool XDxf::LoadGeom(uint32_t pos, XPt* P, uint32_t nbpt, double* Z, double* ZRan
 					cmpt++;
 			}
 			break;
-		case 21 : sscanf(m_Line, "%lf", &y);
+		case 21 : std::ignore = sscanf(m_Line, "%lf", &y);
 			if ((x != 0.)&&(y != 0.)) {
 					vertex = true;
 					P[cmpt].X = x;
@@ -455,8 +456,8 @@ bool XDxf::LoadGeom(uint32_t pos, XPt* P, uint32_t nbpt, double* Z, double* ZRan
 					cmpt++;
 			}
 			break;
-		case 30 : if (Z != NULL) if (vertex) sscanf(m_Line, "%lf", &Z[cmpt-1]); break;
-		case 31 : if (Z != NULL) if (vertex) sscanf(m_Line, "%lf", &Z[cmpt-1]); break;
+		case 30 : if (Z != NULL) if (vertex) std::ignore = sscanf(m_Line, "%lf", &Z[cmpt-1]); break;
+		case 31 : if (Z != NULL) if (vertex) std::ignore = sscanf(m_Line, "%lf", &Z[cmpt-1]); break;
 		default : ;
 		}
 	}
@@ -531,14 +532,14 @@ bool XDxf::Convert(const char* file_in, const char* file_out, XGeodConverter* L,
 
 	char token1[1024], token2[1024];
 	std::string value, type;
-	uint32_t  code, xcode, ycode, code_max, line = 0;
+	uint32_t  code = 0, xcode = 0, ycode = 0, code_max = 0, line = 0;
 	double xi, yi, z, xf, yf;
 	bool need_code = true, useful_data = false, section = false;
 
 	while( (!m_In.eof()) && (m_In.good()) ) {
 		if (need_code) {
 			m_In.getline(token1, 1024); line++;
-			sscanf(token1,"%u", &code);
+			std::ignore = sscanf(token1,"%u", &code);
 			m_In.getline(token2, 1024); line++;
 		} else
 			need_code = true;
@@ -579,13 +580,13 @@ bool XDxf::Convert(const char* file_in, const char* file_out, XGeodConverter* L,
 
 		if ((code >= 10)&&(code <= code_max)) {
 			xcode = code;
-			sscanf(token2,"%lf", &xi);
+			std::ignore = sscanf(token2,"%lf", &xi);
 
 			if ((xi < 360.)&&(xi > -360.)&&(xi != 0.))
 				dxf.precision(6);
 
 			m_In.getline(token1, 1024); line++;
-			sscanf(token1,"%u", &code);
+			std::ignore = sscanf(token1,"%u", &code);
 			m_In.getline(token2, 1024); line++;
 
 			if ((code != 20)&&(code != 21)&&(code != 22)&&(code != 23)) {
@@ -595,13 +596,13 @@ bool XDxf::Convert(const char* file_in, const char* file_out, XGeodConverter* L,
 				dxf << token2 << std::endl;
 			} else {
 				ycode = code;
-				sscanf(token2,"%lf", &yi);
+				std::ignore = sscanf(token2,"%lf", &yi);
 
 				m_In.getline(token1, 1024); line++;
-				sscanf(token1,"%u", &code);
+				std::ignore = sscanf(token1,"%u", &code);
 				m_In.getline(token2, 1024); line++;
 				if ((code == 30)||(code == 31)||(code == 32)||(code == 33))
-					sscanf(token2,"%lf", &z);
+					std::ignore = sscanf(token2,"%lf", &z);
 				else {
 					z = 0.;
 					need_code = false;

@@ -378,6 +378,20 @@ void MapView::Ground2Pixel(double& X, double& Y)
 }
 
 //==============================================================================
+// Cree un cadre terrain a partir d'une position Pixel et de la demi-taille en pixels
+//==============================================================================
+XFrame MapView::Pixel2Ground(const double& Xcenter, const double& Ycenter, const double& nbpix)
+{
+	double X0 = Xcenter - nbpix, Y0 = Ycenter - nbpix, X1 = Xcenter + nbpix, Y1 = Ycenter + nbpix;
+	Pixel2Ground(X0, Y0);
+	Pixel2Ground(X1, Y1);
+	XFrame F;
+	F += XPt2D(X0, Y0);
+	F += XPt2D(X1, Y1);
+	return F;
+}
+
+//==============================================================================
 // Echelle cartograpique 1 : cartoscale
 //==============================================================================
 double MapView::ComputeCartoScale(double cartoscale)
@@ -479,14 +493,10 @@ void MapView::SelectFeatures(juce::Point<int> P)
 {
 	if (m_GeoBase == nullptr)
 		return;
-	XFrame F;
-	double X = P.x - 1, Y = P.y - 1;
-	Pixel2Ground(X, Y);
-	F += XPt2D(X, Y);
-	X = P.x + 1; Y = P.y + 1;
-	Pixel2Ground(X, Y);
-	F += XPt2D(X, Y);
+	XFrame F = Pixel2Ground(P.x, P.y, 1);
 	m_GeoBase->SelectFeatures(&F);
+	F = Pixel2Ground(P.x, P.y, 3);
+	m_GeoBase->KeepClosestCentroid(&F);
 	sendActionMessage("UpdateSelectFeatures");
 }
 

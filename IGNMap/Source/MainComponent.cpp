@@ -20,7 +20,7 @@
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
 #include "AffineImage.h"
-
+#include "../../XToolVector/XTAChantier.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -840,7 +840,7 @@ void MainComponent::ImportImageFolder()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json;*.xml");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -857,6 +857,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoTools::ImportDxf(filename, &m_GeoBase);
 	if (extension == ".json")
 		flag = GeoTools::ImportGeoJson(filename, &m_GeoBase);
+	if (extension == ".xml")
+		flag = GeoTools::ImportTA(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
@@ -1310,10 +1312,51 @@ void MainComponent::Test()
 	m_MapView.get()->setTransform(transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY()));
 	*/
 
+	if (m_GeoBase.NbSelection() != 1)
+		return;
+	XGeoVector* V = m_GeoBase.Selection(0);
+	XTACliche* cliche = dynamic_cast<XTACliche*>(V);
+	if (cliche == nullptr)
+		return;
+	juce::String filename;
+	filename = AppUtil::OpenFile("RasterPath");
+	if (filename.isEmpty())
+		return;
+	juce::File file(filename);
+	juce::String name = file.getFileNameWithoutExtension();
+	RotationImage* affine = new RotationImage();
+	if (!affine->AnalyzeImage(filename.toStdString())) {
+		delete affine;
+		return;
+	}
+	XPt2D S = cliche->Centroide();
+	double gsd = cliche->Resol();
+	XPt2D C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() * 0.5);
+	if (!cliche->IsDigital()) {
+		gsd = (cliche->Resol() * 1000 * 0.24) / XMin(affine->GetImageW(), affine->GetImageH());
+		C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() - affine->GetImageW() * 0.5);
+	}
+
+	affine->SetPosition(S.X, S.Y, gsd);
+	affine->SetImageCenter(C.X, C.Y);
+	affine->SetRotation(XPI - (cliche->Cap() / 180.) * XPI);
+
+	if (!GeoTools::RegisterObject(&m_GeoBase, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
+		delete affine;
+		return;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
+
+
+	
+	/*
 	XGeoMap* map = m_GeoBase.Map("ROTATION");
 	if (map != NULL) {
 		for (uint32_t i = 0; i < map->NbObject(); i++) {
-			AffineImage* image = dynamic_cast<AffineImage*>(map->Object(i));
+			RotationImage* image = dynamic_cast<RotationImage*>(map->Object(i));
 			if (image != nullptr) {
 				image->AddRotation(XPI4 / 4);
 			}
@@ -1329,13 +1372,17 @@ void MainComponent::Test()
 		return;
 	juce::File file(filename);
 	juce::String name = file.getFileNameWithoutExtension();
-	AffineImage* affine = new AffineImage();
+	RotationImage* affine = new RotationImage();
 	if (!affine->AnalyzeImage(filename.toStdString())) {
 		delete affine;
 		return;
 	}
+	// 465593,69 ; 6872112,785 93.04 
 	affine->SetPosition(668000., 6840000., 0.5);
+	affine->SetImageCenter(affine->GetImageW(), affine->GetImageH());
 	affine->SetRotation(XPI4);
+	//affine->SetPosition(465593.69, 6872112.785, 0.5);
+	//affine->SetRotation((93.04 / 180) * XPI - XPI2);
 	
 	if (!GeoTools::RegisterObject(&m_GeoBase, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
 		delete affine;
@@ -1345,7 +1392,7 @@ void MainComponent::Test()
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->RenderMap(false, true, false, false, false, true);
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
-
+	*/
 }
 
 //==============================================================================

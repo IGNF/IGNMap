@@ -537,6 +537,8 @@
       <FILE id="nUj5uk" name="XPt3D.cpp" compile="1" resource="0" file="../XTool/XPt3D.cpp"/>
       <FILE id="F47MmN" name="XPt3D.h" compile="0" resource="0" file="../XTool/XPt3D.h"/>
       <FILE id="DrAEsM" name="XTransfo.h" compile="0" resource="0" file="../XTool/XTransfo.h"/>
+      <FILE id="Xirs7v" name="XXml.cpp" compile="1" resource="0" file="../XTool/XXml.cpp"/>
+      <FILE id="vYKpqz" name="XXml.h" compile="0" resource="0" file="../XTool/XXml.h"/>
     </GROUP>
     <GROUP id="{922568F6-A5F8-F969-4DAF-930F4E8FE4E7}" name="XToolAlgo">
       <FILE id="nQypig" name="XColor.h" compile="0" resource="0" file="../XToolAlgo/XColor.h"/>
@@ -545,6 +547,8 @@
       <FILE id="wfXTdH" name="XInternetMap.h" compile="0" resource="0" file="../XToolAlgo/XInternetMap.h"/>
       <FILE id="v2dLJ0" name="XLasFile.cpp" compile="1" resource="0" file="../XToolAlgo/XLasFile.cpp"/>
       <FILE id="aLJf7D" name="XLasFile.h" compile="0" resource="0" file="../XToolAlgo/XLasFile.h"/>
+      <FILE id="QpqOKx" name="XTime.cpp" compile="1" resource="0" file="../XToolAlgo/XTime.cpp"/>
+      <FILE id="PRYRGz" name="XTime.h" compile="0" resource="0" file="../XToolAlgo/XTime.h"/>
     </GROUP>
     <GROUP id="{DBEF2DB7-C523-4320-EC11-103B4DF3114E}" name="XToolGeod">
       <FILE id="MwykR8" name="XAlgoGeod.cpp" compile="1" resource="0" file="../XToolGeod/XAlgoGeod.cpp"/>
@@ -652,6 +656,8 @@
             file="../XToolVector/XShapefileVector.cpp"/>
       <FILE id="SwL2Rm" name="XShapefileVector.h" compile="0" resource="0"
             file="../XToolVector/XShapefileVector.h"/>
+      <FILE id="HRzusB" name="XTAChantier.cpp" compile="1" resource="0" file="../XToolVector/XTAChantier.cpp"/>
+      <FILE id="mqxzQT" name="XTAChantier.h" compile="0" resource="0" file="../XToolVector/XTAChantier.h"/>
       <FILE id="DmsLuA" name="XWKBGeom.cpp" compile="1" resource="0" file="../XToolVector/XWKBGeom.cpp"/>
       <FILE id="lKnwuw" name="XWKBGeom.h" compile="0" resource="0" file="../XToolVector/XWKBGeom.h"/>
     </GROUP>

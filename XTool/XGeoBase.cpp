@@ -310,6 +310,25 @@ uint32_t XGeoBase::SelectFeatures(XFrame* F, bool only_visible)
 }
 
 //-----------------------------------------------------------------------------
+// Garde dans la selection uniquement les geometrie avec centroide inclus dans le cadre
+//-----------------------------------------------------------------------------
+bool XGeoBase::KeepClosestCentroid(XFrame* F)
+{
+	std::vector<XGeoVector*> newSel;
+	for (size_t i = 0; i < m_Selection.size(); i++) {
+		if (!m_Selection[i]->HasCentroide())
+			continue;
+		XPt2D P = m_Selection[i]->Centroide();
+		if (F->IsIn(P))
+			newSel.push_back(m_Selection[i]);
+	}
+	if (newSel.size() < 1) // Pas de centroide dans le cadre
+		return false;	// La selection originelle reste intacte
+	m_Selection = newSel;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Trie des classes en fonction du ZOrder
 //-----------------------------------------------------------------------------
 bool ClassZOrder(XGeoClass* A, XGeoClass* B)

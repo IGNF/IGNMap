@@ -12,9 +12,21 @@
 #include "AffineImage.h"
 
 //-----------------------------------------------------------------------------
+// Analyse l'image source
+//-----------------------------------------------------------------------------
+bool RotationImage::AnalyzeImage(std::string path)
+{
+  if (!m_Image.AnalyzeImage(path))
+    return false;
+  m_O.X = m_Image.Width() * 0.5;
+  m_O.Y = m_Image.Height() * 0.5;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Renvoie une image pour couvrir un cadre
 //-----------------------------------------------------------------------------
-juce::Image& AffineImage::GetAreaImage(const XFrame& F, double gsd)
+juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
 {
   if ((F == m_LastFrame) && (gsd == m_LastGsd))
     return m_ProjImage;
@@ -62,7 +74,7 @@ juce::Image& AffineImage::GetAreaImage(const XFrame& F, double gsd)
   XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
 
   // Reechantillonage dans la projection souhaitee
-  XTransfoRotation transfo(m_dRot, m_C, m_dGsd, m_Image.Width(), m_Image.Height(), u0, v0, factor);
+  XTransfoRotation transfo(m_dRot, m_C, m_dGsd, m_O, u0, v0, factor);
   transfo.SetEndFrame(F);
   Resample(&transfo);
   m_ProjImage = m_ProjImage.rescaled((int)(F.Width() / gsd), (int)(F.Height() / gsd));
@@ -72,7 +84,7 @@ juce::Image& AffineImage::GetAreaImage(const XFrame& F, double gsd)
 //-----------------------------------------------------------------------------
 // Attributs de l'objet
 //-----------------------------------------------------------------------------
-bool AffineImage::ReadAttributes(std::vector<std::string>& V)
+bool RotationImage::ReadAttributes(std::vector<std::string>& V)
 {
   V.clear();
   V.push_back("GSD"); V.push_back(juce::String(m_dGsd).toStdString());
@@ -82,7 +94,7 @@ bool AffineImage::ReadAttributes(std::vector<std::string>& V)
 //-----------------------------------------------------------------------------
 // Calcul du cadre terrain de l'image en fonction de la rotation
 //-----------------------------------------------------------------------------
-bool AffineImage::ComputeFrame()
+bool RotationImage::ComputeFrame()
 {
   if (!m_Image.IsValid())
     return false;
@@ -114,11 +126,11 @@ bool AffineImage::ComputeFrame()
 //-----------------------------------------------------------------------------
 // Passage coordonnees Image -> Terrain
 //-----------------------------------------------------------------------------
-void AffineImage::Image2Ground(double u, double v, double* x, double* y)
+void RotationImage::Image2Ground(double u, double v, double* x, double* y)
 {
   // Passage en coordoonnees centrees
-  double Ua = u - m_Image.Width() * 0.5;
-  double Va = m_Image.Height() * 0.5 - v;
+  double Ua = u - m_O.X;
+  double Va = m_O.Y - v;
   // Rotation
   double Ub = cos(m_dRot) * Ua - sin(m_dRot) * Va;
   double Vb = sin(m_dRot) * Ua + cos(m_dRot) * Va;
@@ -130,7 +142,7 @@ void AffineImage::Image2Ground(double u, double v, double* x, double* y)
 //-----------------------------------------------------------------------------
 // Passage coordonnees Terrain -> Image
 //-----------------------------------------------------------------------------
-void AffineImage::Ground2Image(double x, double y, double* u, double* v)
+void RotationImage::Ground2Image(double x, double y, double* u, double* v)
 {
   // Rotation inverse en coordonnees terrain
   double Xa = cos(m_dRot) * (x - m_C.X) + sin(m_dRot) * (y - m_C.Y);
@@ -139,8 +151,8 @@ void AffineImage::Ground2Image(double x, double y, double* u, double* v)
   *u = Xa / m_dGsd;
   *v = Ya / m_dGsd;
   // Passage en coordonnees image
-  *u = *u + m_Image.Width() * 0.5;
-  *v = m_Image.Height() * 0.5 - *v;
+  *u = *u + m_O.X;
+  *v = m_O.Y - *v;
 }
 
 //-----------------------------------------------------------------------------
@@ -158,8 +170,8 @@ void XTransfoRotation::Direct(double x, double y, double* u, double* v)
   *u = Xa / m_dGsd;
   *v = Ya / m_dGsd;
   // Passage en coordonnees image
-  *u = *u + m_W * 0.5;
-  *v = m_H * 0.5 - *v;
+  *u = *u + m_O.X;
+  *v = m_O.Y - *v;
   // Passage dans l'extrait
   *u -= m_U0;
   *v -= m_V0;

@@ -368,8 +368,10 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XTool\XPolygone2D.cpp"/>
     <ClCompile Include="..\..\..\XTool\XPt2D.cpp"/>
     <ClCompile Include="..\..\..\XTool\XPt3D.cpp"/>
+    <ClCompile Include="..\..\..\XTool\XXml.cpp"/>
     <ClCompile Include="..\..\..\XToolAlgo\XInternetMap.cpp"/>
     <ClCompile Include="..\..\..\XToolAlgo\XLasFile.cpp"/>
+    <ClCompile Include="..\..\..\XToolAlgo\XTime.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XAlgoGeod.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XDomGeod.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XGeodGrid.cpp"/>
@@ -408,6 +410,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClCompile Include="..\..\..\XToolVector\XShapefileConverter.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefileRecord.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XShapefileVector.cpp"/>
+    <ClCompile Include="..\..\..\XToolVector\XTAChantier.cpp"/>
     <ClCompile Include="..\..\..\XToolVector\XWKBGeom.cpp"/>
     <ClCompile Include="..\..\..\zlib-1.3.1\adler32.c"/>
     <ClCompile Include="..\..\..\zlib-1.3.1\compress.c"/>
@@ -1951,9 +1954,11 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XTool\XPt3.h"/>
     <ClInclude Include="..\..\..\XTool\XPt3D.h"/>
     <ClInclude Include="..\..\..\XTool\XTransfo.h"/>
+    <ClInclude Include="..\..\..\XTool\XXml.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XColor.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XInternetMap.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XLasFile.h"/>
+    <ClInclude Include="..\..\..\XToolAlgo\XTime.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XAlgoGeod.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XDomGeod.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XGeodConverter.h"/>
@@ -1993,6 +1998,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
     <ClInclude Include="..\..\..\XToolVector\XShapefileConverter.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefileRecord.h"/>
     <ClInclude Include="..\..\..\XToolVector\XShapefileVector.h"/>
+    <ClInclude Include="..\..\..\XToolVector\XTAChantier.h"/>
     <ClInclude Include="..\..\..\XToolVector\XWKBGeom.h"/>
     <ClInclude Include="..\..\..\zlib-1.3.1\crc32.h"/>
     <ClInclude Include="..\..\..\zlib-1.3.1\deflate.h"/>

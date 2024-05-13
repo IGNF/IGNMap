@@ -289,8 +289,10 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XPolygone2D_17ca3d3c.o \
   $(JUCE_OBJDIR)/XPt2D_5979b195.o \
   $(JUCE_OBJDIR)/XPt3D_5b2e8a34.o \
+  $(JUCE_OBJDIR)/XXml_ba111f82.o \
   $(JUCE_OBJDIR)/XInternetMap_ca70d833.o \
   $(JUCE_OBJDIR)/XLasFile_52021412.o \
+  $(JUCE_OBJDIR)/XTime_636b2fbf.o \
   $(JUCE_OBJDIR)/XAlgoGeod_b79ba2f8.o \
   $(JUCE_OBJDIR)/XDomGeod_f9f0910d.o \
   $(JUCE_OBJDIR)/XGeodGrid_bc53526b.o \
@@ -329,6 +331,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XShapefileConverter_24c58b65.o \
   $(JUCE_OBJDIR)/XShapefileRecord_3816b976.o \
   $(JUCE_OBJDIR)/XShapefileVector_d626568.o \
+  $(JUCE_OBJDIR)/XTAChantier_c1ce0d83.o \
   $(JUCE_OBJDIR)/XWKBGeom_ed139392.o \
   $(JUCE_OBJDIR)/adler32_7f36c161.o \
   $(JUCE_OBJDIR)/compress_5fc9eb00.o \
@@ -1452,6 +1455,11 @@ $(JUCE_OBJDIR)/XPt3D_5b2e8a34.o: ../../../XTool/XPt3D.cpp
 	@echo "Compiling XPt3D.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/XXml_ba111f82.o: ../../../XTool/XXml.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XXml.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/XInternetMap_ca70d833.o: ../../../XToolAlgo/XInternetMap.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XInternetMap.cpp"
@@ -1460,6 +1468,11 @@ $(JUCE_OBJDIR)/XInternetMap_ca70d833.o: ../../../XToolAlgo/XInternetMap.cpp
 $(JUCE_OBJDIR)/XLasFile_52021412.o: ../../../XToolAlgo/XLasFile.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XLasFile.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XTime_636b2fbf.o: ../../../XToolAlgo/XTime.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XTime.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XAlgoGeod_b79ba2f8.o: ../../../XToolGeod/XAlgoGeod.cpp
@@ -1650,6 +1663,11 @@ $(JUCE_OBJDIR)/XShapefileRecord_3816b976.o: ../../../XToolVector/XShapefileRecor
 $(JUCE_OBJDIR)/XShapefileVector_d626568.o: ../../../XToolVector/XShapefileVector.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XShapefileVector.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XTAChantier_c1ce0d83.o: ../../../XToolVector/XTAChantier.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XTAChantier.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XWKBGeom_ed139392.o: ../../../XToolVector/XWKBGeom.cpp

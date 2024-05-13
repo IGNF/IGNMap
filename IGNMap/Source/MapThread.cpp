@@ -277,7 +277,8 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 					g.drawRect(frame, 2);
 				}
 				else {
-					DrawGeometry(V);
+					if (!DrawCentroide(V))
+						DrawGeometry(V);
 					g.strokePath(m_Path, juce::PathStrokeType(C->Repres()->Size(), juce::PathStrokeType::beveled));
 					if (m_bFill) {
 						g.setFillType(juce::FillType(juce::Colour(C->Repres()->FillColor())));
@@ -362,6 +363,23 @@ bool MapThread::DrawText(juce::Graphics* g, XGeoVector* V)
 	int Y = (int)((m_dY0 - P.Y) / m_dGsd) - 5;
 	g->drawSingleLineText(V->Name(), X, Y);
 	return true;
+}
+
+//==============================================================================
+// Dessin des centroides
+//==============================================================================
+bool MapThread::DrawCentroide(XGeoVector* G)
+{
+	if (G->HasCentroide()) {
+		XPt2D P = G->Centroide();
+		float X = (float)((P.X - m_dX0) / m_dGsd);
+		float Y = (float)((m_dY0 - P.Y) / m_dGsd);
+		float d = 3.f;
+		m_Path.startNewSubPath(X, Y);
+		m_Path.addStar(juce::Point<float>(X, Y), 4, 5.f, 10.f);
+		return true;
+	}
+	return false;
 }
 
 //==============================================================================

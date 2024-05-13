@@ -18,6 +18,7 @@
 #include "../../XToolVector/XMifMid.h"
 #include "../../XToolVector/XDxf.h"
 #include "../../XToolVector/XGeoJson.h"
+#include "../../XToolVector/XTAChantier.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 #include "../../XToolGeod/XGeoPref.h"
@@ -467,6 +468,12 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 	for (int i = 0; i < T.size(); i++)
 		ImportGeoJson(T[i].getFullPathName(), base);
 
+	// Format TA XML
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.xml");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportTA(T[i].getFullPathName(), base);
+
 	ColorizeClasses(base);
 
 	return true;
@@ -535,6 +542,19 @@ bool GeoTools::ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map
 	if (fileName.isEmpty())
 		return false;
 	XGeoClass* C = XGeoJson::ImportGeoJson(base, fileName.toStdString().c_str(), map);
+	if (C == NULL)
+		return false;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier Tableau d'Assemblage IGN
+//-----------------------------------------------------------------------------
+bool GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return false;
+	XGeoClass* C = XTAChantier::ImportTA(base, fileName.toStdString().c_str(), map);
 	if (C == NULL)
 		return false;
 	return true;
