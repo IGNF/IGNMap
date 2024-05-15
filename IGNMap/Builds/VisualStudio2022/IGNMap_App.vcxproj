@@ -94,11 +94,6 @@
       <OutputFile>$(IntDir)\IGNMap.bsc</OutputFile>
     </Bscmake>
     <Lib/>
-    <PostBuildEvent>
-      <Command>MKDIR .\x64\Debug\App\Images
-COPY ..\..\Images\*.* .\x64\Debug\App\Images
-</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -144,11 +139,6 @@ COPY ..\..\Images\*.* .\x64\Debug\App\Images
       <OutputFile>$(IntDir)\IGNMap.bsc</OutputFile>
     </Bscmake>
     <Lib/>
-    <PostBuildEvent>
-      <Command>MKDIR .\x64\Release\App\Images
-COPY ..\..\Images\*.* .\x64\Release\App\Images
-</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\jpeg-9f\jaricom.c"/>
@@ -2532,7 +2522,7 @@ COPY ..\..\Images\*.* .\x64\Release\App\Images
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Images\GSD.png"/>
-    <None Include="..\..\Images\IGNMap.png"/>
+    <None Include="..\..\Images\IGNMapv3.png"/>
     <None Include="..\..\Images\Move.png"/>
     <None Include="..\..\Images\NoSelectable.png"/>
     <None Include="..\..\Images\NoView.png"/>

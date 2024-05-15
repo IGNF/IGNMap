@@ -57,7 +57,10 @@ void MapView::paint(juce::Graphics& g)
 		return;
 	}
 
-	m_MapThread.Draw(g);
+	if (!m_MapThread.Draw(g)) {
+		g.fillAll(juce::Colours::white);
+		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
+	}
 	if (!m_MapThread.isThreadRunning())
 		DrawAnnotation(g);
 	DrawFrames(g);
@@ -153,6 +156,7 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 	juce::Graphics imaG(m_Image);
 	m_MapThread.Draw(imaG);
 	m_StartPt = event.getPosition();
+	m_DragPt = juce::Point<int>(0, 0);
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
 	if ((event.mods.isCtrlDown()) || (m_nMouseMode == Zoom)) {
 		m_bZoom = true;
@@ -199,6 +203,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		if (m_bZoom) {
 			m_dScale /= ((b.getWidth() / m_DragPt.x + b.getHeight() / m_DragPt.y) * 0.5);
 			if (m_dScale < 0.05) m_dScale = 0.05;
+			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
 			CenterView((X0 + X1) * 0.5, (Y0 + Y1) * 0.5);
 		}
 		if (m_bSelect) {
@@ -222,6 +227,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	if (m_bZoom) {	// Clic pour zoomer
 			if (event.mods.isRightButtonDown()) m_dScale *= (2.0);
 			if (event.mods.isLeftButtonDown()) m_dScale *= (0.5);
+			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
 			CenterView(x, y);
 			EndMouseAction();
 			return;
@@ -247,6 +253,7 @@ void MapView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWhe
 		m_dScale *= sqrt(2.0);
 	else
 		m_dScale *= (1. / sqrt(2.0));
+	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
 	CenterView(X, Y);
 }
 
@@ -260,7 +267,7 @@ void MapView::mouseDoubleClick(const juce::MouseEvent& event)
 void MapView::EndMouseAction()
 {
 	m_bDrag = m_bZoom = m_bSelect = false;
-	m_DragPt = juce::Point<int>(0, 0);
+	// m_DragPt = juce::Point<int>(0, 0);
 }
 
 //==============================================================================

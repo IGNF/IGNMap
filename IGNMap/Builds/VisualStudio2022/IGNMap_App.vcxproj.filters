@@ -4841,7 +4841,7 @@
     <None Include="..\..\Images\GSD.png">
       <Filter>IGNMap\Images</Filter>
     </None>
-    <None Include="..\..\Images\IGNMap.png">
+    <None Include="..\..\Images\IGNMapv3.png">
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\Move.png">

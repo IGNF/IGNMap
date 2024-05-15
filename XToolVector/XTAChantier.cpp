@@ -236,6 +236,17 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	V.push_back("Style");
 	V.push_back(style);
 
+	// Orientation
+	std::string orientation;
+	V.push_back("Orientation");
+	switch (m_Orientation) {
+		case N2S : orientation = "N->S";
+		case S2N : orientation = "S->N";
+		case E2W : orientation = "E->W";
+		case W2E : orientation = "W->E";
+	}
+	V.push_back(orientation);
+
 	// Qualite
 	std::string Qualite;
 	if(m_Qualite == 0)

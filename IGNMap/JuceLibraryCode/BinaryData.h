@@ -11,8 +11,8 @@ namespace BinaryData
     extern const char*   GSD_png;
     const int            GSD_pngSize = 667;
 
-    extern const char*   IGNMap_png;
-    const int            IGNMap_pngSize = 8398;
+    extern const char*   IGNMapv3_png;
+    const int            IGNMapv3_pngSize = 195348;
 
     extern const char*   Move_png;
     const int            Move_pngSize = 5869;

@@ -6,8 +6,9 @@
               defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
-      <FILE id="D0Gt1C" name="GSD.png" compile="0" resource="1" file="Images/GSD.png"/>
-      <FILE id="cCtoK8" name="IGNMap.png" compile="0" resource="1" file="Images/IGNMap.png"/>
+      <FILE id="D0Gt1C" name="GSD.png" compile="0" resource="1" file="Images/GSD.png"
+            xcodeResource="0"/>
+      <FILE id="bOamUH" name="IGNMapv3.png" compile="0" resource="1" file="Images/IGNMapv3.png"/>
       <FILE id="BcYc12" name="Move.png" compile="0" resource="1" file="Images/Move.png"/>
       <FILE id="qhgxQ6" name="NoSelectable.png" compile="0" resource="1"
             file="Images/NoSelectable.png"/>
@@ -707,7 +708,7 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS"
                 userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-                smallIcon="cCtoK8" bigIcon="cCtoK8">
+                smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2"
                        userNotes="make CONFIG=Debug"/>
@@ -726,12 +727,10 @@
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;"
             userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-            smallIcon="cCtoK8" bigIcon="cCtoK8">
+            smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"
-                       postbuildCommand="MKDIR .\x64\Debug\App\Images&#10;COPY ..\..\Images\*.* .\x64\Debug\App\Images&#10;"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"
-                       postbuildCommand="MKDIR .\x64\Release\App\Images&#10;COPY ..\..\Images\*.* .\x64\Release\App\Images&#10;"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
@@ -743,10 +742,11 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;off64_t=off_t&#10;Z_HAVE_UNISTD_H"
+               smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../libwebp-1.3.2"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../libwebp-1.3.2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

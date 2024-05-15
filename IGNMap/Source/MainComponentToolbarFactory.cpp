@@ -64,10 +64,13 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   {
   case Move:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Move_png, BinaryData::Move_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Move.png"));
+    //drawable_off->setImage(getImageFromAssets("Move.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Move.png"));
+    //drawable_on->setImage(getImageFromAssets("Move.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkcyan);
     button = new juce::ToolbarButton(Move, juce::translate("Move"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -78,10 +81,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Select:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Select_png, BinaryData::Select_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Select.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Select.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkcyan);
     button = new juce::ToolbarButton(Select, juce::translate("Select"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -91,10 +95,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Zoom:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Zoom_png, BinaryData::Zoom_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Zoom.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Zoom.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkcyan);
     button = new juce::ToolbarButton(Zoom, juce::translate("Zoom"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -104,10 +109,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Select3D:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Select3D_png, BinaryData::Select3D_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Select3D.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Select3D.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkcyan);
     button = new juce::ToolbarButton(Select3D, juce::translate("Select3D"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -117,8 +123,9 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Gsd:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::GSD_png, BinaryData::GSD_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("GSD.png"));
+    drawable_off->setImage(image);
     button = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
     button->setTooltip(juce::translate("GSD of the view"));
     break;
@@ -127,10 +134,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   // Outils de dessin
   case Polyline:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Polyline_png, BinaryData::Polyline_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Polyline.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Polyline.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkred);
     button = new juce::ToolbarButton(Polyline, juce::translate("Polyline"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -140,10 +148,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Polygone:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Polygone_png, BinaryData::Polygone_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Polygone.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Polygone.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkred);
     button = new juce::ToolbarButton(Polygone, juce::translate("Polygone"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -153,10 +162,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Rectangle:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Rectangle_png, BinaryData::Rectangle_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Rectangle.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Rectangle.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkred);
     button = new juce::ToolbarButton(Rectangle, juce::translate("Rectangle"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
@@ -166,10 +176,11 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   }
   case Text:
   {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Text_png, BinaryData::Text_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(getImageFromAssets("Text.png"));
+    drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(getImageFromAssets("Text.png"));
+    drawable_on->setImage(image);
     drawable_on->setOverlayColour(juce::Colours::darkred);
     button = new juce::ToolbarButton(Text, juce::translate("Text"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);

@@ -15,10 +15,8 @@
 // calcul d'un polynome
 double XAlgoGeod :: poly ( double x, int degre, double coef[])
 {
-	register int i;
-
 	double  val = 0;
-	for (i = 0 ; i <= degre  ; i++)
+	for (int i = 0 ; i <= degre  ; i++)
 	{
 		val += coef[i]*pow( x , i ) ;  
 	}
@@ -287,9 +285,8 @@ void XAlgoGeod::CoeffArcMer(double e2, double c[DEGRE+1])
 		{0,     0, 15./256,  45/1024.,   525/16384.},
 		{0,     0,       0, -35/3072.,  -175/12288.},
 		{0,     0,       0,         0,  315/131072.}};
-		register int i;
 		
-		for (i=0; i<=DEGRE; i++)
+		for (int i=0; i<=DEGRE; i++)
 			c[i] = poly(e2, DEGRE, coef[i]);
 }
 
@@ -299,7 +296,7 @@ void XAlgoGeod::CoeffArcMer(double e2, double c[DEGRE+1])
 double XAlgoGeod::DevArcMer(double phi, double e2)
 {
 	double beta, coef[5];
-	register int k;
+	int k;
 	
 	CoeffArcMer(e2, coef);
 	beta = coef[0]*phi;
@@ -314,7 +311,7 @@ double XAlgoGeod::DevArcMer(double phi, double e2)
 double XAlgoGeod::LatArcMer(double beta, double e2, double epsilon_phi)
 {
   double phi0, phi1, b1, coef[5];
-  register int k;
+  int k;
 
   CoeffArcMer(e2, coef);
   phi1 = beta/coef[0];
@@ -339,9 +336,8 @@ void XAlgoGeod::CoefProjMercTrDir(double e2, double c[])
 	{0,     0, 13./768,  17/5120.,     -311/737280.},
 	{0,     0,       0, 61/15360.,      899/430080.},
 	{0,     0,       0,         0, 49561./41287680.}};
-  register int i;
 
-  for (i=0; i<=DEGRE; i++)
+  for (int i=0; i<=DEGRE; i++)
     c[i] = poly(e2, DEGRE, coef[i]);
 }
 
@@ -356,9 +352,8 @@ void XAlgoGeod::CoefProjMercTrInv(double e2, double c[])
 	{0,     0, 1./768,   3./1280,    559/368640.},
 	{0,     0,      0, 17/30720.,    283/430080.},
 	{0,     0,      0,         0, 4397/41287680.}};
-  register int i;
 
-  for (i=0; i<=DEGRE; i++)
+  for (int i=0; i<=DEGRE; i++)
     c[i] = poly(e2, DEGRE, coef[i]);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -371,7 +366,7 @@ void XAlgoGeod::GeoMercTr(double lambda0, double n, double xs, double ys,
 #ifndef __cplusplus
 	struct
 #endif
-		register int i;
+	int i;
 	
 	CoefProjMercTrDir(e2, c);
 	l = LatIso(phi, e2);
@@ -421,7 +416,7 @@ void XAlgoGeod::MercTrGeo(double lambda0, double n, double xs, double ys, double
 #ifndef __cplusplus
 	struct
 #endif
-		register int i;
+	int i;
 	
 	CoefProjMercTrInv(e2, c);
 #ifdef __cplusplus
@@ -620,7 +615,7 @@ void XAlgoGeod::LabMadGeo(double azc, double n1, double n2, double xs, double ys
 					  double *lambda, double *phi, double x, double y, double epsilon_phi)
 {
 	double LAMBDA,L,PHI,ux,uy,uz,vx,vy,vz;
-	register int i;
+	int i;
 #ifdef __cplusplus
 	std::complex <double> Z( (y-ys)/n2 , (x-xs)/n2 );
 	std::complex <double> C( (1-cos(2*azc))/12 , sin(2*azc)/12 );
@@ -1062,7 +1057,7 @@ void XAlgoGeod::ConstLambSec(double a,double e2,double phit,double k0,
 						 double epsilon_phi)
 {
 	double w,m,dm,lambda0,x0,y0,lambdac,xs,ys,phia,phib;
-	register int i;
+	int i;
 	
 	x0 = y0 = lambda0=0;
 	CoefProjLambTan(a,e2,lambda0,phit,k0,x0,y0,&lambdac,n,c,&xs,&ys);

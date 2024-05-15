@@ -83,16 +83,16 @@ void DtmViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, i
 	switch (columnId) {
 	case Column::Visibility:
 		if (dtmClass->Visible())
-			icone = getImageFromAssets("View.png");
+			icone = juce::ImageCache::getFromMemory(BinaryData::View_png, BinaryData::View_pngSize);
 		else
-			icone = getImageFromAssets("NoView.png");
+			icone = juce::ImageCache::getFromMemory(BinaryData::NoView_png, BinaryData::NoView_pngSize);
 		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
 		break;
 	case Column::Selectable:
 		if (dtmClass->Selectable())
-			icone = getImageFromAssets("Selectable.png");
+			icone = juce::ImageCache::getFromMemory(BinaryData::Selectable_png, BinaryData::Selectable_pngSize);
 		else
-			icone = getImageFromAssets("NoSelectable.png");
+			icone = juce::ImageCache::getFromMemory(BinaryData::NoSelectable_png, BinaryData::NoSelectable_pngSize);
 		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
 		break;
 	case Column::Name:
@@ -105,7 +105,7 @@ void DtmViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, i
 		g.drawText(juce::String(dtmClass->Zmax()), 0, 0, width, height, juce::Justification::centred);
 		break;
 	case Column::Options:// Options
-		icone = getImageFromAssets("Options.png");
+		icone = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
 		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
 		break;
 	}
@@ -247,7 +247,7 @@ void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, in
 		break;
 	case Column::Options:// Options
 		if (rowNumber == 0) {
-			icone = getImageFromAssets("Options.png");
+			icone = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
 			g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
 		}
 		break;

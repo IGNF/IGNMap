@@ -543,7 +543,7 @@ void OGLWidget::UpdateBase()
   if (m_Base == nullptr)
     return;
   const juce::ScopedLock lock(m_Mutex);
-  openGLContext.setContinuousRepainting(false);
+  //openGLContext.setContinuousRepainting(false);
   FindZminLas();
   for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
     XGeoClass* C = m_Base->Class(i);
@@ -561,7 +561,7 @@ void OGLWidget::UpdateBase()
     MoveZ((float)m_dDeltaZ);
   m_dDeltaZ = 0.;
   m_bNeedUpdate = false;
-  openGLContext.setContinuousRepainting(true);
+  //openGLContext.setContinuousRepainting(true);
   openGLContext.triggerRepaint();
 }
 
@@ -1033,7 +1033,7 @@ void OGLWidget::ReinitDtm()
 void OGLWidget::MoveZ(float dZ)
 {
   const juce::ScopedLock lock(m_Mutex);
-  openGLContext.setContinuousRepainting(false);
+  //openGLContext.setContinuousRepainting(false);
   using namespace ::juce::gl;
   m_dOffsetZ += dZ;
   // Points LAS
@@ -1078,7 +1078,7 @@ void OGLWidget::MoveZ(float dZ)
   glUnmapBuffer(GL_ARRAY_BUFFER);
 
   m_bNeedUpdate = false;
-  openGLContext.setContinuousRepainting(true);
+  //openGLContext.setContinuousRepainting(true);
   openGLContext.triggerRepaint();
 }
 

@@ -685,6 +685,7 @@ bool MapThread::DrawFileRaster(GeoFileImage* image)
 	}
 	juce::Image tmpImage(format, wtmp, htmp, true);
 	juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
+	format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
 
 	if (factor == 1)
 		image->GetArea(U0, V0, win, hin, bitmap.data);
