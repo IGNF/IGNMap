@@ -36,7 +36,7 @@ std::string XGeoAttribut::Type2String(eType type) const
 XGeoAttribut::eType XGeoAttribut::String2Type(const char* type) const
 {
 	std::string s = type;
-	std::transform(s.begin(), s.end(), s.begin(), tolower);
+	std::transform(s.begin(), s.end(), s.begin(), [](char c) {return static_cast<char>(std::tolower(c)); });
 	if (s == "bool") return Bool;
 	if (s == "int16") return Int16;
 	if (s == "int32") return Int32;

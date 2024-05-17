@@ -25,7 +25,8 @@ std::string XGeoPoint2D::Name()
   if (!ReadAttributes(V))
     return "";
   for (uint32_t i = 0; i < V.size(); i+=2) {
-    std::transform(V[i].begin(), V[i].end(), V[i].begin(), tolower);
+    //std::transform(V[i].begin(), V[i].end(), V[i].begin(), tolower);
+    std::transform(V[i].begin(), V[i].end(), V[i].begin(), [](char c) {return static_cast<char>(std::tolower(c));});
     if (V[i] == "toponyme")
       return V[i+1];
     if (V[i] == "nom")
@@ -45,7 +46,7 @@ uint16_t XGeoPoint2D::Importance()
 	if (imp.size() < 1)
 		return 1;
 	uint16_t importance;
-	sscanf(imp.c_str(), "%hu", &importance);
+	std::ignore = sscanf(imp.c_str(), "%hu", &importance);
 	return importance;
 }
 

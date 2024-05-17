@@ -219,7 +219,8 @@ XGeoVector* XGeoBase::Find(const char* classname, const char* att_name, const ch
 		if (C->NbVector() < 1)
 			continue;
 		name = C->Name();
-		std::transform(name.begin(), name.end(), name.begin(), tolower);
+		//std::transform(name.begin(), name.end(), name.begin(), tolower);
+		std::transform(name.begin(), name.end(), name.begin(), [](char c) {return static_cast<char>(std::tolower(c)); });
 		if (name != classname) continue;
 
 		// L'attribut existe-t-il dans le schema ?

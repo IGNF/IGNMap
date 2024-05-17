@@ -1222,6 +1222,7 @@ bool MainComponent::ExportLas()
 //==============================================================================
 void MainComponent::Translate()
 {
+	/*
 	juce::String filename = AppUtil::OpenFile();
 	if (filename.isEmpty())
 		return;
@@ -1229,6 +1230,18 @@ void MainComponent::Translate()
 	if (!file.exists())
 		return;
 	juce::LocalisedStrings::setCurrentMappings(new juce::LocalisedStrings(file, true));
+	*/
+	juce::LocalisedStrings* actualLoc = juce::LocalisedStrings::getCurrentMappings();
+	if (actualLoc != nullptr)
+		juce::LocalisedStrings::setCurrentMappings(nullptr);
+	else {
+		int size;
+		const char* data = BinaryData::getNamedResource("Translation_fr_txt", size);
+		if (data == nullptr)
+			return;
+		juce::String fileContents = juce::String::createStringFromData(data, size);
+		juce::LocalisedStrings::setCurrentMappings(new juce::LocalisedStrings(fileContents, true));
+	}
 
 	m_VectorViewer.get()->Translate();
 	m_ImageViewer.get()->Translate();
@@ -1243,8 +1256,8 @@ void MainComponent::Translate()
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Selection")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Image Options")), true);
-	m_Panel.get()->repaint();
-	repaint();
+	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)	// Necessaire pour rafraichir les titres des panneaux
+		m_Panel.get()->expandPanelFully(m_Panel.get()->getPanel(i), false);
 }
 
 //==============================================================================

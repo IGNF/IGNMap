@@ -25,7 +25,7 @@ bool XGeoFDtm::OpenDtm(const char* filename, const char* tmpname)
 {
   XPath P;
   std::string ext = P.Ext(filename);
-  std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+  std::transform(ext.begin(), ext.end(), ext.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   bool flag = false;
   m_bTmpFile = false;
   if (ext == ".asc")
@@ -358,23 +358,23 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
   bool flag_center = false;
 
   in.getline(buf, 1024);  // Nombre de colonnes
-  sscanf(buf, "%s %u", token, &w);
+  std::ignore = sscanf(buf, "%s %u", token, &w);
   keyword = token;
-  std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+  std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   if (keyword != "ncols")
     return false;
 
   in.getline(buf, 1024);  // Nombre de lignes
-  sscanf(buf, "%s %u", token, &h);
+  std::ignore = sscanf(buf, "%s %u", token, &h);
   keyword = token;
-  std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+  std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   if (keyword != "nrows")
     return false;
 
   in.getline(buf, 1024);  // Origine X
-  sscanf(buf, "%s %lf", token, &x);
+  std::ignore = sscanf(buf, "%s %lf", token, &x);
   keyword = token;
-  std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+  std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   if (keyword != "xllcorner") {
     if (keyword != "xllcenter")
       return false;
@@ -382,27 +382,27 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
   }
 
   in.getline(buf, 1024);  // Origine Y
-  sscanf(buf, "%s %lf", token, &y);
+  std::ignore = sscanf(buf, "%s %lf", token, &y);
   keyword = token;
-  std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+  std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   if (keyword != "yllcorner") {
     if ( (!flag_center) || (keyword != "yllcenter") )
       return false;
   }
 
   in.getline(buf, 1024);  // GSD
-  sscanf(buf, "%s %lf", token, &step);
+  std::ignore = sscanf(buf, "%s %lf", token, &step);
   keyword = token;
-  std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+  std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
   if (keyword != "cellsize")
     return false;
 
   char c = in.peek();
   if ((c == 'n')||(c == 'N')) {
     in.getline(buf, 1024);  // NODATA
-    sscanf(buf, "%s %lf", token, &no_data);
+    std::ignore = sscanf(buf, "%s %lf", token, &no_data);
     keyword = token;
-    std::transform(keyword.begin(), keyword.end(), keyword.begin(), tolower);
+    std::transform(keyword.begin(), keyword.end(), keyword.begin(), [](char c) {return static_cast<char>(std::tolower(c));});
     if (keyword != "nodata_value")
       return false;
   } else
@@ -435,7 +435,7 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
           in.getline(buf, 1024, ' ');
       } else
         in.getline(buf, 1024);
-      sscanf(buf,"%f", ptr);
+      std::ignore = sscanf(buf,"%f", ptr);
       if (*ptr > no_data) {
         zmax = XMax(zmax, *ptr);
         zmin = XMin(zmin, *ptr);
@@ -503,30 +503,30 @@ bool XGeoFDtm::ImportDis(std::string file_asc, std::string file_bin)
 	token = buf;
 
 	strncpy(data, &buf[160], 15); data[15] = 0;
-	sscanf(data, "%lf", &x);
+  std::ignore = sscanf(data, "%lf", &x);
 	strncpy(data, &buf[175], 15); data[15] = 0;
-	sscanf(data, "%lf", &y);
+  std::ignore = sscanf(data, "%lf", &y);
 
 	strncpy(data, &buf[280], 10); data[10] = 0;
-	sscanf(data, "%lf", &dx);
+  std::ignore = sscanf(data, "%lf", &dx);
 	strncpy(data, &buf[290], 10); data[10] = 0;
-	sscanf(data, "%lf", &dy);
+  std::ignore = sscanf(data, "%lf", &dy);
 	if (dx != dy)
 		return false;
 	step = dx;
 
 	strncpy(data, &buf[320], 10); data[10] = 0;
-	sscanf(data, "%u", &w);
+  std::ignore = sscanf(data, "%u", &w);
 	strncpy(data, &buf[330], 10); data[10] = 0;
-	sscanf(data, "%u", &h);
+  std::ignore = sscanf(data, "%u", &h);
 
 	strncpy(data, &buf[380], 10); data[10] = 0;
-	sscanf(data, "%lf", &zmin);
+  std::ignore = sscanf(data, "%lf", &zmin);
 	strncpy(data, &buf[390], 10); data[10] = 0;
-	sscanf(data, "%lf", &zmax);
+  std::ignore = sscanf(data, "%lf", &zmax);
 
 	strncpy(data, &buf[410], 5); data[5] = 0;
-	sscanf(data, "%d", &nb_car);
+  std::ignore = sscanf(data, "%d", &nb_car);
 
 	while(in.peek() != '\n') {
 		in.ignore();
@@ -544,7 +544,7 @@ bool XGeoFDtm::ImportDis(std::string file_asc, std::string file_bin)
 		ptr = line; 
 		for (uint32_t j = 0; j < w; j++) {
 			in.get(data, nb_car);
-			sscanf(data, "%f", ptr);
+      std::ignore = sscanf(data, "%f", ptr);
 			ptr++;
 		}
 		out.write((char*)line, w * sizeof(float));

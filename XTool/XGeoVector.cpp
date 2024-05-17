@@ -145,7 +145,7 @@ std::string XGeoVector::FindAttribute(std::string att_name, bool no_case)
 		return "";
 	for (uint32_t i = 0; i < V.size(); i+=2) {
 		if (no_case)
-			std::transform(V[i].begin(), V[i].end(), V[i].begin(), tolower);
+			std::transform(V[i].begin(), V[i].end(), V[i].begin(), [](char c) {return static_cast<char>(std::tolower(c));});
 		if (V[i] == att_name)
 			return V[i+1];
 	}
@@ -162,7 +162,7 @@ bool XGeoVector::UpdateAttribute(std::string att_name, std::string value, bool n
 		return false;
 	for (uint32_t i = 0; i < V.size(); i+=2) {
 		if (no_case)
-			std::transform(V[i].begin(), V[i].end(), V[i].begin(), tolower);
+			std::transform(V[i].begin(), V[i].end(), V[i].begin(), [](char c) {return static_cast<char>(std::tolower(c));});
 		if (V[i] == att_name) {
 			V[i+1] = value;
 			WriteAttributes(V);

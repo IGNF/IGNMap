@@ -9,6 +9,7 @@
 
 #include "XTime.h"
 #include <cmath>
+#include <cstring>
 #include "../XTool/XBase.h"
 
 //-----------------------------------------------------------------------------
