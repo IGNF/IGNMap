@@ -70,6 +70,8 @@ countries: fr be mc ch lu
 "Double-click for copying"="Double-cliquer pour copier"
 "Layer Center"="Centre de la couche"
 "Layer Frame"="Cadre de la couche"
+"Layer GSD"="Resolution de la couche"
+"Export Class"="Export de la classe"
 "Remove"="Supprimer"
 "New Window"="Nouvelle fenêtre"
 "RGB"="RVB"

@@ -12,6 +12,7 @@
 #include "ImageLayersViewer.h"
 #include "Utilities.h"
 #include "../../XTool/XGeoClass.h"
+#include "../../XTool/XGeoVector.h"
 
 //==============================================================================
 // LayerViewerComponent : constructeur
@@ -177,12 +178,17 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 			XFrame F = geoLayer->Frame();
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
+		std::function< void() > LayerGsd = [=]() { // Zoom a la resolution native de la couche
+			XGeoVector* V = geoLayer->Vector((uint32_t)0);
+			if (V != nullptr)
+				sendActionMessage("ZoomGsd:" + juce::String(V->Resolution(), 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveImageClass"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("Layer GSD"), LayerGsd);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());

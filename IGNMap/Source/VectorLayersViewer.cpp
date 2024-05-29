@@ -176,7 +176,7 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 		juce::CallOutBox::launchAsynchronously(std::move(widthSelector), bounds, nullptr);
 		return;
 	}
-
+	
 	// Options
 	if (columnId == Column::Options) { // Creation d'un popup menu
 

@@ -235,7 +235,6 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addSubMenu(juce::translate("Panels"), PanelSubMenu);
 		menu.addSeparator();
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuZoomTotal);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuZoomLevel);
 		juce::PopupMenu ScaleSubMenu;
 		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale1k);
 		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale10k);
@@ -277,7 +276,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
 		CommandIDs::menuExportImage, CommandIDs::menuExportLas,
-		CommandIDs::menuZoomTotal, CommandIDs::menuZoomLevel,
+		CommandIDs::menuZoomTotal,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
 		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions,
@@ -374,9 +373,6 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuZoomTotal:
 		result.setInfo(juce::translate("Zoom total"), juce::translate("Zoom total"), "Menu", 0);
-		break;
-	case CommandIDs::menuZoomLevel:
-		result.setInfo(juce::translate("Zoom level"), juce::translate("Zoom level"), "Menu", 0);
 		break;
 	case CommandIDs::menuScale1k:
 		result.setInfo(juce::translate("1 : 1000"), juce::translate("1 : 1000"), "Menu", 0);
@@ -536,9 +532,6 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuZoomTotal:
 		m_MapView.get()->ZoomWorld();
 		break;
-	case CommandIDs::menuZoomLevel:
-		m_MapView.get()->ZoomLevel();
-		break;
 	case CommandIDs::menuScale1k:
 		m_MapView.get()->ZoomScale(1000);
 		break;
@@ -690,6 +683,11 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		double X = T[1].getDoubleValue();
 		double Y = T[2].getDoubleValue();
 		m_MapView.get()->CenterView(X, Y);
+	}
+	if (T[0] == "ZoomGsd") {
+		if (T.size() < 1)
+			return;
+		m_MapView.get()->ZoomGsd(T[1].getDoubleValue());
 	}
 	if (T[0] == "UpdateGroundPos") {
 		if (T.size() < 3)

@@ -374,7 +374,6 @@ bool MapThread::DrawCentroide(XGeoVector* G)
 		XPt2D P = G->Centroide();
 		float X = (float)((P.X - m_dX0) / m_dGsd);
 		float Y = (float)((m_dY0 - P.Y) / m_dGsd);
-		float d = 3.f;
 		m_Path.startNewSubPath(X, Y);
 		m_Path.addStar(juce::Point<float>(X, Y), 4, 5.f, 10.f);
 		return true;
@@ -550,6 +549,10 @@ void MapThread::DrawSelection()
 			}
 			else {
 				DrawGeometry(V);
+				if (V->HasCentroide()) {
+					g.setColour(juce::Colour(V->Repres()->Color()));
+					g.strokePath(m_Path, juce::PathStrokeType(V->Repres()->Size(), juce::PathStrokeType::beveled));
+				}
 				juce::Path::Iterator iter(m_Path);
 				int numPoint = -1;
 				if (!m_bFill)
