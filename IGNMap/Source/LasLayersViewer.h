@@ -20,7 +20,7 @@
 //==============================================================================
 class LasViewerModel : public juce::TableListBoxModel,
 	public juce::ChangeListener,
-	public juce::ActionBroadcaster {
+	public juce::ActionBroadcaster, public juce::ActionListener {
 public:
 	typedef enum { Visibility = 1, Selectable = 2, Name = 3, NbElem = 4, Zmin = 5, Zmax = 6, Options = 7 } Column;
 	LasViewerModel() { m_Base = nullptr; m_ActiveRow = m_ActiveColumn = -1;}
@@ -33,6 +33,8 @@ public:
 	juce::var getDragSourceDescription(const juce::SparseSet<int>& selectedRows) override;
 
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+	// Gestion des actions
+	void actionListenerCallback(const juce::String& message) override;
 
 	void SetBase(XGeoBase* base) { m_Base = base; }
 	XGeoClass* FindLasClass(int index);

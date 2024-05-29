@@ -248,6 +248,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/thread_341c282f.o \
   $(JUCE_OBJDIR)/AffineImage_f63fb19d.o \
   $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o \
+  $(JUCE_OBJDIR)/ClassViewer_44f830b.o \
   $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
   $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
   $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
@@ -1248,6 +1249,11 @@ $(JUCE_OBJDIR)/AffineImage_f63fb19d.o: ../../Source/AffineImage.cpp
 $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o: ../../Source/AppUtil.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AppUtil.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ClassViewer_44f830b.o: ../../Source/ClassViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ClassViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o: ../../Source/DtmLayersViewer.cpp

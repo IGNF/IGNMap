@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "LasLayersViewer.h"
+#include "ClassViewer.h"
 #include "Utilities.h"
 #include "AppUtil.h"
 #include "LasShader.h"
@@ -151,11 +152,16 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			sendActionMessage("ComputeDtm"); };
 		std::function< void() > ComputeStat = [=]() { // Statistiques
 			sendActionMessage("ComputeStat"); };
+		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
+			ClassViewer* viewer = new ClassViewer(lasClass->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, lasClass, this);
+			viewer->setVisible(true);
+			};
 
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute DTM"), ComputeDtm);
 		menu.addItem(juce::translate("Statistics"), ComputeStat);
@@ -204,6 +210,17 @@ void LasViewerModel::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 	//if (m_ActiveRow >= m_Base->GetDtmLayerCount())
 	//	return;
 	//GeoBase::RasterLayer* geoLayer = m_Base->GetDtmLayer(m_ActiveRow);
+}
+
+//==============================================================================
+// Gestion des actions
+//==============================================================================
+void LasViewerModel::actionListenerCallback(const juce::String& message)
+{
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateClass");
+		return;
+	}
 }
 
 //==============================================================================
@@ -500,11 +517,16 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableLas.repaint();
 		return;
 	}
-	if (message == "UpdateLas") {
+	if (message == "UpdateLasOptions") {
+		sendActionMessage("UpdateLas");
 		repaint();
 		return;
 	}
 	if (message == "UpdateLasClassificationColor") {
+		sendActionMessage("UpdateLas");
+		return;
+	}
+	if (message == "UpdateClass") {
 		sendActionMessage("UpdateLas");
 		return;
 	}
@@ -573,7 +595,7 @@ void LasLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 	if (comboBoxThatHasChanged == &m_Mode) {
 		LasShader shader;
 		shader.Mode((LasShader::ShaderMode)(m_Mode.getSelectedId()));
-		m_ModelLas.sendActionMessage("UpdateLas");
+		m_ModelLas.sendActionMessage("UpdateLasOptions");
 		bool ZRangeVisible = true;
 		if (LasShader::Mode() == LasShader::ShaderMode::Classification) 
 			ZRangeVisible = false;
@@ -603,7 +625,7 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 		UpdateAltiColors();
 	}
 
-	m_ModelLas.sendActionMessage("UpdateLas");
+	m_ModelLas.sendActionMessage("UpdateLasOptions");
 }
 
 //==============================================================================

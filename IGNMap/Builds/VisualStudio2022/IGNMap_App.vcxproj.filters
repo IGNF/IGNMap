@@ -841,6 +841,9 @@
     <ClCompile Include="..\..\Source\AppUtil.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ClassViewer.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\DtmLayersViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -2968,6 +2971,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AppUtil.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ClassViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DtmLayersViewer.h">

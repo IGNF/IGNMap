@@ -260,6 +260,8 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 			index++;
 			if (V == nullptr)
 				return;
+			if (!V->Visible())
+				continue;
 
 			m_bFill = false;
 			if (V->IsClosed())
@@ -605,6 +607,8 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 		if (threadShouldExit())
 			return false;
 		GeoImage* image = dynamic_cast<GeoImage*>(C->Vector(i));
+		if (!image->Visible())
+			continue;
 		if (!m_Frame.Intersect(image->Frame()))
 			continue;
 		GeoFileImage* fileImage = dynamic_cast<GeoFileImage*>(image);
@@ -753,6 +757,8 @@ bool MapThread::DrawDtmClass(XGeoClass* C)
 	bool flag = false;
 	for (uint32_t i = 0; i < C->NbVector(); i++) {
 		GeoDTM* dtm = (GeoDTM*)C->Vector(i);
+		if (!dtm->Visible())
+			continue;
 		if (m_Frame.Intersect(dtm->Frame()))
 			flag |= DrawDtm(dtm);
 		if (threadShouldExit())
@@ -829,6 +835,8 @@ bool MapThread::DrawLasClass(XGeoClass* C)
 	bool flag = false;
 	for (uint32_t i = 0; i < C->NbVector(); i++) {
 		GeoLAS* las = (GeoLAS*)C->Vector(i);
+		if (!las->Visible())
+			continue;
 		XFrame F = las->Frame();
 		if (!m_Frame.Intersect(F))
 			continue;

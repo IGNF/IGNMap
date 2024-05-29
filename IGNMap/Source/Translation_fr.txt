@@ -72,6 +72,7 @@ countries: fr be mc ch lu
 "Layer Frame"="Cadre de la couche"
 "Layer GSD"="Resolution de la couche"
 "Export Class"="Export de la classe"
+"View Objects"="Visualiser les objets"
 "Remove"="Supprimer"
 "New Window"="Nouvelle fenêtre"
 "RGB"="RVB"

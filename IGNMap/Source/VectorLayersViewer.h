@@ -16,15 +16,15 @@
 #include "../../XTool/XGeoClass.h"
 
 //==============================================================================
-// LayerViewerComponent : table pour montrer les proprietes des layers
+// VectorViewerModel : modele de table pour montrer les layers vectoriels
 //==============================================================================
-class LayerViewerModel : public juce::TableListBoxModel,
+class VectorViewerModel : public juce::TableListBoxModel,
 	public juce::ChangeListener,
 	public juce::Slider::Listener,
-	public juce::ActionBroadcaster {
+	public juce::ActionBroadcaster, public juce::ActionListener {
 public:
 	typedef enum { Visibility = 1, Selectable = 2, Name = 3, PenWidth = 4, PenColour = 5, FillColour = 6, Options = 7 } Column;
-	LayerViewerModel();
+	VectorViewerModel();
 
 	int getNumRows() override;
 	void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
@@ -35,6 +35,8 @@ public:
 
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 	void sliderValueChanged(juce::Slider* slider) override;
+	// Gestion des actions
+	void actionListenerCallback(const juce::String& message) override;
 
 	void SetBase(XGeoBase* base) { m_Base = base; }
 	XGeoClass* FindVectorClass(int index);
@@ -76,7 +78,7 @@ public:
 private:
 	XGeoBase* m_Base;
 	juce::TableListBox	m_Table;
-	LayerViewerModel		m_Model;
+	VectorViewerModel		m_Model;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VectorLayersViewer)
 };

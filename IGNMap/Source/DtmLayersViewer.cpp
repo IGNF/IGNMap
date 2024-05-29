@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "DtmLayersViewer.h"
+#include "ClassViewer.h"
 #include "Utilities.h"
 #include "DtmShader.h"
 #include "ThreadClassProcessor.h"
@@ -152,10 +153,15 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			sendActionMessage("RemoveDtmClass"); };
 		std::function< void() > ComputeDeltaZ = [=]() { // Calcul des deltaZ importants
 			sendActionMessage("ComputeDeltaZ"); };
+		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
+			ClassViewer* viewer = new ClassViewer(dtmClass->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, dtmClass);
+			viewer->setVisible(true);
+			};
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute Delta Z"), ComputeDeltaZ);
 		menu.addSeparator();

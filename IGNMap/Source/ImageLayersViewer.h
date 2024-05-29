@@ -21,7 +21,7 @@
 class ImageViewerModel : public juce::TableListBoxModel,
 	public juce::ChangeListener,
 	public juce::Slider::Listener,
-	public juce::ActionBroadcaster {
+	public juce::ActionBroadcaster, public juce::ActionListener {
 public:
 	typedef enum { Visibility = 1, Selectable = 2, Name = 3, Opacity = 4, FillColour = 5, Options = 6 } Column;
 	ImageViewerModel();
@@ -35,6 +35,8 @@ public:
 
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 	void sliderValueChanged(juce::Slider* slider) override;
+	// Gestion des actions
+	void actionListenerCallback(const juce::String& message) override;
 
 	void SetBase(XGeoBase* base) { m_Base = base; }
 	XGeoClass* FindRasterClass(int index);

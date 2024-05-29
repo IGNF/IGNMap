@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "ImageLayersViewer.h"
+#include "ClassViewer.h"
 #include "Utilities.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
@@ -184,11 +185,16 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 				sendActionMessage("ZoomGsd:" + juce::String(V->Resolution(), 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveImageClass"); };
+		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
+			ClassViewer* viewer = new ClassViewer(geoLayer->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, geoLayer, this);
+			viewer->setVisible(true);
+			};
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
 		menu.addItem(juce::translate("Layer GSD"), LayerGsd);
+		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -240,7 +246,7 @@ void ImageViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 			uint32_t color = cs->getCurrentColour().getARGB();
 			if (m_ActiveColumn == Column::FillColour)
 				geoLayer->Repres()->FillColor(color);
-			sendActionMessage("UpdateRaster");
+			sendActionMessage("UpdateFillOpacity");
 		}
 	}
 }
@@ -258,8 +264,19 @@ void ImageViewerModel::sliderValueChanged(juce::Slider* slider)
 	if (m_ActiveColumn == Column::Opacity) {
 		if (geoLayer->Repres()->Transparency() != (100 - (int)slider->getValue())) {
 			geoLayer->Repres()->Transparency((uint8_t)(100 - (int)slider->getValue()));
-			sendActionMessage("UpdateRaster");
+			sendActionMessage("UpdateFillOpacity");
 		}
+	}
+}
+
+//==============================================================================
+// Gestion des actions
+//==============================================================================
+void ImageViewerModel::actionListenerCallback(const juce::String& message)
+{
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateClass");
+		return;
 	}
 }
 
@@ -302,13 +319,17 @@ void ImageLayersViewer::Translate()
 //==============================================================================
 void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 {
-	if (message == "UpdateRaster") {
+	if (message == "UpdateFillOpacity") {
 		repaint();
 		return;
 	}
 	if (message == "NewWindow") {
 		m_Table.updateContent();
 		m_Table.repaint();
+		return;
+	}
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateRaster");
 		return;
 	}
 	

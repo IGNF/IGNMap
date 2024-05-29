@@ -297,6 +297,7 @@
 		F5FE92DDF65E01AEB1858B37 /* SelTreeViewer.cpp */ = {isa = PBXBuildFile; fileRef = 6A6ABCBE377E763574C3AC9E; };
 		F69F2279D8DD000683764296 /* mydefs.cpp */ = {isa = PBXBuildFile; fileRef = 7B6C577FAEA4BBBAD0A3B015; };
 		F7A7234D4EEDBD879B42ADF1 /* random_utils.c */ = {isa = PBXBuildFile; fileRef = 39FD591D4B3ED60EA39A91E6; };
+		F96D622D48FCFE7453D44231 /* ClassViewer.cpp */ = {isa = PBXBuildFile; fileRef = C02BFD57F98E1840BBB8FEB1; };
 		FACFDAD1465D95547ADDCCC6 /* deflate.c */ = {isa = PBXBuildFile; fileRef = FBBD6108DC29CFFA1C0B19EF; };
 		FAF5C1DBC45BAB3CAB9964E9 /* j2k.c */ = {isa = PBXBuildFile; fileRef = 745B3E510C299EBA8819E535; };
 		FBCF7CFB68F34DC7B422B3B7 /* t1.c */ = {isa = PBXBuildFile; fileRef = E72F6EC3E7099C8203CA238C; };
@@ -343,6 +344,7 @@
 		17612775D126E5CE84F27B49 /* thread_utils.h */ /* thread_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = thread_utils.h; path = "../../../libwebp-1.3.2/src/utils/thread_utils.h"; sourceTree = SOURCE_ROOT; };
 		17867F1839BB5602E9EFDBC9 /* XGeoLine.h */ /* XGeoLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XGeoLine.h; path = ../../../XTool/XGeoLine.h; sourceTree = SOURCE_ROOT; };
 		17C673E0C88491A3386E3D6E /* XJpegCodec.cpp */ /* XJpegCodec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XJpegCodec.cpp; path = ../../../XToolImage/XJpegCodec.cpp; sourceTree = SOURCE_ROOT; };
+		192B2E4D3B02E575C1ED7275 /* ClassViewer.h */ /* ClassViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ClassViewer.h; path = ../../Source/ClassViewer.h; sourceTree = SOURCE_ROOT; };
 		1973CD394ED56CA7A333FF31 /* XGeoRaster.h */ /* XGeoRaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XGeoRaster.h; path = ../../../XTool/XGeoRaster.h; sourceTree = SOURCE_ROOT; };
 		19AED2EF6119ECD08DC061FB /* yuv_neon.c */ /* yuv_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = yuv_neon.c; path = "../../../libwebp-1.3.2/src/dsp/yuv_neon.c"; sourceTree = SOURCE_ROOT; };
 		19C60BE91A3BA84DF937CD44 /* XShapefileRecord.cpp */ /* XShapefileRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XShapefileRecord.cpp; path = ../../../XToolVector/XShapefileRecord.cpp; sourceTree = SOURCE_ROOT; };
@@ -689,6 +691,7 @@
 		BED218E8F8D206A0267E543A /* XPath.h */ /* XPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XPath.h; path = ../../../XTool/XPath.h; sourceTree = SOURCE_ROOT; };
 		BF3E39FF1F556959691707E9 /* frame_dec.c */ /* frame_dec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = frame_dec.c; path = "../../../libwebp-1.3.2/src/dec/frame_dec.c"; sourceTree = SOURCE_ROOT; };
 		C0072B26F4A2FFDD7FB84293 /* integercompressor.hpp */ /* integercompressor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = integercompressor.hpp; path = ../../../LASzip/src/integercompressor.hpp; sourceTree = SOURCE_ROOT; };
+		C02BFD57F98E1840BBB8FEB1 /* ClassViewer.cpp */ /* ClassViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ClassViewer.cpp; path = ../../Source/ClassViewer.cpp; sourceTree = SOURCE_ROOT; };
 		C0710D00AEADE5B2EF9BC485 /* XZlibCodec.h */ /* XZlibCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XZlibCodec.h; path = ../../../XToolImage/XZlibCodec.h; sourceTree = SOURCE_ROOT; };
 		C0E3B3687D03713E09068145 /* laswriteitemcompressed_v3.cpp */ /* laswriteitemcompressed_v3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = laswriteitemcompressed_v3.cpp; path = ../../../LASzip/src/laswriteitemcompressed_v3.cpp; sourceTree = SOURCE_ROOT; };
 		C11196DAFB84EEA13E1B41A3 /* XGeoMap.h */ /* XGeoMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XGeoMap.h; path = ../../../XTool/XGeoMap.h; sourceTree = SOURCE_ROOT; };
@@ -1010,6 +1013,8 @@
 				7E18B2FB615A0C5083034905,
 				B868A2A5F653F4027201EB94,
 				2B42CA134BA212F25D2DB3B9,
+				C02BFD57F98E1840BBB8FEB1,
+				192B2E4D3B02E575C1ED7275,
 				13EC4B48A636BD4F26A18B2C,
 				852500E6B2B7FD16B7E9A36D,
 				3587A6D277789A7EF88A6CB6,
@@ -1892,6 +1897,7 @@
 				E03C1F5198B637392DCCDB93,
 				C5D61D5E8A99D8B788D6F179,
 				2C7429A83CB372132B18C91B,
+				F96D622D48FCFE7453D44231,
 				275EDCBCC64C619638120C3B,
 				D4DD1A0F49F29B4108417899,
 				8296B3EA69D2CE0E1750D874,

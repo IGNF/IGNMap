@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "VectorLayersViewer.h"
+#include "ClassViewer.h"
 #include "Utilities.h"
 #include "ThreadClassProcessor.h"
 #include "../../XTool/XGeoClass.h"
@@ -18,7 +19,7 @@
 //==============================================================================
 // LayerViewerComponent : constructeur
 //==============================================================================
-LayerViewerModel::LayerViewerModel()
+VectorViewerModel::VectorViewerModel()
 {
 	m_Base = nullptr;
 	m_ActiveRow = m_ActiveColumn = -1;
@@ -27,7 +28,7 @@ LayerViewerModel::LayerViewerModel()
 //==============================================================================
 // FindDtmClass : renvoie la ieme classe DTM de la base ou nullptr sinon
 //==============================================================================
-XGeoClass* LayerViewerModel::FindVectorClass(int index)
+XGeoClass* VectorViewerModel::FindVectorClass(int index)
 {
 	if (m_Base == nullptr)
 		return nullptr;
@@ -46,7 +47,7 @@ XGeoClass* LayerViewerModel::FindVectorClass(int index)
 //==============================================================================
 // Nombre de lignes de la table
 //==============================================================================
-int LayerViewerModel::getNumRows()
+int VectorViewerModel::getNumRows()
 {
 	if (m_Base == nullptr)
 		return 0;
@@ -62,7 +63,7 @@ int LayerViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void LayerViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+void VectorViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	g.setColour(juce::Colours::lightblue);
 	if (rowIsSelected)
@@ -73,7 +74,7 @@ void LayerViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, 
 //==============================================================================
 // Dessin des cellules
 //==============================================================================
-void LayerViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+void VectorViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
 	XGeoClass* geoLayer = FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -118,7 +119,7 @@ void LayerViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 //==============================================================================
 // Clic dans une cellule
 //==============================================================================
-void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
 	XGeoClass* geoLayer = FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -191,10 +192,15 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 			sendActionMessage("RemoveVectorClass"); };
 		std::function< void() > ExportClass = [=]() { // Export de la classe
 			sendActionMessage("ExportClass"); };
+		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
+			ClassViewer* viewer = new ClassViewer(geoLayer->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, geoLayer, this);
+			viewer->setVisible(true);
+			};
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Export Class"), ExportClass);
 		menu.addSeparator();
@@ -206,7 +212,7 @@ void LayerViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void LayerViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
+void VectorViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* geoLayer = FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -225,7 +231,7 @@ void LayerViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce
 //==============================================================================
 // Drag&Drop des lignes pour changer l'ordre des layers
 //==============================================================================
-juce::var LayerViewerModel::getDragSourceDescription(const juce::SparseSet<int>& selectedRows)
+juce::var VectorViewerModel::getDragSourceDescription(const juce::SparseSet<int>& selectedRows)
 {
 	juce::StringArray rows;
 	for (int i = 0; i < selectedRows.size(); i++)
@@ -236,7 +242,7 @@ juce::var LayerViewerModel::getDragSourceDescription(const juce::SparseSet<int>&
 //==============================================================================
 // LayerViewer : constructeur
 //==============================================================================
-void LayerViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
+void VectorViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
 	XGeoClass* geoLayer = FindVectorClass(m_ActiveRow);
 	if (geoLayer == nullptr)
@@ -250,7 +256,7 @@ void LayerViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 				geoLayer->Repres()->Color(color);
 			if (m_ActiveColumn == Column::FillColour)
 				geoLayer->Repres()->FillColor(color);
-			sendActionMessage("UpdateVector");
+			sendActionMessage("UpdateVectorRepres");
 		}
 	}
 }
@@ -258,7 +264,7 @@ void LayerViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 //==============================================================================
 // Changement de valeur des sliders
 //==============================================================================
-void LayerViewerModel::sliderValueChanged(juce::Slider* slider)
+void VectorViewerModel::sliderValueChanged(juce::Slider* slider)
 {
 	XGeoClass* geoLayer = FindVectorClass(m_ActiveRow);
 	if (geoLayer == nullptr)
@@ -268,8 +274,19 @@ void LayerViewerModel::sliderValueChanged(juce::Slider* slider)
 	if (m_ActiveColumn == Column::PenWidth) {
 		if (geoLayer->Repres()->Size() != (int)slider->getValue()) {
 			geoLayer->Repres()->Size((uint8_t)slider->getValue());
-			sendActionMessage("UpdateVector");
+			sendActionMessage("UpdateVectorRepres");
 		}
+	}
+}
+
+//==============================================================================
+// Gestion des actions
+//==============================================================================
+void VectorViewerModel::actionListenerCallback(const juce::String& message)
+{
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateVector");
+		return;
 	}
 }
 
@@ -286,13 +303,13 @@ VectorLayersViewer::VectorLayersViewer()
 	m_Table.setOutlineThickness(1);
 	m_Table.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
-	m_Table.getHeader().addColumn(juce::translate(" "), LayerViewerModel::Column::Visibility, 25);
-	m_Table.getHeader().addColumn(juce::translate(" "), LayerViewerModel::Column::Selectable, 25);
-	m_Table.getHeader().addColumn(juce::translate("Name"), LayerViewerModel::Column::Name, 200);
-	m_Table.getHeader().addColumn(juce::translate("Width"), LayerViewerModel::Column::PenWidth, 50);
-	m_Table.getHeader().addColumn(juce::translate("Pen"), LayerViewerModel::Column::PenColour, 50);
-	m_Table.getHeader().addColumn(juce::translate("Brush"), LayerViewerModel::Column::FillColour, 50);
-	m_Table.getHeader().addColumn(juce::translate(" "), LayerViewerModel::Column::Options, 25);
+	m_Table.getHeader().addColumn(juce::translate(" "), VectorViewerModel::Column::Visibility, 25);
+	m_Table.getHeader().addColumn(juce::translate(" "), VectorViewerModel::Column::Selectable, 25);
+	m_Table.getHeader().addColumn(juce::translate("Name"), VectorViewerModel::Column::Name, 200);
+	m_Table.getHeader().addColumn(juce::translate("Width"), VectorViewerModel::Column::PenWidth, 50);
+	m_Table.getHeader().addColumn(juce::translate("Pen"), VectorViewerModel::Column::PenColour, 50);
+	m_Table.getHeader().addColumn(juce::translate("Brush"), VectorViewerModel::Column::FillColour, 50);
+	m_Table.getHeader().addColumn(juce::translate(" "), VectorViewerModel::Column::Options, 25);
 	m_Table.setSize(377, 200);
 	m_Table.setModel(&m_Model);
 	addAndMakeVisible(m_Table);
@@ -303,10 +320,10 @@ VectorLayersViewer::VectorLayersViewer()
 //==============================================================================
 void VectorLayersViewer::Translate()
 {
-	m_Table.getHeader().setColumnName(LayerViewerModel::Column::Name, juce::translate("Name"));
-	m_Table.getHeader().setColumnName(LayerViewerModel::Column::PenWidth, juce::translate("Width"));
-	m_Table.getHeader().setColumnName(LayerViewerModel::Column::PenColour, juce::translate("Pen"));
-	m_Table.getHeader().setColumnName(LayerViewerModel::Column::FillColour, juce::translate("Brush"));
+	m_Table.getHeader().setColumnName(VectorViewerModel::Column::Name, juce::translate("Name"));
+	m_Table.getHeader().setColumnName(VectorViewerModel::Column::PenWidth, juce::translate("Width"));
+	m_Table.getHeader().setColumnName(VectorViewerModel::Column::PenColour, juce::translate("Pen"));
+	m_Table.getHeader().setColumnName(VectorViewerModel::Column::FillColour, juce::translate("Brush"));
 }
 
 //==============================================================================
@@ -316,11 +333,12 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 {
 	if (message == "NewWindow") {
 		m_Table.updateContent();
-		m_Table.repaint();
+		
 		return;
 	}
-	if (message == "UpdateVector") {
-		repaint();
+	if (message == "UpdateVectorRepres") {
+		m_Table.repaint();
+		sendActionMessage("UpdateVector");
 		return;
 	}
 

@@ -3288,6 +3288,7 @@ static const unsigned char temp_binary_data_15[] =
 "\"Double-click for copying\"=\"Double-cliquer pour copier\"\r\n"
 "\"Layer Center\"=\"Centre de la couche\"\r\n"
 "\"Layer Frame\"=\"Cadre de la couche\"\r\n"
+"\"Layer GSD\"=\"Resolution de la couche\"\r\n"
 "\"Export Class\"=\"Export de la classe\"\r\n"
 "\"Remove\"=\"Supprimer\"\r\n"
 "\"New Window\"=\"Nouvelle fen\xc3\xaatre\"\r\n"
@@ -3333,7 +3334,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 3019; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 3058; return Translation_fr_txt;
         default: break;
     }
 

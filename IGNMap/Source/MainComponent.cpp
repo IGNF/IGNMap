@@ -80,15 +80,15 @@ MainComponent::MainComponent()
 	m_Panel.get()->addPanel(-1, m_ImageViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_DtmViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_LasViewer.get(), false);
-	m_Panel.get()->addPanel(-1, m_SelTreeViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_ImageOptionsViewer.get(), false);
+	m_Panel.get()->addPanel(-1, m_SelTreeViewer.get(), false);
 	
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(0), new juce::TextButton(juce::translate("Vector Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(1), new juce::TextButton(juce::translate("Image Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(2), new juce::TextButton(juce::translate("DTM Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Selection")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Image Options")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Image Options")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Selection")), true);
 
   // set up the layout and resizer bars..
   m_VerticalLayout.setItemLayout(0, -0.2, -1.0, -0.65);
@@ -1252,8 +1252,8 @@ void MainComponent::Translate()
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(1), new juce::TextButton(juce::translate("Image Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(2), new juce::TextButton(juce::translate("DTM Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Selection")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Image Options")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Image Options")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Selection")), true);
 	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)	// Necessaire pour rafraichir les titres des panneaux
 		m_Panel.get()->expandPanelFully(m_Panel.get()->getPanel(i), false);
 }

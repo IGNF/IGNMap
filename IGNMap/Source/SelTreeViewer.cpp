@@ -57,6 +57,8 @@ void SelTreeItem::paintItem(juce::Graphics& g, int width, int height)
     g.drawText(juce::String(m_Feature->ClassName()), 4, 0, width - 4, height, juce::Justification::centredLeft, true);
     return;
   }
+  if (m_AttName.isEmpty() && m_AttValue.isEmpty())
+    return;
   juce::String text = m_AttName;
   g.setColour(juce::Colours::coral);
   //g.drawText(text, 4, 0, width / 4 - 4, height, juce::Justification::centredLeft, true);
