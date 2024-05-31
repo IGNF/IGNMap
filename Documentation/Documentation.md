@@ -5,8 +5,9 @@ IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier uniqu
 IGNMap peut s’exécuter depuis une clef USB.
 
 ## Interface générale
-
+<div align="center">
 <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Interface.png">
+</div><br>
 
 L’interface d’IGNMap est composée :
 * d’une barre de menus
@@ -30,3 +31,24 @@ Les formats reconnus par IGNMap sont :
 De plus, IGNMap peut importer des flux WMTS ou TMS. Certains flux sont déjà préconfigurés, comme les flux OSM ou certains flux de la Géoplateforme.
 
 ## Visualiser les données
+Dans la vue principale, on peut être dans 3 modes :
+* le mode déplacement
+* le mode sélection
+* le mode zoom
+Quel que soit le mode, la molette de la souris permet de zoomer / dézoomer.
+
+### Le mode déplacement
+C’est le mode par défaut, accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Move.png"> de la barre d’outils.
+En faisant un click & drag dans la vue principale, on peut se déplacer.
+### Le mode sélection
+Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
+Un clic souris bouton gauche permet de sélectionner le ou les données se trouvant sous la souris.
+En faisant un click & drag, on peut sélectionner toutes les données se trouvant dans une zone rectangulaire.
+La sélection d’un objet permet de visualiser ses points de construction dans la vue principale et d’afficher ses attributs dans le panneau **Sélection** :
+<img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Selection.png">
+
+### Le mode zoom
+Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Zoom.png"> de la barre d’outils.
+Un clic souris bouton gauche permet de faire un zoom avant.
+Un clic souris bouton droit permet de faire un zoom arrière.
+En faisant un click & drag, on peut zoomer sur une zone rectangulaire donnée.
