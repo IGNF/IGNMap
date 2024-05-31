@@ -35,6 +35,8 @@ Les formats reconnus par IGNMap sont :
 
 De plus, IGNMap peut importer des flux WMTS ou TMS. Certains flux sont déjà préconfigurés, comme les flux OSM ou certains flux de la Géoplateforme.
 
+On peut aussi charger directement des fichiers de données en faisant un drag & drop du fichier vers la fenêtre d’IGNMap.
+
 ## Visualiser les données
 Dans la vue principale, on peut être dans 3 modes :
 * le mode déplacement
@@ -45,6 +47,11 @@ Quel que soit le mode, la molette de la souris permet de zoomer / dézoomer.
 ### Le mode déplacement
 C’est le mode par défaut, accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Move.png"> de la barre d’outils.
 En faisant un click & drag dans la vue principale, on peut se déplacer.
+
+Dans le mode déplacement, on peut accéder directement aux deux autres modes en utilisant des touches du clavier :
+* en maintenant la touche `Shift`, on passe en mode sélection (voir ci-dessous)
+* en maintenant la touche `Ctrl`, on passe en mode zoom (voir ci-dessous)
+
 ### Le mode sélection
 Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
 Un clic souris bouton gauche permet de sélectionner le ou les données se trouvant sous la souris.

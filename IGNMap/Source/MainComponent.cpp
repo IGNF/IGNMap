@@ -230,8 +230,8 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowImageLayers);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowDtmLayers);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowLasLayers);
-		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowSelection);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowImageOptions);
+		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowSelection);
 		menu.addSubMenu(juce::translate("Panels"), PanelSubMenu);
 		menu.addSeparator();
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuZoomTotal);
@@ -599,7 +599,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		juce::URL(XInternetMap::BingMapsUrl(m_MapView.get()->GetTarget(), m_MapView.get()->GetGsd())).launchInDefaultBrowser();
 		break;
 	case CommandIDs::menuHelp:
-		juce::URL("https://ignmap.ign.fr").launchInDefaultBrowser();
+		juce::URL("https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md").launchInDefaultBrowser();
 		break;
 	case CommandIDs::menuAbout:
 		AboutIGNMap();
