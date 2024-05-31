@@ -1,5 +1,10 @@
 # Documentation IGNMap v3
 
+* <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#installation-du-logiciel">Installation du logiciel</a>
+* <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#charger-des-donn%C3%A9es">Charger des données</a>
+* <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#visualiser-les-donn%C3%A9es">Visualiser les données</a>
+
+
 ## Installation du logiciel
 IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.
 IGNMap peut s’exécuter depuis une clef USB.
@@ -45,7 +50,9 @@ Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githu
 Un clic souris bouton gauche permet de sélectionner le ou les données se trouvant sous la souris.
 En faisant un click & drag, on peut sélectionner toutes les données se trouvant dans une zone rectangulaire.
 La sélection d’un objet permet de visualiser ses points de construction dans la vue principale et d’afficher ses attributs dans le panneau **Sélection** :
+<div align=center>
 <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Selection.png">
+</div><br>
 
 ### Le mode zoom
 Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Zoom.png"> de la barre d’outils.
