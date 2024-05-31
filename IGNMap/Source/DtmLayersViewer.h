@@ -19,8 +19,7 @@
 // DtmViewerModel : modele pour montrer les proprietes des MNT
 //==============================================================================
 class DtmViewerModel : public juce::TableListBoxModel,
-	public juce::ChangeListener,
-	public juce::ActionBroadcaster {
+	public juce::ActionBroadcaster, public juce::ActionListener {
 public:
 	typedef enum { Visibility = 1, Selectable = 2, Name = 3, Zmin = 4, Zmax = 5, Options = 6 } Column;
 	DtmViewerModel();
@@ -32,10 +31,10 @@ public:
 	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event) override;
 	juce::var getDragSourceDescription(const juce::SparseSet<int>& selectedRows) override;
 
-	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
-
 	void SetBase(XGeoBase* base) { m_Base = base; }
 	XGeoClass* FindDtmClass(int index);
+
+	void actionListenerCallback(const juce::String& message) override { sendActionMessage(message); }
 
 private:
 	XGeoBase* m_Base;
@@ -84,8 +83,6 @@ public:
 	virtual ~DtmLayersViewer() { m_Cache.deleteRecursively(); }
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_ModelDtm.SetBase(base); m_ModelRange.SetBase(base); m_TableDtm.updateContent(); }
-	void SetActionListener(juce::ActionListener* listener) 
-		{ addActionListener(listener); m_ModelDtm.addActionListener(listener); m_ModelRange.addActionListener(listener); }
 	void Translate();
 	void resized() override;
 	// Gestion des actions

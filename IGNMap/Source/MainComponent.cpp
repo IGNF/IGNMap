@@ -43,13 +43,13 @@ MainComponent::MainComponent()
 	m_VectorViewer.reset(new VectorLayersViewer);
 	addAndMakeVisible(m_VectorViewer.get());
 	m_VectorViewer.get()->SetBase(&m_GeoBase);
-	m_VectorViewer.get()->SetActionListener(this);
+	m_VectorViewer.get()->addActionListener(this);
 	addActionListener(m_VectorViewer.get());
 
 	m_ImageViewer.reset(new ImageLayersViewer);
 	addAndMakeVisible(m_ImageViewer.get());
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
-	m_ImageViewer.get()->SetActionListener(this);
+	m_ImageViewer.get()->addActionListener(this);
 	addActionListener(m_ImageViewer.get());
 
 	m_SelTreeViewer.reset(new SelTreeViewer);
@@ -64,12 +64,12 @@ MainComponent::MainComponent()
 	m_DtmViewer.reset(new DtmLayersViewer);
 	addAndMakeVisible(m_DtmViewer.get());
 	m_DtmViewer.get()->SetBase(&m_GeoBase);
-	m_DtmViewer.get()->SetActionListener(this);
+	m_DtmViewer.get()->addActionListener(this);
 
 	m_LasViewer.reset(new LasLayersViewer);
 	addAndMakeVisible(m_LasViewer.get());
 	m_LasViewer.get()->SetBase(&m_GeoBase);
-	m_LasViewer.get()->SetActionListener(this);
+	m_LasViewer.get()->addActionListener(this);
 
 	m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, juce::DocumentWindow::allButtons));
 	m_OGL3DViewer.get()->setVisible(false);
@@ -213,7 +213,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	else if (menuIndex == 1) // Edit
 	{
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
+		//menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuPreferences);
 	}
 	else if (menuIndex == 2) // Tools
@@ -248,6 +248,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	}
 	else if (menuIndex == 4) // Help
 	{
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuHelp);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuAbout);
 	}
 
@@ -286,7 +287,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailSCAN50Histo,
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
-		CommandIDs::menuGoogle, CommandIDs::menuBing, CommandIDs::menuAbout };
+		CommandIDs::menuGoogle, CommandIDs::menuBing, CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
 
@@ -437,6 +438,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuBing:
 		result.setInfo(juce::translate("Bing Maps"), juce::translate("Bing Maps"), "Menu", 0);
+		break;
+	case CommandIDs::menuHelp:
+		result.setInfo(juce::translate("Help"), juce::translate("Help"), "Menu", 0);
 		break;
 	case CommandIDs::menuAbout:
 		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
@@ -593,6 +597,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuBing:
 		juce::URL(XInternetMap::BingMapsUrl(m_MapView.get()->GetTarget(), m_MapView.get()->GetGsd())).launchInDefaultBrowser();
+		break;
+	case CommandIDs::menuHelp:
+		juce::URL("https://ignmap.ign.fr").launchInDefaultBrowser();
 		break;
 	case CommandIDs::menuAbout:
 		AboutIGNMap();
@@ -788,8 +795,8 @@ void MainComponent::NewWindow()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.0.4";
-	juce::String info = "07/03/2024";
+	juce::String version = "0.0.5";
+	juce::String info = "04/06/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);

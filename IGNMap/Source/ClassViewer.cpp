@@ -10,17 +10,33 @@
 //-----------------------------------------------------------------------------
 
 #include "ClassViewer.h"
+#include "../../XTool/XGeoBase.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
 
+ClassViewerMgr gClassViewerMgr;	// Le manager de toutes les fenetres ClassViewer
+
 //==============================================================================
-// renvoie la ieme vecteur de la classe ou nullptr sinon
+// Renvoie la ieme vecteur de la classe ou nullptr sinon
 //==============================================================================
 XGeoVector* ClassViewerModel::FindVector(int index)
 {
 	if (m_Class == nullptr)
 		return nullptr;
-	return m_Class->Vector(index);
+	if (index >= m_Proxy.size())
+		return nullptr;
+	return m_Proxy[index];
+}
+
+//==============================================================================
+// Fixe la classe
+//==============================================================================
+void ClassViewerModel::SetClass(XGeoClass* C)
+{ 
+	m_Class = C;
+	m_Proxy.clear();
+	for (uint32_t i = 0; i < m_Class->NbVector(); i++)
+		m_Proxy.push_back(m_Class->Vector(i));
 }
 
 //==============================================================================
@@ -30,7 +46,7 @@ int ClassViewerModel::getNumRows()
 {
 	if (m_Class == nullptr)
 		return 0;
-	return (int)m_Class->NbVector();
+	return (int)m_Proxy.size();
 }
 
 //==============================================================================
@@ -72,7 +88,7 @@ void ClassViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 		break;
 	default:
 		V->ReadAttributes(Att);
-		g.drawText(juce::String(Att[(columnId - 1) * 2 + 1]), 0, 0, width, height, juce::Justification::centredLeft);
+		g.drawText(juce::String(Att[(columnId - ClassViewerModel::Column::Attribut) * 2 + 1]), 0, 0, width, height, juce::Justification::centredLeft);
 		/*
 	case Column::Name:
 		g.drawText(juce::String(dtmClass->Name()), 0, 0, width, height, juce::Justification::centredLeft);
@@ -118,6 +134,37 @@ void ClassViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce
 	XGeoVector* V = FindVector(rowNumber);
 	if (V == nullptr)
 		return;
+	XFrame F = V->Frame();
+	sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
+		juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+}
+
+//==============================================================================
+// Tri des colonnes
+//==============================================================================
+void ClassViewerModel::sortOrderChanged(int newSortColumnId, bool isForwards)
+{
+	if ((newSortColumnId == Column::Visibility) || (newSortColumnId == Column::Selectable))
+		return;
+	std::multimap<std::string, XGeoVector*> map;
+	std::vector<std::string> Att;
+	XGeoVector* V;
+	if (m_Proxy.size())
+		juce::MouseCursor::showWaitCursor();
+	for (size_t i = 0; i < m_Proxy.size(); i++) {
+		V = m_Proxy[i];
+		Att.clear();
+		V->ReadAttributes(Att);
+		map.emplace(Att[2 * (newSortColumnId - ClassViewerModel::Column::Attribut) + 1], V);
+	}
+	std::multimap<std::string, XGeoVector*>::iterator iter;
+	m_Proxy.clear();
+	for (iter = map.begin(); iter != map.end(); iter++) 
+		m_Proxy.push_back(iter->second);
+	if (!isForwards)
+		std::reverse(m_Proxy.begin(), m_Proxy.end());
+	juce::MouseCursor::hideWaitCursor();
+	sendActionMessage("UpdateSort");
 }
 
 //==============================================================================
@@ -157,10 +204,24 @@ ClassViewer::ClassViewer(const juce::String& name, juce::Colour backgroundColour
 }
 
 //==============================================================================
+// ClassViewer : fermeture de la fenetre
+//==============================================================================
+void ClassViewer::closeButtonPressed() 
+{ 
+	gClassViewerMgr.RemoveViewer(this);
+	delete this; 
+}
+
+//==============================================================================
 // Gestion des actions
 //==============================================================================
 void ClassViewer::actionListenerCallback(const juce::String& message)
 {
+	if (message == "UpdateSort") {
+		m_Table.repaint();
+		return;
+	}
+
 	// Objets selectionnees
 	std::vector<XGeoVector*> T;
 	juce::SparseSet< int > S = m_Table.getSelectedRows();
@@ -183,4 +244,51 @@ void ClassViewer::actionListenerCallback(const juce::String& message)
 		m_Table.repaint();
 		return;
 	}
+	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
+}
+
+//==============================================================================
+// Ajout d'un Viewer au gestionnaire de Viewer
+//==============================================================================
+void ClassViewerMgr::AddClassViewer(const juce::String& name, XGeoClass* C, juce::ActionListener* listener)
+{
+	ClassViewer* viewer = new ClassViewer(name, juce::Colours::grey, juce::DocumentWindow::allButtons, C, listener);
+	viewer->setVisible(true);
+	m_Viewer.push_back(viewer);
+}
+
+//==============================================================================
+// Retrait d'un Viewer du gestionnaire de Viewer
+//==============================================================================
+void ClassViewerMgr::RemoveViewer(ClassViewer* viewer)
+{
+	m_Viewer.remove(viewer);
+}
+
+//==============================================================================
+// Retrait de tous les Viewers d'une classe donnee du gestionnaire de Viewer
+//==============================================================================
+void ClassViewerMgr::RemoveViewer(XGeoClass* C)
+{
+	std::list<ClassViewer*>::iterator iter;
+	for (iter = m_Viewer.begin(); iter != m_Viewer.end(); iter++) {
+		if ((*iter)->GetClass() != C)
+			continue;
+		delete (*iter);
+		m_Viewer.erase(iter);
+		RemoveViewer(C);
+		break;
+	}
+}
+
+//==============================================================================
+// Retrait de tous les Viewers
+//==============================================================================
+void ClassViewerMgr::RemoveAll()
+{
+	std::list<ClassViewer*>::iterator iter;
+	for (iter = m_Viewer.begin(); iter != m_Viewer.end(); iter++) {
+		delete (*iter);
+	}
+	m_Viewer.clear();
 }

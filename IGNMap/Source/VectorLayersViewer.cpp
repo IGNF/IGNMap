@@ -193,8 +193,7 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 		std::function< void() > ExportClass = [=]() { // Export de la classe
 			sendActionMessage("ExportClass"); };
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			ClassViewer* viewer = new ClassViewer(geoLayer->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, geoLayer, this);
-			viewer->setVisible(true);
+			gClassViewerMgr.AddClassViewer(geoLayer->Name(), geoLayer, this);
 			};
 
 		juce::PopupMenu menu;
@@ -280,17 +279,6 @@ void VectorViewerModel::sliderValueChanged(juce::Slider* slider)
 }
 
 //==============================================================================
-// Gestion des actions
-//==============================================================================
-void VectorViewerModel::actionListenerCallback(const juce::String& message)
-{
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateVector");
-		return;
-	}
-}
-
-//==============================================================================
 // LayerViewer : constructeur
 //==============================================================================
 VectorLayersViewer::VectorLayersViewer()
@@ -332,8 +320,12 @@ void VectorLayersViewer::Translate()
 void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 {
 	if (message == "NewWindow") {
+		gClassViewerMgr.RemoveAll();
 		m_Table.updateContent();
-		
+		return;
+	}
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateVector");
 		return;
 	}
 	if (message == "UpdateVectorRepres") {
@@ -362,13 +354,19 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
 		sendActionMessage("UpdateVector");
+		return;
 	}
 	if (message == "UpdateVectorSelectability") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_Table.repaint();
+		return;
 	}
 	if (message == "RemoveVectorClass") {
+		for (int i = 0; i < T.size(); i++) {
+			XGeoClass* C = m_Base->Class(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
+			gClassViewerMgr.RemoveViewer(C);
+		}
 		m_Base->ClearSelection();
 		for (int i = 0; i < T.size(); i++)
 			m_Base->RemoveClass(T[i]->Layer()->Name().c_str(), T[i]->Name().c_str());
@@ -376,9 +374,13 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		m_Table.repaint();
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateVector");
+		return;
 	}
-	if (message == "ExportClass")
+	if (message == "ExportClass") {
 		ExportClass(T);
+		return;
+	}
+	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
 //==============================================================================

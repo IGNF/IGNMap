@@ -149,18 +149,22 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 			XFrame F = dtmClass->Frame();
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
+		std::function< void() > LayerGsd = [=]() { // Zoom a la resolution native de la couche
+			XGeoVector* V = dtmClass->Vector((uint32_t)0);
+			if (V != nullptr)
+				sendActionMessage("ZoomGsd:" + juce::String(V->Resolution(), 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveDtmClass"); };
 		std::function< void() > ComputeDeltaZ = [=]() { // Calcul des deltaZ importants
 			sendActionMessage("ComputeDeltaZ"); };
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			ClassViewer* viewer = new ClassViewer(dtmClass->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, dtmClass);
-			viewer->setVisible(true);
+			gClassViewerMgr.AddClassViewer(dtmClass->Name(), dtmClass, this);
 			};
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("Layer GSD"), LayerGsd);
 		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute Delta Z"), ComputeDeltaZ);
@@ -197,18 +201,6 @@ juce::var DtmViewerModel::getDragSourceDescription(const juce::SparseSet<int>& s
 	for (int i = 0; i < selectedRows.size(); i++)
 		rows.add(juce::String(selectedRows[i]));
 	return rows.joinIntoString(":");
-}
-
-//==============================================================================
-// LayerViewer : constructeur
-//==============================================================================
-void DtmViewerModel::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
-{
-	if (m_Base == nullptr)
-		return;
-	//if (m_ActiveRow >= m_Base->GetDtmLayerCount())
-	//	return;
-	//GeoBase::RasterLayer* geoLayer = m_Base->GetDtmLayer(m_ActiveRow);
 }
 
 //==============================================================================
@@ -504,7 +496,13 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableDtm.updateContent();
 		m_TableDtm.repaint();
 		return;
-	}	if (message == "UpdateDtm") {
+	}
+	if (message == "UpdateClass") {
+		sendActionMessage("UpdateDtm");
+		return;
+	}
+	if (message == "UpdateDtm") {
+		sendActionMessage("UpdateDtm");
 		repaint();
 		return;
 	}
@@ -533,11 +531,13 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 			T[i]->Visible(!T[i]->Visible());
 		m_TableDtm.repaint();
 		sendActionMessage("UpdateDtm");
+		return;
 	}
 	if (message == "UpdateDtmSelectability") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_TableDtm.repaint();
+		return;
 	}
 	if (message == "RemoveDtmClass") {
 		m_Base->ClearSelection();
@@ -547,10 +547,13 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableDtm.repaint();
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateDtm");
+		return;
 	}
-	if (message == "ComputeDeltaZ")
+	if (message == "ComputeDeltaZ") {
 		ComputeDeltaZ(T);
-
+		return;
+	}
+	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
 //==============================================================================

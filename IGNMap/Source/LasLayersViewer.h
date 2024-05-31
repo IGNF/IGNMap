@@ -33,8 +33,7 @@ public:
 	juce::var getDragSourceDescription(const juce::SparseSet<int>& selectedRows) override;
 
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
-	// Gestion des actions
-	void actionListenerCallback(const juce::String& message) override;
+	void actionListenerCallback(const juce::String& message) override { sendActionMessage(message); }
 
 	void SetBase(XGeoBase* base) { m_Base = base; }
 	XGeoClass* FindLasClass(int index);
@@ -81,11 +80,6 @@ public:
 	LasLayersViewer();
 
 	void SetBase(XGeoBase* base);
-	void SetActionListener(juce::ActionListener* listener)
-	{
-		addActionListener(listener);
-		m_ModelLas.addActionListener(listener); 
-	}
 	void Translate();
 	void UpdateAltiColors();
 	void resized() override;

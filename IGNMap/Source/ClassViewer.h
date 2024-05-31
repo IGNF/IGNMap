@@ -29,12 +29,15 @@ public:
 	void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/) override;
 	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
 	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	void sortOrderChanged(int newSortColumnId, bool isForwards) override;
 
-	void SetClass(XGeoClass* C) { m_Class = C; }
+	void SetClass(XGeoClass* C);
+	XGeoClass* GetClass() { return m_Class; }
 	XGeoVector* FindVector(int index);
 
 private:
 	XGeoClass* m_Class;
+	std::vector<XGeoVector*> m_Proxy;
 };
 
 //==============================================================================
@@ -45,9 +48,9 @@ public:
 	ClassViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons, 
 							XGeoClass* C, juce::ActionListener* listener = nullptr);
 
-	void closeButtonPressed() override { delete this; }
-	// Gestion des actions
+	void closeButtonPressed() override;
 	void actionListenerCallback(const juce::String& message) override;
+	XGeoClass* GetClass() { return m_Model.GetClass(); }
 
 private:
 	juce::TableListBox m_Table;
@@ -55,3 +58,22 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClassViewer)
 };
+
+//==============================================================================
+// ClassViewerMgr : gestionnaire des fenetres ClassViewer
+//==============================================================================
+class ClassViewerMgr {
+public:
+	ClassViewerMgr() { ; }
+	virtual ~ClassViewerMgr() { ; }
+
+	void AddClassViewer(const juce::String& name, XGeoClass* C, juce::ActionListener* listener);
+	void RemoveViewer(ClassViewer* viewer);
+	void RemoveViewer(XGeoClass* C);
+	void RemoveAll();
+
+private:
+	std::list<ClassViewer*> m_Viewer;
+};
+
+extern ClassViewerMgr gClassViewerMgr;

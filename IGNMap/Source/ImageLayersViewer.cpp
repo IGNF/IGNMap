@@ -186,8 +186,7 @@ void ImageViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveImageClass"); };
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			ClassViewer* viewer = new ClassViewer(geoLayer->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, geoLayer, this);
-			viewer->setVisible(true);
+			gClassViewerMgr.AddClassViewer(geoLayer->Name(), geoLayer, this);
 			};
 
 		juce::PopupMenu menu;
@@ -270,17 +269,6 @@ void ImageViewerModel::sliderValueChanged(juce::Slider* slider)
 }
 
 //==============================================================================
-// Gestion des actions
-//==============================================================================
-void ImageViewerModel::actionListenerCallback(const juce::String& message)
-{
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateClass");
-		return;
-	}
-}
-
-//==============================================================================
 // LayerViewer : constructeur
 //==============================================================================
 ImageLayersViewer::ImageLayersViewer()
@@ -353,11 +341,13 @@ void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
 		sendActionMessage("UpdateRaster");
+		return;
 	}
 	if (message == "UpdateImageSelectability") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_Table.repaint();
+		return;
 	}
 	if (message == "RemoveImageClass") {
 		m_Base->ClearSelection();
@@ -367,7 +357,9 @@ void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 		m_Table.repaint();
 		sendActionMessage("UpdateSelectFeatures");
 		sendActionMessage("UpdateRaster");
+		return;
 	}
+	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
 //==============================================================================

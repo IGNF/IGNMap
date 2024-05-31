@@ -153,8 +153,7 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 		std::function< void() > ComputeStat = [=]() { // Statistiques
 			sendActionMessage("ComputeStat"); };
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			ClassViewer* viewer = new ClassViewer(lasClass->Name(), juce::Colours::grey, juce::DocumentWindow::allButtons, lasClass, this);
-			viewer->setVisible(true);
+			gClassViewerMgr.AddClassViewer(lasClass->Name(), lasClass, this);
 			};
 
 
@@ -210,17 +209,6 @@ void LasViewerModel::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 	//if (m_ActiveRow >= m_Base->GetDtmLayerCount())
 	//	return;
 	//GeoBase::RasterLayer* geoLayer = m_Base->GetDtmLayer(m_ActiveRow);
-}
-
-//==============================================================================
-// Gestion des actions
-//==============================================================================
-void LasViewerModel::actionListenerCallback(const juce::String& message)
-{
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateClass");
-		return;
-	}
 }
 
 //==============================================================================
@@ -551,11 +539,13 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 			T[i]->Visible(!T[i]->Visible());
 		m_TableLas.repaint();
 		sendActionMessage("UpdateLas");
+		return;
 	}
 	if (message == "UpdateLasSelectability") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_TableLas.repaint();
+		return;
 	}
 	if (message == "RemoveLasClass") {
 		juce::String removeLas = "RemoveLasClass";
@@ -564,6 +554,7 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage(removeLas);
 		m_TableLas.deselectAllRows();
 		m_TableLas.repaint();
+		return;
 	}
 	if (message == "UpdateLasClassificationVisibility") {
 		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
@@ -572,6 +563,7 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		}
 		m_TableClassif.repaint();
 		sendActionMessage("UpdateLas");
+		return;
 	}
 	if (message == "UpdateLasClassificationSelectable") {
 		juce::SparseSet< int > S = m_TableClassif.getSelectedRows();
@@ -580,11 +572,17 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		}
 		m_TableClassif.repaint();
 		sendActionMessage("UpdateLas");
+		return;
 	}
-	if (message == "ComputeDtm")
+	if (message == "ComputeDtm") {
 		ComputeDtm(T);
-	if (message == "ComputeStat")
+		return;
+	}
+	if (message == "ComputeStat") {
 		ComputeStat(T);
+		return;
+	}
+	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
 //==============================================================================
