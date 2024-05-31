@@ -6,7 +6,7 @@ IGNMap peut s’exécuter depuis une clef USB.
 
 ## Interface générale
 
-<https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Interface.png>
+<img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Interface.png">
 
 L’interface d’IGNMap est composée :
 * d’une barre de menus
