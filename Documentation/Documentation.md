@@ -109,8 +109,8 @@ Permet de fixer l’échelle de la vue principale de telle manière qu’un pixe
 #### Calcul de MNT
 Permet de calculer un MNT à partir des points des nuages de points. **Seuls les points visibles participent au calcul**.
 Trois algorithmes sont proposés :
-* Z minimum : dans chaque cellule du MNT, on garde l’altitude de point du nuages de points qui a le Z minimum
-* Z maximum : dans chaque cellule du MNT, on garde l’altitude de point du nuages de points qui a le Z maximum
+* Z minimum : dans chaque cellule du MNT, on garde l’altitude de point du nuage de points qui a le Z minimum
+* Z maximum : dans chaque cellule du MNT, on garde l’altitude de point du nuage de points qui a le Z maximum
 * Z moyen :  dans chaque cellule du MNT, on fait la moyenne des altitudes de tous les points du nuage de points qui se trouvent dans cette cellule.
 
 #### Statistiques
