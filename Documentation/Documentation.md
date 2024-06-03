@@ -3,7 +3,7 @@
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#installation-du-logiciel">Installation du logiciel</a>
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#charger-des-donn%C3%A9es">Charger des données</a>
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#visualiser-les-donn%C3%A9es">Visualiser les données</a>
-
+* <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#les-panneaux-dinformation">Les panneaux d’information</a>
 
 ## Installation du logiciel
 IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.
@@ -70,14 +70,20 @@ En faisant un click & drag, on peut zoomer sur une zone rectangulaire donnée.
 
 ## Les panneaux d’information
 Ces panneaux permettent de voir quelles sont les couches de données chargées dans IGNMap et d’agir sur ces couches. Il y a 4 panneaux, chacun permettant de travailler sur un type de données :
-* le panneau Couches vectorielles : pour les données vectorielles (Shapefile, MIF/MID, …)
-* le panneau Couches images : pour les données images (TIFF, COG, JPEG2000, …)
-* le panneau Couches MNT : pour les modèles numériques de terrain
-* le panneau Couches LAS : pour les nuages de points
-Chaque panneau présente la liste des couches, dans leur ordre d’affichage (la première couche de la liste est la couche qui sera affichée en premier, donc susceptible d’être recouverte par les autres). L’ordre des couches peut-être modifié en sélectionnant les couches que l’on veut déplacer et en faisant un glisser / déposer (*drag & drop*).
+* le panneau Couches vectorielles : pour les données vectorielles (Shapefile, MIF/MID, …),
+* le panneau Couches images : pour les données images (TIFF, COG, JPEG2000, …),
+* le panneau Couches MNT : pour les modèles numériques de terrain,
+* le panneau Couches LAS : pour les nuages de points.
+
+Chaque panneau présente la liste des couches, dans leur ordre d’affichage (la première couche de la liste est la couche qui sera affichée en premier, donc susceptible d’être recouverte par les autres).
+L’ordre des couches peut-être modifié en sélectionnant les couches que l’on veut déplacer et en faisant un glisser / déposer (*drag & drop*).
+
 L’icône <img alt="View" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/View.png"> permet de rendre visible / invisible une couche.
+
 L’icône <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Selectable.png"> permet de rendre sélectionnable / non-sélectionnable une couche.
+
 Si on sélectionne plusieurs couches dans la liste, alors on peut rendre visible / invisible plusieurs couches à la fois en un seul clic souris.
+
 A côté de chaque couche, l’icône <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Options.png"> permet d’accéder à différentes **actions** :
 * Centre de la couche : permet de recentre la vue principale au centre de la couche,
 * Emprise de la couche : permet de centrer et de mettre à l’échelle la vue principale pour afficher l’intégralité de la couche,
