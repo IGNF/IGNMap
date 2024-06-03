@@ -54,7 +54,7 @@ namespace BinaryData
     const int            Zoom_pngSize = 6752;
 
     extern const char*   Translation_fr_txt;
-    const int            Translation_fr_txtSize = 3058;
+    const int            Translation_fr_txtSize = 3591;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 16;

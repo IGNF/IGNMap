@@ -201,7 +201,7 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
 		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
-		menu.addItem(juce::translate("Export Class"), ExportClass);
+		menu.addItem(juce::translate("Export Layer"), ExportClass);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());

@@ -4,6 +4,7 @@
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#charger-des-donn%C3%A9es">Charger des données</a>
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#visualiser-les-donn%C3%A9es">Visualiser les données</a>
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#les-panneaux-dinformation">Les panneaux d’information</a>
+* <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#vue 3d">Vue 3D</a>
 
 ## Installation du logiciel
 IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.
@@ -46,7 +47,7 @@ Dans la vue principale, on peut être dans 3 modes :
 Quel que soit le mode, la molette de la souris permet de zoomer / dézoomer.
 
 ### Le mode déplacement
-C’est le mode par défaut, accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Move.png"> de la barre d’outils.
+C’est le mode par défaut, accessible via le bouton <img alt="Move" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Move.png"> de la barre d’outils.
 En faisant un click & drag dans la vue principale, on peut se déplacer.
 
 Dans le mode déplacement, on peut accéder directement aux deux autres modes en utilisant des touches du clavier :
@@ -54,7 +55,7 @@ Dans le mode déplacement, on peut accéder directement aux deux autres modes en
 * en maintenant la touche `Ctrl`, on passe en mode zoom (voir ci-dessous)
 
 ### Le mode sélection
-Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
+Ce mode est accessible via le bouton <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
 Un clic souris bouton gauche permet de sélectionner le ou les données se trouvant sous la souris.
 En faisant un click & drag, on peut sélectionner toutes les données se trouvant dans une zone rectangulaire.
 La sélection d’un objet permet de visualiser ses points de construction dans la vue principale et d’afficher ses attributs dans le panneau **Sélection** :
@@ -93,16 +94,42 @@ A côté de chaque couche, l’icône <img alt="Select" src="https://raw.githubu
 En fonction du type de la couche, on retrouvera d’autres actions :
 
 ### Actions spécifiques pour les couches vectorielles
-#### Export de la classe
+#### Export de la couche
+Cela permet d’exporter les objets de la couche au format Shapefile. **Seuls les objets visibles sont exportés** !
 
 ### Actions spécifiques pour les couches vectorielles
 #### Résolution de la couche
+Permet de fixer l’échelle de la vue principale de telle manière qu’un pixel écran contienne exactement un pixel image.
 
 ### Actions spécifiques pour les couches MNT
 #### Résolution de la couche
+Permet de fixer l’échelle de la vue principale de telle manière qu’un pixel écran contienne exactement un nœud du MNT.
 
 ### Actions spécifiques pour les couches LAS
 #### Calcul de MNT
+Permet de calculer un MNT à partir des points des nuages de points. **Seuls les points visibles participent au calcul**.
+Trois algorithmes sont proposés :
+* Z minimum : dans chaque cellule du MNT, on garde l’altitude de point du nuages de points qui a le Z minimum
+* Z maximum : dans chaque cellule du MNT, on garde l’altitude de point du nuages de points qui a le Z maximum
+* Z moyen :  dans chaque cellule du MNT, on fait la moyenne des altitudes de tous les points du nuage de points qui se trouvent dans cette cellule.
 
 #### Statistiques
+Permet de calculer des statistiques sur tous les fichiers LAS.
 
+## Vue 3D
+IGNMap permet d’afficher en 3D les nuages de points, les MNT et données vectorielles 3D. Pour ce faire, on utilise l’outil de sélection 3D <img alt="Select3D" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select3D.png"> de la barre d’outils.
+Il suffit d’entourer la zone que l’on veut visualiser en 3D. Attention toutefois, **si la zone est trop grande, toutes les données ne pourront être chargées en mémoires**.
+Dans la vue 3D, en maintenant le bouton gauche de la souris enfoncé, on peut modifier l’angle de visualisation.
+La molette de la souris permet de zoomer / dézoomer.
+Les flèches du clavier permettent de se déplacer.
+Les touches `PageUp` et `PageDown` permettent de changer l’échelle altimétrique.
+Les touches suivantes du clavier permettent de modifier l’affichage :
+* A : rotation automatique de la vue 3D
+* Q et S : dimension des points des nuages de points
+* W et X : épaisseur de l’affichage des MNT
+* C et V : épaisseur de l’affichage des données vectorielles
+* D : affichage des MNT sous forme de points ou de triangles
+* F : remplissage ou non des triangles des MNT
+* K : affichage ou non des données vectorielles
+* L : affichage ou non des données LAS
+* M : affichage ou non des données MNT

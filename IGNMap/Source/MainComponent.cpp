@@ -121,6 +121,9 @@ MainComponent::MainComponent()
 	pref.Projection(XGeoProjection::Lambert93);
 	pref.GoogleMode(3); // Streetview
 	pref.VEMode(1);
+	// Langue par defaut
+	if (juce::SystemStats::getDisplayLanguage() == "fr-FR")
+		Translate();
 }
 
 MainComponent::~MainComponent()
@@ -799,9 +802,8 @@ void MainComponent::AboutIGNMap()
 	juce::String info = "04/06/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
-		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER);
-	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
-		juce::translate("About IGNMap"), message, "OK");
+		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER) + "\n";
+	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, juce::translate("About IGNMap"), message, "OK");
 }
 
 //==============================================================================

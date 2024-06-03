@@ -3224,6 +3224,7 @@ static const unsigned char temp_binary_data_15[] =
 "\"Value\" = \"Valeur\"\r\n"
 "\"Quit\" = \"Quitter\"\r\n"
 "\"About IGNMap\" = \"A propos de IGNMap\"\r\n"
+"\"Help\"=\"Aide\"\r\n"
 "\"Selection\" = \"S\xc3\xa9lection\"\r\n"
 "\"File\" = \"Fichier\"\r\n"
 "\"Edit\" = \"Edition\"\r\n"
@@ -3236,10 +3237,10 @@ static const unsigned char temp_binary_data_15[] =
 "\"Colour\" = \"Couleur\"\r\n"
 "\" is already opened\" = \" est d\xc3\xa9j\xc3\xa0 ouvert\"\r\n"
 "\" : this file cannot be opened\" = \" : ce fichier ne peut pas \xc3\xaatre ouvert\"\r\n"
-"\"Add WMTS / TMS server\" : \"Ajout d'une couche WMTS / TMS\"\r\n"
-"\"Geoportail (France)\" : \"G\xc3\xa9oportail (France)\"\r\n"
-"\"Translate\" : \"Traduire\"\r\n"
-"\"Load a translation file\" : \"Chargement d'un fichier de traduction\"\r\n"
+"\"Add WMTS / TMS server\" = \"Ajout d'une couche WMTS / TMS\"\r\n"
+"\"Geoportail (France)\" = \"G\xc3\xa9oportail (France)\"\r\n"
+"\"Translate\" = \"Traduire\"\r\n"
+"\"Load a translation file\" = \"Chargement d'un fichier de traduction\"\r\n"
 "\"Translate\" = \"Traduire\"\r\n"
 "\"Preferences\" = \"Pr\xc3\xa9""f\xc3\xa9rences\"\r\n"
 "\"Application settings\" = \"Pr\xc3\xa9""f\xc3\xa9rences de l'application\"\r\n"
@@ -3247,7 +3248,12 @@ static const unsigned char temp_binary_data_15[] =
 "\"Add OSM data\" = \"Ajout d'une couche OSM\"\r\n"
 "\"View\" = \"Afficher\"\r\n"
 "\"View Side Panel\" = \"Afficher le panneau d'information\"\r\n"
-"\"View Feature Viewer\" = \"Afficher la fiche objet\"\r\n"
+"\"View Vector Layers Panel\" = \"Afficher le panneau Couches vectorielles\"\r\n"
+"\"View Image Layers Panel\" = \"Afficher le panneau Couches images\"\r\n"
+"\"View DTM Layers Panel\" = \"Afficher le panneau Couches MNT\"\r\n"
+"\"View LAS Layers Panel\" = \"Afficher le panneau Couches LAS\"\r\n"
+"\"View Image Options Panel\" = \"Afficher le panneau Options des images\"\r\n"
+"\"View Selection Panel\" = \"Afficher le panneau S\xc3\xa9lection\"\r\n"
 "\"DTM\" = \"MNT\"\r\n"
 "\"Altitude\"=\"Altitude\"\r\n"
 "\"Standard shading\"=\"Estompage classique\"\r\n"
@@ -3287,13 +3293,18 @@ static const unsigned char temp_binary_data_15[] =
 "\"Double-click for viewing\"=\"Double-cliquer pour voir\"\r\n"
 "\"Double-click for copying\"=\"Double-cliquer pour copier\"\r\n"
 "\"Layer Center\"=\"Centre de la couche\"\r\n"
-"\"Layer Frame\"=\"Cadre de la couche\"\r\n"
-"\"Layer GSD\"=\"Resolution de la couche\"\r\n"
-"\"Export Class\"=\"Export de la classe\"\r\n"
+"\"Layer Frame\"=\"Emprise de la couche\"\r\n"
+"\"Layer GSD\"=\"R\xc3\xa9solution de la couche\"\r\n"
+"\"Export Layer\"=\"Export de la couche\"\r\n"
+"\"View Objects\"=\"Visualiser les objets\"\r\n"
 "\"Remove\"=\"Supprimer\"\r\n"
+"\"Compute Delta Z\"=\"Calculer les Delta Z\"\r\n"
+"\"Compute DTM\"=\"Calculer des MNT\"\r\n"
+"\"Statistics\"=\"Statistiques\"\r\n"
 "\"New Window\"=\"Nouvelle fen\xc3\xaatre\"\r\n"
 "\"RGB\"=\"RVB\"\r\n"
 "\"Intensity\"=\"Intensit\xc3\xa9\"\r\n"
+"\"Scan Angle\"=\"Angle de scan\"\r\n"
 "\"DTM Layers\" = \"Couches MNT\"\r\n"
 "\"LAS Layers\" = \"Couches LAS\"\r\n"
 "\"Image Layers\" = \"Couches images\"\r\n"
@@ -3334,7 +3345,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 3058; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 3591; return Translation_fr_txt;
         default: break;
     }
 
