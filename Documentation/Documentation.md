@@ -64,10 +64,13 @@ La sélection d’un objet permet de visualiser ses points de construction dans 
 </div><br>
 
 ### Le mode zoom
-Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Zoom.png"> de la barre d’outils.
-Un clic souris bouton gauche permet de faire un zoom avant.
-Un clic souris bouton droit permet de faire un zoom arrière.
+Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Zoom.png"> de la barre d’outils.  
+Un clic souris bouton gauche permet de faire un zoom avant.  
+Un clic souris bouton droit permet de faire un zoom arrière.  
 En faisant un click & drag, on peut zoomer sur une zone rectangulaire donnée.
+
+Le bouton <img alt="GSD" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/GSD.png"> de la barre d’outils permet de changer la résolution d’affichage. GSD signifie *ground sample distance* c’est-à-dire la dimension terrain que représente un pixel de la vue principale.  
+Ce bouton permet de changer rapidement l’échelle d’affichage.
 
 ## Les panneaux d’information
 Ces panneaux permettent de voir quelles sont les couches de données chargées dans IGNMap et d’agir sur ces couches. Il y a 4 panneaux, chacun permettant de travailler sur un type de données :
