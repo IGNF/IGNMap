@@ -8,6 +8,7 @@
 ## Installation du logiciel
 IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.
 IGNMap peut s’exécuter depuis une clef USB.
+Sous Linux, il faut éventuellement rendre le fichier exécutable (`chmod a+x`).
 
 ## Interface générale
 <div align="center">
@@ -28,7 +29,7 @@ L’interface d’IGNMap peut être en langue anglaise ou française : pour bas
 Pour importer des données, on utilise le menu **Fichier** et les sous-menus en fonction du type de données à charger.
 IGNMap peut importer soit un fichier unique, soit tous les fichiers se trouvant dans un répertoire.
 Les formats reconnus par IGNMap sont :
-* pour les données vectorielles : Shapefile, GeoPackage, MIF/MID, DXF
+* pour les données vectorielles : Shapefile, GeoPackage, GEOJSON, MIF/MID, DXF
 * pour les données images : TIFF, COG, JPEG2000, WEBP
 * pour les modèles numériques de terrain : TIFF 32 bits, ASC
 * pour les nuages de points : LAS, LAZ, COPC
@@ -66,3 +67,36 @@ Ce mode est accessible via le bouton <img alt="Interface" src="https://raw.githu
 Un clic souris bouton gauche permet de faire un zoom avant.
 Un clic souris bouton droit permet de faire un zoom arrière.
 En faisant un click & drag, on peut zoomer sur une zone rectangulaire donnée.
+
+## Les panneaux d’information
+Ces panneaux permettent de voir quelles sont les couches de données chargées dans IGNMap et d’agir sur ces couches. Il y a 4 panneaux, chacun permettant de travailler sur un type de données :
+* le panneau Couches vectorielles : pour les données vectorielles (Shapefile, MIF/MID, …)
+* le panneau Couches images : pour les données images (TIFF, COG, JPEG2000, …)
+* le panneau Couches MNT : pour les modèles numériques de terrain
+* le panneau Couches LAS : pour les nuages de points
+Chaque panneau présente la liste des couches, dans leur ordre d’affichage (la première couche de la liste est la couche qui sera affichée en premier, donc susceptible d’être recouverte par les autres). L’ordre des couches peut-être modifié en sélectionnant les couches que l’on veut déplacer et en faisant un glisser / déposer (*drag & drop*).
+L’icône <img alt="View" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/View.png"> permet de rendre visible / invisible une couche.
+L’icône <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Selectable.png"> permet de rendre sélectionnable / non-sélectionnable une couche.
+Si on sélectionne plusieurs couches dans la liste, alors on peut rendre visible / invisible plusieurs couches à la fois en un seul clic souris.
+A côté de chaque couche, l’icône <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Options.png"> permet d’accéder à différentes **actions** :
+* Centre de la couche : permet de recentre la vue principale au centre de la couche,
+* Emprise de la couche : permet de centrer et de mettre à l’échelle la vue principale pour afficher l’intégralité de la couche,
+* Visualiser les objets : permet d’affiche la liste de tous les objets de la couche,
+* Supprimer : permet de retirer la couche d’IGNMap.
+
+En fonction du type de la couche, on retrouvera d’autres actions :
+
+### Actions spécifiques pour les couches vectorielles
+#### Export de la classe
+
+### Actions spécifiques pour les couches vectorielles
+#### Résolution de la couche
+
+### Actions spécifiques pour les couches MNT
+#### Résolution de la couche
+
+### Actions spécifiques pour les couches LAS
+#### Calcul de MNT
+
+#### Statistiques
+
