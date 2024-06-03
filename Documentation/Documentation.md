@@ -7,8 +7,8 @@
 * <a href="https://github.com/IGNF/IGNMap/blob/master/Documentation/Documentation.md#vue-3d">Vue 3D</a>
 
 ## Installation du logiciel
-IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.
-IGNMap peut s’exécuter depuis une clef USB.
+IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier unique. Il n’y a aucune dépendance à installer en plus.  
+IGNMap peut s’exécuter depuis une clef USB.  
 Sous Linux, il faut éventuellement rendre le fichier exécutable (`chmod a+x`).
 
 ## Interface générale
@@ -118,17 +118,14 @@ Permet de calculer des statistiques sur tous les fichiers LAS.
 
 ## Vue 3D
 IGNMap permet d’afficher en 3D les nuages de points, les MNT et données vectorielles 3D.
-Pour ce faire, on utilise l’outil de sélection 3D <img alt="Select3D" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select3D.png"> de la barre d’outils.
+Pour ce faire, on utilise l’outil de sélection 3D <img alt="Select3D" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select3D.png"> de la barre d’outils.  
 Il suffit d’entourer la zone que l’on veut visualiser en 3D.
 
 Attention toutefois, **si la zone est trop grande, toutes les données ne pourront être chargées en mémoires**.
 
-Dans la vue 3D, en maintenant le bouton gauche de la souris enfoncé, on peut modifier l’angle de visualisation.
-
-La molette de la souris permet de zoomer / dézoomer.
-
-Les flèches du clavier permettent de se déplacer.
-
+Dans la vue 3D, en maintenant le bouton gauche de la souris enfoncé, on peut modifier l’angle de visualisation.  
+La molette de la souris permet de zoomer / dézoomer.  
+Les flèches du clavier permettent de se déplacer.  
 Les touches `PageUp` et `PageDown` permettent de changer l’échelle altimétrique.
 
 Les touches suivantes du clavier permettent de modifier l’affichage :
