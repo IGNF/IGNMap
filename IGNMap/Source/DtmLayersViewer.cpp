@@ -412,8 +412,8 @@ DtmLayersViewer::DtmLayersViewer()
 	m_Mode.addItem(juce::translate("Colours + Shading"), 7);
 	m_Mode.addItem(juce::translate("Contour lines"), 8);
 	
+	m_Mode.setSelectedId(static_cast<int>(DtmShader::m_Mode) + 1, juce::NotificationType::dontSendNotification);
 	m_Mode.addListener(this);
-	m_Mode.setSelectedId(static_cast<int>(DtmShader::m_Mode) + 1);
 	addAndMakeVisible(m_Mode);
 	
 	m_IsoStep.setRange(1., 250., 1.);
@@ -440,6 +440,8 @@ DtmLayersViewer::DtmLayersViewer()
 	m_Zenith.setChangeNotificationOnlyOnRelease(true);
 	m_Zenith.addListener(this);
 	addAndMakeVisible(m_Zenith);
+
+	comboBoxChanged(&m_Mode); // Pour fixer la visibilite des combos Azimuth, Zenith, ...
 }
 
 //==============================================================================

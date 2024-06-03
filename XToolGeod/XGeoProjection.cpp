@@ -471,11 +471,11 @@ std::string XGeoProjection::ProjectionName(XProjCode proj)
 		// Guyane
 		case CSG1967_UTM21: name = "Guyane - CSG1967 UTM21"; break;
 		case CSG1967_UTM22: name = "Guyane - CSG1967 UTM22"; break;
-		case RGFG95: name = "Guyane - RGFG95 UTM22"; break;
+		case RGFG95: name = "RGFG95 UTM22"; break;
 
 		// Reunion
 		case PitonNeiges: name = "Réunion - Piton des Neiges"; break;
-		case RGR92: name = "Réunion - RGR92 UTM40"; break;
+		case RGR92: name = "RGR92 UTM40"; break;
 
 		// Saint Pierre et Miquelon
 		case SPMiquelon1950: name = "Saint Pierre et Miquelon 1950"; break;
