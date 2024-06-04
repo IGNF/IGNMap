@@ -122,7 +122,7 @@ MainComponent::MainComponent()
 	pref.GoogleMode(3); // Streetview
 	pref.VEMode(1);
 	// Langue par defaut
-	if (juce::SystemStats::getDisplayLanguage() == "fr-FR")
+	if (juce::SystemStats::getDisplayLanguage().containsIgnoreCase("fr"))
 		Translate();
 }
 
