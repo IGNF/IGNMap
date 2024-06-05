@@ -35,7 +35,8 @@ OGLWidget::OGLWidget()
 {
   setSize(500, 500);
   setWantsKeyboardFocus(true);
-  openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL3_2);
+  openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL4_1);
+  // openGL3_2 est recommande par JUCE mais probleme sur MacOS avec glLineWidth
   openGLContext.setContinuousRepainting(true);
   vertexShader = nullptr;
   fragmentShader = nullptr;
@@ -337,6 +338,8 @@ void OGLWidget::render()
     }
    }
 
+  //glEnable(GL_PRIMITIVE_RESTART);
+  //glPrimitiveRestartIndex(0xFFFFFFFF);
   // Dessin des polygones
   if ((m_nNbPolyVertex > 0) && (!m_bNeedUpdate) && (m_bViewVector)) {
     openGLContext.extensions.glBindVertexArray(m_PolyVertexArrayID);
@@ -344,9 +347,13 @@ void OGLWidget::render()
     openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_PolyElementID);
     m_Attributes->enable();
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    //glEnable(GL_PRIMITIVE_RESTART);
+    //glPrimitiveRestartIndex(0xFFFFFFFF);
+    glDisable(GL_LINE_SMOOTH);
     glLineWidth(m_VectorWidth);
-    glDrawElements(GL_LINE_LOOP, m_nNbPolyVertex, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_LINE_LOOP, m_nNbPolyVertex + m_nNbPoly, GL_UNSIGNED_INT, 0);
     glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    //glDisable(GL_PRIMITIVE_RESTART);
     m_Attributes->disable();
   }
 
@@ -358,10 +365,11 @@ void OGLWidget::render()
     m_Attributes->enable();
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     glLineWidth(m_VectorWidth);
-    glDrawElements(GL_LINE_STRIP, m_nNbLineVertex, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_LINE_STRIP, m_nNbLineVertex + m_nNbLine, GL_UNSIGNED_INT, 0);
     glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     m_Attributes->disable();
   }
+  //glDisable(GL_PRIMITIVE_RESTART);
 
   if (m_bNeedUpdate)
     UpdateBase();
