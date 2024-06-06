@@ -35,7 +35,7 @@ OGLWidget::OGLWidget()
 {
   setSize(500, 500);
   setWantsKeyboardFocus(true);
-  openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL4_1);
+  openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL3_2);
   // openGL3_2 est recommande par JUCE mais probleme sur MacOS avec glLineWidth
   openGLContext.setContinuousRepainting(true);
   vertexShader = nullptr;
@@ -338,22 +338,17 @@ void OGLWidget::render()
     }
    }
 
-  //glEnable(GL_PRIMITIVE_RESTART);
-  //glPrimitiveRestartIndex(0xFFFFFFFF);
+  // Dessin des polygones et des lignes
+  glEnable(GL_PRIMITIVE_RESTART);
+  glPrimitiveRestartIndex(0xFFFFFFFF);
+  glLineWidth(m_VectorWidth); // Ne marche pas sur MacOS
   // Dessin des polygones
   if ((m_nNbPolyVertex > 0) && (!m_bNeedUpdate) && (m_bViewVector)) {
     openGLContext.extensions.glBindVertexArray(m_PolyVertexArrayID);
     openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PolyBufferID);
     openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_PolyElementID);
     m_Attributes->enable();
-    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
-    //glEnable(GL_PRIMITIVE_RESTART);
-    //glPrimitiveRestartIndex(0xFFFFFFFF);
-    glDisable(GL_LINE_SMOOTH);
-    glLineWidth(m_VectorWidth);
     glDrawElements(GL_LINE_LOOP, m_nNbPolyVertex + m_nNbPoly, GL_UNSIGNED_INT, 0);
-    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
-    //glDisable(GL_PRIMITIVE_RESTART);
     m_Attributes->disable();
   }
 
@@ -363,13 +358,10 @@ void OGLWidget::render()
     openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LineBufferID);
     openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_LineElementID);
     m_Attributes->enable();
-    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
-    glLineWidth(m_VectorWidth);
     glDrawElements(GL_LINE_STRIP, m_nNbLineVertex + m_nNbLine, GL_UNSIGNED_INT, 0);
-    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     m_Attributes->disable();
   }
-  //glDisable(GL_PRIMITIVE_RESTART);
+  glDisable(GL_PRIMITIVE_RESTART);
 
   if (m_bNeedUpdate)
     UpdateBase();
@@ -377,7 +369,7 @@ void OGLWidget::render()
   // Dessin du repere orthonorme
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_RepereID);
   m_Attributes->enable();
-  glLineWidth(3.0);
+  glLineWidth(3.0); // Ne marche pas sur MacOS
   glDrawArrays(GL_LINES, 0, 6);
   m_Attributes->disable();
 

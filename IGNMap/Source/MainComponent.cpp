@@ -799,7 +799,7 @@ void MainComponent::NewWindow()
 void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.0.5";
-	juce::String info = "04/06/2024";
+	juce::String info = "06/06/2024";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER) + "\n";
