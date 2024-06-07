@@ -114,7 +114,7 @@ private:
   bool      m_bViewLas;         // Affichages points LAS
   bool      m_bViewDtm;         // Affichages des MNT
   bool      m_bViewVector;      // Affichages des donnees vectorielles
-  uint32_t  m_nDtmW;
+  uint32_t  m_nDtmW;            // Dimensions du MNT
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains

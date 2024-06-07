@@ -128,12 +128,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
-	if (isConnected()) {
-		juce::String message = "Disconnect";
-		juce::MemoryBlock block(message.getCharPointer(), message.length());
-		sendMessage(block);
-		disconnect();
-	}
+	disconnect();
 }
 
 
@@ -1454,6 +1449,7 @@ void MainComponent::connectionLost()
 {
 	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,
 		juce::translate("Synchronization"), juce::translate("Connection lost !"), "OK");
+	createPipe("IGNMap", -1, false);
 }
 
 void MainComponent::messageReceived(const juce::MemoryBlock& message)
@@ -1498,7 +1494,7 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 			ImportImageFile(filename);
 		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
 			ImportLasFile(filename);
-		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg"))
+		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg") || ext.equalsIgnoreCase(".json"))
 			ImportVectorFile(filename);
 		if (ext.equalsIgnoreCase(".asc"))
 			ImportDtmFile(filename);

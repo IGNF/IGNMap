@@ -79,6 +79,7 @@ public:
 	bool KeepClosestCentroid(XFrame* F);
 
 	double ComputeMinResol();
+	double ComputeMinDtmResol();
 	std::string FindTopRasterClass();
 	XGeoVector* FindTopRasterObject(XFrame* F);
 	uint32_t NbObjectFrame(XFrame* F, bool only_visible);

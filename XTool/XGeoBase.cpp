@@ -636,6 +636,31 @@ double XGeoBase::ComputeMinResol()
 }
 
 //-----------------------------------------------------------------------------
+// Calcul la resolution minimum pour les MNT
+//-----------------------------------------------------------------------------
+double XGeoBase::ComputeMinDtmResol()
+{
+	XGeoLayer* layer = NULL;
+	XGeoClass* classe;
+	XGeoVector* vector;
+	double resol = 10.;
+	for (uint32_t i = 0; i < m_Layer.size(); i++) {
+		layer = m_Layer[i];
+		if (!layer->Visible()) continue;
+		for (uint32_t j = 0; j < layer->NbClass(); j++) {
+			classe = layer->Class(j);
+			if (!classe->Visible()) continue;
+			if (!classe->IsDTM()) continue;
+			for (uint32_t k = 0; k < classe->NbVector(); k++) {
+				vector = classe->Vector(k);
+				resol = XMin(resol, vector->Resolution());
+			}
+		}
+	}
+	return resol;
+}
+
+//-----------------------------------------------------------------------------
 // Indique quelle est la classe raster la plus haute (en profondeur d'affichage)
 //-----------------------------------------------------------------------------
 std::string XGeoBase::FindTopRasterClass()
