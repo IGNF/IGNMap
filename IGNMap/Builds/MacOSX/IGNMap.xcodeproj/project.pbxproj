@@ -33,6 +33,7 @@
 		16FAC49188610422AE373C82 /* jerror.c */ = {isa = PBXBuildFile; fileRef = 592C0DC738C908DBBB822F73; };
 		1705632A5064C858D6D5FAB5 /* mct.c */ = {isa = PBXBuildFile; fileRef = 0ABB96732B8B3DD0DEF382E0; };
 		1795B0ABA37E328CA40EA13B /* XPt2D.cpp */ = {isa = PBXBuildFile; fileRef = FB239D8ECFD96FE20F03CE51; };
+		1977FB7784589AB7DE946907 /* include_juce_core_CompilationTime.cpp */ = {isa = PBXBuildFile; fileRef = 5D0DAC34531C33B6849A4751; };
 		1A9C3C59E401EB9982451D50 /* XGeoPref.cpp */ = {isa = PBXBuildFile; fileRef = 7839FA242DE66017FB1C46E8; };
 		1BE2B2FA78B07FE73595DE38 /* XTAChantier.cpp */ = {isa = PBXBuildFile; fileRef = 47C4592BB21531C775726025; };
 		1CC0F1DE1BDC2431ACC0830C /* jdatasrc.c */ = {isa = PBXBuildFile; fileRef = 7804B7129EFCE9D0F336313B; };
@@ -110,6 +111,7 @@
 		58271421828B19F7252D1801 /* jdmainct.c */ = {isa = PBXBuildFile; fileRef = C49B54EEF82EDDD56507AE08; };
 		5863F2E3C7E32320AB3EA94F /* opj_malloc.c */ = {isa = PBXBuildFile; fileRef = A9119D401D396A7916F4CE1D; };
 		593BC75F13CA1EA45FB182F1 /* jcmainct.c */ = {isa = PBXBuildFile; fileRef = CB0CF0ECDF8EF18F7E8B06F1; };
+		5A6E8C9BC71D00DDA47678BD /* include_juce_graphics_Harfbuzz.cpp */ = {isa = PBXBuildFile; fileRef = 04998B5C04EC2FC75F4C976A; };
 		5AABB9B594D7066E68C66B10 /* alpha_processing_sse2.c */ = {isa = PBXBuildFile; fileRef = 430146CA3F4E01AF9B80E0F0; };
 		5B718334E60AE2D6C1736C07 /* LasShader.cpp */ = {isa = PBXBuildFile; fileRef = 67170055D9E04D92263D9C7D; };
 		5CD2ED49D74D4BD43EE37AB0 /* jidctflt.c */ = {isa = PBXBuildFile; fileRef = 057DEF49C88B7A5B53C2DFFA; };
@@ -311,6 +313,7 @@
 		01B66EFAEE75578E7F279C12 /* quant_levels_utils.c */ /* quant_levels_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = quant_levels_utils.c; path = "../../../libwebp-1.3.2/src/utils/quant_levels_utils.c"; sourceTree = SOURCE_ROOT; };
 		02A9B8D0AEB85E73F1E1E621 /* JuceHeader.h */ /* JuceHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JuceHeader.h; path = ../../JuceLibraryCode/JuceHeader.h; sourceTree = SOURCE_ROOT; };
 		0496796325E209F9FC74D3CE /* jctrans.c */ /* jctrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jctrans.c; path = "../../../jpeg-9f/jctrans.c"; sourceTree = SOURCE_ROOT; };
+		04998B5C04EC2FC75F4C976A /* include_juce_graphics_Harfbuzz.cpp */ /* include_juce_graphics_Harfbuzz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_graphics_Harfbuzz.cpp; path = ../../JuceLibraryCode/include_juce_graphics_Harfbuzz.cpp; sourceTree = SOURCE_ROOT; };
 		04A5331632305FB74B139840 /* XWKBGeom.cpp */ /* XWKBGeom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XWKBGeom.cpp; path = ../../../XToolVector/XWKBGeom.cpp; sourceTree = SOURCE_ROOT; };
 		04CC41F2266DCB306480D357 /* XShapefile.cpp */ /* XShapefile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XShapefile.cpp; path = ../../../XToolVector/XShapefile.cpp; sourceTree = SOURCE_ROOT; };
 		04EDC3B4D389901A8AC5D363 /* gzguts.h */ /* gzguts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gzguts.h; path = "../../../zlib-1.3.1/gzguts.h"; sourceTree = SOURCE_ROOT; };
@@ -487,6 +490,7 @@
 		596216D185363C37DDE23EE9 /* inftrees.c */ /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = inftrees.c; path = "../../../zlib-1.3.1/inftrees.c"; sourceTree = SOURCE_ROOT; };
 		5B6AA6F0ED0DE5D62A2983C9 /* BinaryData.h */ /* BinaryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BinaryData.h; path = ../../JuceLibraryCode/BinaryData.h; sourceTree = SOURCE_ROOT; };
 		5B8C3A44A1DAB9D4FDD8BA12 /* deflate.h */ /* deflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deflate.h; path = "../../../zlib-1.3.1/deflate.h"; sourceTree = SOURCE_ROOT; };
+		5D0DAC34531C33B6849A4751 /* include_juce_core_CompilationTime.cpp */ /* include_juce_core_CompilationTime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_core_CompilationTime.cpp; path = ../../JuceLibraryCode/include_juce_core_CompilationTime.cpp; sourceTree = SOURCE_ROOT; };
 		5D7E01CE8E4926E335AC00C5 /* XGeoLayer.cpp */ /* XGeoLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XGeoLayer.cpp; path = ../../../XTool/XGeoLayer.cpp; sourceTree = SOURCE_ROOT; };
 		5DDFE34CE2A9A75CCF33DDE4 /* juce_events */ /* juce_events */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_events; path = ../../../JUCE/modules/juce_events; sourceTree = SOURCE_ROOT; };
 		5E2FE0DDC339344FE380A8B5 /* ExportLasDlg.cpp */ /* ExportLasDlg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ExportLasDlg.cpp; path = ../../Source/ExportLasDlg.cpp; sourceTree = SOURCE_ROOT; };
@@ -1084,9 +1088,11 @@
 				E0704DF4008F394C74076CD7,
 				5B6AA6F0ED0DE5D62A2983C9,
 				0C76D86C0E4A9F42CE0A8793,
+				5D0DAC34531C33B6849A4751,
 				D57276A6028117877472A2FF,
 				C908E66E39D3F43FEC33A57C,
 				A509A2531937279CCCD07605,
+				04998B5C04EC2FC75F4C976A,
 				C742F1D06F0C722A3755D3D9,
 				8022BB0897F6CB189821DF15,
 				79F9353DF68742876119A801,
@@ -2000,9 +2006,11 @@
 				1DB04AAAA86A8D84B8E69E91,
 				F5380E62CF7BBB5D94DEAF0B,
 				02B6078F2A6340349EEB9646,
+				1977FB7784589AB7DE946907,
 				0C2D6C26D261EE26BE66A537,
 				C89BCC6D91064279EDE0E67E,
 				678BCB62890623902D9BECD1,
+				5A6E8C9BC71D00DDA47678BD,
 				56D8DE498B5E3B77AAC2ED86,
 				8A4845F4BB8B4DB7236AA758,
 				2C5B2152B1C68A3ADBAC3E2C,
@@ -2124,9 +2132,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_DEBUG=1",
 					"DEBUG=1",
-					"JUCE_DISPLAY_SPLASH_SCREEN=1",
-					"JUCE_USE_DARK_SPLASH_SCREEN=1",
-					"JUCE_PROJUCER_VERSION=0x7000c",
+					"JUCE_PROJUCER_VERSION=0x80000",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",
@@ -2189,9 +2195,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_NDEBUG=1",
 					"NDEBUG=1",
-					"JUCE_DISPLAY_SPLASH_SCREEN=1",
-					"JUCE_USE_DARK_SPLASH_SCREEN=1",
-					"JUCE_PROJUCER_VERSION=0x7000c",
+					"JUCE_PROJUCER_VERSION=0x80000",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",
