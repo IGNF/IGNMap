@@ -21,6 +21,7 @@
 #include "XDtmShader.h"
 #include "../XTool/XTransfo.h"
 #include "../XTool/XInterpol.h"
+#include "../XTool/XFrame.h"
 #include "XTiffWriter.h"
 
 //-----------------------------------------------------------------------------
@@ -588,3 +589,40 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
   return true;
 }
 
+//==============================================================================
+// Dessin d'un dataset raster
+//==============================================================================
+bool XFileImage::PrepareRasterDraw(XFrame* F, double gsdR, int& U0, int& V0, int& win, int& hin, int& nbBand,
+                                   int& R0, int& S0, int& wout, int& hout)
+{
+  nbBand = NbByte();
+  // Pour l'instant, on ne gere pas les rotations et les facteurs d'echelle differents
+  int W = Width();
+  int H = Height();
+  double X0 = 0., Y0 = 0., gsd = 1.;
+  GetGeoref(&X0, &Y0, &gsd);
+
+  // Zone pixel dans l'image
+  U0 = (int)round((F->Xmin - X0) / gsd);
+  V0 = (int)round((Y0 - F->Ymax) / gsd);
+  int U1 = (int)round((F->Xmax - X0) / gsd);
+  int V1 = (int)round((Y0 - F->Ymin) / gsd);
+  if (U0 < 0) U0 = 0;
+  if (V0 < 0) V0 = 0;
+  if (U1 > W) U1 = W;
+  if (V1 > H) V1 = H;
+  // Zone pixel dans le bitmap resultat
+  //double gsdR = (F->Xmax - F->Xmin) / m_Raster.getWidth();
+  R0 = (int)round(((U0 * gsd + X0) - F->Xmin) / gsdR);
+  S0 = (int)round((F->Ymax - (Y0 - V0 * gsd)) / gsdR);
+  int R1 = (int)round(((U1 * gsd + X0) - F->Xmin) / gsdR);
+  int S1 = (int)round((F->Ymax - (Y0 - V1 * gsd)) / gsdR);
+  if (((R1 - R0) <= 0) || ((S1 - S0) <= 0))
+    return false;
+  // Resultat de l'intersection
+  win = U1 - U0;
+  hin = V1 - V0;
+  wout = R1 - R0;
+  hout = S1 - S0;
+  return true;
+}

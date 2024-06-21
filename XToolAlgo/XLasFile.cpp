@@ -28,6 +28,7 @@ XLasFile::XLasFile()
   m_dXmin = m_dXmax = m_dYmin = m_dYmax = m_dZmin = m_dZmax = 0.;
   m_nNbPoint = m_nIndex = 0;
   m_bCopc = false;
+  m_dWorldGsd = 0.;
 }
 
 //==============================================================================
@@ -239,7 +240,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 
 		u = (int)XRint((X - F.Xmin) / gsd);
 		v = (int)XRint((F.Ymax - Y) / gsd);
-		if ((u >= W) || (v >= H))	// Theoriquement cela ne devrait pas arrive si l'entete du LAS est correcte
+		if (((uint32_t)u >= W) || ((uint32_t)v >= H))	// Theoriquement cela ne devrait pas arrive si l'entete du LAS est correcte
 			continue;
 		if ((u < 0) || (v < 0))
 			continue;
@@ -470,7 +471,7 @@ bool PredEntriesDepth(CopcReader::Entry A, CopcReader::Entry B)
 bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
 {
   CopcInfo* info = (CopcInfo*)data;
-  int nb_entries = info->root_hier_size / 32;
+  int nb_entries = (int)(info->root_hier_size / 32);
   if (nb_entries < 1)
     return false;
   m_dSpacing = info->spacing;

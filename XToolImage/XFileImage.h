@@ -15,6 +15,7 @@
 
 class XTransfo;
 class XInterpol;
+class XFrame;
 
 class XFileImage {
 public:
@@ -67,6 +68,9 @@ public:
 
   // Fonction de reechantillonnage
   bool Resample(std::string file_out, XTransfo* transfo, XInterpol* inter, XWait* wait = nullptr);
+
+  // Preparation pour un dessin
+  bool PrepareRasterDraw(XFrame* F, double gsdR, int& U0, int& V0, int& win, int& hin, int& nbBand, int& R0, int& S0, int& wout, int& hout);
 
 protected:
   XBaseImage*   m_Image;

@@ -701,7 +701,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
     if (m_nNbLasVertex >= m_nMaxLasPt)
       break;
   }
-  las->CloseIfNeeded();
+  las->CloseIfNeeded(1);
   glUnmapBuffer(GL_ARRAY_BUFFER);
   m_dDeltaZ = -(m_dDeltaZ / m_nNbLasVertex);
 }
@@ -828,20 +828,22 @@ void OGLWidget::DrawDtm()
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
  
   juce::Image rawImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
-  juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::readWrite);
-  for (int i = 0; i < bitmap.height; i++) {
-    P.Y = m_Frame.Ymax - i * deltaY;
-    float* ptr_Z = (float*)bitmap.getLinePointer(i);
-    for (int j = 0; j < bitmap.width; j++) {
-      P.X = m_Frame.Xmin + j * deltaX;
-      P.Z = m_Base->Z(P);
-      *ptr_Z = (float)P.Z;
-      ptr_Z++;
-    }
+  { // Necessaire pour que bitmap soit detruit avant l'appel a ConvertImage
+    juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::writeOnly);
+    double minGsd = XMin(deltaX, deltaY);
+    uint32_t gridW = m_Frame.Width() / minGsd, gridH = m_Frame.Height() / minGsd;
+    float* grid = new float[gridW * gridH];
+    if (grid == nullptr)
+      return;
+    GeoTools::ComputeZGrid(m_Base, grid, gridW, gridH, &m_Frame);
+    XBaseImage::FastZoomBil(grid, gridW, gridH, (float*)bitmap.data, bitmap.width, bitmap.height);
+    delete[] grid;
   }
+ 
   juce::Image rgbImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
   shader.ConvertImage(&rawImage, &rgbImage);
   juce::Image::BitmapData colors(rgbImage, juce::Image::BitmapData::readWrite);
+  juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::readOnly);
 
   for (uint32_t i = 0; i < m_nDtmH; i++) {
     P.Y = m_Frame.Ymax - i * deltaY;

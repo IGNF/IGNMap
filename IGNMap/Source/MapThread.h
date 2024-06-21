@@ -76,8 +76,6 @@ private:
   bool DrawInternetRaster(GeoInternetImage* image);
   bool DrawDtmClass(XGeoClass* C);
   bool DrawDtm(GeoDTM* poDataset);
-  bool PrepareRasterDraw(XFileImage* image, int& U0, int& V0, int& win, int& hin, int& nbBand,
-    int& R0, int& S0, int& wout, int& hout);
 
   bool DrawLasClass(XGeoClass* C);
   bool DrawLas(GeoLAS* las);

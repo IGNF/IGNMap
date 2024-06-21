@@ -622,53 +622,12 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 }
 
 //==============================================================================
-// Dessin d'un dataset raster
-//==============================================================================
-bool MapThread::PrepareRasterDraw(XFileImage* image, int& U0, int& V0, int& win, int& hin, int& nbBand,
-	int& R0, int& S0, int& wout, int& hout)
-{
-	if (image == nullptr)
-		return false;
-	nbBand = image->NbByte();
-
-	// Pour l'instant, on ne gere pas les rotations et les facteurs d'echelle differents
-	int W = image->Width();
-	int H = image->Height();
-	double X0 = 0., Y0 = 0., gsd = 1.;
-	image->GetGeoref(&X0, &Y0, &gsd);
-
-	// Zone pixel dans l'image
-	U0 = (int)round((m_Frame.Xmin - X0) / gsd);
-	V0 = (int)round((Y0 - m_Frame.Ymax) / gsd);
-	int U1 = (int)round((m_Frame.Xmax - X0) / gsd);
-	int V1 = (int)round((Y0 - m_Frame.Ymin) / gsd);
-	if (U0 < 0) U0 = 0;
-	if (V0 < 0) V0 = 0;
-	if (U1 > W) U1 = W;
-	if (V1 > H) V1 = H;
-	// Zone pixel dans le bitmap resultat
-	double gsdR = (m_Frame.Xmax - m_Frame.Xmin) / m_Raster.getWidth();
-	R0 = (int)round(((U0 * gsd + X0) - m_Frame.Xmin) / gsdR);
-	S0 = (int)round((m_Frame.Ymax - (Y0 - V0 * gsd)) / gsdR);
-	int R1 = (int)round(((U1 * gsd + X0) - m_Frame.Xmin) / gsdR);
-	int S1 = (int)round((m_Frame.Ymax - (Y0 - V1 * gsd)) / gsdR);
-	if (((R1 - R0) <= 0) || ((S1 - S0) <= 0))
-		return false;
-	// Resultat de l'intersection
-	win = U1 - U0;
-	hin = V1 - V0;
-	wout = R1 - R0;
-	hout = S1 - S0;
-	return true;
-}
-
-//==============================================================================
 // Dessin d'une image provenant d'un fichier
 //==============================================================================
 bool MapThread::DrawFileRaster(GeoFileImage* image)
 {
 	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
-	if (!PrepareRasterDraw(image, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
+	if (!image->PrepareRasterDraw(&m_Frame, m_Frame.Width() / m_Raster.getWidth(), U0, V0, win, hin, nbBand, R0, S0, wout, hout))
 		return false;
 	juce::Rectangle<int> destRect(R0, S0, wout, hout);
 	if (m_ClipRaster.contains(destRect))
@@ -691,27 +650,29 @@ bool MapThread::DrawFileRaster(GeoFileImage* image)
 			format = juce::Image::PixelFormat::ARGB;
 	}
 	juce::Image tmpImage(format, wtmp, htmp, true);
-	juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-	format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
+		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
+		format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
 
-	if (factor == 1)
-		image->GetArea(U0, V0, win, hin, bitmap.data);
-	else
-		image->GetZoomArea(U0, V0, win, hin, bitmap.data, factor);
+		if (factor == 1)
+			image->GetArea(U0, V0, win, hin, bitmap.data);
+		else
+			image->GetZoomArea(U0, V0, win, hin, bitmap.data, factor);
 
-	if (format == juce::Image::PixelFormat::RGB) {
-		if (nbBand == 1)
-			XBaseImage::Gray2RGB(bitmap.data, wtmp * htmp);
-		else
-			XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
-		XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
-	}
-	else {
-		if (nbBand == 1)
-			XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
-		else
-			XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
-		XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+		if (format == juce::Image::PixelFormat::RGB) {
+			if (nbBand == 1)
+				XBaseImage::Gray2RGB(bitmap.data, wtmp * htmp);
+			else
+				XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
+			XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
+		}
+		else {
+			if (nbBand == 1)
+				XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
+			else
+				XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
+			XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+		}
 	}
 
 	if (m_bFirstRaster) {	// Nettoyage pour la premiere couche raster a afficher
@@ -780,7 +741,7 @@ bool MapThread::DrawDtm(GeoDTM* dtm)
 	double gsd = dtm->Resolution();
 	image.SetGeoref(dtm->Frame().Xmin - gsd * 0.5, dtm->Frame().Ymax + gsd * 0.5, gsd);
 	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
-	if (!PrepareRasterDraw(&image, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
+	if (!image.PrepareRasterDraw(&m_Frame, m_Frame.Width() / m_Raster.getWidth(), U0, V0, win, hin, nbBand, R0, S0, wout, hout))
 		return false;
 	
 	int factor = win / wout;
@@ -796,13 +757,16 @@ bool MapThread::DrawDtm(GeoDTM* dtm)
 	uint32_t nb_sample;
 	image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
 	juce::Image tmpImage(m_RawDtm.getFormat(), wout, hout, true);
-	juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-	XBaseImage::FastZoomBil(area, wtmp, htmp, (float*)bitmap.data, wout, hout);
-	delete[] area;
-	XBaseImage::OffsetArea(bitmap.data, wout * 4, bitmap.height, bitmap.lineStride);
+	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
+		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
+		XBaseImage::FastZoomBil(area, wtmp, htmp, (float*)bitmap.data, wout, hout);
+		delete[] area;
+		XBaseImage::OffsetArea(bitmap.data, wout * 4, bitmap.height, bitmap.lineStride);
+	}
 
 	m_RawDtm.clear(juce::Rectangle<int>(R0, S0, wout, hout));
 	juce::Graphics g(m_RawDtm);
+	g.setOpacity(1.f);
 	g.drawImageAt(tmpImage, R0, S0);
 
 	m_nNumObjects++;
@@ -952,7 +916,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 			break;
 	}
 	m_nNumObjects++;
-	las->CloseIfNeeded();
+	las->CloseIfNeeded(1);
 
 	return true;
 }

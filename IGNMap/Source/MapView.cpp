@@ -198,7 +198,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	Pixel2Ground(X0, Y0);
 	Pixel2Ground(X1, Y1);
 
-	if ((abs(m_DragPt.x) > 1) || (abs(m_DragPt.y) > 1)) {	// Drag avec la souris : action zonale
+	if ((abs(m_DragPt.x) > 1) && (abs(m_DragPt.y) > 1)) {	// Drag avec la souris : action zonale
 		auto b = getLocalBounds();
 		if (m_bZoom) {
 			m_dScale /= ((b.getWidth() / m_DragPt.x + b.getHeight() / m_DragPt.y) * 0.5);
@@ -527,7 +527,7 @@ void MapView::SelectFeatures(const double& X0, const double& Y0, const double& X
 //==============================================================================
 void MapView::Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1)
 {
-	m_3DFrame = XFrame();;
+	m_3DFrame = XFrame();
 	m_3DFrame += XPt2D(X0, Y0);
 	m_3DFrame += XPt2D(X1, Y1);
 	StopThread();

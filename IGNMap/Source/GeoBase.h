@@ -145,4 +145,5 @@ namespace GeoTools {
   void ColorizeClasses(XGeoBase* base);
   juce::File CreateCacheDir(juce::String name);
   void UpdateProjection(XGeoBase* base);
+  bool ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h, XFrame* F);
 }

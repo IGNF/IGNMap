@@ -659,3 +659,53 @@ void GeoTools::UpdateProjection(XGeoBase* base)
 	}
 	base->UpdateFrame();
 }
+
+//-----------------------------------------------------------------------------
+// Calcul d'une grille d'altitude a partir des MNT charges
+//-----------------------------------------------------------------------------
+bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h, XFrame* F)
+{
+	for (uint32_t i = 0; i < base->NbClass(); i++) {
+		XGeoClass* C = base->Class(i);
+		if (C == nullptr)
+			continue;
+		if ((!C->IsDTM()) || (!C->Visible()))
+			continue;
+		for (uint32_t j = 0; j < C->NbVector(); j++) {
+			GeoDTM* dtm = (GeoDTM*)C->Vector(j);
+			if (!dtm->Visible())
+				continue;
+			if (!F->Intersect(dtm->Frame()))
+				continue;
+			XFileImage image;
+			if (!image.AnalyzeImage(dtm->ImageName()))
+				continue;
+			if (image.NbSample() != 1)
+				continue;
+			double gsd = dtm->Resolution();
+			image.SetGeoref(dtm->Frame().Xmin - gsd * 0.5, dtm->Frame().Ymax + gsd * 0.5, gsd);
+			int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
+			if (!image.PrepareRasterDraw(F, F->Width() / w, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
+				continue;
+
+			int factor = win / wout;
+			if (factor < 1)
+				factor = 1;
+			int wtmp = win / factor, htmp = hin / factor;
+			if ((wtmp == 0) || (htmp == 0))
+				continue;
+
+			float* area = new float[wtmp * htmp];
+			float* data = new float[wout * hout];
+			if ((area == nullptr)||(data == nullptr))
+				continue;
+			uint32_t nb_sample;
+			image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
+			XBaseImage::FastZoomBil(area, wtmp, htmp, data, wout, hout);
+			XBaseImage::CopyArea((uint8_t*)data, (uint8_t*)grid, wout * sizeof(float), hout, w * sizeof(float), h, R0 * sizeof(float), S0);
+			delete[] area;
+			delete[] data;
+		}
+	}
+	return false;
+}

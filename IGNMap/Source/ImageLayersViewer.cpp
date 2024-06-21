@@ -309,6 +309,7 @@ void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 {
 	if (message == "UpdateFillOpacity") {
 		repaint();
+		sendActionMessage("UpdateRaster");
 		return;
 	}
 	if (message == "NewWindow") {
@@ -387,6 +388,7 @@ void ImageLayersViewer::itemDropped(const SourceDetails& details)
 			C->Repres()->ZOrder(index * 10);
 	}
 	m_Base->SortClass();
+	m_Table.repaint();
 	m_Model.sendActionMessage("UpdateRaster");
 }
 

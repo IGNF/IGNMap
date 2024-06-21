@@ -332,8 +332,8 @@ bool DtmShader::ConvertImage(juce::Image* rawImage, juce::Image* rgbImage)
     return false;
   int w = rawImage->getWidth(), h = rawImage->getHeight();
 
-  juce::Image::BitmapData rawData(*rawImage, juce::Image::BitmapData::readWrite);
-  juce::Image::BitmapData rgbData(*rgbImage, juce::Image::BitmapData::readWrite);
+  juce::Image::BitmapData rawData(*rawImage, juce::Image::BitmapData::readOnly);
+  juce::Image::BitmapData rgbData(*rgbImage, juce::Image::BitmapData::writeOnly);
 
   EstompLine((float*)rawData.getLinePointer(0), (float*)rawData.getLinePointer(0), (float*)rawData.getLinePointer(1), 
               w, rgbData.getLinePointer(0), 0);

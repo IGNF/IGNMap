@@ -475,6 +475,19 @@ bool XBaseImage::ExtractArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t h
 }
 
 //-----------------------------------------------------------------------------
+// Copie d'une zone de pixels au sein d'une image
+//-----------------------------------------------------------------------------
+bool XBaseImage::CopyArea(uint8_t* patch, uint8_t* image, uint32_t wpatch, uint32_t hpatch, uint32_t wimage, uint32_t himage,
+                          uint32_t x0, uint32_t y0)
+{
+  if (x0 + wpatch > wimage) return false;
+  if (y0 + hpatch > himage) return false;
+  for (uint32_t i = 0; i < hpatch; i++)
+    ::memcpy(&image[(y0 + i) * wimage + x0], &patch[i * wpatch], wpatch);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Zoom sur un buffer de pixels
 //-----------------------------------------------------------------------------
 bool XBaseImage::ZoomArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t nbbyte)
