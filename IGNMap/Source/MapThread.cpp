@@ -245,6 +245,8 @@ bool MapThread::Draw(juce::Graphics& g, int x0, int y0)
 //==============================================================================
 void MapThread::DrawVectorClass(XGeoClass* C)
 {
+	if (!m_Frame.Intersect(C->Frame()))
+		return;
 	int index = 0;
 	do {
 		const juce::MessageManagerLock mml(Thread::getCurrentThread());
@@ -255,7 +257,7 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 
 		for (int i = 0; i < 1000; i++) {
 			if (threadShouldExit())
-				return;
+				return ;
 			XGeoVector* V = C->Vector(index);
 			index++;
 			if (V == nullptr)
@@ -715,6 +717,9 @@ bool MapThread::DrawDtmClass(XGeoClass* C)
 {
 	if (!m_Frame.Intersect(C->Frame()))
 		return false;
+	const juce::MessageManagerLock mml(Thread::getCurrentThread());
+	if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
+		return false;
 	bool flag = false;
 	for (uint32_t i = 0; i < C->NbVector(); i++) {
 		GeoDTM* dtm = (GeoDTM*)C->Vector(i);
@@ -795,6 +800,9 @@ float MapThread::GetZ(int u, int v)
 bool MapThread::DrawLasClass(XGeoClass* C)
 {
 	if (!m_Frame.Intersect(C->Frame()))
+		return false;
+	const juce::MessageManagerLock mml(Thread::getCurrentThread());
+	if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
 		return false;
 	bool flag = false;
 	for (uint32_t i = 0; i < C->NbVector(); i++) {
