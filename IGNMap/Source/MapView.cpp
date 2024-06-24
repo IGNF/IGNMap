@@ -18,7 +18,8 @@ MapView::MapView(juce::String name) : m_MapThread(name)
 	m_strName = name;
 	Clear();
 	setOpaque(true);
-	startTimerHz(20);
+	startTimerHz(5);
+	m_MapThread.addListener(this);
 }
 
 MapView::~MapView()

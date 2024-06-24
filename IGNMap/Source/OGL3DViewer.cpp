@@ -835,6 +835,8 @@ void OGLWidget::DrawDtm()
     float* grid = new float[gridW * gridH];
     if (grid == nullptr)
       return;
+    for (uint32_t i = 0; i < gridW * gridH; i++)
+      grid[i] = (float)XGEO_NO_DATA;
     GeoTools::ComputeZGrid(m_Base, grid, gridW, gridH, &m_Frame);
     XBaseImage::FastZoomBil(grid, gridW, gridH, (float*)bitmap.data, bitmap.width, bitmap.height);
     delete[] grid;

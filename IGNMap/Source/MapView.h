@@ -20,7 +20,7 @@ class XGeoBase;
 //==============================================================================
 /*
 */
-class MapView : public juce::Component, private juce::Timer, public juce::ActionBroadcaster
+class MapView : public juce::Component, private juce::Timer, public juce::ActionBroadcaster, public juce::Thread::Listener
 {
 public:
   MapView(juce::String name);
@@ -54,6 +54,7 @@ public:
   double GetGsd() const { return m_dScale; }
 
   void paint(juce::Graphics&) override;
+  void exitSignalSent() override { repaint(); }
   void resized() override;
   void mouseDown(const juce::MouseEvent& event) override;
   void mouseMove(const juce::MouseEvent& event) override;
