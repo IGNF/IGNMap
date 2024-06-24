@@ -220,7 +220,6 @@ void MapThread::run()
 	if (m_bOverlay)
 		DrawSelection();
 	m_bRaster = m_bVector = m_bOverlay = false;
-	signalThreadShouldExit();
 }
 
 bool MapThread::Draw(juce::Graphics& g, int x0, int y0)
