@@ -21,19 +21,19 @@
 //-----------------------------------------------------------------------------
 
 // sample error callback expecting a FILE* client object
-static void error_callback(const char* msg, void* client_data)
+static void error_callback(const char* /*msg*/, void* client_data)
 {
   (void)client_data;
   //fprintf(stdout, "[ERROR] %s", msg);
 }
 // sample warning callback expecting a FILE* client object
-static void warning_callback(const char* msg, void* client_data)
+static void warning_callback(const char* /*msg*/, void* client_data)
 {
   (void)client_data;
   //fprintf(stdout, "[WARNING] %s", msg);
 }
 // sample debug callback expecting no client object
-static void info_callback(const char* msg, void* client_data)
+static void info_callback(const char* /*msg*/, void* client_data)
 {
   (void)client_data;
   //fprintf(stdout, "[INFO] %s", msg);
@@ -53,8 +53,8 @@ XOpenJp2Image::XOpenJp2Image(const char* filename)
   m_nW = m_Image->x1 - m_Image->x0;
   m_nH = m_Image->y1 - m_Image->y0;
 
-  m_nNbSample = m_Image->numcomps;
-  m_nNbBits = m_Image->comps[0].prec;
+  m_nNbSample = (uint16_t)m_Image->numcomps;
+  m_nNbBits = (uint16_t)m_Image->comps[0].prec;
   if ((m_nNbBits > 8) && (m_nNbBits <= 16))
     m_nNbBits = 16;
 
@@ -133,7 +133,7 @@ bool XOpenJp2Image::CreateCodec()
 //-----------------------------------------------------------------------------
 // Lecture d'une region
 //-----------------------------------------------------------------------------
-bool XOpenJp2Image::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
+bool XOpenJp2Image::GetArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
 {
   if (!m_bValid)
     return false;
@@ -164,7 +164,7 @@ bool XOpenJp2Image::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uin
 //-----------------------------------------------------------------------------
 // Recuperation d'une zone de pixels avec zoom arriere
 //-----------------------------------------------------------------------------
-bool XOpenJp2Image::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
+bool XOpenJp2Image::GetZoomArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
 {
   if (!m_bValid)
     return false;
@@ -185,7 +185,13 @@ bool XOpenJp2Image::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w,
    if (!CreateCodec())
      return false;
   
-  if (!opj_set_decoded_resolution_factor(m_Codec, opj_factor)) 
+   bool flag = false;
+  for (uint32_t i = 0; i < opj_factor; i++) {
+    flag = opj_set_decoded_resolution_factor(m_Codec, opj_factor);
+    if (flag) break;// Le niveau de zoom existe bien
+    opj_factor -= 1;
+  }
+  if (!flag)
     return false;
   if (!opj_set_decode_area(m_Codec, m_Image, x, y, x + maxW, y + maxH))
     return false;

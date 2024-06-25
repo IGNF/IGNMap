@@ -613,6 +613,9 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 			continue;
 		if (!m_Frame.Intersect(image->Frame()))
 			continue;
+		const juce::MessageManagerLock mml(Thread::getCurrentThread());
+		if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
+			continue;
 		GeoFileImage* fileImage = dynamic_cast<GeoFileImage*>(image);
 		if (fileImage != nullptr)
 			flag |= DrawFileRaster(fileImage);
