@@ -133,6 +133,7 @@ bool XLasFile::GetNextPoint(double* X, double* Y, double* Z)
     do {
       laszip_read_point(m_Reader);
       m_nIndex++;
+      if ((m_nIndex >= m_nNbPoint)) break;
       if (m_Point->X <= m_dXmin) continue;
       if (m_Point->X >= m_dXmax) continue;
       if (m_Point->Y <= m_dYmin) continue;
