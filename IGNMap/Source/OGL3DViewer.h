@@ -55,6 +55,7 @@ protected:
   void UpdateBase();
   void ReinitDtm();
   void MoveZ(float dZ);
+  void ChangeLasColor();
   void DrawLas(GeoLAS* las);
   void DrawDtm(GeoDTM* dtm);
   void DrawDtm();
@@ -118,6 +119,8 @@ private:
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
+  bool      m_bUpdatelasColor;  // Inidique que l'on veut changer les couleurs des points LAS
+  bool      m_bShowF1Help;      // Affiche l'aide F1
   
 
   juce::Point<float>  m_LastPos;  // Position souris pour les drags

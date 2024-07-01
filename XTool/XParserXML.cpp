@@ -84,17 +84,16 @@ XNodeXML* XNodeXML::GetNode(std::string nodename, uint32_t num)
 //-----------------------------------------------------------------------------
 std::string XNodeXML::GetToken(std::istream* in)
 {
-	std::string token;
-	char c = 0;
-
 	// On retire les blancs en debut de chaine
+	char c = 0;
 	while(!in->eof()) {
 		*in >> c;
 		if ((c != 0x09)&&(c != 0x0A)&&(c != 0x0D)&&(c != 0x20))	// Espace, tabulation, ...
 			break;
 	}
 	if (in->eof())
-		return token;
+		return "";
+	std::string token;
 	token += c;
 	// On lit le token
 	while(!in->eof()) {
@@ -154,9 +153,7 @@ bool XNodeXML::FindAttributes()
 //-----------------------------------------------------------------------------
 bool XNodeXML::Read(std::istream* in, bool root)
 {
-	std::string token;
-
-	token = GetToken(in);
+	std::string token = GetToken(in);
 	if ((token == "")&&(in->eof()))
 		return true;
 	// Detection des entetes XML <?xml ...?>

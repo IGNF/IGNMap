@@ -59,19 +59,21 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
   uint32_t wtmp = win / factor, htmp = hin / factor;
 
   m_SourceImage =juce::Image(juce::Image::PixelFormat::ARGB, wtmp, htmp, true);
-  juce::Image::BitmapData bitmap(m_SourceImage, juce::Image::BitmapData::readWrite);
+  { // Necessaire pour fixer le scope du BitmapData
+    juce::Image::BitmapData bitmap(m_SourceImage, juce::Image::BitmapData::readWrite);
 
-  if (factor == 1)
-    m_Image.GetArea(u0, v0, win, hin, bitmap.data);
-  else
-    m_Image.GetZoomArea(u0, v0, win, hin, bitmap.data, factor);
+    if (factor == 1)
+      m_Image.GetArea(u0, v0, win, hin, bitmap.data);
+    else
+      m_Image.GetZoomArea(u0, v0, win, hin, bitmap.data, factor);
 
-  uint8_t r = 0, g = 0, b = 0, alpha = 255;
-  if (m_Image.NbSample() == 1)
-    XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
-  else
-    XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
-  XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+    uint8_t r = 0, g = 0, b = 0, alpha = 255;
+    if (m_Image.NbSample() == 1)
+      XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
+    else
+      XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
+    XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+  }
 
   // Reechantillonage dans la projection souhaitee
   XTransfoRotation transfo(m_dRot, m_C, m_dGsd, m_O, u0, v0, factor);
@@ -183,8 +185,8 @@ void XTransfoRotation::Direct(double x, double y, double* u, double* v)
 //-----------------------------------------------------------------------------
 // Dimension de l'image reechantillonnee
 //-----------------------------------------------------------------------------
-void XTransfoRotation::Dimension(int w, int h, int* wout, int* hout)
+void XTransfoRotation::Dimension(int , int , int* wout, int* hout)
 {
-  *wout = m_Ff.Width() / (m_dGsd * m_Factor);
-  *hout = m_Ff.Height() / (m_dGsd * m_Factor);
+  *wout = (int)(m_Ff.Width() / (m_dGsd * m_Factor));
+  *hout = (int)(m_Ff.Height() / (m_dGsd * m_Factor));
 }

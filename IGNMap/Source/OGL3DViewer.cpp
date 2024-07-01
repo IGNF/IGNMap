@@ -59,6 +59,7 @@ OGLWidget::OGLWidget()
   m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
   m_dDeltaZ = m_dOffsetZ = 0.;
+  m_bUpdatelasColor = m_bShowF1Help = false;
 }
 
 //==============================================================================
@@ -266,6 +267,33 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(lastPt, 25, 80, 300, 30, juce::Justification::left);
   g.drawLine(20, 20, 170, 20);
   g.drawLine(20, 110, 170, 110);
+
+  if (!m_bShowF1Help)
+    return;
+  auto b = getLocalBounds();
+  b.expand(-20, -20);
+  g.setOpacity(0.7f);
+  g.setFillType(juce::FillType(juce::Colours::lightskyblue));
+  g.fillRect(b);
+  b.expand(-5, -5);
+  g.setFillType(juce::FillType(juce::Colours::darkblue));
+  g.setFont(18);
+  help = "Help : F1";
+  g.drawText(help, b.getX(), b.getY() + 5, b.getWidth(), 40, juce::Justification::left);
+  help = "Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)";
+  g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);
+  help = "DTM : D (point / triangle), F (fill triangles)";
+  g.drawText(help, b.getX(), b.getY() + 65, b.getWidth(), 40, juce::Justification::left);
+  help = "Visibility: K (Vector) ; L (Las) ; M (DTM)";
+  g.drawText(help, b.getX(), b.getY() + 95, b.getWidth(), 40, juce::Justification::left);
+  help = "Z scale: PageUp ; PageDown";
+  g.drawText(help, b.getX(), b.getY() + 125, b.getWidth(), 40, juce::Justification::left);
+  help = "Position : Left ; Right ; Up ; Down";
+  g.drawText(help, b.getX(), b.getY() + 155, b.getWidth(), 40, juce::Justification::left);
+  help = "Z Position : T ; G";
+  g.drawText(help, b.getX(), b.getY() + 185, b.getWidth(), 40, juce::Justification::left);
+  help = "A : automatic rotation ;  R : reset ; P : LAS color";
+  g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
 }
 
 //==============================================================================
@@ -446,6 +474,8 @@ void OGLWidget::mouseDoubleClick(const juce::MouseEvent& /*event*/)
 //==============================================================================
 bool OGLWidget::keyPressed(const juce::KeyPress& key)
 {
+  if (key.getKeyCode() == juce::KeyPress::F1Key) 
+    m_bShowF1Help = !m_bShowF1Help;
   if (key.getKeyCode() == juce::KeyPress::upKey)
     m_T.Y += 0.1;
   if (key.getKeyCode() == juce::KeyPress::downKey)
@@ -501,7 +531,10 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_dDeltaZ = -1.;
     m_bNeedUpdate = true;
   }
-
+  if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
+    m_bUpdatelasColor = true;
+    m_bNeedUpdate = true;
+  }
   repaint();
   return true;
 }
@@ -531,9 +564,13 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
 //==============================================================================
 void OGLWidget::UpdateBase()
 {
-  if (m_dDeltaZ != 0.) {
+  if (m_dDeltaZ != 0.) {  // Juste un changement d'echelle altimetrique
     MoveZ((float)m_dDeltaZ);
     m_dDeltaZ = 0.;
+    return;
+  }
+  if (m_bUpdatelasColor) { // Juste un reetalement des couleurs des points LAS
+    ChangeLasColor();
     return;
   }
   m_nNbLasVertex = 0;
@@ -831,7 +868,7 @@ void OGLWidget::DrawDtm()
   { // Necessaire pour que bitmap soit detruit avant l'appel a ConvertImage
     juce::Image::BitmapData bitmap(rawImage, juce::Image::BitmapData::writeOnly);
     double minGsd = XMin(deltaX, deltaY);
-    uint32_t gridW = m_Frame.Width() / minGsd, gridH = m_Frame.Height() / minGsd;
+    uint32_t gridW = (uint32_t)(m_Frame.Width() / minGsd), gridH = (uint32_t)(m_Frame.Height() / minGsd);
     float* grid = new float[gridW * gridH];
     if (grid == nullptr)
       return;
@@ -968,6 +1005,49 @@ void OGLWidget::MoveZ(float dZ)
 
   m_bNeedUpdate = false;
   //openGLContext.setContinuousRepainting(true);
+  openGLContext.triggerRepaint();
+}
+
+//==============================================================================
+// Changement des couleurs des points LAS
+//==============================================================================
+void OGLWidget::ChangeLasColor()
+{
+  if (m_nNbLasVertex < 1)
+    return;
+  LasShader shader;
+  if (shader.Mode() != LasShader::ShaderMode::Altitude)
+    return;
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  if (ptr_vertex == nullptr)
+    return;
+  // Recherche du Zmin et du Zmax
+  float zmin = ptr_vertex[0].position[2], zmax = ptr_vertex[0].position[2];
+  for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
+    zmin = XMin(zmin, ptr_vertex[i].position[2]);
+    zmax = XMax(zmax, ptr_vertex[i].position[2]);
+  }
+  float deltaZ = zmax - zmin;
+  if (deltaZ <= 0) deltaZ = 1.f;	// Pour eviter les divisions par 0
+
+  juce::Colour col = juce::Colours::orchid;
+  uint8_t data[4] = { 0, 0, 0, 255 };
+  uint32_t* data_ptr = (uint32_t*)&data;
+  for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
+    col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
+    *data_ptr = (uint32_t)col.getARGB();
+    ptr_vertex->colour[0] = (float)data[2] / 255.f;
+    ptr_vertex->colour[1] = (float)data[1] / 255.f;
+    ptr_vertex->colour[2] = (float)data[0] / 255.f;
+    ptr_vertex->colour[3] = (float)data[3] / 255.f;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  m_bNeedUpdate = false;
+  m_bUpdatelasColor = false;
   openGLContext.triggerRepaint();
 }
 

@@ -1075,7 +1075,7 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 {
 	juce::String filename = lasfile;
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("LasPath");
+		filename = AppUtil::OpenFile("LasPath", juce::translate("Open LAS file"), "*.las;*.laz;*.copc;");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
