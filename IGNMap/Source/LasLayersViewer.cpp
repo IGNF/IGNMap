@@ -316,6 +316,7 @@ void ClassifModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 LasLayersViewer::LasLayersViewer()
 {
 	m_Base = nullptr;
+	m_nLasGradient = 0;
 
 	setName("LAS Layers");
 	m_ModelLas.addActionListener(this);
@@ -380,6 +381,8 @@ LasLayersViewer::LasLayersViewer()
 	m_lblZRange.setText(juce::translate("Min / Max :"), juce::dontSendNotification);
 	addAndMakeVisible(m_lblZRange);
 	m_lblZRange.attachToComponent(&m_sldZRange, true);
+	m_drwZRect.setInterceptsMouseClicks(true, true);
+	m_drwZRect.addMouseListener(this, true);
 	addAndMakeVisible(m_drwZRect);
 	if (LasShader::Mode() == LasShader::ShaderMode::Classification) {
 		m_sldZRange.setVisible(false);
@@ -602,6 +605,39 @@ void LasLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		m_lblZRange.setVisible(ZRangeVisible);
 		m_drwZRect.setVisible(ZRangeVisible);
 	}
+}
+
+//==============================================================================
+// Clic souris
+//==============================================================================
+void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
+{
+	if (!m_drwZRect.hitTest(event.getMouseDownX(), event.getMouseDownY()))
+		return;
+	m_nLasGradient += 1;
+	m_nLasGradient = m_nLasGradient % 4;
+
+	juce::Colour col1 = juce::Colours::darkblue, col2 = juce::Colours::green, col3 = juce::Colours::lightcoral;
+	if (m_nLasGradient == 2) {
+		col1 = juce::Colours::aqua; col2 = juce::Colours::darkorange; col3 = juce::Colours::lawngreen;
+	}
+	if (m_nLasGradient == 3) {
+		col1 = juce::Colours::darkgreen; col2 = juce::Colours::lightskyblue; col3 = juce::Colours::rebeccapurple;
+	}
+	if (m_nLasGradient > 0) {
+		juce::ColourGradient gradient1(col1, 0., 0., col2, 128., 128., false);
+		juce::ColourGradient gradient2(col2, 0., 0., col3, 128., 128., false);
+		LasShader shader;
+		for (int i = 0; i < 128; i++)
+			shader.AltiColor(gradient1.getColourAtPosition(i / 128.), (uint8_t)i);
+		for (int i = 128; i < 256; i++)
+			shader.AltiColor(gradient2.getColourAtPosition((i - 128) / 128.), (uint8_t)i);
+	}
+	else
+		LasShader::InitAltiColor();
+	UpdateAltiColors();
+	repaint();
+	m_ModelLas.sendActionMessage("UpdateLasOptions");
 }
 
 //==============================================================================

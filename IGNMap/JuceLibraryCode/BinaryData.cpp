@@ -3314,7 +3314,15 @@ static const unsigned char temp_binary_data_15[] =
 "\"World\" = \"Monde\"\r\n"
 "\"New Caledonia\" = \"Nouvelle-Cal\xc3\xa9""donie\"\r\n"
 "\"French Guiana\" = \"Guyane\"\r\n"
-"\"Reunion\" = \"R\xc3\xa9union\"";
+"\"Reunion\" = \"R\xc3\xa9union\"\r\n"
+"\"Help : F1\" = \"Aide : F1\"\r\n"
+"\"Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)\" = \"Dimension des points : Q/S (LAS) ; W/X (MNT) ; C/V (Vecteurs)\"\r\n"
+"\"DTM : D (point / triangle), F (fill triangles)\" = \"MNT : D (affichage par points / par triangles), F (remplissage des triangles)\"\r\n"
+"\"Visibility: K (Vector) ; L (Las) ; M (DTM)\" = \"Visibilit\xc3\xa9 : K (Vecteurs) ; L (Las) ; M (MNT)\"\r\n"
+"\"Z scale: PageUp ; PageDown\" = \"Echelle altim\xc3\xa9trique : PageUp ; PageDown\"\r\n"
+"\"Position : Left ; Right ; Up ; Down\" = \"Position : fl\xc3\xa8""ches Haut ; Bas ; Droite ; Gauche\"\r\n"
+"\"Z Position : T ; G\" = \"Position altim\xc3\xa9trique : T ; G\"\r\n"
+"\"A : automatic rotation ;  R : reset ; P : LAS color\" = \"A : rotation automatique ; R : remise \xc3\xa0 0 ; P : couleur des points Las\"";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_15;
 
@@ -3345,7 +3353,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 3591; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 4322; return Translation_fr_txt;
         default: break;
     }
 

@@ -32,6 +32,7 @@ public:
 	static juce::Colour ClassificationColor(uint8_t classif) { return m_ClassifColors[classif]; }
 	static juce::Colour AltiColor(uint8_t alti) { return m_AltiColors[alti]; }
 	static juce::String ClassificationName(uint8_t classif);
+	static void AltiColor(juce::Colour color, uint8_t alti) { m_AltiColors[alti] = color; }
 	static bool ClassificationVisibility(uint8_t classif) { return m_ClassifVisibility[classif]; }
 	static bool ClassificationSelectable(uint8_t classif) { return m_ClassifSelectable[classif]; }
 

@@ -59,7 +59,7 @@ OGLWidget::OGLWidget()
   m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
   m_dDeltaZ = m_dOffsetZ = 0.;
-  m_bUpdatelasColor = m_bShowF1Help = false;
+  m_bUpdatelasColor = m_bZLocalRange = m_bShowF1Help = false;
 }
 
 //==============================================================================
@@ -255,14 +255,13 @@ void OGLWidget::paint(juce::Graphics& g)
   juce::String translation = "Translations : (" + juce::String(m_T.X) + " ; " + juce::String(m_T.Y) + " ; " + juce::String(m_T.Z) + ")";
   g.drawText(translation, 25, 40, 300, 30, juce::Justification::left);
   */
-  juce::String help = "Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)";
+  juce::String help = juce::translate("Help : F1");
   g.drawText(help, 25, 20, 300, 30, juce::Justification::left);
-  help = "Visibility: K (Vector) ; L (Las) ; M (DTM)";
-  g.drawText(help, 25, 40, 300, 30, juce::Justification::left);
   juce::String nbPoint = "Points : " + juce::String(m_nNbLasVertex) + " Las";
   nbPoint += " | " + juce::String(m_nNbPolyVertex) + " Polygon";
   nbPoint += " | " + juce::String(m_nNbLineVertex) + " Line";
-  g.drawText(nbPoint, 25, 60, 300, 30, juce::Justification::left);
+  g.drawText(nbPoint, 25, 40, 300, 30, juce::Justification::left);
+
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
   g.drawText(lastPt, 25, 80, 300, 30, juce::Justification::left);
   g.drawLine(20, 20, 170, 20);
@@ -278,21 +277,21 @@ void OGLWidget::paint(juce::Graphics& g)
   b.expand(-5, -5);
   g.setFillType(juce::FillType(juce::Colours::darkblue));
   g.setFont(18);
-  help = "Help : F1";
+  help = juce::translate("Help : F1");
   g.drawText(help, b.getX(), b.getY() + 5, b.getWidth(), 40, juce::Justification::left);
-  help = "Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)";
+  help = juce::translate("Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)");
   g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);
-  help = "DTM : D (point / triangle), F (fill triangles)";
+  help = juce::translate("DTM : D (point / triangle), F (fill triangles)");
   g.drawText(help, b.getX(), b.getY() + 65, b.getWidth(), 40, juce::Justification::left);
-  help = "Visibility: K (Vector) ; L (Las) ; M (DTM)";
+  help = juce::translate("Visibility: K (Vector) ; L (Las) ; M (DTM)");
   g.drawText(help, b.getX(), b.getY() + 95, b.getWidth(), 40, juce::Justification::left);
-  help = "Z scale: PageUp ; PageDown";
+  help = juce::translate("Z scale: PageUp ; PageDown");
   g.drawText(help, b.getX(), b.getY() + 125, b.getWidth(), 40, juce::Justification::left);
-  help = "Position : Left ; Right ; Up ; Down";
+  help = juce::translate("Position : Left ; Right ; Up ; Down");
   g.drawText(help, b.getX(), b.getY() + 155, b.getWidth(), 40, juce::Justification::left);
-  help = "Z Position : T ; G";
+  help = juce::translate("Z Position : T ; G");
   g.drawText(help, b.getX(), b.getY() + 185, b.getWidth(), 40, juce::Justification::left);
-  help = "A : automatic rotation ;  R : reset ; P : LAS color";
+  help = juce::translate("A : automatic rotation ;  R : reset ; P : LAS color");
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
 }
 
@@ -1013,6 +1012,8 @@ void OGLWidget::MoveZ(float dZ)
 //==============================================================================
 void OGLWidget::ChangeLasColor()
 {
+  m_bNeedUpdate = false;
+  m_bUpdatelasColor = false;
   if (m_nNbLasVertex < 1)
     return;
   LasShader shader;
@@ -1024,11 +1025,14 @@ void OGLWidget::ChangeLasColor()
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
   if (ptr_vertex == nullptr)
     return;
-  // Recherche du Zmin et du Zmax
-  float zmin = ptr_vertex[0].position[2], zmax = ptr_vertex[0].position[2];
-  for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
-    zmin = XMin(zmin, ptr_vertex[i].position[2]);
-    zmax = XMax(zmax, ptr_vertex[i].position[2]);
+  m_bZLocalRange = !m_bZLocalRange;
+  float zmin = LasShader::Zmin(), zmax = LasShader::Zmax();
+  if (m_bZLocalRange) { // Recherche du Zmin et du Zmax local des points LAS charges
+    zmin = ptr_vertex[0].position[2], zmax = ptr_vertex[0].position[2];
+    for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
+      zmin = XMin(zmin, ptr_vertex[i].position[2]);
+      zmax = XMax(zmax, ptr_vertex[i].position[2]);
+    }
   }
   float deltaZ = zmax - zmin;
   if (deltaZ <= 0) deltaZ = 1.f;	// Pour eviter les divisions par 0
@@ -1037,7 +1041,10 @@ void OGLWidget::ChangeLasColor()
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
   for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
-    col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
+    if (m_bZLocalRange)
+      col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
+    else
+      col = shader.AltiColor((uint8_t)(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - zmin) * 255 / deltaZ));
     *data_ptr = (uint32_t)col.getARGB();
     ptr_vertex->colour[0] = (float)data[2] / 255.f;
     ptr_vertex->colour[1] = (float)data[1] / 255.f;
@@ -1046,8 +1053,6 @@ void OGLWidget::ChangeLasColor()
     ptr_vertex++;
   }
   glUnmapBuffer(GL_ARRAY_BUFFER);
-  m_bNeedUpdate = false;
-  m_bUpdatelasColor = false;
   openGLContext.triggerRepaint();
 }
 

@@ -87,6 +87,7 @@ public:
 	void actionListenerCallback(const juce::String& message) override;
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	void sliderValueChanged(juce::Slider* slider) override;
+	void mouseDoubleClick(const juce::MouseEvent& event) override;
 
 	// Drag&Drop
 	void itemDropped(const SourceDetails& details) override;
@@ -111,6 +112,7 @@ private:
 	juce::DrawableRectangle m_drwZRect;
 	juce::TableListBox	m_TableClassif;
 	ClassifModel				m_ModelClassif;
+	int									m_nLasGradient;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LasLayersViewer)
 };

@@ -119,7 +119,8 @@ private:
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
-  bool      m_bUpdatelasColor;  // Inidique que l'on veut changer les couleurs des points LAS
+  bool      m_bUpdatelasColor;  // Indique que l'on veut changer les couleurs des points LAS
+  bool      m_bZLocalRange;     // Indique que l'on colorise le LAS en prenant les Zmin / Zmax locaux
   bool      m_bShowF1Help;      // Affiche l'aide F1
   
 
