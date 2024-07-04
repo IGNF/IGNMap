@@ -52,6 +52,7 @@ public:
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetSelectionFrame() { return m_SelectionFrame; }
   double GetGsd() const { return m_dScale; }
+  juce::Image GetSelImage() const { return m_SelImage; }
 
   void paint(juce::Graphics&) override;
   void exitSignalSent() override { repaint(); }
@@ -83,6 +84,7 @@ private:
   juce::Point<int>  m_StartPt;
   juce::Point<int>  m_DragPt;
   juce::Image   m_Image;    // Image de la vue
+  juce::Image   m_SelImage; // Partie de l'image de la vue selectionnee
   MapThread     m_MapThread;
   XGeoBase*     m_GeoBase;
   XAnnotation   m_Annotation; // Annotation en cours d'edition

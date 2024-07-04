@@ -668,6 +668,7 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			m_OGL3DViewer.get()->setVisible(true);
 			m_OGL3DViewer.get()->toFront(true);
 			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
+			m_OGL3DViewer.get()->SetQuickLook(m_MapView.get()->GetSelImage());
 		}
 		return;
 	}

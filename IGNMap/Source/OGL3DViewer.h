@@ -46,18 +46,18 @@ public:
   bool keyPressed(const juce::KeyPress& key) override;
 
   void LoadObjects(XGeoBase* base, XFrame* F);
+  void SetQuickLook(juce::Image image) { m_QuickLook = image; }
 
 protected:
   void LoadLasClass(XGeoClass* C);
-  void LoadDtmClass(XGeoClass* C);
   void LoadVectorClass(XGeoClass* C);
   void FindZminLas();
   void UpdateBase();
   void ReinitDtm();
   void MoveZ(float dZ);
   void ChangeLasColor();
+  void ChangeDtmColor();
   void DrawLas(GeoLAS* las);
-  void DrawDtm(GeoDTM* dtm);
   void DrawDtm();
   void DrawPolyVector(XGeoVector* V);
   void DrawLineVector(XGeoVector* V);
@@ -81,6 +81,8 @@ private:
   double    m_dX0, m_dY0, m_dZ0, m_dGsd; // Transformation terrain -> pixel
   XFrame    m_Frame;
   XGeoBase* m_Base;
+  juce::Image m_RawDtm;
+  juce::Image m_QuickLook;
 
   uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
   uint32_t  m_nMaxPolyPt;        // Nombre maximum de points polygone
@@ -119,8 +121,10 @@ private:
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
-  bool      m_bUpdatelasColor;  // Indique que l'on veut changer les couleurs des points LAS
+  bool      m_bUpdateLasColor;  // Indique que l'on veut changer les couleurs des points LAS
   bool      m_bZLocalRange;     // Indique que l'on colorise le LAS en prenant les Zmin / Zmax locaux
+  bool      m_bUpdateDtmColor;  // Indique que l'on veut changer la representation des MNT
+  bool      m_bDtmTextured;     // Indique que l'on represente les MNT par une texture
   bool      m_bShowF1Help;      // Affiche l'aide F1
   
 
@@ -230,6 +234,7 @@ public:
   void closeButtonPressed() { setVisible(false); }
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
+  void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
 
 private:
   OGLWidget   m_OGLWidget;

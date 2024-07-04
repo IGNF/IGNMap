@@ -196,6 +196,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 {
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 	double X0 = m_StartPt.x, Y0 = m_StartPt.y, X1 = m_StartPt.x + m_DragPt.x, Y1 = m_StartPt.y + m_DragPt.y;
+	m_SelImage = m_Image.getClippedImage(juce::Rectangle<int>(m_StartPt, m_StartPt + m_DragPt));
 	Pixel2Ground(X0, Y0);
 	Pixel2Ground(X1, Y1);
 
