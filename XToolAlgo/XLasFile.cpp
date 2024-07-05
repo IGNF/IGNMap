@@ -445,8 +445,7 @@ bool XLasFile::IsCopc()
     return false;
   if (m_CopcReader.MaxLevel() >= 0) // Le CopcReader a deja ete lu
     return true;
-  m_CopcReader.SetInfo(m_Header->vlrs[0].data, m_strFilename);
-  return true;
+  return m_CopcReader.SetInfo(m_Header->vlrs[0].data, m_strFilename);
 }
 
 //-----------------------------------------------------------------------------

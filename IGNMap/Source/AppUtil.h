@@ -19,4 +19,6 @@ namespace AppUtil {
 
 	juce::String GetAppOption(juce::String name);
 	void SaveAppOption(juce::String name, juce::String value);
+
+	std::string GetStringFilename(juce::String filename);
 }

@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "GeoBase.h"
+#include "AppUtil.h"
 
 #include "../../XTool/XGeoBase.h"
 #include "../../XTool/XPath.h"
@@ -486,7 +487,7 @@ bool GeoTools::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* m
 {
 	if (fileName.isEmpty())
 		return false;
-	XGeoClass* C = XShapefile::ImportShapefile(base, fileName.toStdString().c_str(), map);
+	XGeoClass* C = XShapefile::ImportShapefile(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 	if (C == NULL)
 		return false;
 
@@ -500,7 +501,7 @@ bool GeoTools::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* 
 {
 	if (fileName.isEmpty())
 		return false;
-	if (!XGpkgMap::ImportGpkg(base, fileName.toStdString().c_str(), map))
+	if (!XGpkgMap::ImportGpkg(base, AppUtil::GetStringFilename(fileName).c_str(), map))
 		return false;
 	base->UpdateFrame();
 	base->SortClass();
@@ -514,7 +515,7 @@ bool GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
-	XGeoClass* C = XMifMid::ImportMifMid(base, fileName.toStdString().c_str(), map);
+	XGeoClass* C = XMifMid::ImportMifMid(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 	if (C == NULL)
 		return false;
 	return true;
@@ -527,7 +528,7 @@ bool GeoTools::ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
-	if (!XDxf::ImportDxf(base, fileName.toStdString().c_str(), map))
+	if (!XDxf::ImportDxf(base, AppUtil::GetStringFilename(fileName).c_str(), map))
 		return false;
 	base->UpdateFrame();
 	base->SortClass();
@@ -541,7 +542,7 @@ bool GeoTools::ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map
 {
 	if (fileName.isEmpty())
 		return false;
-	XGeoClass* C = XGeoJson::ImportGeoJson(base, fileName.toStdString().c_str(), map);
+	XGeoClass* C = XGeoJson::ImportGeoJson(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 	if (C == NULL)
 		return false;
 	return true;
@@ -554,7 +555,7 @@ bool GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
-	XGeoClass* C = XTAChantier::ImportTA(base, fileName.toStdString().c_str(), map);
+	XGeoClass* C = XTAChantier::ImportTA(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 	if (C == NULL)
 		return false;
 	return true;

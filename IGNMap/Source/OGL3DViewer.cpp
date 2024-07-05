@@ -952,12 +952,19 @@ void OGLWidget::ChangeLasColor()
   juce::Colour col = juce::Colours::orchid;
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
+  juce::Image::BitmapData bitmap(m_QuickLook, juce::Image::BitmapData::readOnly);
+  int x, y;
   for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
+    /*
     if (m_bZLocalRange)
       col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
     else
       col = shader.AltiColor((uint8_t)(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - zmin) * 255 / deltaZ));
     *data_ptr = (uint32_t)col.getARGB();
+    */
+    x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
+    y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
+    *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
     ptr_vertex->colour[0] = (float)data[2] / 255.f;
     ptr_vertex->colour[1] = (float)data[1] / 255.f;
     ptr_vertex->colour[2] = (float)data[0] / 255.f;
@@ -978,7 +985,6 @@ void OGLWidget::ChangeDtmColor()
 
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
-  DtmShader shader;
 
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -996,8 +1002,11 @@ void OGLWidget::ChangeDtmColor()
     rgbImage = m_QuickLook.rescaled(m_nDtmW, m_nDtmH, juce::Graphics::ResamplingQuality::highResamplingQuality);
     opacity = 1.f;
   }
-  else
+  else {
+    DtmShader shader(m_Frame.Width() / m_nDtmW);
     shader.ConvertImage(&m_RawDtm, &rgbImage);
+    opacity = 1.f; // On ne respecte pas l'opacite du DtmShader car il n'y a pas de fond raster
+  }
 
   juce::Image::BitmapData colors(rgbImage, juce::Image::BitmapData::readWrite);
   juce::Image::BitmapData bitmap(m_RawDtm, juce::Image::BitmapData::readOnly);

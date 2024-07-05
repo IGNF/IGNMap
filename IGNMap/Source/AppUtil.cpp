@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "AppUtil.h"
+#include <filesystem>
 
 //==============================================================================
 // Choix d'un repertoire
@@ -108,4 +109,17 @@ void AppUtil::SaveAppOption(juce::String name, juce::String value)
 	juce::PropertiesFile* file = app.getUserSettings();
 	file->setValue(name, value);
 	app.saveIfNeeded();
+}
+
+//==============================================================================
+// Permet de recuperer un nom de fichier sous forme de st:string en reglant les problemes UTF8 ou pas ...
+//==============================================================================
+std::string AppUtil::GetStringFilename(juce::String filename)
+{
+	std::string pathname = filename.toStdString();
+#ifdef _MSC_VER
+	std::filesystem::path path(filename.toWideCharPointer());
+	pathname = path.string();
+#endif
+	return pathname;
 }

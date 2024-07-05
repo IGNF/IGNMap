@@ -892,7 +892,7 @@ bool MainComponent::ImportImageFile(juce::String rasterfile)
 	juce::String name = file.getFileNameWithoutExtension();
 
 	GeoFileImage* image = new GeoFileImage;
-	if (!image->AnalyzeImage(filename.toStdString())) {
+	if (!image->AnalyzeImage(AppUtil::GetStringFilename(filename))) {
 		delete image;
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
@@ -938,7 +938,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 
 	GeoDTM* dtm = new GeoDTM;
 	juce::File tmpFile = juce::File::createTempFile("tif");
-	if (!dtm->OpenDtm(filename.toStdString().c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
+	if (!dtm->OpenDtm(AppUtil::GetStringFilename(filename).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
 		delete dtm;
 		tmpFile.deleteFile();
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
@@ -1012,7 +1012,7 @@ XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::
 				XGeoVector* V = nullptr;
 				if (type == XGeoVector::LAS) {
 					GeoLAS* las = new GeoLAS;
-					if (!las->Open((*T)[i].getFullPathName().toStdString())) {
+					if (!las->Open(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
 						delete las;
 						continue;
 					}
@@ -1022,7 +1022,7 @@ XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::
 				if (type == XGeoVector::DTM) {
 					GeoDTM* dtm = new GeoDTM;
 					juce::File tmpFile = juce::File::createTempFile("tif");
-					if (!dtm->OpenDtm((*T)[i].getFullPathName().toStdString().c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
+					if (!dtm->OpenDtm(AppUtil::GetStringFilename((*T)[i].getFullPathName()).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
 						delete dtm;
 						continue;
 					}
@@ -1030,7 +1030,7 @@ XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::
 				}
 				if (type == XGeoVector::Raster) {
 					GeoFileImage* image = new GeoFileImage;
-					if (!image->AnalyzeImage((*T)[i].getFullPathName().toStdString())) {
+					if (!image->AnalyzeImage(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
 						delete image;
 						continue;
 					}
@@ -1065,8 +1065,8 @@ void MainComponent::ImportLasFolder()
 	if (folderName.isEmpty())
 		return;
 	ImportDataFolder(folderName, XGeoVector::LAS);
-	m_LasViewer.get()->SetBase(&m_GeoBase);
-	m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
+	//m_MapView.get()->RenderMap(false, false, false, false, true, true);
 }
 
 //==============================================================================
@@ -1084,7 +1084,7 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 
 	GeoLAS* las = new GeoLAS;
 	
-	if (!las->Open(filename.toStdString())) {
+	if (!las->Open(AppUtil::GetStringFilename(filename))) {
 		delete las;
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
@@ -1096,9 +1096,9 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 		return false;
 	}
 
-	m_LasViewer.get()->SetBase(&m_GeoBase); 
+	m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	//m_MapView.get()->RenderMap(false, false, false, false, true, true);
 
 	return true;
 }
