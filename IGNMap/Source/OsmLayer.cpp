@@ -117,6 +117,8 @@ juce::String OsmLayer::LoadTile(int x, int y, int zoomlevel)
   juce::URL url(m_strRequest);
   juce::URL::DownloadTaskOptions options;
   std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
+  if (task.get() == nullptr)
+    return filename;
   int count = 0;
   while (task.get()->isFinished() == false)
   {

@@ -16,7 +16,7 @@
 #include <vector>
 #include "../XTool/XBase.h"
 #include "../XTool/XFrame.h"
-#include "../LASzip/src/laszip_api.h"
+#include "../LASzip/dll/laszip_api.h"
 
 class CopcReader {
 public:

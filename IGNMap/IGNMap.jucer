@@ -131,6 +131,8 @@
       <FILE id="gwp6NY" name="lasindex.hpp" compile="0" resource="0" file="../LASzip/src/lasindex.hpp"/>
       <FILE id="gD2zvw" name="lasinterval.cpp" compile="1" resource="0" file="../LASzip/src/lasinterval.cpp"/>
       <FILE id="mP3U24" name="lasinterval.hpp" compile="0" resource="0" file="../LASzip/src/lasinterval.hpp"/>
+      <FILE id="i4Xbru" name="lasmessage.cpp" compile="1" resource="0" file="../LASzip/src/lasmessage.cpp"/>
+      <FILE id="Rgo9F7" name="lasmessage.hpp" compile="0" resource="0" file="../LASzip/src/lasmessage.hpp"/>
       <FILE id="bC2kED" name="laspoint.hpp" compile="0" resource="0" file="../LASzip/src/laspoint.hpp"/>
       <FILE id="uewPiU" name="lasquadtree.cpp" compile="1" resource="0" file="../LASzip/src/lasquadtree.cpp"/>
       <FILE id="fWEPyn" name="lasquadtree.hpp" compile="0" resource="0" file="../LASzip/src/lasquadtree.hpp"/>
@@ -185,7 +187,7 @@
             file="../LASzip/src/laswritepoint.hpp"/>
       <FILE id="iGAmu9" name="laszip.cpp" compile="1" resource="0" file="../LASzip/src/laszip.cpp"/>
       <FILE id="v80NlZ" name="laszip.hpp" compile="0" resource="0" file="../LASzip/src/laszip.hpp"/>
-      <FILE id="gPeeBh" name="laszip_api.h" compile="0" resource="0" file="../LASzip/src/laszip_api.h"/>
+      <FILE id="yUpbs5" name="laszip_api.h" compile="0" resource="0" file="../LASzip/dll/laszip_api.h"/>
       <FILE id="Qm0zIh" name="laszip_common_v1.hpp" compile="0" resource="0"
             file="../LASzip/src/laszip_common_v1.hpp"/>
       <FILE id="oPNhiw" name="laszip_common_v2.hpp" compile="0" resource="0"

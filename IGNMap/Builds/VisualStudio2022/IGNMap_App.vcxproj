@@ -195,6 +195,7 @@
     <ClCompile Include="..\..\..\LASzip\src\integercompressor.cpp"/>
     <ClCompile Include="..\..\..\LASzip\src\lasindex.cpp"/>
     <ClCompile Include="..\..\..\LASzip\src\lasinterval.cpp"/>
+    <ClCompile Include="..\..\..\LASzip\src\lasmessage.cpp"/>
     <ClCompile Include="..\..\..\LASzip\src\lasquadtree.cpp"/>
     <ClCompile Include="..\..\..\LASzip\src\lasreaditemcompressed_v1.cpp"/>
     <ClCompile Include="..\..\..\LASzip\src\lasreaditemcompressed_v2.cpp"/>
@@ -2092,6 +2093,7 @@
     <ClInclude Include="..\..\..\LASzip\src\lasattributer.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\lasindex.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\lasinterval.hpp"/>
+    <ClInclude Include="..\..\..\LASzip\src\lasmessage.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\laspoint.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\lasquadtree.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\lasquantizer.hpp"/>
@@ -2110,7 +2112,7 @@
     <ClInclude Include="..\..\..\LASzip\src\laswriteitemraw.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\laswritepoint.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\laszip.hpp"/>
-    <ClInclude Include="..\..\..\LASzip\src\laszip_api.h"/>
+    <ClInclude Include="..\..\..\LASzip\dll\laszip_api.h"/>
     <ClInclude Include="..\..\..\LASzip\src\laszip_common_v1.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\laszip_common_v2.hpp"/>
     <ClInclude Include="..\..\..\LASzip\src\laszip_common_v3.hpp"/>

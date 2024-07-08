@@ -124,6 +124,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/integercompressor_23e37670.o \
   $(JUCE_OBJDIR)/lasindex_6ec12af1.o \
   $(JUCE_OBJDIR)/lasinterval_53764450.o \
+  $(JUCE_OBJDIR)/lasmessage_7f05ed26.o \
   $(JUCE_OBJDIR)/lasquadtree_f026a8f0.o \
   $(JUCE_OBJDIR)/lasreaditemcompressed_v1_f51600f.o \
   $(JUCE_OBJDIR)/lasreaditemcompressed_v2_f5f7790.o \
@@ -631,6 +632,11 @@ $(JUCE_OBJDIR)/lasindex_6ec12af1.o: ../../../LASzip/src/lasindex.cpp
 $(JUCE_OBJDIR)/lasinterval_53764450.o: ../../../LASzip/src/lasinterval.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lasinterval.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/lasmessage_7f05ed26.o: ../../../LASzip/src/lasmessage.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling lasmessage.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/lasquadtree_f026a8f0.o: ../../../LASzip/src/lasquadtree.cpp

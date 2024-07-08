@@ -104,4 +104,5 @@ countries: fr be mc ch lu
 "Z scale: PageUp ; PageDown" = "Echelle altimétrique : PageUp ; PageDown"
 "Position : Left ; Right ; Up ; Down" = "Position : flèches Haut ; Bas ; Droite ; Gauche"
 "Z Position : T ; G" = "Position altimétrique : T ; G"
-"A : automatic rotation ;  R : reset ; P : LAS color" = "A : rotation automatique ; R : remise à 0 ; P : couleur des points Las"
+"A : automatic rotation ;  R : reset" = "A : rotation automatique ; R : remise à 0"
+"LAS color : P palette ; O raster" = "Couleur des points LAS : P palette ; O fond image"

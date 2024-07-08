@@ -59,7 +59,8 @@ OGLWidget::OGLWidget()
   m_nDtmW = m_nDtmH = 300;
   m_bViewLas = m_bViewDtm = m_bViewVector = true;
   m_dDeltaZ = m_dOffsetZ = 0.;
-  m_bUpdateLasColor = m_bZLocalRange = m_bUpdateDtmColor = m_bDtmTextured = false;
+  m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
+  m_bUpdateDtmColor = m_bDtmTextured = false;
   m_bShowF1Help = false;
 }
 
@@ -292,8 +293,10 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 155, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("Z Position : Y ; H");
   g.drawText(help, b.getX(), b.getY() + 185, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("A : automatic rotation ;  R : reset ; P : LAS color");
+  help = juce::translate("A : automatic rotation ;  R : reset");
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
+  help = juce::translate("LAS color : P palette ; O raster");
+  g.drawText(help, b.getX(), b.getY() + 245, b.getWidth(), 40, juce::Justification::left);
 }
 
 //==============================================================================
@@ -534,6 +537,11 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
     m_bUpdateLasColor = true;
     m_bNeedUpdate = true;
+  }
+  if ((key.getTextCharacter() == 'O') || (key.getTextCharacter() == 'o')) {
+    m_bUpdateLasColor = true;
+    m_bNeedUpdate = true;
+    m_bRasterLas = !m_bRasterLas;
   }
   if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
     m_bUpdateDtmColor = true;
@@ -929,7 +937,7 @@ void OGLWidget::ChangeLasColor()
   if (m_nNbLasVertex < 1)
     return;
   LasShader shader;
-  if (shader.Mode() != LasShader::ShaderMode::Altitude)
+  if ((shader.Mode() != LasShader::ShaderMode::Altitude)&&(!m_bRasterLas))
     return;
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
@@ -939,11 +947,13 @@ void OGLWidget::ChangeLasColor()
     return;
   m_bZLocalRange = !m_bZLocalRange;
   float zmin = (float)LasShader::Zmin(), zmax = (float)LasShader::Zmax();
-  if (m_bZLocalRange) { // Recherche du Zmin et du Zmax local des points LAS charges
-    zmin = ptr_vertex[0].position[2], zmax = ptr_vertex[0].position[2];
-    for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
-      zmin = XMin(zmin, ptr_vertex[i].position[2]);
-      zmax = XMax(zmax, ptr_vertex[i].position[2]);
+  if (!m_bRasterLas) {  // Si on n'utilise pas le fond raster, on utilise une palette
+    if (m_bZLocalRange) { // Recherche du Zmin et du Zmax local des points LAS charges
+      zmin = ptr_vertex[0].position[2], zmax = ptr_vertex[0].position[2];
+      for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
+        zmin = XMin(zmin, ptr_vertex[i].position[2]);
+        zmax = XMax(zmax, ptr_vertex[i].position[2]);
+      }
     }
   }
   float deltaZ = zmax - zmin;
@@ -955,16 +965,20 @@ void OGLWidget::ChangeLasColor()
   juce::Image::BitmapData bitmap(m_QuickLook, juce::Image::BitmapData::readOnly);
   int x, y;
   for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
-    /*
-    if (m_bZLocalRange)
-      col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
-    else
-      col = shader.AltiColor((uint8_t)(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - zmin) * 255 / deltaZ));
-    *data_ptr = (uint32_t)col.getARGB();
-    */
-    x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
-    y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
-    *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
+    if (m_bRasterLas) { // Affichage avec le raster
+      x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
+      y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
+      *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
+    }
+    else // Affichage avec une palette
+    {
+      if (m_bZLocalRange)
+        col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
+      else
+        col = shader.AltiColor((uint8_t)(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - zmin) * 255 / deltaZ));
+      *data_ptr = (uint32_t)col.getARGB();
+    }
+
     ptr_vertex->colour[0] = (float)data[2] / 255.f;
     ptr_vertex->colour[1] = (float)data[1] / 255.f;
     ptr_vertex->colour[2] = (float)data[0] / 255.f;

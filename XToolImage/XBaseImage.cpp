@@ -191,8 +191,8 @@ bool XBaseImage::GetStat(XFile* file, double *minVal, double *maxVal, double *me
   }
   for (uint32_t i = 0; i < nbRow; i++) {
     uint32_t rowH = row;
-    if (i == (nbRow - 1)) // derniere bande
-      rowH = (m_nH % row);
+    if ((i == (nbRow - 1)) && (i != 0)) // derniere bande
+      rowH = (m_nH % (i * row));
     GetArea(file, 0, i*row, m_nW, rowH, line);
     if (NbBits() <= 8) {
       uint8_t* ptr = line;

@@ -290,6 +290,7 @@
 		ED50FA2761D4A3B340A111D6 /* MapThread.cpp */ = {isa = PBXBuildFile; fileRef = 92812C4DBC083984C07222A4; };
 		EDCA90F90DB8D1AA3D1ADDCD /* jdapistd.c */ = {isa = PBXBuildFile; fileRef = A15E35E93FDF746B83336CCA; };
 		F16479597419FE91AFED8505 /* jidctint.c */ = {isa = PBXBuildFile; fileRef = 82A7C7EC9969F74085E524C9; };
+		F2A0147587E2E75138DCDE8A /* lasmessage.cpp */ = {isa = PBXBuildFile; fileRef = 0F6CE6AED259C4EACA88F36D; };
 		F2A3FA5A084BB656DD39D0B5 /* filters_sse2.c */ = {isa = PBXBuildFile; fileRef = 5201B615E0B937D67331931D; };
 		F3162CFDCC2FDC00162A5D84 /* opj_clock.c */ = {isa = PBXBuildFile; fileRef = D9C621805BC7C05AAFA537F5; };
 		F45AFDD8FB3AC06AB1BD2277 /* QuartzCore.framework */ = {isa = PBXBuildFile; fileRef = 9187182B971FFFA6256E01BE; };
@@ -329,6 +330,7 @@
 		0C76D86C0E4A9F42CE0A8793 /* include_juce_core.mm */ /* include_juce_core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_core.mm; path = ../../JuceLibraryCode/include_juce_core.mm; sourceTree = SOURCE_ROOT; };
 		0D640E27908D95535B380F77 /* dec_neon.c */ /* dec_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dec_neon.c; path = "../../../libwebp-1.3.2/src/dsp/dec_neon.c"; sourceTree = SOURCE_ROOT; };
 		0E1723F94692237A9B3D1F84 /* huffman_utils.c */ /* huffman_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = huffman_utils.c; path = "../../../libwebp-1.3.2/src/utils/huffman_utils.c"; sourceTree = SOURCE_ROOT; };
+		0F6CE6AED259C4EACA88F36D /* lasmessage.cpp */ /* lasmessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lasmessage.cpp; path = ../../../LASzip/src/lasmessage.cpp; sourceTree = SOURCE_ROOT; };
 		1011C7FFFDE4399369FBA1D0 /* Utilities.h */ /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = ../../Source/Utilities.h; sourceTree = SOURCE_ROOT; };
 		1200AFC67C2C58FC971F751F /* laszip_decompress_selective_v3.hpp */ /* laszip_decompress_selective_v3.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip_decompress_selective_v3.hpp; path = ../../../LASzip/src/laszip_decompress_selective_v3.hpp; sourceTree = SOURCE_ROOT; };
 		131963E0DDA295D735250212 /* XPredictor.h */ /* XPredictor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XPredictor.h; path = ../../../XToolImage/XPredictor.h; sourceTree = SOURCE_ROOT; };
@@ -540,6 +542,7 @@
 		740C8CFBD85B0F9048CA5A3E /* MetalKit.framework */ /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		745B3E510C299EBA8819E535 /* j2k.c */ /* j2k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = j2k.c; path = ../../../openjpeg/src/lib/openjp2/j2k.c; sourceTree = SOURCE_ROOT; };
 		74629135C3CF45AB0C7C7090 /* lossless_neon.c */ /* lossless_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_neon.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_neon.c"; sourceTree = SOURCE_ROOT; };
+		747DA4608F63565F34B3F9C1 /* laszip_api.h */ /* laszip_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip_api.h; path = ../../../LASzip/dll/laszip_api.h; sourceTree = SOURCE_ROOT; };
 		748426EB60AF29EDED2E553D /* XShapefile.h */ /* XShapefile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XShapefile.h; path = ../../../XToolVector/XShapefile.h; sourceTree = SOURCE_ROOT; };
 		759013CB8674E662ECA73D0B /* XGeoFDtm.cpp */ /* XGeoFDtm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XGeoFDtm.cpp; path = ../../../XTool/XGeoFDtm.cpp; sourceTree = SOURCE_ROOT; };
 		7599EA379872E9EA766ABB1C /* cio.c */ /* cio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cio.c; path = ../../../openjpeg/src/lib/openjp2/cio.c; sourceTree = SOURCE_ROOT; };
@@ -673,6 +676,7 @@
 		B667D9477BF4097DEA0D8030 /* infback.c */ /* infback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = infback.c; path = "../../../zlib-1.3.1/infback.c"; sourceTree = SOURCE_ROOT; };
 		B691D0577BE8A72A08798D09 /* bit_reader_inl_utils.h */ /* bit_reader_inl_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bit_reader_inl_utils.h; path = "../../../libwebp-1.3.2/src/utils/bit_reader_inl_utils.h"; sourceTree = SOURCE_ROOT; };
 		B6B4060153C744F3E236CBE0 /* XInterpol.h */ /* XInterpol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XInterpol.h; path = ../../../XTool/XInterpol.h; sourceTree = SOURCE_ROOT; };
+		B76ADB8893D4D25402568E9C /* lasmessage.hpp */ /* lasmessage.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lasmessage.hpp; path = ../../../LASzip/src/lasmessage.hpp; sourceTree = SOURCE_ROOT; };
 		B868A2A5F653F4027201EB94 /* AppUtil.cpp */ /* AppUtil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AppUtil.cpp; path = ../../Source/AppUtil.cpp; sourceTree = SOURCE_ROOT; };
 		B870EE59FF0E482563769509 /* XBase.h */ /* XBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XBase.h; path = ../../../XTool/XBase.h; sourceTree = SOURCE_ROOT; };
 		B92B7B1D48A2105CEC190EC8 /* cost.c */ /* cost.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cost.c; path = "../../../libwebp-1.3.2/src/dsp/cost.c"; sourceTree = SOURCE_ROOT; };
@@ -739,7 +743,6 @@
 		CD2EBF9D32D92AA2F4AD5E0B /* dec_mips_dsp_r2.c */ /* dec_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dec_mips_dsp_r2.c; path = "../../../libwebp-1.3.2/src/dsp/dec_mips_dsp_r2.c"; sourceTree = SOURCE_ROOT; };
 		CDC4910637273A601A6A5D98 /* function_list.h */ /* function_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = function_list.h; path = ../../../openjpeg/src/lib/openjp2/function_list.h; sourceTree = SOURCE_ROOT; };
 		CE8A32E5EB22712EC6C139A7 /* lossless_enc.c */ /* lossless_enc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_enc.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_enc.c"; sourceTree = SOURCE_ROOT; };
-		CEB74619D6A7D69612F068DF /* laszip_api.h */ /* laszip_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip_api.h; path = ../../../LASzip/src/laszip_api.h; sourceTree = SOURCE_ROOT; };
 		CEEDC411D90E9BB6AD0B93BE /* lasreaditem.hpp */ /* lasreaditem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lasreaditem.hpp; path = ../../../LASzip/src/lasreaditem.hpp; sourceTree = SOURCE_ROOT; };
 		CF4C4A54A28C7A0C4A0CE460 /* alpha_processing.c */ /* alpha_processing.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = alpha_processing.c; path = "../../../libwebp-1.3.2/src/dsp/alpha_processing.c"; sourceTree = SOURCE_ROOT; };
 		CFE356CADAA9217762A9062F /* lasreaditemraw.hpp */ /* lasreaditemraw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lasreaditemraw.hpp; path = ../../../LASzip/src/lasreaditemraw.hpp; sourceTree = SOURCE_ROOT; };
@@ -933,6 +936,8 @@
 				9778D5F3095CF1F266F2D326,
 				D7AA71D68B07779451156915,
 				0AA475EE6650509A6277150F,
+				0F6CE6AED259C4EACA88F36D,
+				B76ADB8893D4D25402568E9C,
 				F68A2BE7DA7BF7D9B3E1B64B,
 				B11F16D9E5D8FC0EC95FCC74,
 				539C3D6B9E83D9DE1D7A1C68,
@@ -963,7 +968,7 @@
 				96D5240044AFA4A2F330C4E1,
 				F40A9488C3F1AD0CAACA9D02,
 				BDF00A73806B96C56BAA5322,
-				CEB74619D6A7D69612F068DF,
+				747DA4608F63565F34B3F9C1,
 				DBF95D361066442434DBCAD9,
 				83AADA29E4F15EED1961CE25,
 				48BA54FC36C31F628C380488,
@@ -1779,6 +1784,7 @@
 				BFB78E576EFD4E7F834BC13A,
 				45E078CF283909FC82D7AF2D,
 				C0CF66F2EAA194D4BFCBBF38,
+				F2A0147587E2E75138DCDE8A,
 				CFCFAB06BA5809E254B93578,
 				5FECCA458D0226BEACF273E4,
 				13E1809973B233102D2DB3DB,

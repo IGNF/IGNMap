@@ -541,6 +541,9 @@
     <ClCompile Include="..\..\..\LASzip\src\lasinterval.cpp">
       <Filter>IGNMap\LASzip</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\LASzip\src\lasmessage.cpp">
+      <Filter>IGNMap\LASzip</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\LASzip\src\lasquadtree.cpp">
       <Filter>IGNMap\LASzip</Filter>
     </ClCompile>
@@ -3069,6 +3072,9 @@
     <ClInclude Include="..\..\..\LASzip\src\lasinterval.hpp">
       <Filter>IGNMap\LASzip</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\LASzip\src\lasmessage.hpp">
+      <Filter>IGNMap\LASzip</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\LASzip\src\laspoint.hpp">
       <Filter>IGNMap\LASzip</Filter>
     </ClInclude>
@@ -3123,7 +3129,7 @@
     <ClInclude Include="..\..\..\LASzip\src\laszip.hpp">
       <Filter>IGNMap\LASzip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\LASzip\src\laszip_api.h">
+    <ClInclude Include="..\..\..\LASzip\dll\laszip_api.h">
       <Filter>IGNMap\LASzip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\LASzip\src\laszip_common_v1.hpp">

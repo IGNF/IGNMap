@@ -607,12 +607,22 @@ void DtmLayersViewer::itemDropped(const SourceDetails& details)
 	T.addTokens(message, ":", "");
 	if (T.size() < 1)
 		return;
-	int i;
-	i = T[0].getIntValue();
+	int item;
+	item = T[0].getIntValue();
 	int row = m_TableDtm.getRowContainingPosition(details.localPosition.x, details.localPosition.y);
-	//m_Base->ReorderDtmLayer(i, row);
-	//m_Table.updateContent();
-	//m_Table.repaint();
+	int index = -1;
+	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+		XGeoClass* C = m_Base->Class(i);
+		if (!C->IsDTM())
+			continue;
+		index++;
+		if (index == item)
+			C->Repres()->ZOrder(row * 10 + 5);
+		else
+			C->Repres()->ZOrder(index * 10);
+	}
+	m_Base->SortClass();
+	m_TableDtm.repaint();
 	m_ModelDtm.sendActionMessage("UpdateDtm");
 }
 

@@ -123,6 +123,7 @@ private:
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
   bool      m_bUpdateLasColor;  // Indique que l'on veut changer les couleurs des points LAS
   bool      m_bZLocalRange;     // Indique que l'on colorise le LAS en prenant les Zmin / Zmax locaux
+  bool      m_bRasterLas;       // Indique que l'on colorise le LAS en prenant le fond Raster de la vue principale
   bool      m_bUpdateDtmColor;  // Indique que l'on veut changer la representation des MNT
   bool      m_bDtmTextured;     // Indique que l'on represente les MNT par une texture
   bool      m_bShowF1Help;      // Affiche l'aide F1
