@@ -84,7 +84,8 @@ protected:
 public:
   XGpkgVector() { m_Map = NULL; m_Id = 0; }
   virtual inline XGeoClass* GeoClass() const { return NULL;}
-  virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/) { ; }
+  virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/,
+                       double /*zmin*/, double /*zmax*/) { ; }
 };
 
 //-----------------------------------------------------------------------------
@@ -129,7 +130,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* , int , int* )
+  virtual void SetGeom(int nb, XPt* P, double* , int , int*, double, double)
                         { m_nNumPoints = nb; m_Pt = P;}
 };
 
@@ -138,9 +139,8 @@ public:
 //-----------------------------------------------------------------------------
 class XGpkgMPoint3D : public XGeoMPoint3D, public XGpkgVector {
 public:
-  XGpkgMPoint3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, double zmin, double zmax, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-    m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
+  XGpkgMPoint3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -151,8 +151,8 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom2D(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int , int* )
-                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z;}
+  virtual void SetGeom(int nb, XPt* P, double* Z, int , int*, double zmin, double zmax)
+                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;}
 };
 
 //-----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* , int , int* )
+  virtual void SetGeom(int nb, XPt* P, double* , int , int*, double, double )
                         { m_nNumPoints = nb; m_Pt = P;}
 };
 
@@ -179,9 +179,8 @@ public:
 //-----------------------------------------------------------------------------
 class XGpkgLine3D : public XGeoLine3D, public XGpkgVector {
 public:
-  XGpkgLine3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, double zmin, double zmax, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-    m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
+  XGpkgLine3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -192,8 +191,8 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom2D(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int , int* )
-                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z;}
+  virtual void SetGeom(int nb, XPt* P, double* Z, int , int*, double zmin, double zmax)
+              { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;}
 };
 
 //-----------------------------------------------------------------------------
@@ -211,7 +210,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts)
+  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
                         { m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;}
 };
 
@@ -220,9 +219,8 @@ public:
 //-----------------------------------------------------------------------------
 class XGpkgMLine3D : public XGeoMLine3D, public XGpkgVector {
 public:
-  XGpkgMLine3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, double zmin, double zmax, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-    m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL; m_Z = NULL;}
+  XGpkgMLine3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL; m_Z = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -233,8 +231,8 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom2D(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts)
-                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts;}
+  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
+      { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;}
 };
 
 //-----------------------------------------------------------------------------
@@ -252,7 +250,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* , int , int* )
+  virtual void SetGeom(int nb, XPt* P, double* , int , int*, double, double)
                         { m_nNumPoints = nb; m_Pt = P;}
 };
 
@@ -261,9 +259,8 @@ public:
 //-----------------------------------------------------------------------------
 class XGpkgPoly3D : public XGeoPoly3D, public XGpkgVector {
 public:
-  XGpkgPoly3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, double zmin, double zmax, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-    m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
+  XGpkgPoly3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_Pt = NULL; m_Z = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -274,8 +271,8 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom2D(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int , int* )
-                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z;}
+  virtual void SetGeom(int nb, XPt* P, double* Z, int , int*, double zmin, double zmax)
+                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;}
 };
 
 //-----------------------------------------------------------------------------
@@ -284,8 +281,7 @@ public:
 class XGpkgMPoly2D : public XGeoMPoly2D, public XGpkgVector {
 public:
   XGpkgMPoly2D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F;
-    m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL;}
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -294,7 +290,7 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts)
+  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
                         { m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;}
 };
 
@@ -303,9 +299,8 @@ public:
 //-----------------------------------------------------------------------------
 class XGpkgMPoly3D : public XGeoMPoly3D, public XGpkgVector {
 public:
-  XGpkgMPoly3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, double zmin, double zmax, uint32_t nbpt = 0)
-  { m_Map = map; m_Id = id; m_Frame = F; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-    m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL; m_Z = NULL;}
+  XGpkgMPoly3D(XGpkgMap* map, sqlite3_int64 id, XFrame& F, uint32_t nbpt = 0)
+  { m_Map = map; m_Id = id; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = 0; m_Pt = NULL; m_Parts = NULL; m_Z = NULL;}
 
   virtual inline XGeoMap* Map() const { return m_Map;}
   virtual bool ReadAttributes(std::vector<std::string>& V)
@@ -316,8 +311,8 @@ public:
                         { if (m_Map!=NULL) return m_Map->LoadGeom2D(m_Id, this); return false;}
 
   virtual inline XGeoClass* GeoClass() const { return Class();}
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts)
-                        { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts;}
+  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
+    { m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;}
 };
 
 #endif // XGPKGMAP_H

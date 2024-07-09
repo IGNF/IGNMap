@@ -21,6 +21,7 @@ XGpkgMap::XGpkgMap()
   m_DB = NULL;
   m_Class = NULL;
   m_bUTF8 = true;
+  m_idxClass = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -241,41 +242,41 @@ bool XGpkgMap::ReadVectors(uint32_t index, XGeoClass* C)
       break;
     case XWKBGeom::wkbMultiPoint :
       if (is2D) vector = new XGpkgMPoint2D(this, id, F);
-      else vector = new XGpkgMPoint3D(this, id, F, zmin, zmax);
+      else vector = new XGpkgMPoint3D(this, id, F);
       break;
     case XWKBGeom::wkbLineString :
       if (is2D) vector = new XGpkgLine2D(this, id, F);
-      else vector = new XGpkgLine3D(this, id, F, zmin, zmax);
+      else vector = new XGpkgLine3D(this, id, F);
       break;
     case XWKBGeom::wkbPolygon :
       if (is2D) vector = new XGpkgPoly2D(this, id, F);
-      else vector = new XGpkgPoly3D(this, id, F, zmin, zmax);
+      else vector = new XGpkgPoly3D(this, id, F);
       break;
     case XWKBGeom::wkbMultiLineString :
       if (is2D) vector = new XGpkgMLine2D(this, id, F);
-      else vector = new XGpkgMLine3D(this, id, F, zmin, zmax);
+      else vector = new XGpkgMLine3D(this, id, F);
       break;
     case XWKBGeom::wkbMultiPolygon :
       if (is2D) vector = new XGpkgMPoly2D(this, id, F);
-      else vector = new XGpkgMPoly3D(this, id, F, zmin, zmax);
+      else vector = new XGpkgMPoly3D(this, id, F);
       break;
     case XWKBGeom::wkbPointZ :
       vector = new XGpkgPoint3D(this, id, F, zmin);
       break;
     case XWKBGeom::wkbMultiPointZ :
-      vector = new XGpkgMPoint3D(this, id, F, zmin, zmax);
+      vector = new XGpkgMPoint3D(this, id, F);
       break;
     case XWKBGeom::wkbLineStringZ :
-      vector = new XGpkgLine3D(this, id, F, zmin, zmax);
+      vector = new XGpkgLine3D(this, id, F);
       break;
     case XWKBGeom::wkbPolygonZ :
-      vector = new XGpkgPoly3D(this, id, F, zmin, zmax);
+      vector = new XGpkgPoly3D(this, id, F);
       break;
     case XWKBGeom::wkbMultiLineStringZ :
-      vector = new XGpkgMLine3D(this, id, F, zmin, zmax);
+      vector = new XGpkgMLine3D(this, id, F);
       break;
     case XWKBGeom::wkbMultiPolygonZ :
-      vector = new XGpkgMPoly3D(this, id, F, zmin, zmax);
+      vector = new XGpkgMPoly3D(this, id, F);
       break;
     default:
       continue;
@@ -400,13 +401,17 @@ bool XGpkgMap::LoadGeom(sqlite3_int64 id, XGpkgVector* V)
   const char* tail;
   uint8_t *geom, *blob;
   bool flag = false;
+  XFrame F;
+  double zmin, zmax;
   sqlite3_prepare_v2(m_DB, statement.c_str() , static_cast<int>(statement.size()), &stmt, &tail);
   while (sqlite3_step(stmt) == SQLITE_ROW) {
     blob = (uint8_t*)sqlite3_column_blob(stmt, 0);
+    if (!ReadGeomHeader(blob, &F, &zmin, &zmax))
+      continue;
     geom = &blob[GetGeomHeaderSize(blob)];
     XWKBGeom wkb(false);
     if (wkb.Read(geom)) {
-      V->SetGeom(wkb.NbPt(), wkb.Pt(), wkb.Z(), wkb.NbPart(), (int*)wkb.Parts());
+      V->SetGeom(wkb.NbPt(), wkb.Pt(), wkb.Z(), wkb.NbPart(), (int*)wkb.Parts(), zmin, zmax);
       flag = true;
       break;
     }
