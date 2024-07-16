@@ -51,6 +51,7 @@ private:
   bool          m_bRasterDone, m_bFirstRaster;
   juce::Path    m_Path;
   bool          m_bFill;        // Indique que le path doit etre rempli
+  int           m_nNbPathPt;    // Nombre de points alloués dans le path
   juce::int64   m_nNumObjects;  // Nombre d'objets affiches dans la vue
   XFrame        m_Frame;
   juce::Rectangle<int>  m_ClipVector;

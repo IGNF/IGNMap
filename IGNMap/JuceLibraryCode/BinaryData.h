@@ -35,6 +35,9 @@ namespace BinaryData
     extern const char*   Rectangle_png;
     const int            Rectangle_pngSize = 619;
 
+    extern const char*   Search_png;
+    const int            Search_pngSize = 961;
+
     extern const char*   Select_png;
     const int            Select_pngSize = 715;
 
@@ -57,7 +60,7 @@ namespace BinaryData
     const int            Translation_fr_txtSize = 4367;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 16;
+    const int namedResourceListSize = 17;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

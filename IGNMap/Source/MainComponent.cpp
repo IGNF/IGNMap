@@ -460,6 +460,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		NewWindow();
 		break;
 	case CommandIDs::menuQuit:
+		Clear();
 		juce::JUCEApplication::quit();
 		break;
 	case CommandIDs::menuTranslate:
@@ -735,27 +736,18 @@ void MainComponent::buttonClicked(juce::Button* button)
 	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
 	if (tlb == nullptr)
 		return;
-	if (tlb->getItemId() == m_ToolbarFactory.Move)
-		m_MapView.get()->SetMouseMode(MapView::Move);
-	if (tlb->getItemId() == m_ToolbarFactory.Select)
-		m_MapView.get()->SetMouseMode(MapView::Select);
-	if (tlb->getItemId() == m_ToolbarFactory.Zoom)
-		m_MapView.get()->SetMouseMode(MapView::Zoom);
-	if (tlb->getItemId() == m_ToolbarFactory.Select3D)
-		m_MapView.get()->SetMouseMode(MapView::Select3D);
-
-	if (tlb->getItemId() == m_ToolbarFactory.Gsd) {
-		double gsd = tlb->getButtonText().getDoubleValue();
-		m_MapView.get()->ZoomGsd(gsd);
+	switch (tlb->getItemId()) {
+	case m_ToolbarFactory.Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
+	case m_ToolbarFactory.Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
+	case m_ToolbarFactory.Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
+	case m_ToolbarFactory.Select3D: m_MapView.get()->SetMouseMode(MapView::Select3D); break;
+	case m_ToolbarFactory.Polyline: m_MapView.get()->SetMouseMode(MapView::Polyline); break;
+	case m_ToolbarFactory.Polygone: m_MapView.get()->SetMouseMode(MapView::Polygone); break;
+	case m_ToolbarFactory.Rectangle: m_MapView.get()->SetMouseMode(MapView::Rectangle); break;
+	case m_ToolbarFactory.Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
+	case m_ToolbarFactory.Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
+	case m_ToolbarFactory.Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
 	}
-	if (tlb->getItemId() == m_ToolbarFactory.Polyline)
-		m_MapView.get()->SetMouseMode(MapView::Polyline);
-	if (tlb->getItemId() == m_ToolbarFactory.Polygone)
-		m_MapView.get()->SetMouseMode(MapView::Polygone);
-	if (tlb->getItemId() == m_ToolbarFactory.Rectangle)
-		m_MapView.get()->SetMouseMode(MapView::Rectangle);
-	if (tlb->getItemId() == m_ToolbarFactory.Text)
-		m_MapView.get()->SetMouseMode(MapView::Text);
 }
 
 //==============================================================================
@@ -772,6 +764,14 @@ void MainComponent::Clear()
 	m_LasViewer.get()->SetBase(&m_GeoBase);
 	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 	m_ImageOptionsViewer.get()->SetImage(nullptr);
+	ClearSearch();
+}
+
+void MainComponent::ClearSearch()
+{
+	for (size_t i = 0; i < m_Search.size(); i++)
+		delete m_Search[i];
+	m_Search.clear();
 }
 
 //==============================================================================
@@ -1500,4 +1500,24 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 		if (ext.equalsIgnoreCase(".asc"))
 			ImportDtmFile(filename);
 	}
+}
+
+//==============================================================================
+// Recherche d'un lieu
+//==============================================================================
+void MainComponent::Search(juce::String query)
+{
+	if (query.length() < 3)
+		return;
+	GeoSearch* search = new GeoSearch;
+		if (!search->SearchIGN(query)) {
+			delete search;
+			return;
+		}
+	if (!ImportVectorFile(search->Filename())) {
+		delete search;
+		return;
+	}
+	m_Search.push_back(search);
+	m_VectorViewer.get()->RenameAndViewLastClass(query);
 }

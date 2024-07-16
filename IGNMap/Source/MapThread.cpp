@@ -25,6 +25,7 @@
 MapThread::MapThread(const juce::String& threadName, size_t threadStackSize) : juce::Thread(threadName, threadStackSize)
 {
 	m_bFill = false;
+	m_nNbPathPt = 0;
 	m_GeoBase = nullptr;
 	m_nNumObjects = 0;
 	m_dX0 = m_dY0 = 0.;
@@ -37,7 +38,10 @@ MapThread::MapThread(const juce::String& threadName, size_t threadStackSize) : j
 //==============================================================================
 bool MapThread::AllocPoints(int numPt)
 {
-	m_Path.preallocateSpace(3 * numPt + 1);
+	if (numPt > m_nNbPathPt) {
+		m_Path.preallocateSpace(3 * numPt + 1);
+		m_nNbPathPt = numPt;
+	}
 	return true;
 }
 

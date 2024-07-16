@@ -88,7 +88,8 @@ void ClassViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 		break;
 	default:
 		V->ReadAttributes(Att);
-		g.drawText(juce::String(Att[(columnId - ClassViewerModel::Column::Attribut) * 2 + 1]), 0, 0, width, height, juce::Justification::centredLeft);
+		if (((columnId - ClassViewerModel::Column::Attribut) * 2 + 1) < Att.size())
+			g.drawText(juce::String(Att[(columnId - ClassViewerModel::Column::Attribut) * 2 + 1]), 0, 0, width, height, juce::Justification::centredLeft);
 		/*
 	case Column::Name:
 		g.drawText(juce::String(dtmClass->Name()), 0, 0, width, height, juce::Justification::centredLeft);
@@ -135,6 +136,7 @@ void ClassViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce
 	if (V == nullptr)
 		return;
 	XFrame F = V->Frame();
+	F += 100.;	// Pour avoir une marge et pour agrandir la zone pour les petits objets et les ponctuels
 	sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 		juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
 }

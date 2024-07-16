@@ -138,11 +138,9 @@ void XGeoMPoint3D::Unload()
 	if (m_Z != NULL)
 		delete[] m_Z;
 	m_Z = NULL;
-  /*
 	if (m_ZRange != NULL)
 		delete[] m_ZRange;
 	m_ZRange = NULL;
-  */
 }
 
 //-----------------------------------------------------------------------------

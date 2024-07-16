@@ -60,6 +60,7 @@ public:
 
 	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); }
 	void Translate();
+	void RenameAndViewLastClass(juce::String newName);
 	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;

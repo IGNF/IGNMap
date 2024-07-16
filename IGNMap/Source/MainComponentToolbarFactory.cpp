@@ -27,6 +27,7 @@ void MainComponentToolbarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
   ids.add(Polygone);
   ids.add(Rectangle);
   ids.add(Text);
+  ids.add(Search);
 
   // If you're going to use separators, then they must also be added explicitly
   // to the list.
@@ -53,6 +54,7 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
   ids.add(spacerId);
   ids.add(separatorBarId);
   ids.add(Gsd);
+  ids.add(Search);
 }
 
 juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
@@ -121,6 +123,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     button->setTooltip(juce::translate("Select 3D view"));
     break;
   }
+  // Slider de GSD
   case Gsd:
   {
     auto image = juce::ImageCache::getFromMemory(BinaryData::GSD_png, BinaryData::GSD_pngSize);
@@ -128,6 +131,16 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     drawable_off->setImage(image);
     button = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
     button->setTooltip(juce::translate("GSD of the view"));
+    break;
+  }
+  // Recherche textuelle
+  case Search:
+  {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Search_png, BinaryData::Search_pngSize);
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(image);
+    button = new TextToolbarButton(Search, juce::translate("0."), std::move(drawable_off), nullptr);
+    button->setTooltip(juce::translate("Search"));
     break;
   }
 

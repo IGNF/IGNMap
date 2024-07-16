@@ -298,6 +298,8 @@ bool XGpkgMap::ReadVectors(uint32_t index, XGeoClass* C)
 //-----------------------------------------------------------------------------
 bool XGpkgMap::ReadGeomHeader(uint8_t* geom, XFrame* F, double* zmin, double* zmax)
 {
+  if (geom == nullptr)
+    return false;
   if ((geom[0] != 0x47)&&(geom[1] != 0x50)) // Magic Number
     return false;
   uint8_t version = geom[2];

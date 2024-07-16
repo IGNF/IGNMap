@@ -14,6 +14,7 @@
 #include <JuceHeader.h>
 #include "MapView.h"
 #include "GeoBase.h"
+#include "GeoSearch.h"
 #include "../../XTool/XGeoBase.h"
 #include "../../XTool/XGeoMap.h"
 #include "../../XTool/XGeoVector.h"
@@ -89,6 +90,9 @@ public:
   bool isInterestedInFileDrag(const juce::StringArray&) override { return true; }
   void filesDropped(const juce::StringArray& filenames, int /*x*/, int /*y*/) override;
 
+  // Recherche
+  void Search(juce::String query);
+
 private:
   juce::ApplicationCommandManager m_CommandManager;
   std::unique_ptr<juce::MenuBarComponent> m_MenuBar;
@@ -108,8 +112,10 @@ private:
   MainComponentToolbarFactory m_ToolbarFactory;
 
   XGeoBase m_GeoBase;
+  std::vector<GeoSearch*> m_Search;   // Recherche effectuees pendant la session
 
   void Clear();
+  void ClearSearch();
   void NewWindow();
   void AboutIGNMap();
   void Translate();

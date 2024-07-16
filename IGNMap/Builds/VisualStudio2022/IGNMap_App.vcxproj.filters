@@ -934,6 +934,9 @@
     <ClCompile Include="..\..\Source\GeoBase.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\GeoSearch.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ImageLayersViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -3346,6 +3349,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GeoBase.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GeoSearch.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ImageLayersViewer.h">
@@ -6087,6 +6093,9 @@
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\Rectangle.png">
+      <Filter>IGNMap\Images</Filter>
+    </None>
+    <None Include="..\..\Images\Search.png">
       <Filter>IGNMap\Images</Filter>
     </None>
     <None Include="..\..\Images\Select.png">

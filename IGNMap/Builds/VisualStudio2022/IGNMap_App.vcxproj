@@ -326,6 +326,7 @@
     <ClCompile Include="..\..\Source\ExportImageDlg.cpp"/>
     <ClCompile Include="..\..\Source\ExportLasDlg.cpp"/>
     <ClCompile Include="..\..\Source\GeoBase.cpp"/>
+    <ClCompile Include="..\..\Source\GeoSearch.cpp"/>
     <ClCompile Include="..\..\Source\ImageLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\ImageOptionsViewer.cpp"/>
     <ClCompile Include="..\..\Source\LasLayersViewer.cpp"/>
@@ -2185,6 +2186,7 @@
     <ClInclude Include="..\..\Source\ExportImageDlg.h"/>
     <ClInclude Include="..\..\Source\ExportLasDlg.h"/>
     <ClInclude Include="..\..\Source\GeoBase.h"/>
+    <ClInclude Include="..\..\Source\GeoSearch.h"/>
     <ClInclude Include="..\..\Source\ImageLayersViewer.h"/>
     <ClInclude Include="..\..\Source\ImageOptionsViewer.h"/>
     <ClInclude Include="..\..\Source\LasLayersViewer.h"/>
@@ -3100,6 +3102,7 @@
     <None Include="..\..\Images\Polygone.png"/>
     <None Include="..\..\Images\Polyline.png"/>
     <None Include="..\..\Images\Rectangle.png"/>
+    <None Include="..\..\Images\Search.png"/>
     <None Include="..\..\Images\Select.png"/>
     <None Include="..\..\Images\Select3D.png"/>
     <None Include="..\..\Images\Selectable.png"/>

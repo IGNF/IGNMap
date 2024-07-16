@@ -255,6 +255,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
   $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
   $(JUCE_OBJDIR)/GeoBase_343e9923.o \
+  $(JUCE_OBJDIR)/GeoSearch_6564213a.o \
   $(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o \
   $(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o \
   $(JUCE_OBJDIR)/LasLayersViewer_53432e13.o \
@@ -1287,6 +1288,11 @@ $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o: ../../Source/ExportLasDlg.cpp
 $(JUCE_OBJDIR)/GeoBase_343e9923.o: ../../Source/GeoBase.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GeoBase.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/GeoSearch_6564213a.o: ../../Source/GeoSearch.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GeoSearch.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o: ../../Source/ImageLayersViewer.cpp

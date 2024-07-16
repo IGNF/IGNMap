@@ -17,6 +17,7 @@
       <FILE id="RILn7C" name="Polygone.png" compile="0" resource="1" file="Images/Polygone.png"/>
       <FILE id="d2ujBd" name="Polyline.png" compile="0" resource="1" file="Images/Polyline.png"/>
       <FILE id="Dct1tZ" name="Rectangle.png" compile="0" resource="1" file="Images/Rectangle.png"/>
+      <FILE id="qTB2vq" name="Search.png" compile="0" resource="1" file="Images/Search.png"/>
       <FILE id="C3qDH8" name="Select.png" compile="0" resource="1" file="Images/Select.png"/>
       <FILE id="o6hJ93" name="Select3D.png" compile="0" resource="1" file="Images/Select3D.png"/>
       <FILE id="qc52PI" name="Selectable.png" compile="0" resource="1" file="Images/Selectable.png"/>
@@ -445,6 +446,8 @@
       <FILE id="M0CWGn" name="ExportLasDlg.h" compile="0" resource="0" file="Source/ExportLasDlg.h"/>
       <FILE id="MWj6Zn" name="GeoBase.cpp" compile="1" resource="0" file="Source/GeoBase.cpp"/>
       <FILE id="nrp2RE" name="GeoBase.h" compile="0" resource="0" file="Source/GeoBase.h"/>
+      <FILE id="tN8zbc" name="GeoSearch.cpp" compile="1" resource="0" file="Source/GeoSearch.cpp"/>
+      <FILE id="WzGlUq" name="GeoSearch.h" compile="0" resource="0" file="Source/GeoSearch.h"/>
       <FILE id="LKaR73" name="ImageLayersViewer.cpp" compile="1" resource="0"
             file="Source/ImageLayersViewer.cpp"/>
       <FILE id="Mx59QQ" name="ImageLayersViewer.h" compile="0" resource="0"

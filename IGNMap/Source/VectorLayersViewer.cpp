@@ -315,6 +315,27 @@ void VectorLayersViewer::Translate()
 }
 
 //==============================================================================
+// Renomme la derniere classe et visualisation des objets
+//==============================================================================
+void VectorLayersViewer::RenameAndViewLastClass(juce::String newName)
+{
+	if (m_Model.getNumRows() < 1)
+		return;
+	XGeoClass* C = m_Model.FindVectorClass(m_Model.getNumRows() - 1);
+	if (C == nullptr)
+		return;
+	C->Name(newName.toStdString());
+	gClassViewerMgr.AddClassViewer(C->Name(), C, &m_Model);
+	XGeoVector* V = C->Vector((uint32_t)0);
+	if (V == nullptr)
+		return;
+	XFrame F = V->Frame();
+	F += 100.;	// Pour avoir une marge et pour agrandir la zone pour les petits objets et les ponctuels
+	sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
+		juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+}
+
+//==============================================================================
 // Gestion des actions
 //==============================================================================
 void VectorLayersViewer::actionListenerCallback(const juce::String& message)
