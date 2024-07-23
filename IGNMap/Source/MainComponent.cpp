@@ -737,16 +737,16 @@ void MainComponent::buttonClicked(juce::Button* button)
 	if (tlb == nullptr)
 		return;
 	switch (tlb->getItemId()) {
-	case m_ToolbarFactory.Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
-	case m_ToolbarFactory.Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
-	case m_ToolbarFactory.Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
-	case m_ToolbarFactory.Select3D: m_MapView.get()->SetMouseMode(MapView::Select3D); break;
-	case m_ToolbarFactory.Polyline: m_MapView.get()->SetMouseMode(MapView::Polyline); break;
-	case m_ToolbarFactory.Polygone: m_MapView.get()->SetMouseMode(MapView::Polygone); break;
-	case m_ToolbarFactory.Rectangle: m_MapView.get()->SetMouseMode(MapView::Rectangle); break;
-	case m_ToolbarFactory.Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
-	case m_ToolbarFactory.Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
-	case m_ToolbarFactory.Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
+	case MainComponentToolbarFactory::Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
+	case MainComponentToolbarFactory::Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
+	case MainComponentToolbarFactory::Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
+	case MainComponentToolbarFactory::Select3D: m_MapView.get()->SetMouseMode(MapView::Select3D); break;
+	case MainComponentToolbarFactory::Polyline: m_MapView.get()->SetMouseMode(MapView::Polyline); break;
+	case MainComponentToolbarFactory::Polygone: m_MapView.get()->SetMouseMode(MapView::Polygone); break;
+	case MainComponentToolbarFactory::Rectangle: m_MapView.get()->SetMouseMode(MapView::Rectangle); break;
+	case MainComponentToolbarFactory::Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
+	case MainComponentToolbarFactory::Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
+	case MainComponentToolbarFactory::Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
 	}
 }
 
