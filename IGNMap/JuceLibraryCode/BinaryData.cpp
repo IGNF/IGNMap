@@ -3342,7 +3342,9 @@ static const unsigned char temp_binary_data_16[] =
 "\"Position : Left ; Right ; Up ; Down\" = \"Position : fl\xc3\xa8""ches Haut ; Bas ; Droite ; Gauche\"\r\n"
 "\"Z Position : T ; G\" = \"Position altim\xc3\xa9trique : T ; G\"\r\n"
 "\"A : automatic rotation ;  R : reset\" = \"A : rotation automatique ; R : remise \xc3\xa0 0\"\r\n"
-"\"LAS color : P palette ; O raster\" = \"Couleur des points LAS : P palette ; O fond image\"";
+"\"LAS color : P palette ; O raster\" = \"Couleur des points LAS : P palette ; O fond image\"\r\n"
+"\"Copy Attributes\" = \"Copier les attributs\"\r\n"
+"\"Object Frame\"=\"Emprise de l'objet\"";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_16;
 
@@ -3374,7 +3376,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 4367; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 4448; return Translation_fr_txt;
         default: break;
     }
 

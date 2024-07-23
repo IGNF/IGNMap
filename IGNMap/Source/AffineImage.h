@@ -46,12 +46,14 @@ protected:
   XPt2D       m_O;    // Centre de rotation de l'image en coordoonnes image
   double      m_dGsd; // Resolution terrain de l'image
   double      m_dRot; // Rotation en radians
+  uint32_t    m_nW;   // Largeur de l'image
+  uint32_t    m_nH;   // Hauteur de l'image
 
   void Ground2Image(double x, double y, double* u, double* v);
   void Image2Ground(double u, double v, double* x, double* y);
 
 public:
-  RotationImage() { m_dGsd = 1.; m_dRot = 0.; }
+  RotationImage() { m_dGsd = 1.; m_dRot = 0.; m_nW = 0; m_nH = 0; }
   virtual ~RotationImage() { ; }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V);
@@ -63,7 +65,7 @@ public:
   bool ComputeFrame();
 
   bool AnalyzeImage(std::string path);
-  uint32_t GetImageW() { return m_Image.Width(); }
-  uint32_t GetImageH() { return m_Image.Height(); }
+  uint32_t GetImageW() const { return m_nW; }
+  uint32_t GetImageH() const { return m_nH; }
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
 };

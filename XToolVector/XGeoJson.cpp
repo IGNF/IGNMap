@@ -368,8 +368,10 @@ bool XGeoJson::AnalyzeFeature(std::istream* in)
   uint32_t pos = in->tellg();
   char sep;
   *in >> sep;
-  if (sep != '{')
+  if (sep != '{') {
+    in->putback(sep);
     return false;
+  }
 
   bool flag;
   std::string key, value, type;

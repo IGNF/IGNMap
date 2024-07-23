@@ -106,3 +106,5 @@ countries: fr be mc ch lu
 "Z Position : T ; G" = "Position altimétrique : T ; G"
 "A : automatic rotation ;  R : reset" = "A : rotation automatique ; R : remise à 0"
 "LAS color : P palette ; O raster" = "Couleur des points LAS : P palette ; O fond image"
+"Copy Attributes" = "Copier les attributs"
+"Object Frame"="Emprise de l'objet"

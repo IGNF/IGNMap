@@ -55,30 +55,57 @@ void SelTreeItem::paintItem(juce::Graphics& g, int width, int height)
     if (isSelected())
       g.fillAll(juce::Colours::teal);
     g.drawText(juce::String(m_Feature->ClassName()), 4, 0, width - 4, height, juce::Justification::centredLeft, true);
+
+    juce::Image icone = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
+    g.drawImageAt(icone, width - icone.getWidth(), (height - icone.getHeight()) / 2);
+
     return;
   }
   if (m_AttName.isEmpty() && m_AttValue.isEmpty())
     return;
   juce::String text = m_AttName;
   g.setColour(juce::Colours::coral);
-  //g.drawText(text, 4, 0, width / 4 - 4, height, juce::Justification::centredLeft, true);
   g.drawText(text, 4, 0, m_Margin, height, juce::Justification::centredLeft, true);
   text = m_AttValue;
   g.setColour(juce::Colours::lightyellow);
-  //g.drawText(text, 4 + width / 4, 0, 3 * width / 4 - 4, height, juce::Justification::centredLeft, true);
   g.drawText(text, 4 + m_Margin, 0, width - m_Margin - 4, height, juce::Justification::centredLeft, true);
 }
 
 //==============================================================================
 // Clic simple
 //==============================================================================
-void SelTreeItem::itemClicked(const juce::MouseEvent&)
+void SelTreeItem::itemClicked(const juce::MouseEvent& event)
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr)) {
+    /*
     SelTreeViewer* viewer = static_cast<SelTreeViewer*>(getOwnerView());
     XFrame F = m_Feature->Frame();
     viewer->sendActionMessage("DrawEnvelope:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
       juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+    */
+    juce::Image icone = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
+    juce::Rectangle<int> R = getItemPosition(true);
+    if (event.x < R.getWidth() - icone.getWidth())
+      return;
+    SelTreeViewer* viewer = static_cast<SelTreeViewer*>(getOwnerView());
+    std::function< void() > CopyAttributes = [=]() {	// Copie des attributs dans le presse papier
+      std::vector<std::string> Att;
+      m_Feature->ReadAttributes(Att);
+      juce::String S;
+      for (int i = 0; i < Att.size() / 2; i++)
+        S += (Att[2 * i] + std::string("\t") + Att[2 * i + 1] + std::string("\n")).c_str();
+      juce::SystemClipboard::copyTextToClipboard(S);
+     };
+    std::function< void() > ObjectFrame = [=]() {	// Cadre de l'objet
+      XFrame F = m_Feature->Frame();
+      viewer->sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
+        juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+     };
+    
+    juce::PopupMenu menu;
+    menu.addItem(juce::translate("Copy Attributes"), CopyAttributes);
+    menu.addItem(juce::translate("Object Frame"), ObjectFrame);
+    menu.showMenuAsync(juce::PopupMenu::Options());
   }
 }
 

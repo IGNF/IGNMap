@@ -1510,7 +1510,7 @@ void MainComponent::Search(juce::String query)
 	if (query.length() < 3)
 		return;
 	GeoSearch* search = new GeoSearch;
-		if (!search->SearchIGN(query)) {
+		if (!search->Search(query)) {
 			delete search;
 			return;
 		}

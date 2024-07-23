@@ -111,7 +111,7 @@ void ClassViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 //==============================================================================
 // Clic dans une cellule
 //==============================================================================
-void ClassViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+void ClassViewerModel::cellClicked(int /*rowNumber*/, int columnId, const juce::MouseEvent& /*event*/)
 {
 	// Visibilite
 	if (columnId == Column::Visibility) {
@@ -130,7 +130,7 @@ void ClassViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 //==============================================================================
 // DoubleClic dans une cellule
 //==============================================================================
-void ClassViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
+void ClassViewerModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const juce::MouseEvent& /*event*/)
 {
 	XGeoVector* V = FindVector(rowNumber);
 	if (V == nullptr)

@@ -16,10 +16,23 @@
 //-----------------------------------------------------------------------------
 bool RotationImage::AnalyzeImage(std::string path)
 {
-  if (!m_Image.AnalyzeImage(path))
+  m_nW = m_nH = 0;
+  if (m_Image.AnalyzeImage(path)) { // Ouverture des formats geographiques (TIFF, COG, JP2, ...)
+    m_nW = m_Image.Width();
+    m_nH = m_Image.Height();
+    m_O.X = m_Image.Width() * 0.5;
+    m_O.Y = m_Image.Height() * 0.5;
+    return true;
+  }
+  juce::File file(path);
+  juce::Image image = juce::ImageFileFormat::loadFrom(file);  // Image classique (JPEG, PNG, GIF)
+  if (!image.isValid())
     return false;
-  m_O.X = m_Image.Width() * 0.5;
-  m_O.Y = m_Image.Height() * 0.5;
+  m_strRequest = path;
+  m_nW = image.getWidth();
+  m_nH = image.getHeight();
+  m_O.X = m_nW * 0.5;
+  m_O.Y = m_nH * 0.5;
   return true;
 }
 
@@ -34,7 +47,7 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
   m_LastGsd = gsd;
 
   // Calcul des pixels necessaires de l'image
-  double u, v, minU = m_Image.Width(), maxU = 0, minV = m_Image.Height(), maxV = 0;
+  double u, v, minU = m_nW, maxU = 0, minV = m_nH, maxV = 0;
   for (double y = F.Ymin; y <= F.Ymax; y += gsd) {
     for (double x = F.Xmin; x <= F.Xmax; x += gsd) {
       Ground2Image(x, y, &u, &v);
@@ -46,8 +59,8 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
   }
   minU = XMax(0., minU);
   minV = XMax(0., minV);
-  maxU = XMin((double)m_Image.Width(), maxU);
-  maxV = XMin((double)m_Image.Height(), maxV);
+  maxU = XMin((double)m_nW, maxU);
+  maxV = XMin((double)m_nH, maxV);
 
   // Calcul des coordonnees du cadre en geometrie image
   uint32_t u0 = (uint32_t)minU;
@@ -57,22 +70,32 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
   uint32_t factor = (uint32_t)(gsd / m_dGsd);
   if (factor < 1) factor = 1;
   uint32_t wtmp = win / factor, htmp = hin / factor;
+  if (m_Image.IsValid()) {  // Cas des images geographiques (TIFF, COG, JP2, ...)
+    m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wtmp, htmp, true);
+    { // Necessaire pour fixer le scope du BitmapData
+      juce::Image::BitmapData bitmap(m_SourceImage, juce::Image::BitmapData::readWrite);
 
-  m_SourceImage =juce::Image(juce::Image::PixelFormat::ARGB, wtmp, htmp, true);
-  { // Necessaire pour fixer le scope du BitmapData
-    juce::Image::BitmapData bitmap(m_SourceImage, juce::Image::BitmapData::readWrite);
+      if (factor == 1)
+        m_Image.GetArea(u0, v0, win, hin, bitmap.data);
+      else
+        m_Image.GetZoomArea(u0, v0, win, hin, bitmap.data, factor);
 
-    if (factor == 1)
-      m_Image.GetArea(u0, v0, win, hin, bitmap.data);
-    else
-      m_Image.GetZoomArea(u0, v0, win, hin, bitmap.data, factor);
-
-    uint8_t r = 0, g = 0, b = 0, alpha = 255;
-    if (m_Image.NbSample() == 1)
-      XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
-    else
-      XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
-    XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+      uint8_t r = 0, g = 0, b = 0, alpha = 255;
+      if (m_Image.NbSample() == 1)
+        XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
+      else
+        XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
+      XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+    }
+  }
+  else {
+    juce::File file(m_strRequest);
+    juce::Image image = juce::ImageFileFormat::loadFrom(file);  // Image classique (JPEG, PNG, GIF)
+    if (!image.isValid())
+      return m_ProjImage;
+    m_SourceImage = image.getClippedImage(juce::Rectangle<int>(u0, v0, win, hin))
+                          .rescaled(wtmp, htmp)
+                          .convertedToFormat(juce::Image::ARGB);
   }
 
   // Reechantillonage dans la projection souhaitee
@@ -98,13 +121,13 @@ bool RotationImage::ReadAttributes(std::vector<std::string>& V)
 //-----------------------------------------------------------------------------
 bool RotationImage::ComputeFrame()
 {
-  if (!m_Image.IsValid())
+  if ((m_nW < 1)||(m_nH < 1))
     return false;
   double X0, Y0, X1, Y1, X2, Y2, X3, Y3;
   Image2Ground(0, 0, &X0, &Y0);
-  Image2Ground(m_Image.Width(), 0, &X1, &Y1);
-  Image2Ground(m_Image.Width(), m_Image.Height(), &X2, &Y2);
-  Image2Ground(0, m_Image.Height(), &X3, &Y3);
+  Image2Ground(m_nW, 0, &X1, &Y1);
+  Image2Ground(m_nW, m_nH, &X2, &Y2);
+  Image2Ground(0, m_nH, &X3, &Y3);
 
   m_Frame.Xmin = XMin(X0, X1);
   m_Frame.Xmin = XMin(m_Frame.Xmin, X2);
