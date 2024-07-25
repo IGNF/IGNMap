@@ -77,7 +77,7 @@ countries: fr be mc ch lu
 "Layer Center"="Centre de la couche"
 "Layer Frame"="Emprise de la couche"
 "Layer GSD"="Résolution de la couche"
-"Export Layer"="Export de la couche"
+"Export Layer"="Exporter la couche"
 "View Objects"="Visualiser les objets"
 "Remove"="Supprimer"
 "Compute Delta Z"="Calculer les Delta Z"
@@ -108,3 +108,4 @@ countries: fr be mc ch lu
 "LAS color : P palette ; O raster" = "Couleur des points LAS : P palette ; O fond image"
 "Copy Attributes" = "Copier les attributs"
 "Object Frame"="Emprise de l'objet"
+"Add Image"="Ajout d'une image"

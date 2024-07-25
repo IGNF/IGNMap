@@ -48,10 +48,10 @@ std::string XInternetMap::GoogleMapsUrl(const XPt2D& C, double scale)
 
   // https://www.google.com/maps/@?api=1&map_action=map&center=-33.712206,150.311941&zoom=12&basemap=terrain
   char buf[512];
-  sprintf(buf, "https://www.google.com/maps/@?api=1&map_action=map&center=%lf,%lf&zoom=%d&basemap=%s",
+  snprintf(buf, 512, "https://www.google.com/maps/@?api=1&map_action=map&center=%lf,%lf&zoom=%d&basemap=%s",
     lat, lon, zoom, map_type.c_str());
   if (Pref.GoogleMode() == 3) // Streetview
-    sprintf(buf, "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=%lf,%lf", lat, lon);
+    snprintf(buf, 512, "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=%lf,%lf", lat, lon);
 
   return buf;
 }
@@ -94,7 +94,7 @@ std::string XInternetMap::BingMapsUrl(const XPt2D& C, double scale)
 
   // http://bing.com/maps/default.aspx?cp=43.901683~-69.522416&lvl=12&style=r
   char buf[512];
-  sprintf(buf, "https://bing.com/maps/default.aspx?cp=%lf~%lf&lvl=%d&style=%s",
+  snprintf(buf, 512, "https://bing.com/maps/default.aspx?cp=%lf~%lf&lvl=%d&style=%s",
     lat, lon, zoom, map_type.c_str());
 
   return buf;

@@ -121,7 +121,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 			V.push_back("NOM");
 			V.push_back(vector->Name());
 			V.push_back("IMPORTANCE");
-			sprintf(buf,"%d", vector->Importance());
+			snprintf(buf, 256, "%d", vector->Importance());
 			V.push_back(buf);
 		}
 		dbase.WriteRecord(V);

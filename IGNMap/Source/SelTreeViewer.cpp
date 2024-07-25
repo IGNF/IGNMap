@@ -101,10 +101,15 @@ void SelTreeItem::itemClicked(const juce::MouseEvent& event)
       viewer->sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
         juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
      };
+    std::function< void() > AddImage = [=]() {	// Ajoute une image dans le cadre de l'objet
+      int index = getIndexInParent();
+      viewer->sendActionMessage("AddImageInObject:" + juce::String(index));
+      };
     
     juce::PopupMenu menu;
     menu.addItem(juce::translate("Copy Attributes"), CopyAttributes);
     menu.addItem(juce::translate("Object Frame"), ObjectFrame);
+    menu.addItem(juce::translate("Add Image"), AddImage);
     menu.showMenuAsync(juce::PopupMenu::Options());
   }
 }
@@ -131,7 +136,7 @@ int SelTreeItem::getItemWidth() const
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr))
     return TreeViewItem::getItemWidth();
-  return juce::Font(15.0f).getStringWidth(m_AttName + m_AttValue) + m_Margin;
+  return juce::Font(juce::FontOptions(15.0f)).getStringWidth(m_AttName + m_AttValue) + m_Margin;
 }
 
 //==============================================================================

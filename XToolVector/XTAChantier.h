@@ -89,7 +89,7 @@ public:
 	virtual void Unload() { ;}
 	virtual bool LoadGeom() { return true;}
 
-	virtual std::string Name() { char buf[20]; sprintf(buf,"%u", m_nNum); return buf;}
+	virtual std::string Name() { char buf[20]; snprintf(buf, 20, "%u", m_nNum); return buf;}
 	virtual std::string ImageName() { return m_strImage;}
 
 	virtual inline XGeoMap* Map() const { return m_TA;}

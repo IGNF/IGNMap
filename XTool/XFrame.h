@@ -11,10 +11,11 @@
 #define _XFRAME_H
 
 #include <iostream>
-#include "XBase.h"
-#include "XParserXML.h"
 #include "XPt2D.h"
 #include "XPt3D.h"
+
+class XParserXML;
+class XError;
 
 class XFrame {
 public:
@@ -43,8 +44,8 @@ public:
 	XPt2D Center() const { return XPt2D((Xmax + Xmin)*0.5, (Ymax + Ymin)*0.5);}
   void Round(double unit = 1.0);
 
-	virtual bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
-	virtual bool XmlWrite(std::ostream* out);
+	bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
+	bool XmlWrite(std::ostream* out);
 };
 
 // Operateurs logiques

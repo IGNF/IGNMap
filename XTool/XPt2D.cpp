@@ -10,6 +10,7 @@
 #include <cmath>
 #include "XPt2D.h"
 #include "XPt3D.h"
+#include "XParserXML.h"
 
 //-----------------------------------------------------------------------------
 // Egalite a un epsilon

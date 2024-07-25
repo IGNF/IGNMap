@@ -30,7 +30,7 @@ std::string XXml::OemToXml(std::string s)
 		if (((uint8_t)s[i] < 160) && (s[i] != '<') && (s[i] != '>'))
 			result += s[i];
 		else {
-			sprintf(newStr, "&#%d;", (uint8_t)s[i]);
+			snprintf(newStr, 10, "&#%d;", (uint8_t)s[i]);
 			result += newStr;
 		}
 	}

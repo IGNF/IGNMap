@@ -9,6 +9,7 @@
 
 #include "XGeoLayer.h"
 #include "XGeoClass.h"
+#include "XParserXML.h"
 
 //-----------------------------------------------------------------------------
 // Constructeur

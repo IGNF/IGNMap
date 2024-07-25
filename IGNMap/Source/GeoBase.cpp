@@ -14,6 +14,7 @@
 
 #include "../../XTool/XGeoBase.h"
 #include "../../XTool/XPath.h"
+#include "../../XTool/XParserXML.h"
 #include "../../XToolVector/XShapefile.h"
 #include "../../XToolVector/XGpkgMap.h"
 #include "../../XToolVector/XMifMid.h"
@@ -23,6 +24,7 @@
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 #include "../../XToolGeod/XGeoPref.h"
+#include "AffineImage.h"
 
 //-----------------------------------------------------------------------------
 // Points du cadre de l'image
@@ -44,7 +46,7 @@ XPt2D GeoImage::Pt(uint32_t i)
 //-----------------------------------------------------------------------------
 bool GeoFileImage::ReadAttributes(std::vector<std::string>& V)
 {
-	char buf[256];
+	char buf[64];
 	V.clear();
 	V.push_back("Nom");
 	V.push_back(m_strFilename);
@@ -53,28 +55,28 @@ bool GeoFileImage::ReadAttributes(std::vector<std::string>& V)
 	GetGeoref(&xmin, &ymax, &gsd);
 
 	V.push_back("Resolution");
-	sprintf(buf, "%.2lf", gsd);
+	snprintf(buf, 64, "%.2lf", gsd);
 	V.push_back(buf);
 	V.push_back("Largeur");
-	sprintf(buf, "%u", XFileImage::Width());
+	snprintf(buf, 64, "%u", XFileImage::Width());
 	V.push_back(buf);
 	V.push_back("Hauteur");
-	sprintf(buf, "%u", XFileImage::Height());
+	snprintf(buf, 64, "%u", XFileImage::Height());
 	V.push_back(buf);
 	V.push_back("Nb. bits");
-	sprintf(buf, "%u", NbBits());
+	snprintf(buf, 64, "%u", NbBits());
 	V.push_back(buf);
 	V.push_back("Xmin");
-	sprintf(buf, "%.2lf", m_Frame.Xmin);
+	snprintf(buf, 64, "%.2lf", m_Frame.Xmin);
 	V.push_back(buf);
 	V.push_back("Ymin");
-	sprintf(buf, "%.2lf", m_Frame.Ymin);
+	snprintf(buf, 64, "%.2lf", m_Frame.Ymin);
 	V.push_back(buf);
 	V.push_back("Xmax");
-	sprintf(buf, "%.2lf", m_Frame.Xmax);
+	snprintf(buf, 64, "%.2lf", m_Frame.Xmax);
 	V.push_back(buf);
 	V.push_back("Ymax");
-	sprintf(buf, "%.2lf", m_Frame.Ymax);
+	snprintf(buf, 64, "%.2lf", m_Frame.Ymax);
 	V.push_back(buf);
 	V.push_back("Metadata");
 	V.push_back(GetMetadata());
@@ -709,4 +711,52 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 		}
 	}
 	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Ajout d'une image dans le cadre d'un objet
+//-----------------------------------------------------------------------------
+bool GeoTools::AddImageInObect(XGeoBase* base, int index)
+{
+	XGeoVector* V = base->Selection(index);
+	if (V == nullptr)
+		return false;
+	juce::String filename;
+	filename = AppUtil::OpenFile("RasterPath");
+	if (filename.isEmpty())
+		return false;
+	juce::File file(filename);
+	juce::String name = file.getFileNameWithoutExtension();
+	RotationImage* affine = new RotationImage();
+	if (!affine->AnalyzeImage(filename.toStdString())) {
+		delete affine;
+		return false;
+	}
+
+	XTACliche* cliche = dynamic_cast<XTACliche*>(V);
+	if (cliche != nullptr) {	// Cas particulier des cliches aeriens
+		XPt2D S = cliche->Centroide();
+		double gsd = cliche->Resol();
+		XPt2D C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() * 0.5);
+		if (!cliche->IsDigital()) {
+			gsd = (cliche->Resol() * 1000 * 0.24) / XMin(affine->GetImageW(), affine->GetImageH());
+			C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() - affine->GetImageW() * 0.5);
+		}
+		affine->SetPosition(S.X, S.Y, gsd);
+		affine->SetImageCenter(C.X, C.Y);
+		affine->SetRotation(XPI - (cliche->Cap() / 180.) * XPI);
+	}
+	else {	// Cas general : on colle l'image dans le cadre
+		double gsd = 1.;
+		if ((V->FrameW() > 1.) && (V->FrameH() > 1.))
+			gsd = (V->FrameW() / affine->GetImageW() + V->FrameH() / affine->GetImageH()) * 0.5;
+		XPt2D S = V->Frame().Center();
+		affine->SetPosition(S.X, S.Y, gsd);
+	}
+
+	if (!GeoTools::RegisterObject(base, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
+		delete affine;
+		return false;
+	}
+	return true;
 }

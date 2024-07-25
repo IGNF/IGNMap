@@ -235,15 +235,15 @@ bool XDBaseFile::ReadRecord(uint32_t num, std::vector<std::string>& V, XError* e
 		switch(desc.Type()) {
 		case XDBaseFieldDescriptor::Short :
 			memcpy((void*)&s, (void*)buf, sizeof(short));
-			sprintf(buf, "%d", s);
+			snprintf(buf, 1024, "%d", s);
 			break;
 		case XDBaseFieldDescriptor::Long :
 			memcpy((void*)&n, (void*)buf, sizeof(int));
-			sprintf(buf, "%d", n);
+			snprintf(buf, 1024, "%d", n);
 			break;
 		case XDBaseFieldDescriptor::Double :
 			memcpy((void*)&x, (void*)buf, sizeof(double));
-			sprintf(buf, "%lf", x);
+			snprintf(buf, 1024, "%lf", x);
 			break;
 		case XDBaseFieldDescriptor::NumericN :
 		case XDBaseFieldDescriptor::NumericF :

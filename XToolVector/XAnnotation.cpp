@@ -10,6 +10,7 @@
 #include "XAnnotation.h"
 #include <sstream>
 #include "../XToolGeod/XGeoPref.h"
+#include "../XTool/XParserXML.h"
 
 //-----------------------------------------------------------------------------
 // Constructeur

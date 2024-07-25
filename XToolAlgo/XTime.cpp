@@ -17,8 +17,8 @@
 //-----------------------------------------------------------------------------
 double XTime::HMSDecToS(double HMSDec)
 {
-	int heure = floor(HMSDec * 0.0001);
-	int min   = floor((HMSDec-heure*10000.)*0.01); 
+	int heure = (int)floor(HMSDec * 0.0001);
+	int min   = (int)floor((HMSDec-heure*10000.)*0.01); 
 	double sec = HMSDec - heure*10000 - min*100;
 	return (heure*3600 + min*60 + sec);
 }
@@ -112,7 +112,7 @@ uint16_t XTime::MYToM(uint32_t MY)
 uint16_t XTime::MYToY(uint32_t MY)
 {
 	uint16_t x = MYToM(MY);
-	return (MY - x * 100);
+	return (uint16_t)(MY - x * 100);
 }
 
 //-----------------------------------------------------------------------------
@@ -192,13 +192,13 @@ std::string XTime::HMSDecToString(double HMSDec, uint16_t nbDec)
 {
 	if (HMSDec < 0.)
 		return (std::string)"Heure inconnue";
-	int heure = floor(HMSDec * 0.0001);
-	int min   = floor((HMSDec-heure*10000.)*0.01); 
+	int heure = (int)floor(HMSDec * 0.0001);
+	int min   = (int)floor((HMSDec-heure*10000.)*0.01); 
 	double sec = HMSDec - heure*10000 - min*100;
 
 	char chaine[80], format[80];
-	sprintf(format, "%%02dh %%02dm %%.%dlf", (int)nbDec);
-	sprintf(chaine, format, heure, min, sec);
+	snprintf(format, 80, "%%02dh %%02dm %%.%dlf", (int)nbDec);
+	snprintf(chaine, 80, format, heure, min, sec);
 	return (std::string)chaine;
 }
 
@@ -207,15 +207,15 @@ std::string XTime::HMSDecToString(double HMSDec, uint16_t nbDec)
 //-----------------------------------------------------------------------------
 std::string XTime::HMSToString(uint32_t HMS)
 {
-	int heure = floor((double)HMS * 0.0001);
-	int min   = floor(((double)HMS-heure*10000.)*0.01); 
+	int heure = (int)floor((double)HMS * 0.0001);
+	int min   = (int)floor(((double)HMS-heure*10000.)*0.01); 
 	int sec = HMS - heure*10000 - min*100;
 
 	char chaine[80];
 	if (sec != 0)
-		sprintf(chaine,"%02dh %02dm %02d", heure, min, sec);
+		snprintf(chaine, 80, "%02dh %02dm %02d", heure, min, sec);
 	else
-		sprintf(chaine,"%02dh %02d", heure, min);
+		snprintf(chaine, 80, "%02dh %02d", heure, min);
 	return (std::string)chaine;
 }
 
@@ -231,7 +231,7 @@ std::string XTime::DMYToString(uint32_t DMY, char sep)
 	}
 
 	if ((DMY > 1300) && (DMY < 10000)) {	// On ne connait que l'annee
-		sprintf(chaine,"%d", DMY);
+		snprintf(chaine, 80, "%d", DMY);
 		return (std::string)chaine;
 	}
 	if (DMY < 1300) 	// On connait MMYY
@@ -240,7 +240,7 @@ std::string XTime::DMYToString(uint32_t DMY, char sep)
 	int year = 2000;
 	if (DMYToY(DMY) > 20)
 		year = 1900;
-	sprintf(chaine,"%02d%c%02d%c%d", DMYToD(DMY), sep, DMYToM(DMY), sep, year + DMYToY(DMY));
+	snprintf(chaine, 80, "%02d%c%02d%c%d", DMYToD(DMY), sep, DMYToM(DMY), sep, year + DMYToY(DMY));
 	return (std::string)chaine;
 }
 
@@ -256,7 +256,7 @@ std::string XTime::DMYYToString(uint32_t DMYY, char sep)
 	}
 
 	if (DMYY < 10000) {	// On ne connait que l'annee
-		sprintf(chaine,"%d", DMYY);
+		snprintf(chaine, 80, "%d", DMYY);
 		return (std::string)chaine;
 	}
 
@@ -265,16 +265,16 @@ std::string XTime::DMYYToString(uint32_t DMYY, char sep)
 	if ((d > 31)||(d < 1))
 		strcpy(dstr,"??");
 	else
-		sprintf(dstr,"%02d", d);
+		snprintf(dstr, 80, "%02d", d);
 
 	uint32_t m = DMYYToM(DMYY);
 	char mstr[80];
 	if ((m > 12)||(m < 1))
 		strcpy(mstr,"??");
 	else
-		sprintf(mstr,"%02d", m);
+		snprintf(mstr, 80, "%02d", m);
 
-	sprintf(chaine,"%s%c%s%c%d", dstr, sep, mstr, sep, DMYYToY(DMYY));
+	snprintf(chaine, 80, "%s%c%s%c%d", dstr, sep, mstr, sep, DMYYToY(DMYY));
 	return (std::string)chaine;
 }
 
@@ -292,14 +292,14 @@ std::string XTime::MYToString(uint32_t MY, char sep)
 		return DMYToString(MY, sep);
 
 	if (MY > 1300) {	// On ne connait que l'annee
-		sprintf(chaine,"%d", MY);
+		snprintf(chaine, 80, "%d", MY);
 		return (std::string)chaine;
 	}
 
 	int year = 2000;
 	if (MYToY(MY) > 20)
 		year = 1900;
-	sprintf(chaine,"%02d%c%d", MYToM(MY), sep, year + MYToY(MY));
+	snprintf(chaine, 80, "%02d%c%d", MYToM(MY), sep, year + MYToY(MY));
 	return (std::string)chaine;
 }
 

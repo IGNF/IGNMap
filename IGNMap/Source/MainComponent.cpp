@@ -19,8 +19,6 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
-#include "AffineImage.h"
-#include "../../XToolVector/XTAChantier.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -652,6 +650,49 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		XFrame F = m_GeoBase.Frame();
 		m_MapView.get()->SetFrame(F);
 		m_MapView.get()->CenterView(F.Center().X, F.Center().Y);
+		return;
+	}
+	if (message == "ExportRepresVector") {
+		juce::String filename = AppUtil::SaveFile("RepresPath", juce::translate("Save Representation file"), "*.xml;");
+		if (filename.isEmpty())
+			return;
+		std::ofstream out(AppUtil::GetStringFilename(filename));
+		if (!out.good())
+			return;
+		XGeoRepres repres;
+		out << "<ignmap_style>" << std::endl;
+		for (uint32_t i = 0; i < m_GeoBase.NbClass(); i++) {
+			XGeoClass* C = m_GeoBase.Class(i);
+			repres = *(C->Repres());
+			repres.Name(C->Name().c_str());
+			repres.XmlWrite(&out);
+		}
+		out << "</ignmap_style>" << std::endl;
+		return;
+	}
+	if (message == "ImportRepresVector") {
+		juce::String filename = AppUtil::OpenFile("RepresPath", juce::translate("Open Representation file"), "*.xml;");
+		if (filename.isEmpty())
+			return;
+		XParserXML parser;
+		if (!parser.Parse(AppUtil::GetStringFilename(filename)))
+			return;
+		std::vector<XParserXML> vec;
+		parser.FindAllSubParsers("/ignmap_style/xgeorepres", &vec);
+		XGeoRepres repres;
+		for (uint32_t i = 0; i < vec.size(); i++) {
+			if (!repres.XmlRead(&vec[i]))
+				continue;
+			for (uint32_t j = 0; j < m_GeoBase.NbClass(); j++) {
+				XGeoClass* C = m_GeoBase.Class(j);
+				if (C->Name() == repres.Name())
+					*(C->Repres()) = repres;
+			}
+		}
+		m_GeoBase.SortClass();
+		m_MapView.get()->RenderMap(false, false, false, true, false, true);
+		m_VectorViewer.get()->SetBase(&m_GeoBase);
+		return;
 	}
 
 	juce::StringArray T;
@@ -725,6 +766,16 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 
 		actionListenerCallback("UpdateSelectFeatures");
 		actionListenerCallback("UpdateLas");
+	}
+	if (T[0] == "AddImageInObject") {
+		if (T.size() < 1)
+			return;
+		int index = T[1].getIntValue();
+		if (!GeoTools::AddImageInObect(&m_GeoBase, index))
+			return;
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+		m_MapView.get()->RenderMap(false, true, false, false, false, true);
+		m_ImageViewer.get()->SetBase(&m_GeoBase);
 	}
 }
 
@@ -1327,46 +1378,6 @@ void MainComponent::Test()
 	//transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY());
 	m_MapView.get()->setTransform(transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY()));
 	*/
-
-	if (m_GeoBase.NbSelection() != 1)
-		return;
-	XGeoVector* V = m_GeoBase.Selection(0);
-	XTACliche* cliche = dynamic_cast<XTACliche*>(V);
-	if (cliche == nullptr)
-		return;
-	juce::String filename;
-	filename = AppUtil::OpenFile("RasterPath");
-	if (filename.isEmpty())
-		return;
-	juce::File file(filename);
-	juce::String name = file.getFileNameWithoutExtension();
-	RotationImage* affine = new RotationImage();
-	if (!affine->AnalyzeImage(filename.toStdString())) {
-		delete affine;
-		return;
-	}
-	XPt2D S = cliche->Centroide();
-	double gsd = cliche->Resol();
-	XPt2D C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() * 0.5);
-	if (!cliche->IsDigital()) {
-		gsd = (cliche->Resol() * 1000 * 0.24) / XMin(affine->GetImageW(), affine->GetImageH());
-		C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() - affine->GetImageW() * 0.5);
-	}
-
-	affine->SetPosition(S.X, S.Y, gsd);
-	affine->SetImageCenter(C.X, C.Y);
-	affine->SetRotation(XPI - (cliche->Cap() / 180.) * XPI);
-
-	if (!GeoTools::RegisterObject(&m_GeoBase, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
-		delete affine;
-		return;
-	}
-
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
-
-
 	
 	/*
 	XGeoMap* map = m_GeoBase.Map("ROTATION");

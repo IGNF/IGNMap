@@ -12,6 +12,7 @@
 
 #include "XGeoFDtm.h"
 #include "XPath.h"
+#include "XParserXML.h"
 #include "../XToolGeod/XGeodConverter.h"
 #include "../XToolImage/XTiffWriter.h"
 #include "XPath.h"
@@ -397,7 +398,7 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
   if (keyword != "cellsize")
     return false;
 
-  char c = in.peek();
+  char c = (char)in.peek();
   if ((c == 'n')||(c == 'N')) {
     in.getline(buf, 1024);  // NODATA
     std::ignore = sscanf(buf, "%s %lf", token, &no_data);
@@ -1075,47 +1076,47 @@ bool XGeoFDtm::ConvertAsc(const char* file_out, XGeodConverter* L, XError* error
 //-----------------------------------------------------------------------------
 bool XGeoFDtm::ReadAttributes(std::vector<std::string>& V)
 {
-  char buf[256];
+  char buf[64];
   V.clear();
   V.push_back("Nom");
   V.push_back(m_strName);
 
   V.push_back("Resolution");
-  sprintf(buf,"%.2lf", m_dGSD);
+  snprintf(buf, 64, "%.2lf", m_dGSD);
   V.push_back(buf);
   V.push_back("Zmin");
   if (m_dZmin > m_dNoData)
-    sprintf(buf,"%.2lf", m_dZmin);
+    snprintf(buf, 64, "%.2lf", m_dZmin);
   else
     strcpy(buf, "NOZ");
   V.push_back(buf);
   V.push_back("Zmax");
   if (m_dZmax > m_dNoData)
-    sprintf(buf,"%.2lf", m_dZmax);
+    snprintf(buf, 64, "%.2lf", m_dZmax);
   else
     strcpy(buf, "NOZ");
   V.push_back(buf);
   V.push_back("NbNOZ");
-  sprintf(buf,"%u", m_nNbNoZ);
+  snprintf(buf, 64, "%u", m_nNbNoZ);
   V.push_back(buf);
 
   V.push_back("Largeur");
-  sprintf(buf,"%u", m_nW);
+  snprintf(buf, 64, "%u", m_nW);
   V.push_back(buf);
   V.push_back("Hauteur");
-  sprintf(buf,"%u", m_nH);
+  snprintf(buf, 64, "%u", m_nH);
   V.push_back(buf);
   V.push_back("Xmin");
-  sprintf(buf,"%.2lf", m_Frame.Xmin);
+  snprintf(buf, 64, "%.2lf", m_Frame.Xmin);
   V.push_back(buf);
   V.push_back("Ymin");
-  sprintf(buf,"%.2lf", m_Frame.Ymin);
+  snprintf(buf, 64, "%.2lf", m_Frame.Ymin);
   V.push_back(buf);
   V.push_back("Xmax");
-  sprintf(buf,"%.2lf", m_Frame.Xmax);
+  snprintf(buf, 64, "%.2lf", m_Frame.Xmax);
   V.push_back(buf);
   V.push_back("Ymax");
-  sprintf(buf,"%.2lf", m_Frame.Ymax);
+  snprintf(buf, 64, "%.2lf", m_Frame.Ymax);
   V.push_back(buf);
 
   return true;

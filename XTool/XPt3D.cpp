@@ -10,6 +10,7 @@
 #include <cmath>
 #include "XPt3D.h"
 #include "XPt2D.h"
+#include "XParserXML.h"
 
 //-----------------------------------------------------------------------------
 // Lecture dans un fichier XML

@@ -10,7 +10,7 @@
 #include <algorithm>
 #include "XGeoClass.h"
 #include "XGeoVector.h"
-
+#include "XParserXML.h"
 
 //-----------------------------------------------------------------------------
 // Convertion d'un type d'attribut en chaine de caracteres
@@ -64,7 +64,7 @@ std::string XGeoAttribut::ShortName(uint32_t num) const
 	}
 	if (num > 0) {
 		char buf[10];
-		::sprintf(buf, "%u", num);
+		::snprintf(buf, 10, "%u", num);
 		shortname += buf;
 	}
 	return shortname;

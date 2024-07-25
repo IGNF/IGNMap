@@ -12,9 +12,9 @@
 
 #include <iostream>
 #include "XBase.h"
-#include "XParserXML.h"
 
 class XPt3D;
+class XParserXML;
 
 class XPt2D {
 public:
@@ -41,8 +41,8 @@ public:
   // Tests
   bool egal(const XPt2D &M, const double &epsilon);
 
-	virtual bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
-	virtual bool XmlWrite(std::ostream* out);
+	bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
+	bool XmlWrite(std::ostream* out);
 };
 
 // Fonctions d'aide

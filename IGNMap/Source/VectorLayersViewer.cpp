@@ -195,6 +195,10 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
 			gClassViewerMgr.AddClassViewer(geoLayer->Name(), geoLayer, this);
 			};
+		std::function< void() > ExportRepresVector = [=]() { // Export des representations des classes
+			sendActionMessage("ExportRepresVector"); };
+		std::function< void() > ImportRepresVector = [=]() { // Import des representations des classes
+			sendActionMessage("ImportRepresVector"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -202,6 +206,8 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Export Layer"), ExportClass);
+		menu.addItem(juce::translate("Export Representations"), ExportRepresVector);
+		menu.addItem(juce::translate("Import Representations"), ImportRepresVector);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
