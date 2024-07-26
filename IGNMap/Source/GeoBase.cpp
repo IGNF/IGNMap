@@ -568,7 +568,6 @@ bool GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
 //-----------------------------------------------------------------------------
 void GeoTools::ColorizeClasses(XGeoBase* base)
 {
-	XGeoRepres defaut_repres;
 	for (uint32_t i = 0; i < base->NbLayer(); i++) {
 		XGeoLayer* layer = base->Layer(i);
 		for (uint32_t j = 0; j < layer->NbClass(); j++) {
@@ -576,12 +575,12 @@ void GeoTools::ColorizeClasses(XGeoBase* base)
 			XGeoRepres* repres = C->Repres();
 			if (repres == nullptr)
 				continue;
-			if (*repres == defaut_repres) {
+			if (repres->Name().empty()) {
 				auto& rd = juce::Random::getSystemRandom();
 				repres->Color(juce::Colour((juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256)).getARGB());
 				repres->FillColor(juce::Colour((juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256), (juce::uint8)rd.nextInt(256)).getARGB());
+				repres->Name(C->Name().c_str());
 			}
-
 		}
 	}
 }

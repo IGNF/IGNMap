@@ -34,7 +34,6 @@ public:
   { m_nColor = color; m_nFillColor = fill; m_nSymbol = symbol; m_nZOrder = zorder;
     m_nSize = size; m_nFontSize = font; m_nTrans = trans; m_bDeletable = false;
     m_nMinScale = 0; m_nMaxScale = 0;}
-	virtual ~XGeoRepres() {;}
 
 	inline uint32_t Color() const { return m_nColor;}
 	inline uint32_t FillColor() const { return m_nFillColor;}
@@ -79,8 +78,8 @@ public:
   void Deletable(bool flag) { m_bDeletable = flag;}
   void Scale(uint32_t min, uint32_t max) { m_nMinScale = min; m_nMaxScale = max;}
 
-	virtual bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
-	virtual bool XmlWrite(std::ostream* out);
+	bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
+	bool XmlWrite(std::ostream* out);
 
 	// Operateurs logiques
 	friend bool operator==(XGeoRepres, XGeoRepres);

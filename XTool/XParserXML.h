@@ -80,6 +80,7 @@ public:
 	std::string ReadNode(std::string nodename, uint32_t num = 0);
 	int ReadNodeAsInt(std::string nodename, uint32_t num = 0);
 	uint32_t ReadNodeAsUInt32(std::string nodename, uint32_t num = 0);
+	uint32_t ReadNodeAsHexUInt32(std::string nodename, uint32_t num = 0);
 	double ReadNodeAsDouble(std::string nodename, uint32_t num = 0);
 	bool ReadNodeAsBool(std::string nodename, uint32_t num = 0);
 

@@ -978,13 +978,13 @@ XPt2D XGeoVector::LabelPoint(uint16_t* rot)
 			if (LoadGeom()) {
 				XPt2D A = Pt(0);
 				XPt2D B = Pt(1);
-				*rot = XRint((asin( fabs(B.Y - A.Y) / dist(A, B)) * 180. / XPI));
+				*rot = (uint16_t)XRint((asin( fabs(B.Y - A.Y) / dist(A, B)) * 180. / XPI));
 				if ((A.X < B.X)&&(A.Y > B.Y))
 					*rot = 360 - *rot;
 				if ((A.X > B.X)&&(A.Y < B.Y))
 					*rot = 360 - *rot;
 
-				*rot = XRint(*rot * 0.1) * 10;
+				*rot = (uint16_t)XRint(*rot * 0.1) * 10;
 				Unload();
 			}
 		}
@@ -1005,7 +1005,7 @@ XPt2D XGeoVector::LabelPoint(uint16_t* rot)
 		M = (A + B) * 0.5;
 
 		if (rot != NULL) {
-			*rot = XRint((asin( fabs(B.Y - A.Y) / dist(A, B)) * 180. / XPI));
+			*rot = (uint16_t)XRint((asin( fabs(B.Y - A.Y) / dist(A, B)) * 180. / XPI));
 			if ((A.X < B.X)&&(A.Y > B.Y))
 				*rot = 360 - *rot;
 			if ((A.X > B.X)&&(A.Y < B.Y))
@@ -1880,7 +1880,7 @@ bool XGeoVector::Generalize(std::vector<XPt2D>& T, double min_angle)
   }
 
   XPt2D J, K, L;
-  double alpha, cumul = 0.;
+  double alpha = 0.;
   uint32_t last_in;
   std::vector<XPt2D> Pt_in;
 
@@ -1981,8 +1981,8 @@ bool XGeoVector::Rasterize(double gsd, double& Xmin, double& Ymax, uint32_t& W, 
   XFrame F = Frame();
   double X0 = floor(F.Xmin /gsd) * gsd;
   double Y0 = ceil(F.Ymax / gsd) * gsd;
-  W = ceil(F.Width() / gsd) + 1;
-  H = ceil(F.Height() / gsd) + 1;
+  W = (uint32_t)ceil(F.Width() / gsd) + 1;
+  H = (uint32_t)ceil(F.Height() / gsd) + 1;
   uint8_t* buf = new uint8_t[W * H];
   ::memset(buf, 0, W*H);
   for (uint32_t i = 0; i < H; i++) {
@@ -1998,7 +1998,8 @@ bool XGeoVector::Rasterize(double gsd, double& Xmin, double& Ymax, uint32_t& W, 
       for (uint32_t j = 0; j < T.size(); j++) {
         U.push_back(XRint(((T[j] - X0) / gsd)));
       }
-      std::unique(U.begin(), U.end());
+      std::vector<uint32_t>::iterator iter = std::unique(U.begin(), U.end());
+			U.erase(iter, U.end());
       for (uint32_t j = 0; j < U.size() / 2; j++) {
         for (uint32_t k = U[j*2]; k < U[j*2 + 1]; k++)
           line[k] += 1;

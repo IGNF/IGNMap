@@ -144,16 +144,19 @@ XGeoClass* XGeoBase::AddClass(const char* layer_name, const char* class_name)
 	for (uint32_t i = 0; i < m_Layer.size(); i++)
 		if (m_Layer[i]->Name().compare(layer_name) == 0) {
 			layer = m_Layer[i];
-			return layer->AddClass(class_name);
+			break;
 		}
-	if (layer == NULL) {
-		XGeoLayer* newLayer = new XGeoLayer;
-		newLayer->Name(layer_name);
-		XGeoClass* C = newLayer->AddClass(class_name);
-		m_Layer.push_back(newLayer);
-		return C;
+	if (layer == NULL) {	// Creation du layer
+		layer = new XGeoLayer;
+		layer->Name(layer_name);
+		m_Layer.push_back(layer);
 	}
-	return NULL;
+	uint32_t zorder = 0;
+	if (m_Class.size() > 0)
+		zorder = m_Class[m_Class.size() - 1]->Repres()->ZOrder();
+	XGeoClass* C = layer->AddClass(class_name);
+	C->Repres()->ZOrder(zorder + 1);
+	return C;
 }
 
 //-----------------------------------------------------------------------------

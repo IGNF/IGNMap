@@ -58,7 +58,7 @@ class VectorLayersViewer : public juce::Component,
 public:
 	VectorLayersViewer();
 
-	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); }
+	void SetBase(XGeoBase* base) { m_Base = base;  m_Model.SetBase(base); m_Table.updateContent(); m_Table.repaint(); }
 	void Translate();
 	void RenameAndViewLastClass(juce::String newName);
 	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }

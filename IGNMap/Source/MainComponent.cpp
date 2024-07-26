@@ -683,9 +683,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		for (uint32_t i = 0; i < vec.size(); i++) {
 			if (!repres.XmlRead(&vec[i]))
 				continue;
+			juce::String name = repres.Name();
 			for (uint32_t j = 0; j < m_GeoBase.NbClass(); j++) {
 				XGeoClass* C = m_GeoBase.Class(j);
-				if (C->Name() == repres.Name())
+				if (name.compareIgnoreCase(C->Name()) == 0)
 					*(C->Repres()) = repres;
 			}
 		}

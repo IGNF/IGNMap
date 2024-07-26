@@ -434,6 +434,7 @@ void VectorLayersViewer::itemDropped(const SourceDetails& details)
 			C->Repres()->ZOrder(index * 10);
 	}
 	m_Base->SortClass();
+	m_Table.repaint();
 	m_Model.sendActionMessage("UpdateVector");
 }
 

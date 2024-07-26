@@ -74,15 +74,15 @@ bool XGeoRepres::XmlRead(XParserXML* parser, uint32_t num, XError* error)
 	data = repres.ReadNodeAsUInt32("/xgeorepres/size");
 	if (data > 255)
 		data = 1;
-	m_nSize = data;
+	m_nSize = (uint8_t)data;
 	data = repres.ReadNodeAsUInt32("/xgeorepres/font_size");
 	if ((data < 1)||(data > 255))
 		data = 9;
-	m_nFontSize = data;
+	m_nFontSize = (uint8_t)data;
 
 	m_nSymbol = repres.ReadNodeAsUInt32("/xgeorepres/symbol");
 	if (m_nSymbol == 0) {
-    uint32_t pen, brush, cell, data;
+    uint32_t pen, brush, cell;
     data = repres.ReadNodeAsUInt32("/xgeorepres/symbol_data");
     pen = repres.ReadNodeAsUInt32("/xgeorepres/symbol_pen");
 		brush = repres.ReadNodeAsUInt32("/xgeorepres/symbol_brush");
@@ -90,28 +90,38 @@ bool XGeoRepres::XmlRead(XParserXML* parser, uint32_t num, XError* error)
     m_nSymbol = DPBCSymbol(data, pen, brush, cell);
 	}
 
-	uint32_t r,g, b;
-	r = repres.ReadNodeAsUInt32("/xgeorepres/color_r");
-	g = repres.ReadNodeAsUInt32("/xgeorepres/color_g");
-	b = repres.ReadNodeAsUInt32("/xgeorepres/color_b");
-	m_nColor = RGBColor(r, g, b);
-	
-	bool transparent = false;
-	transparent = repres.ReadNodeAsBool("/xgeorepres/pen_transparent");
-	if (transparent)
-		m_nColor = 0xFFFFFFFF;
+	if (repres.FindNode("/xgeorepres/pen_color")) // Nouvelle maniere
+		m_nColor = repres.ReadNodeAsHexUInt32("/xgeorepres/pen_color");
+	else {
+		uint32_t r, g, b;
+		r = repres.ReadNodeAsUInt32("/xgeorepres/color_r");
+		g = repres.ReadNodeAsUInt32("/xgeorepres/color_g");
+		b = repres.ReadNodeAsUInt32("/xgeorepres/color_b");
+		m_nColor = RGBColor(r, g, b);
 
-	r = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_r");
-	g = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_g");
-	b = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_b");
-	m_nFillColor = RGBColor(r, g, b);
+		bool transparent = false;
+		transparent = repres.ReadNodeAsBool("/xgeorepres/pen_transparent");
+		if (transparent)
+			m_nColor = 0xFFFFFFFF;
+	}
 
-	transparent = repres.ReadNodeAsBool("/xgeorepres/fill_transparent");
-	if (transparent)
-		m_nFillColor = 0xFFFFFFFF;
+	if (repres.FindNode("/xgeorepres/fill_color")) // Nouvelle maniere
+		m_nFillColor = repres.ReadNodeAsHexUInt32("/xgeorepres/fill_color");
+	else {
+		uint32_t r, g, b;
+		r = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_r");
+		g = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_g");
+		b = repres.ReadNodeAsUInt32("/xgeorepres/fill_color_b");
+		m_nFillColor = RGBColor(r, g, b);
+
+		bool transparent = false;
+		transparent = repres.ReadNodeAsBool("/xgeorepres/fill_transparent");
+		if (transparent)
+			m_nFillColor = 0xFFFFFFFF;
+	}
 
 	if (repres.FindNode("/xgeorepres/transparency")) {
-		r = repres.ReadNodeAsUInt32("/xgeorepres/transparency");
+		uint32_t r = repres.ReadNodeAsUInt32("/xgeorepres/transparency");
 		if (r > 100)
 			m_nTrans = 100;
 		else
@@ -128,11 +138,17 @@ bool XGeoRepres::XmlRead(XParserXML* parser, uint32_t num, XError* error)
 //-----------------------------------------------------------------------------
 bool XGeoRepres::XmlWrite(std::ostream* out)
 {
-	uint8_t* ptr;
-
 	*out << "\t<xgeorepres>" << std::endl;
   *out << "\t\t<name> " << m_strName << " </name>" << std::endl;
 
+	char buf[12];
+	snprintf(buf, 12, "%x", m_nColor);
+	*out << "\t\t<pen_color> " << buf << " </pen_color>" << std::endl;
+	snprintf(buf, 12, "%x", m_nFillColor);
+	*out << "\t\t<fill_color> " << buf << " </fill_color>" << std::endl;
+
+	/* Ancienne version
+	uint8_t* ptr;
 	if (m_nColor != 0xFFFFFFFF) {
 		ptr = (uint8_t*)&m_nColor;
     *out << "\t\t<color_r> " << (int)ptr[2] << " </color_r>" << std::endl;
@@ -148,6 +164,7 @@ bool XGeoRepres::XmlWrite(std::ostream* out)
     *out << "\t\t<fill_color_b> " << (int)ptr[0] << " </fill_color_b>" << std::endl;
 	} else
 		*out << "\t\t<fill_transparent>" << (int)true << " </fill_transparent>" << std::endl;
+	*/
 
 	*out << "\t\t<symbol> " << m_nSymbol << " </symbol>" << std::endl;
 	*out << "\t\t<size> " << (int)m_nSize << " </size>" << std::endl;
