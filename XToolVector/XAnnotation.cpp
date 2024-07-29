@@ -246,8 +246,14 @@ void XAnnotation::AddPt(double x, double y)
   XPt P;
   P.X = x;
   P.Y = y;
-  m_Pt.push_back(P);
-  m_Frame += XPt2D(x, y);
+  if ((m_Primitive != pRect)||(m_Pt.size() < 2)) {
+    m_Pt.push_back(P);
+    m_Frame += XPt2D(x, y);
+  }
+  else {
+    m_Pt[1] = P;
+    ComputeFrame();
+  }
 }
 
 //-----------------------------------------------------------------------------

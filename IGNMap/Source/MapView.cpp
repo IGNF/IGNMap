@@ -141,12 +141,20 @@ void MapView::RenderMap(bool overlay, bool raster, bool dtm, bool vector, bool l
 void MapView::SetMouseMode(MouseMode mode)
 { 
 	m_nMouseMode = mode;
+	SetModeCursor();
+	m_Annotation.Close();
+	m_Annotation.Clear();
+}
+
+//==============================================================================
+// Fixe la forme du curseur de la souris en fonction du mode
+//==============================================================================
+void MapView::SetModeCursor()
+{
 	if (m_nMouseMode == Move)
 		setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 	else
 		setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
-	m_Annotation.Close();
-	m_Annotation.Clear();
 }
 
 //==============================================================================
@@ -169,7 +177,10 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 	}
 	if ((m_nMouseMode == Polyline) || (m_nMouseMode == Polygone) || (m_nMouseMode == Rectangle) || (m_nMouseMode == Text)) {
 		m_bDrawing = true;
-		AddAnnotationPoint(m_StartPt);
+		if (event.mods.isRightButtonDown())
+			CloseAnnotation();
+		if (event.mods.isLeftButtonDown())
+			AddAnnotationPoint(m_StartPt);
 		return;
 	}
 	m_bZoom = m_bSelect = m_bDrawing = false;
@@ -240,7 +251,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		return;
 	}
 		
-	setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+	SetModeCursor();
 	sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
 	if (event.mods.isAltDown())
 		SetTarget(x, y);
@@ -551,6 +562,14 @@ void MapView::AddAnnotationPoint(juce::Point<int>& P)
 		if (m_nMouseMode == Text) m_Annotation.Primitive(XAnnotation::pText);
 	}
 	m_Annotation.AddPt(X0, Y0);
+}
+
+//==============================================================================
+// Fin de la saisie d'une annotation
+//==============================================================================
+void MapView::CloseAnnotation()
+{
+	m_Annotation.Close();
 }
 
 //==============================================================================

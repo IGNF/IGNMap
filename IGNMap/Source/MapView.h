@@ -66,6 +66,7 @@ public:
 
   enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4, Polyline = 5, Polygone = 6, Rectangle = 7, Text = 8};
   void SetMouseMode(MouseMode mode);
+  void SetModeCursor();
 
 private:
   juce::String  m_strName;
@@ -97,6 +98,7 @@ private:
 
   void EndMouseAction();
   void AddAnnotationPoint(juce::Point<int>&);
+  void CloseAnnotation();
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MapView)
 };
