@@ -337,7 +337,7 @@ void DtmRangeModel::cellClicked(int rowNumber, int columnId, const juce::MouseEv
 void DtmRangeModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
 	// Choix d'une couleur
-	if ((m_ActiveColumn == Column::Colour)) {
+	if (m_ActiveColumn == Column::Colour) {
 		if (auto* cs = dynamic_cast<juce::ColourSelector*> (source)) {
 			DtmShader::m_Colour[m_ActiveRow] = cs->getCurrentColour();
 			sendActionMessage("UpdateDtm");

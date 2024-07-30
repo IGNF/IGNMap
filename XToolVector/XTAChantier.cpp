@@ -213,7 +213,7 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	data.precision(2);
 	V.clear();
 
-	V.push_back("Num√©ro");
+	V.push_back("Numero");
 	data << m_nNum;
 	V.push_back(data.str());
 	data.str("");
@@ -228,10 +228,10 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	std::string style;
 	switch(m_Style) {
 		case Standard : style = "Standard"; break;
-		case MultiSpectral : style = "Num√©rique multispectral"; break;
-		case DoubleFauchee : style = "Num√©rique double fauchÈe"; break;
+		case MultiSpectral : style = "Numerique multispectral"; break;
+		case DoubleFauchee : style = "Numerique double fauchee"; break;
 		case Argentique : style = "Argentique"; break;
-		case AvantArriere : style = "Num√©rique avant arriËre"; break;
+		case AvantArriere : style = "Numerique avant arriere"; break;
 	}
 	V.push_back("Style");
 	V.push_back(style);
@@ -256,16 +256,16 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	if (m_Qualite &Ombre)
 		Qualite += " Ombre";
 	if (m_Qualite &Reacteur)
-		Qualite += " RÈacteur";
+		Qualite += " Reacteur";
 	if (m_Qualite &Surexpose)
-		Qualite += " SurexposÈ";
+		Qualite += " Surexpose";
 	if (m_Qualite &Sousexpose)
-		Qualite += " Sous-exposÈ";
+		Qualite += " Sous-expose";
 	if (m_Qualite &Reflet)
 		Qualite += " Reflet";
 	if (m_Qualite &AutreDefaut)
-		Qualite += " DÈfaut";
-	V.push_back("Qualit√©");
+		Qualite += " Defaut";
+	V.push_back("Qualite");
 	V.push_back(Qualite);
 
 	data << m_S.Z;
@@ -274,7 +274,7 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	data.str("");
 
 	if (m_Style != Argentique) {
-		V.push_back("R√©solution moyenne");
+		V.push_back("Resolution moyenne");
 		data << m_dResolMoy;
 	} else {
 		V.push_back("Echelle moyenne");
@@ -291,17 +291,17 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 	V.push_back(XTime::HMSDecToString(m_dTime));
 
 	// Cap
-	data << Cap();//cap en degrÈs
-	V.push_back("Cap (en degr√©s)");
+	data << Cap();//cap en degres
+	V.push_back("Cap (en degres)");
 	V.push_back(data.str());
 	data.str("");
 
-	V.push_back("Hauteur du soleil (en degr√©s)");
+	V.push_back("Hauteur du soleil (en degres)");
 	data << (m_dSunHeight* 180.) / XPI;
 	V.push_back(data.str());
 	data.str("");
 
-	V.push_back("Clich√© en ZI");
+	V.push_back("Cliche en ZI");
 	if (m_bZI)
 		V.push_back("Oui");
 	else

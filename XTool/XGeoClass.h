@@ -30,7 +30,7 @@ protected:
 	uint32_t				m_nLength;
 	uint8_t					m_nDecCount;
 public:
-	XGeoAttribut() { m_strName = "Indéfini"; m_strShortName = "Indef"; m_Type = String; m_nLength = 64; m_nDecCount = 0;}
+	XGeoAttribut() { m_strName = "Indefini"; m_strShortName = "Indef"; m_Type = String; m_nLength = 64; m_nDecCount = 0;}
 	XGeoAttribut(const char* name, const char* shortname, eType type, uint16_t length, uint8_t dec = 0) :
 						m_strName(name), m_strShortName(shortname), m_Type(type), m_nLength(length), m_nDecCount(dec) {;}
 	XGeoAttribut(std::string name, std::string shortname, std::string desc, eType type, uint16_t length, uint8_t dec = 0) :

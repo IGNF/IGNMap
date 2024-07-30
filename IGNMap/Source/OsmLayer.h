@@ -41,7 +41,7 @@ public:
   inline uint16_t H() const { return m_nH; }
   inline uint16_t Zoom() const { return m_nZoom; }
 
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
+	bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
 };
 
 // Layer OSM

@@ -95,7 +95,7 @@ double XDtmShader::CoefEstompage(float altC, float altH, float altD, float angle
   normenormale = (normale[0] * normale[0]) + (normale[1] * normale[1]) + (normale[2] * normale[2]);
 
   normeDirLum = (DirLum[0] * DirLum[0]) + (DirLum[1] * DirLum[1]) + (DirLum[2] * DirLum[2]);
-  if (!normenormale == 0 && !normeDirLum == 0)
+  if (normenormale * normeDirLum > 0)
     correction = scalaire / sqrt(normenormale * normeDirLum);
   else correction = 0;
 
@@ -188,7 +188,7 @@ bool XDtmShader::EstompLine(float* lineR, float* lineS, float* lineT, uint32_t W
     }
 
     if (val > m_Z[m_Z.size() - 1]) {
-      index = m_Z.size();
+      index = (int)m_Z.size();
       r = m_Color[index].R();
       g = m_Color[index].G();
       b = m_Color[index].B();

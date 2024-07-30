@@ -470,7 +470,7 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
 
   XTiffWriter tiff;
 
-  if (m_Image->ColorMapSize() == 256 * 256 * 256) {	// Recherche du blanc pour les images avec palettes
+  if (m_Image->ColorMapSize() == 256 + 256 + 256) {	// Recherche du blanc pour les images avec palettes
     uint16_t* colormap = m_Image->ColorMap();
     for (int i = 0; i < 256; i++)
       if (colormap[i] == 255)

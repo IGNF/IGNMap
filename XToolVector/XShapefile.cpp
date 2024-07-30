@@ -269,6 +269,7 @@ bool XShapefile::Read(const char* filename, XError* error)
 				} else
 					m_Data.push_back(polyM3D);
 				break;
+				default: return false;
 			} // end switch
 			index++;
 		}

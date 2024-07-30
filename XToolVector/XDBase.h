@@ -89,7 +89,7 @@ public:
 	bool ReadHeader(const char* filename, XError* error = NULL);
 	bool ReadRecord(uint32_t num, std::vector<std::string>& V, XError* error = NULL);
 
-	uint32_t NbField() const { return m_FieldDesc.size();}
+	uint32_t NbField() const { return (uint32_t)m_FieldDesc.size();}
 	uint32_t NbRecord() const { return m_Header.NbRecord();}
 	bool GetFieldDesc(uint32_t index, std::string& name, XDBaseFieldDescriptor::eType& type, uint16_t& length, uint8_t& dec);
 

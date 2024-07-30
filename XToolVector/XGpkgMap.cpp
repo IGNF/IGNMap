@@ -211,12 +211,14 @@ bool XGpkgMap::ReadVectors(uint32_t index, XGeoClass* C)
     is2D = false;
 
   sqlite3_stmt *stmt = NULL;
-  std::string statement = "SELECT ";
+  std::string statement = "SELECT \"";
   statement += m_Table[index].m_strPrimaryKey;
-  statement += ", ";
+  statement += "\", \"";
   statement += m_Table[index].m_strGeomName;
-  statement += " FROM ";
+  statement += "\" FROM ";
+	statement += "\"";	// Le nom de la table peut contenir des caracteres comme + ou -
   statement += m_Table[index].m_strName;
+	statement += "\"";
 
   const char* tail;
   sqlite3_int64 id;
@@ -302,10 +304,10 @@ bool XGpkgMap::ReadGeomHeader(uint8_t* geom, XFrame* F, double* zmin, double* zm
     return false;
   if ((geom[0] != 0x47)&&(geom[1] != 0x50)) // Magic Number
     return false;
-  uint8_t version = geom[2];
+  // uint8_t version = geom[2];
   GpkgFlags* flags = (GpkgFlags*)&geom[3];
 
-  int* srid = (int*)&geom[4];
+  // int* srid = (int*)&geom[4];
   double* envelop = (double*)&geom[8];
   if (flags->envelop > 0) {
     F->Xmin = envelop[0];
@@ -354,11 +356,11 @@ bool XGpkgMap::ReadAttributes(sqlite3_int64 id, std::vector<std::string>& V, XGe
   std::stringstream request;
   request << "SELECT ";
   for (uint32_t i = 0; i < m_Att.size()-1; i++)
-    request << m_Att[i] << " , ";
-  request << m_Att[m_Att.size()-1] << " ";
-  request << " FROM "
-          << m_Table[m_idxClass].m_strName << " WHERE " << m_Table[m_idxClass].m_strPrimaryKey
-          << " = " << id << " ;";
+    request << "\"" << m_Att[i] << "\" , ";
+  request << "\"" << m_Att[m_Att.size()-1] << "\" ";
+  request << " FROM \""
+          << m_Table[m_idxClass].m_strName << "\" WHERE \"" << m_Table[m_idxClass].m_strPrimaryKey
+          << "\" = " << id << " ;";
   std::string statement = request.str();
 
   const char* tail;
@@ -395,9 +397,9 @@ bool XGpkgMap::LoadGeom(sqlite3_int64 id, XGpkgVector* V)
 
   sqlite3_stmt *stmt = NULL;
   std::stringstream request;
-  request << "SELECT " << m_Table[m_idxClass].m_strGeomName <<  " FROM "
-          << m_Table[m_idxClass].m_strName << " WHERE " << m_Table[m_idxClass].m_strPrimaryKey
-          << " = " << id << " ;";
+  request << "SELECT \"" << m_Table[m_idxClass].m_strGeomName <<  "\" FROM \""
+          << m_Table[m_idxClass].m_strName << "\" WHERE \"" << m_Table[m_idxClass].m_strPrimaryKey
+          << "\" = " << id << " ;";
   std::string statement = request.str();
 
   const char* tail;

@@ -187,7 +187,7 @@ bool XGeoSchema::AddAttribut(std::string name, std::string shortname, std::strin
 bool XGeoSchema::SortAttribut(std::vector<std::string>* V)
 {
 	std::vector<std::string> Att;
-	int cmpt, nb = V->size()/2;
+	int cmpt, nb = (int)V->size()/2;
 	for (uint32_t i = 0; i < m_Attrib.size(); i++) {
 		cmpt = -1;
 		for(int j = 0; j < nb; j++) {
@@ -341,7 +341,7 @@ uint32_t XGeoClass::Find(std::vector<XGeoVector*>* T, XPt2D& P, double dist)
 		if (vector->IsNear2D(P, dist))
 			T->push_back(vector);
 	}
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -356,7 +356,7 @@ uint32_t XGeoClass::FindConnection(std::vector<XGeoVector*>* T, XPt2D& P)
 		if (vector->IsConnected(P))
 			T->push_back(vector);
 	}
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------

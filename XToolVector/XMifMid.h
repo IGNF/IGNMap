@@ -80,7 +80,7 @@ public:
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return m_File->ReadAttributes(m_nId, V);}
 	virtual std::string FindAttribute(std::string att_name) { return m_File->FindAttribute(m_nId, att_name);}
@@ -102,7 +102,7 @@ public:
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
 
 	virtual bool LoadGeom();
 
@@ -126,7 +126,7 @@ public:
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, uint32_t num = 1, XError* error = NULL);
-	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
 
 	virtual bool LoadGeom();
 
@@ -154,7 +154,7 @@ public:
 //	void Centroide(double x, double y) { m_Centroide = XPt2D(x, y);}
 
 	bool Read(std::ifstream* in, XError* error = NULL);
-	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { ; }
+	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
 
 	virtual bool LoadGeom();
 

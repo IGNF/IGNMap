@@ -51,8 +51,8 @@ std::string XXml::XmlToOem(std::string s)
 			if (s[i+1] != '#')
 				continue;
 			numstr = s.substr(i+2);
-			int pos = numstr.find(';');
-			if (pos < 0)
+			std::string::size_type pos = numstr.find(';');
+			if (pos == std::string::npos)
 				continue;
 			numstr = numstr.substr(0, pos);
 			

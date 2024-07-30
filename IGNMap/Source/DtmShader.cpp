@@ -115,7 +115,7 @@ double DtmShader::CoefEstompage(float altC, float altH, float altD, float angleH
   normenormale = (normale[0] * normale[0]) + (normale[1] * normale[1]) + (normale[2] * normale[2]);
 
   normeDirLum = (DirLum[0] * DirLum[0]) + (DirLum[1] * DirLum[1]) + (DirLum[2] * DirLum[2]);
-  if (!normenormale == 0 && !normeDirLum == 0)
+  if ((normenormale * normeDirLum) > 0)
     correction = scalaire / sqrt(normenormale * normeDirLum);
   else correction = 0;
 

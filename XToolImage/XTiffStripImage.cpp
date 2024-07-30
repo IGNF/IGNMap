@@ -118,7 +118,7 @@ bool XTiffStripImage::AllocBuffer()
 {
 	if (m_nNbStrip < 1)
 		return false;
-	uint32_t maxsize = 0;
+	uint64_t maxsize = 0;
 	for (uint32_t i = 0; i < m_nNbStrip; i++)
 		if (m_StripCounts[i] > maxsize)
 			maxsize = m_StripCounts[i];
@@ -156,7 +156,7 @@ bool XTiffStripImage::LoadStrip(XFile* file, uint32_t num)
 		return true;
   if (m_nPlanarConfig == 1) {
     file->Seek(m_StripOffsets[num]);
-    uint32_t nBytesRead = file->Read((char*)m_Buffer, m_StripCounts[num]);
+    uint64_t nBytesRead = file->Read((char*)m_Buffer, m_StripCounts[num]);
     if (nBytesRead != m_StripCounts[num])
       return false;
     m_nLastStrip = num;

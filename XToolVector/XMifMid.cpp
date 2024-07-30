@@ -190,7 +190,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 
 	std::string type, token;
 	char sep;
-	uint32_t num, pos;
+	uint32_t num;
 	uint32_t fill, width, pattern, back, symbol;
 	XGeoRepres* repres = NULL;
 	char buf[1024];
@@ -243,7 +243,7 @@ bool XMifMid::Read(const char* filename, bool extract_repres, XError* error)
 		if (type == "pline") {
 			num = 1;
 			if (sep != '\n') {
-				pos = m_In.tellg();
+				std::streamoff pos = m_In.tellg();
 				m_In >> token;
 				std::transform(token.begin(), token.end(), token.begin(), tolower);
 				if (token == "multiple")

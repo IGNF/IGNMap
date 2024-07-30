@@ -469,7 +469,7 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
   m_Frame.Ymax = m_Frame.Ymin + step * (m_nH - 1);
   m_dZmax = zmax;
   m_dZmin = zmin;
-  if (zmin == 9e9) {  // MNT vide ?
+  if (zmin >= 9e9) {  // MNT vide ?
     m_dZmax = m_dNoData;
     m_dZmin = m_dNoData;
   }
@@ -1432,9 +1432,9 @@ int XGeoFDtm::ExportFlood(std::string filename, double Z0, std::vector<XPt2D>& P
   out << "Nom du fichier :\t" << filename << std::endl;
   out << "Altitude d'inondation :\t" << Z0 << std::endl;
   out << "Nombre de noeuds :\t" << m_nW * m_nH << std::endl;
-  out << "Noeuds non inondés (Z > " << Z0 << ") :\t" << nb_0 << std::endl;
-  out << "Noeuds non inondés (Z < " << Z0 << ") :\t" << nb_200 << std::endl;
-  out << "Noeuds inondés :\t" << nb_66 << std::endl;
+  out << "Noeuds non inondes (Z > " << Z0 << ") :\t" << nb_0 << std::endl;
+  out << "Noeuds non inondes (Z < " << Z0 << ") :\t" << nb_200 << std::endl;
+  out << "Noeuds inondes :\t" << nb_66 << std::endl;
   out << "Volume d'inondation (m3) :\t" << volume * m_dGSD * m_dGSD << std::endl;
 
   delete[] T;
@@ -1749,7 +1749,7 @@ bool XGeoFDtm::FindThalweg(std::string filename)
   if (!out.good())
     return false;
   out.seekp(0, std::ios_base::end);
-  uint32_t offset = out.tellp();
+  //uint32_t offset = out.tellp();
 
   // Ecriture des donnees
   if (!StreamReady())

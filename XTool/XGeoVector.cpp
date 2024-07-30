@@ -193,6 +193,7 @@ std::string XGeoVector::TypeVectorString()
 		case MPolyZ : return "Multi-Polygone 3D";
 		case Raster : return "Raster";
 		case DTM : return "MNT";
+		case LAS: return "LAS";
 	}
 	return "Type inconnu";
 }
@@ -2052,6 +2053,10 @@ bool XGeoVector::WriteGeoJson(std::ostream* json, std::vector<std::string>* Att)
     case PolyZ : *json << "\"Polygon\",\n"; break;
     case MPoly : *json << "\"MultiPolygon\",\n"; break;
     case MPolyZ : *json << "\"MultiPolygon\",\n"; break;
+		case Raster: *json << "\"Polygon\",\n"; break;	// On ecrit l'emprise du raster
+		case DTM: *json << "\"Polygon\",\n"; break; // On ecrit l'emprise du MNT
+		case LAS: *json << "\"Polygon\",\n"; break; // On ecrit l'emprise du LAS
+		default: return false;
   }
 
   *json << "  \"coordinates\": ";

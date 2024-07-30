@@ -114,8 +114,8 @@ juce::String LasShader::ClassificationName(uint8_t classif)
   case 10: return "Rail";
   case 11: return "Road Surface";
   case 12: return "Reserved";
-  case 13: return "Wire – Guard (Shield)";
-  case 14: return "Wire – Conductor (Phase)";
+  case 13: return "Wire - Guard (Shield)";
+  case 14: return "Wire - Conductor (Phase)";
   case 15: return "Transmission Tower";
   case 16: return "Wire-Structure Connector";
   case 17: return "Bridge Deck";

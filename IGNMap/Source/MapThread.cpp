@@ -354,6 +354,7 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 	case XGeoVector::MPolyZ:
 		flag = DrawMultiPolygon(V);
 	break;
+		default: flag = false;
 	}
 	V->Unload();
 	return flag;
@@ -921,6 +922,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 				data[0] = (uint8_t)(255 - data[1]);
 			}
 			break;
+		default: ;
 		}
 
 		ptr = bitmap.getPixelPointer((int)X, (int)Y);

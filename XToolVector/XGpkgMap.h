@@ -83,9 +83,10 @@ protected:
 
 public:
   XGpkgVector() { m_Map = NULL; m_Id = 0; }
+	virtual ~XGpkgVector() {;}
   virtual inline XGeoClass* GeoClass() const { return NULL;}
   virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/,
-                       double /*zmin*/, double /*zmax*/) { ; }
+											 double /*zmin*/, double /*zmax*/) {;}
 };
 
 //-----------------------------------------------------------------------------

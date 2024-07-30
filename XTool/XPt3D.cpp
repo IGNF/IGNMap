@@ -66,9 +66,9 @@ bool XPt3D::egal(const XPt3D& M, const double& epsilon)
     return false;
   if (fabs(Y - M.Y) > epsilon)
     return false;
-  return true;
   if (fabs(Z - M.Z) > epsilon)
     return false;
+	return true;
 }
 
 //-----------------------------------------------------------------------------

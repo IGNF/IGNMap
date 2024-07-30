@@ -384,8 +384,8 @@ bool XLasFile::StatLas(std::string file_out, std::ofstream* mif, std::ofstream* 
   out << "10 : Rail : " << TClassif[10] << std::endl;
   out << "11 : Road Surface : " << TClassif[11] << std::endl;
   out << "12 : " << TClassif[12] << std::endl;
-  out << "13 : Wire – Guard (Shield) : " << TClassif[13] << std::endl;
-  out << "14 : Wire – Conductor (Phase) : " << TClassif[14] << std::endl;
+  out << "13 : Wire - Guard (Shield) : " << TClassif[13] << std::endl;
+  out << "14 : Wire - Conductor (Phase) : " << TClassif[14] << std::endl;
   out << "15 : Transmission Tower : " << TClassif[15] << std::endl;
   out << "16 : Wire-Structure Connector : " << TClassif[16] << std::endl;
   out << "17 : Bridge Deck : " << TClassif[17] << std::endl;

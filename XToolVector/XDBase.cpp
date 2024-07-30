@@ -323,7 +323,7 @@ bool XDBaseFile::SetNbRecord(uint32_t nb)
 	uint32_t size = 1;
 	for (uint32_t i = 0; i < m_FieldDesc.size(); i++)
 		size += m_FieldDesc[i].Length();
-	m_Header = XDBaseFileHeader(nb, size, m_FieldDesc.size());
+	m_Header = XDBaseFileHeader(nb, size, (uint32_t)m_FieldDesc.size());
 	return true;
 }
 

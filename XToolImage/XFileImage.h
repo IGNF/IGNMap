@@ -20,7 +20,7 @@ class XFrame;
 class XFileImage {
 public:
   XFileImage();
-  ~XFileImage() { Close(); }
+  virtual ~XFileImage() { Close(); }
 
   virtual bool AnalyzeImage(std::string path);
   virtual bool IsValid() { if (m_Image == nullptr) return false; return true; }

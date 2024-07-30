@@ -22,6 +22,7 @@ protected:
 
 public:
 	XGeodConverter() { m_StartProjection = m_EndProjection = RGF93;}
+	virtual ~XGeodConverter() {;}
 
 	virtual bool SetDefaultProjection(XProjCode start_proj, XProjCode end_proj) 
 														{ m_StartProjection = start_proj; m_EndProjection = end_proj; return true;}

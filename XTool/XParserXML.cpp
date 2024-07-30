@@ -55,13 +55,13 @@ XNodeXML& XNodeXML::operator=(const XNodeXML& N)
 XNodeXML* XNodeXML::GetNode(std::string nodename, uint32_t num)
 {
 	if (nodename[0] != '/')
-		return NULL;
-	int pos = nodename.find('/', 1);
+		return nullptr;
+	std::string::size_type pos = nodename.find('/', 1);
 	std::string topnode = nodename.substr(1, pos - 1);
 	std::string subnode = nodename.substr(topnode.length() + 1);
 	if (topnode != m_strName)
-		return NULL;
-	if (pos == -1)  // Fin d'un arbre
+		return nullptr;
+	if (pos == std::string::npos)// Fin d'un arbre
 		return this;
 
 	// Recherche dans les noeuds fils
@@ -70,13 +70,13 @@ XNodeXML* XNodeXML::GetNode(std::string nodename, uint32_t num)
 	XNodeXML* nodeXML;
 	for (iter = m_Tree.begin(); iter != m_Tree.end(); iter++){
 		nodeXML = (*iter)->GetNode(subnode);
-		if (nodeXML != NULL) {
+		if (nodeXML != nullptr) {
 			nb_find++;
 			if (nb_find == num)
 				return nodeXML;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -122,14 +122,14 @@ std::string XNodeXML::GetToken(std::istream* in)
 //-----------------------------------------------------------------------------
 bool XNodeXML::FindAttributes()
 {
-	int pos = m_strName.find(' ');
+	std::string::size_type pos = m_strName.find(' ');
 	if (pos == std::string::npos)
 		return true;
 
 	std::string token = m_strName, att, val;
 	m_strName = token.substr(0, pos);
 
-	int next;
+	std::string::size_type next;
 	do {
 		next = token.find('=', pos);
 		if (next == std::string::npos)
@@ -230,12 +230,12 @@ bool XNodeXML::FindNode(std::string nodename, uint32_t num)
 {
 	if (nodename[0] != '/')
 		return false;
-	int pos = nodename.find('/', 1);
+	std::string::size_type pos = nodename.find('/', 1);
 	std::string topnode = nodename.substr(1, pos - 1);
 	std::string subnode = nodename.substr(topnode.length() + 1);
 	if (topnode != m_strName)
 		return false;
-	if (pos == -1)  // Fin d'un arbre
+	if (pos == std::string::npos)  // Fin d'un arbre
 		return true;
 
 	// Recherche dans les noeuds fils
@@ -259,12 +259,12 @@ std::string XNodeXML::ReadNode(std::string nodename, uint32_t num)
 	std::string result = "";
 	if (nodename[0] != '/')
 		return result;
-	int pos = nodename.find('/', 1);
+	std::string::size_type pos = nodename.find('/', 1);
 	std::string topnode = nodename.substr(1, pos - 1);
 	std::string subnode = nodename.substr(topnode.length() + 1);
 	if (topnode != m_strName)
 		return result;
-	if (pos == -1)  // Fin d'un arbre
+	if (pos == std::string::npos)  // Fin d'un arbre
 		return m_strValue;
 
 	// Recherche dans les noeuds fils
@@ -288,12 +288,12 @@ uint32_t XNodeXML::ReadArrayNode(std::string nodename, std::vector<std::string>*
 {
 	if (nodename[0] != '/')
 		return 0;
-	int pos = nodename.find('/', 1);
+	std::string::size_type pos = nodename.find('/', 1);
 	std::string topnode = nodename.substr(1, pos - 1);
 	std::string subnode = nodename.substr(topnode.length() + 1);
 	if (topnode != m_strName)
 		return 0;
-	if (pos == -1) { // Fin d'un arbre
+	if (pos == std::string::npos) { // Fin d'un arbre
 		V->push_back(m_strValue);
 		return V->size();
 	}
@@ -313,12 +313,12 @@ uint32_t XNodeXML::ReadAllNodes(std::string nodename, std::vector<XNodeXML*>* T)
 {
 	if (nodename[0] != '/')
 		return 0;
-	int pos = nodename.find('/', 1);
+	std::string::size_type pos = nodename.find('/', 1);
 	std::string topnode = nodename.substr(1, pos - 1);
 	std::string subnode = nodename.substr(topnode.length() + 1);
 	if (topnode != m_strName)
 		return 0;
-	if (pos == -1) { // Fin d'un arbre
+	if (pos == std::string::npos) { // Fin d'un arbre
 		T->push_back(this);
 		return T->size();
 	}
