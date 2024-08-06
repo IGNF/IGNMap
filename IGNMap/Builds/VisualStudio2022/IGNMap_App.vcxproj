@@ -319,6 +319,7 @@
     <ClCompile Include="..\..\..\openjpeg\src\lib\openjp2\tgt.c"/>
     <ClCompile Include="..\..\..\openjpeg\src\lib\openjp2\thread.c"/>
     <ClCompile Include="..\..\Source\AffineImage.cpp"/>
+    <ClCompile Include="..\..\Source\AnnotViewer.cpp"/>
     <ClCompile Include="..\..\Source\AppUtil.cpp"/>
     <ClCompile Include="..\..\Source\ClassViewer.cpp"/>
     <ClCompile Include="..\..\Source\DtmLayersViewer.cpp"/>
@@ -2194,6 +2195,7 @@
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\tgt.h"/>
     <ClInclude Include="..\..\..\openjpeg\src\lib\openjp2\thread.h"/>
     <ClInclude Include="..\..\Source\AffineImage.h"/>
+    <ClInclude Include="..\..\Source\AnnotViewer.h"/>
     <ClInclude Include="..\..\Source\AppUtil.h"/>
     <ClInclude Include="..\..\Source\ClassViewer.h"/>
     <ClInclude Include="..\..\Source\DtmLayersViewer.h"/>

@@ -18,9 +18,40 @@
 XAnnotation::XAnnotation()
 {
   m_Primitive = pNull;
-  m_Repres = new XGeoRepres;
-  //m_Repres->Size(3);
-  m_T = NULL;
+  m_Repres = &m_R;
+  m_Repres->Deletable(false);
+  m_T = nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Constructeur de copie
+//-----------------------------------------------------------------------------
+XAnnotation::XAnnotation(const XAnnotation& A)
+{
+  m_Frame = A.m_Frame;
+  m_Primitive = A.m_Primitive;
+  m_Pt = A.m_Pt;
+  m_strText = A.m_strText;
+  m_Att = A.m_Att;
+  m_R = A.m_R;
+  m_Repres = &m_R;
+  m_T = nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Operateur =
+//-----------------------------------------------------------------------------
+XAnnotation& XAnnotation::operator= (const XAnnotation& A)
+{
+  m_Frame = A.m_Frame;
+  m_Primitive = A.m_Primitive;
+  m_Pt = A.m_Pt;
+  m_strText = A.m_strText;
+  m_Att = A.m_Att;
+  m_R = A.m_R;
+  m_Repres = &m_R;
+  Unload();
+  return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -31,6 +62,7 @@ void XAnnotation::Clear()
   m_Primitive = pNull;
   m_Pt.clear();
   m_Frame = XFrame();
+  m_strText = "";
   Unload();
 }
 
@@ -76,8 +108,8 @@ bool XAnnotation::LoadGeom()
 //-----------------------------------------------------------------------------
 void XAnnotation::Unload()
 {
-  if (m_T != NULL) delete[] m_T;
-  m_T = NULL;
+  if (m_T != nullptr) delete[] m_T;
+  m_T = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -229,6 +261,7 @@ bool XAnnotation::Close()
     T.push_back(A);
   }
   m_Pt = T;
+  ComputeFrame();
   if (m_Primitive != pPolygon)
     return true;
   if (m_Pt.size() < 3)
@@ -246,6 +279,12 @@ void XAnnotation::AddPt(double x, double y)
   XPt P;
   P.X = x;
   P.Y = y;
+  if (m_Primitive == pText) { // On remplace la position existante
+    m_Pt.clear();
+    m_Pt.push_back(P);
+    ComputeFrame();
+    return;
+  }
   if ((m_Primitive != pRect)||(m_Pt.size() < 2)) {
     m_Pt.push_back(P);
     m_Frame += XPt2D(x, y);

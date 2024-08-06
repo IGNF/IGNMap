@@ -21,8 +21,8 @@ XDBaseFileHeader::XDBaseFileHeader(uint32_t nbRecord, uint32_t recordSize, uint3
 	m_Date[1] = 12;
 	m_Date[2] = 31;
 	m_nNbRecord = nbRecord;						// Nombre de records dans le fichier
-	m_nRecordSize = recordSize;				// Taille d'un record en octets
-	m_nHeaderSize = nb_field * 32 + 32 + 1;		// Taille de l'entete en octets
+	m_nRecordSize = (uint16_t)recordSize;				// Taille d'un record en octets
+	m_nHeaderSize = (uint16_t)(nb_field * 32 + 32 + 1);		// Taille de l'entete en octets
 
 	m_cTransaction = 0;
 	m_cEncryption = 0;
@@ -72,7 +72,7 @@ bool XDBaseFileHeader::Read(std::ifstream* in, XError* error)
 //-----------------------------------------------------------------------------
 // Ecriture dans un fichier
 //-----------------------------------------------------------------------------
-bool XDBaseFileHeader::Write(std::ofstream* out, XError* error)
+bool XDBaseFileHeader::Write(std::ofstream* out, XError* /*error*/)
 {
 	out->write((const char*)&m_cVersion, 1);
 	out->write((const char*)&m_Date, 3);
@@ -122,7 +122,7 @@ bool XDBaseFieldDescriptor::Char2Type(char t)
 //-----------------------------------------------------------------------------
 // Lecture d'un descripteur de champs
 //-----------------------------------------------------------------------------
-bool XDBaseFieldDescriptor::Read(std::ifstream* in, XError* error)
+bool XDBaseFieldDescriptor::Read(std::ifstream* in, XError* /*error*/)
 {
 	char buf[256];
 
@@ -143,7 +143,7 @@ bool XDBaseFieldDescriptor::Read(std::ifstream* in, XError* error)
 //-----------------------------------------------------------------------------
 // Ecriture d'un descripteur de champs
 //-----------------------------------------------------------------------------
-bool XDBaseFieldDescriptor::Write(std::ofstream* out, XError* error)
+bool XDBaseFieldDescriptor::Write(std::ofstream* out, XError* /*error*/)
 {
 	char buf[256];
 
@@ -212,7 +212,7 @@ bool XDBaseFile::ReadHeader(const char* filename, XError* error)
 //-----------------------------------------------------------------------------
 // Lecture d'un enregistrement
 //-----------------------------------------------------------------------------
-bool XDBaseFile::ReadRecord(uint32_t num, std::vector<std::string>& V, XError* error)
+bool XDBaseFile::ReadRecord(uint32_t num, std::vector<std::string>& V, XError* /*error*/)
 {
 	V.clear();
   std::ifstream* in = m_In.IStream();
@@ -280,7 +280,7 @@ bool XDBaseFile::GetFieldDesc(uint32_t index, std::string& name, XDBaseFieldDesc
 	name = m_FieldDesc[index].Name();
 	type = m_FieldDesc[index].Type();
 	length = m_FieldDesc[index].Length();
-	dec = m_FieldDesc[index].DecCount();
+	dec = (uint8_t)m_FieldDesc[index].DecCount();
 	return true;
 }
 
@@ -345,7 +345,7 @@ bool XDBaseFile::WriteHeader(const char* filename, XError* error)
 //-----------------------------------------------------------------------------
 // Ecriture d'un enregistrement
 //-----------------------------------------------------------------------------
-bool XDBaseFile::WriteRecord(std::vector<std::string>& V, XError* error)
+bool XDBaseFile::WriteRecord(std::vector<std::string>& V, XError* /*error*/)
 {
 	char flag = ' ';
 	char buf[256];
@@ -359,15 +359,15 @@ bool XDBaseFile::WriteRecord(std::vector<std::string>& V, XError* error)
 		::strncpy(buf, V[2*i+1].c_str(), V[2*i+1].size());
 		switch(m_FieldDesc[i].Type()) {
 		case XDBaseFieldDescriptor::Short :
-			sscanf(buf,"%hd", &s);
+			(void)sscanf(buf,"%hd", &s);
 			m_Out.write((char*)&s, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::Long :
-			sscanf(buf,"%d", &n);
+			(void)sscanf(buf,"%d", &n);
 			m_Out.write((char*)&n, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::Double :
-			sscanf(buf,"%lf", &x);
+			(void)sscanf(buf,"%lf", &x);
 			m_Out.write((char*)&x, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::String :
@@ -416,15 +416,15 @@ bool XDBaseFile::UpdateRecord(uint32_t num, std::vector<std::string>& V, XError*
 		::strncpy(buf, V[2*i+1].c_str(), V[2*i+1].size());
 		switch(m_FieldDesc[i].Type()) {
 		case XDBaseFieldDescriptor::Short :
-			sscanf(buf,"%hd", &s);
+			(void)sscanf(buf,"%hd", &s);
 			m_Out.write((char*)&s, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::Long :
-			sscanf(buf,"%d", &n);
+			(void)sscanf(buf,"%d", &n);
 			m_Out.write((char*)&n, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::Double :
-			sscanf(buf,"%lf", &x);
+			(void)sscanf(buf,"%lf", &x);
 			m_Out.write((char*)&x, m_FieldDesc[i].Length());
 			break;
 		case XDBaseFieldDescriptor::String :

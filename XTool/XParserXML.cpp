@@ -97,7 +97,7 @@ std::string XNodeXML::GetToken(std::istream* in)
 	token += c;
 	// On lit le token
 	while(!in->eof()) {
-		c = in->get();
+		in->get(c);
 		if ((c == 0x09)||(c == 0x0A)||(c == 0x0D) || (c == 0x20)) {	// Espace, tabulation, ...
 			if (token[token.size() - 1] != ' ')
 				token += ' ';

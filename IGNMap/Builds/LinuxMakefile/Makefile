@@ -248,6 +248,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/tgt_2712c166.o \
   $(JUCE_OBJDIR)/thread_341c282f.o \
   $(JUCE_OBJDIR)/AffineImage_f63fb19d.o \
+  $(JUCE_OBJDIR)/AnnotViewer_a719b399.o \
   $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o \
   $(JUCE_OBJDIR)/ClassViewer_44f830b.o \
   $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
@@ -1253,6 +1254,11 @@ $(JUCE_OBJDIR)/thread_341c282f.o: ../../../openjpeg/src/lib/openjp2/thread.c
 $(JUCE_OBJDIR)/AffineImage_f63fb19d.o: ../../Source/AffineImage.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AffineImage.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AnnotViewer_a719b399.o: ../../Source/AnnotViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AnnotViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o: ../../Source/AppUtil.cpp

@@ -26,6 +26,7 @@ public:
                     pText = 60};
 
   XAnnotation();
+  XAnnotation(const XAnnotation& A);
   virtual ~XAnnotation() { Clear();}
 
   void Clear();
@@ -77,12 +78,16 @@ public:
 
   virtual bool WriteHtml(std::ostream* out);
 
+  // Operateur
+  XAnnotation& operator= (const XAnnotation& A);
+
 protected:
   ePrimitive        m_Primitive;
   std::vector<XPt>  m_Pt;
   std::string       m_strText;
   XPt*              m_T;
   std::vector<std::string>  m_Att;
+  XGeoRepres        m_R;  // Representation de l'annotation (m_Repres pointe dessus)
 
   bool IsPtClosed();
 

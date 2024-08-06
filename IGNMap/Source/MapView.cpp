@@ -38,6 +38,8 @@ void MapView::Clear()
 	m_nMouseMode = Move;
 	m_nFrameCounter = 0;
 	m_Annotation.Clear();
+	m_Annot.clear();
+	m_Annotation.Repres()->Color(juce::Colours::chartreuse.getARGB());
 }
 
 void MapView::paint(juce::Graphics& g)
@@ -52,7 +54,7 @@ void MapView::paint(juce::Graphics& g)
 	if (m_bDrag) {
 		g.fillAll(juce::Colours::white);
 		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
-		DrawAnnotation(g, m_DragPt.x, m_DragPt.y);
+		DrawAnnotation(&m_Annotation, g, m_DragPt.x, m_DragPt.y);
 		DrawTarget(g, m_DragPt.x, m_DragPt.y);
 		DrawDecoration(g, m_DragPt.x, m_DragPt.y);
 		return;
@@ -63,7 +65,7 @@ void MapView::paint(juce::Graphics& g)
 		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
 	}
 	if (!m_MapThread.isThreadRunning())
-		DrawAnnotation(g);
+		DrawAllAnnotations(g);
 	DrawFrames(g);
 	DrawTarget(g);
 	DrawDecoration(g);
@@ -272,6 +274,7 @@ void MapView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWhe
 
 void MapView::mouseDoubleClick(const juce::MouseEvent& event)
 {
+	if (event.mods.isRightButtonDown()) return;
 	double X = event.getPosition().x, Y = event.getPosition().y;
 	Pixel2Ground(X, Y);
 	CenterView(X, Y);
@@ -569,43 +572,59 @@ void MapView::AddAnnotationPoint(juce::Point<int>& P)
 //==============================================================================
 void MapView::CloseAnnotation()
 {
-	m_Annotation.Close();
+	if (!m_Annotation.Close())
+		return;
+	m_Annotation.Text(m_Annotation.TypeVectorString());
+	m_Annot.push_back(m_Annotation);
+	m_Annotation.Clear();
+}
+
+//==============================================================================
+// Dessin de toutes les annotations
+//==============================================================================
+void MapView::DrawAllAnnotations(juce::Graphics& g, int deltaX, int deltaY)
+{
+	for (size_t i = 0; i < m_Annot.size(); i++)
+		DrawAnnotation(&m_Annot[i], g, deltaX, deltaY);
+	DrawAnnotation(&m_Annotation, g, deltaX, deltaY);
 }
 
 //==============================================================================
 // Dessin de l'annotation en cours
 //==============================================================================
-void MapView::DrawAnnotation(juce::Graphics& g, int deltaX, int deltaY)
+void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, int deltaX, int deltaY)
 {
-	if (m_Annotation.NbPt() < 1)
+	if (annot->NbPt() < 1)
 		return;
-	XPt2D P0 = m_Annotation.Pt(0);
+	if (!annot->Visible())
+		return;
+	XPt2D P0 = annot->Pt(0);
 	Ground2Pixel(P0.X, P0.Y);
 	P0 += XPt2D(deltaX, deltaY);
-	g.setColour(juce::Colours::chartreuse);
+	g.setColour(juce::Colour(annot->Repres()->Color()));
 	g.drawEllipse((float)P0.X - 3.f, (float)P0.Y - 3.f, 6.f, 6.f, 2.f);
 
-	if (m_Annotation.Primitive() == XAnnotation::pText) {
-		g.drawSingleLineText(juce::String("Text"), (int)P0.X + 5, (int)P0.Y);
+	if (annot->Primitive() == XAnnotation::pText) {
+		g.drawSingleLineText(juce::String(annot->Text()), (int)P0.X + 5, (int)P0.Y);
 		return;
 	}
-	if (m_Annotation.Primitive() == XAnnotation::pRect) {
-		XPt2D P1 = m_Annotation.Pt(2);	// XAnnotation renvoit systematiquement 4 points
+	if (annot->Primitive() == XAnnotation::pRect) {
+		XPt2D P1 = annot->Pt(2);	// XAnnotation renvoit systematiquement 4 points
 		Ground2Pixel(P1.X, P1.Y);
 		P1 += XPt2D(deltaX, deltaY);
 		g.drawEllipse((float)P1.X - 3.f, (float)P1.Y - 3.f, 6.f, 6.f, 2.f);
 		g.drawRect(juce::Rectangle<float>(juce::Point<float>((float)P0.X, (float)P0.Y), juce::Point<float>((float)P1.X, (float)P1.Y)));
 		return;
 	}
-	if (m_Annotation.NbPt() < 2)
+	if (annot->NbPt() < 2)
 		return;
 	juce::Path path;
 	path.startNewSubPath((float)P0.X, (float)P0.Y);
-	for (uint32_t i = 0; i < m_Annotation.NbPt(); i++) {
-		XPt2D Pi = m_Annotation.Pt(i);
+	for (uint32_t i = 0; i < annot->NbPt(); i++) {
+		XPt2D Pi = annot->Pt(i);
 		Ground2Pixel(Pi.X, Pi.Y);
 		Pi += XPt2D(deltaX, deltaY);
 		path.lineTo((float)Pi.X, (float)Pi.Y);
 	}
-	g.strokePath(path, juce::PathStrokeType(2, juce::PathStrokeType::beveled));
+	g.strokePath(path, juce::PathStrokeType(annot->Repres()->Size(), juce::PathStrokeType::beveled));
 }

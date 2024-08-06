@@ -306,6 +306,7 @@
 		FAF5C1DBC45BAB3CAB9964E9 /* j2k.c */ = {isa = PBXBuildFile; fileRef = 745B3E510C299EBA8819E535; };
 		FBCF7CFB68F34DC7B422B3B7 /* t1.c */ = {isa = PBXBuildFile; fileRef = E72F6EC3E7099C8203CA238C; };
 		FD3028F5D3D304B609DA460C /* enc.c */ = {isa = PBXBuildFile; fileRef = A026404AC9FD85876E69AF60; };
+		FF2B12B94281348CDB00029E /* AnnotViewer.cpp */ = {isa = PBXBuildFile; fileRef = D57DD0F6BAAF5546952AC061; };
 		FFABB87454039BBC782EA680 /* inflate.c */ = {isa = PBXBuildFile; fileRef = 4A7D1D0FFA3A47FBFC759FAB; };
 		FFEDACAC945F477A72EA1A39 /* lossless_mips_dsp_r2.c */ = {isa = PBXBuildFile; fileRef = 572708DECC48510C6270C3DE; };
 /* End PBXBuildFile section */
@@ -695,6 +696,7 @@
 		BC662C9B70D770CB31A7767E /* jdmerge.c */ /* jdmerge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = "../../../jpeg-9f/jdmerge.c"; sourceTree = SOURCE_ROOT; };
 		BD10940234BBA41C91F941BD /* t2.c */ /* t2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = t2.c; path = ../../../openjpeg/src/lib/openjp2/t2.c; sourceTree = SOURCE_ROOT; };
 		BD5E771ACF2AE132300685CA /* jp2.c */ /* jp2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jp2.c; path = ../../../openjpeg/src/lib/openjp2/jp2.c; sourceTree = SOURCE_ROOT; };
+		BD7324F6E02161F2253A6F20 /* AnnotViewer.h */ /* AnnotViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnnotViewer.h; path = ../../Source/AnnotViewer.h; sourceTree = SOURCE_ROOT; };
 		BDD077477F71725BDEAABD78 /* dec_mips32.c */ /* dec_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dec_mips32.c; path = "../../../libwebp-1.3.2/src/dsp/dec_mips32.c"; sourceTree = SOURCE_ROOT; };
 		BDF00A73806B96C56BAA5322 /* laszip.hpp */ /* laszip.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip.hpp; path = ../../../LASzip/src/laszip.hpp; sourceTree = SOURCE_ROOT; };
 		BE1922142CCE2AAA4BBEF09E /* XPt3D.h */ /* XPt3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XPt3D.h; path = ../../../XTool/XPt3D.h; sourceTree = SOURCE_ROOT; };
@@ -758,6 +760,7 @@
 		D1FA1EB4E7F7B7627ADB3B91 /* WebKit.framework */ /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		D56F0099C666F42ECD2DE48A /* XFrame.cpp */ /* XFrame.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XFrame.cpp; path = ../../../XTool/XFrame.cpp; sourceTree = SOURCE_ROOT; };
 		D57276A6028117877472A2FF /* include_juce_data_structures.mm */ /* include_juce_data_structures.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_data_structures.mm; path = ../../JuceLibraryCode/include_juce_data_structures.mm; sourceTree = SOURCE_ROOT; };
+		D57DD0F6BAAF5546952AC061 /* AnnotViewer.cpp */ /* AnnotViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AnnotViewer.cpp; path = ../../Source/AnnotViewer.cpp; sourceTree = SOURCE_ROOT; };
 		D5C9791C0BB697F9DFDE4D08 /* XAnnotation.h */ /* XAnnotation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XAnnotation.h; path = ../../../XToolVector/XAnnotation.h; sourceTree = SOURCE_ROOT; };
 		D5D8E2D5F8AD8E11B3F93906 /* bit_writer_utils.c */ /* bit_writer_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bit_writer_utils.c; path = "../../../libwebp-1.3.2/src/utils/bit_writer_utils.c"; sourceTree = SOURCE_ROOT; };
 		D6831E233BB2A0224015641F /* enc_mips32.c */ /* enc_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = enc_mips32.c; path = "../../../libwebp-1.3.2/src/dsp/enc_mips32.c"; sourceTree = SOURCE_ROOT; };
@@ -1024,6 +1027,8 @@
 			children = (
 				46036ABE2A7BB12C2ABB998E,
 				7E18B2FB615A0C5083034905,
+				D57DD0F6BAAF5546952AC061,
+				BD7324F6E02161F2253A6F20,
 				B868A2A5F653F4027201EB94,
 				2B42CA134BA212F25D2DB3B9,
 				C02BFD57F98E1840BBB8FEB1,
@@ -1915,6 +1920,7 @@
 				D6C298C9B1C58981F18F6CAF,
 				E03C1F5198B637392DCCDB93,
 				C5D61D5E8A99D8B788D6F179,
+				FF2B12B94281348CDB00029E,
 				2C7429A83CB372132B18C91B,
 				F96D622D48FCFE7453D44231,
 				275EDCBCC64C619638120C3B,

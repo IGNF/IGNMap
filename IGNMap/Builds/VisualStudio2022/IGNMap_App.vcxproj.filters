@@ -919,6 +919,9 @@
     <ClCompile Include="..\..\Source\AffineImage.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\AnnotViewer.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\AppUtil.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -3349,6 +3352,9 @@
       <Filter>IGNMap\openjpeg</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AffineImage.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AnnotViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AppUtil.h">

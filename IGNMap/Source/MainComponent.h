@@ -25,6 +25,7 @@
 #include "SelTreeViewer.h"
 #include "ImageOptionsViewer.h"
 #include "OGL3DViewer.h"
+#include "AnnotViewer.h"
 #include "MainComponentToolbarFactory.h"
 
 //==============================================================================
@@ -54,7 +55,7 @@ public:
     menuZoomTotal, menuScale1k, menuScale10k, menuScale25k, menuScale100k, menuScale250k,
     menuShowSidePanel, menuShow3DViewer,
     menuShowVectorLayers, menuShowImageLayers, menuShowDtmLayers, menuShowLasLayers, menuShowSelection, menuShowImageOptions,
-    menuAddOSM, menuAddWmtsServer,
+    menuShowAnnotations, menuAddOSM, menuAddWmtsServer,
     menuAddGeoportailOrthophoto, menuAddGeoportailOrthophotoIRC, menuAddGeoportailOrthohisto, menuAddGeoportailSatellite,
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
@@ -104,6 +105,7 @@ private:
   std::unique_ptr<DtmLayersViewer> m_DtmViewer;
   std::unique_ptr<LasLayersViewer> m_LasViewer;
   std::unique_ptr<OGL3DViewer> m_OGL3DViewer;
+  std::unique_ptr<AnnotViewer> m_AnnotViewer;
 
   juce::StretchableLayoutManager m_VerticalLayout;
   std::unique_ptr<juce::StretchableLayoutResizerBar> m_VerticalDividerBar;

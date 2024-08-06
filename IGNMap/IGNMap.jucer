@@ -427,6 +427,8 @@
     <GROUP id="{2D72BBF7-CC90-ABF2-5F2C-BDC1866D3222}" name="Source">
       <FILE id="KhenFV" name="AffineImage.cpp" compile="1" resource="0" file="Source/AffineImage.cpp"/>
       <FILE id="WNOnos" name="AffineImage.h" compile="0" resource="0" file="Source/AffineImage.h"/>
+      <FILE id="MyjDjo" name="AnnotViewer.cpp" compile="1" resource="0" file="Source/AnnotViewer.cpp"/>
+      <FILE id="S73SJQ" name="AnnotViewer.h" compile="0" resource="0" file="Source/AnnotViewer.h"/>
       <FILE id="bIpneZ" name="AppUtil.cpp" compile="1" resource="0" file="Source/AppUtil.cpp"/>
       <FILE id="RrGnm4" name="AppUtil.h" compile="0" resource="0" file="Source/AppUtil.h"/>
       <FILE id="N3W7za" name="ClassViewer.cpp" compile="1" resource="0" file="Source/ClassViewer.cpp"/>

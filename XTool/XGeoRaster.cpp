@@ -128,7 +128,7 @@ bool XGeoRasterContext::NbChannel(uint16_t nb)
 			return false;
 		}
     for(uint16_t j = 0; j < 256; j++)
-      m_Lut[i][j] = j;
+      m_Lut[i][j] = (uint8_t)j;
 	}
 	return true;
 }

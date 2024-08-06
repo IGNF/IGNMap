@@ -69,6 +69,11 @@ MainComponent::MainComponent()
 	m_LasViewer.get()->SetBase(&m_GeoBase);
 	m_LasViewer.get()->addActionListener(this);
 
+	m_AnnotViewer.reset(new AnnotViewer);
+	addAndMakeVisible(m_AnnotViewer.get());
+	m_AnnotViewer.get()->SetAnnot(m_MapView.get()->GetAnnot());
+	m_AnnotViewer.get()->addActionListener(this);
+
 	m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, juce::DocumentWindow::allButtons));
 	m_OGL3DViewer.get()->setVisible(false);
 
@@ -79,6 +84,7 @@ MainComponent::MainComponent()
 	m_Panel.get()->addPanel(-1, m_DtmViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_LasViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_ImageOptionsViewer.get(), false);
+	m_Panel.get()->addPanel(-1, m_AnnotViewer.get(), false);
 	m_Panel.get()->addPanel(-1, m_SelTreeViewer.get(), false);
 	
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(0), new juce::TextButton(juce::translate("Vector Layers")), true);
@@ -86,7 +92,8 @@ MainComponent::MainComponent()
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(2), new juce::TextButton(juce::translate("DTM Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Image Options")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Selection")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Annotations")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(6), new juce::TextButton(juce::translate("Selection")), true);
 
   // set up the layout and resizer bars..
   m_VerticalLayout.setItemLayout(0, -0.2, -1.0, -0.65);
@@ -128,7 +135,6 @@ MainComponent::~MainComponent()
 {
 	disconnect();
 }
-
 
 void MainComponent::resized()
 {
@@ -227,6 +233,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowDtmLayers);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowLasLayers);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowImageOptions);
+		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowAnnotations);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowSelection);
 		menu.addSubMenu(juce::translate("Panels"), PanelSubMenu);
 		menu.addSeparator();
@@ -276,7 +283,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuZoomTotal,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
-		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions,
+		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions, CommandIDs::menuShowAnnotations,
 		CommandIDs::menuShow3DViewer, CommandIDs::menuAddOSM, CommandIDs::menuAddGeoportailOrthophoto,
 		CommandIDs::menuAddGeoportailOrthohisto, CommandIDs::menuAddGeoportailSatellite, CommandIDs::menuAddGeoportailCartes,
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
@@ -425,6 +432,11 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		result.setInfo(juce::translate("View Image Options Panel"), juce::translate("View Image Options Panel"), "Menu", 0);
 		if (m_ImageOptionsViewer.get() != nullptr)
 			result.setTicked(m_ImageOptionsViewer.get()->isVisible());
+		break;
+	case CommandIDs::menuShowAnnotations:
+		result.setInfo(juce::translate("View Annotations Panel"), juce::translate("View Annotations Panel"), "Menu", 0);
+		if (m_AnnotViewer.get() != nullptr)
+			result.setTicked(m_AnnotViewer.get()->isVisible());
 		break;
 	case CommandIDs::menuSynchronize:
 		result.setInfo(juce::translate("Synchronize"), juce::translate("Synchronize with another IGNMap"), "Menu", 0);
@@ -585,6 +597,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuShowImageOptions:
 		ShowHidePanel(m_ImageOptionsViewer.get());
+		break;
+	case CommandIDs::menuShowAnnotations:
+		ShowHidePanel(m_AnnotViewer.get());
 		break;
 	case CommandIDs::menuSynchronize:
 		Synchronize();
@@ -1303,6 +1318,7 @@ void MainComponent::Translate()
 	m_DtmViewer.get()->Translate();
 	m_LasViewer.get()->Translate();
 	m_ImageOptionsViewer.get()->Translate();
+	m_AnnotViewer.get()->Translate();
 	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)
 		m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(i), nullptr, true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(0), new juce::TextButton(juce::translate("Vector Layers")), true);
@@ -1310,7 +1326,8 @@ void MainComponent::Translate()
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(2), new juce::TextButton(juce::translate("DTM Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(3), new juce::TextButton(juce::translate("LAS Layers")), true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(4), new juce::TextButton(juce::translate("Image Options")), true);
-	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Selection")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(5), new juce::TextButton(juce::translate("Annotations")), true);
+	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(6), new juce::TextButton(juce::translate("Selection")), true);
 	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)	// Necessaire pour rafraichir les titres des panneaux
 		m_Panel.get()->expandPanelFully(m_Panel.get()->getPanel(i), false);
 }
