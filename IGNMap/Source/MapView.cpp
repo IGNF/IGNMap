@@ -40,6 +40,7 @@ void MapView::Clear()
 	m_Annotation.Clear();
 	m_Annot.clear();
 	m_Annotation.Repres()->Color(juce::Colours::chartreuse.getARGB());
+	m_Annotation.Repres()->FillColor(0x30dc143c);
 }
 
 void MapView::paint(juce::Graphics& g)
@@ -577,6 +578,7 @@ void MapView::CloseAnnotation()
 	m_Annotation.Text(m_Annotation.TypeVectorString());
 	m_Annot.push_back(m_Annotation);
 	m_Annotation.Clear();
+	sendActionMessage("CloseAnnotation");
 }
 
 //==============================================================================
@@ -627,4 +629,8 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, int deltaX, 
 		path.lineTo((float)Pi.X, (float)Pi.Y);
 	}
 	g.strokePath(path, juce::PathStrokeType(annot->Repres()->Size(), juce::PathStrokeType::beveled));
+	if (annot->Primitive() == XAnnotation::pPolygon) {
+		g.setFillType(juce::FillType(juce::Colour(annot->Repres()->FillColor())));
+		g.fillPath(path);
+	}
 }

@@ -660,6 +660,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(true, false, false, false, false);
 		return;
 	}
+	if (message == "CloseAnnotation") {
+		m_AnnotViewer.get()->Update();
+		return;
+	}
 	if (message == "UpdatePreferences") {
 		GeoTools::UpdateProjection(&m_GeoBase);
 		XFrame F = m_GeoBase.Frame();

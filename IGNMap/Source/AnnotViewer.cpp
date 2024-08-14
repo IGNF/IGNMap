@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------------
 
 #include "AnnotViewer.h"
+#include "AppUtil.h"
+#include "../../XTool/XParserXML.h"
 
 //==============================================================================
 // AnnotViewerModel : constructeur
@@ -18,6 +20,7 @@ AnnotViewerModel::AnnotViewerModel()
 {
 	m_Annot = nullptr;
 	m_ActiveRow = m_ActiveColumn = -1;
+	m_Table = nullptr;
 }
 
 //==============================================================================
@@ -73,10 +76,14 @@ void AnnotViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 		g.drawText(juce::String((*m_Annot)[rowNumber].Repres()->Size()), 0, 0, width, height, juce::Justification::centred);
 		break;
 	case Column::PenColour:// Pen
+		g.setColour(juce::Colours::white);
+		g.fillRect(0, 0, width, height);
 		g.setColour(juce::Colour((*m_Annot)[rowNumber].Repres()->Color()));
 		g.fillRect(0, 0, width, height);
 		break;
 	case Column::FillColour:// brush
+		g.setColour(juce::Colours::white);
+		g.fillRect(0, 0, width, height);
 		g.setColour(juce::Colour((*m_Annot)[rowNumber].Repres()->FillColor()));
 		g.fillRect(0, 0, width, height);
 		break;
@@ -105,13 +112,13 @@ void AnnotViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		sendActionMessage("UpdateVectorVisibility");
+		sendActionMessage("UpdateAnnotVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		sendActionMessage("UpdateVectorSelectability");
+		sendActionMessage("UpdateAnnotSelectability");
 		return;
 	}
 
@@ -160,12 +167,12 @@ void AnnotViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mous
 			XFrame F = (*m_Annot)[rowNumber].Frame();
 			sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
 				juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2)); };
-		std::function< void() > LayerRemove = [=]() { // Retire la couche
-			sendActionMessage("RemoveVectorClass"); };
+		std::function< void() > LayerRemove = [=]() { // Retire l'annotation
+			sendActionMessage("RemoveAnnotation"); };
 
 		juce::PopupMenu menu;
-		menu.addItem(juce::translate("Layer Center"), LayerCenter);
-		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
+		menu.addItem(juce::translate("Annotation Center"), LayerCenter);
+		menu.addItem(juce::translate("Annotation Frame"), LayerFrame);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -217,7 +224,7 @@ juce::Component* AnnotViewerModel::refreshComponentForCell(int rowNumber, int co
 
 	auto* textLabel = static_cast<EditableTextCustomAnnotation*> (existingComponentToUpdate);
 	if (textLabel == nullptr)
-		textLabel = new EditableTextCustomAnnotation(m_Annot, rowNumber);
+		textLabel = new EditableTextCustomAnnotation(m_Table, m_Annot, rowNumber);
 	else
 		textLabel->setText((*m_Annot)[rowNumber].Text(), juce::dontSendNotification);
 
@@ -242,7 +249,7 @@ void AnnotViewerModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 				(*m_Annot)[m_ActiveRow].Repres()->Color(color);
 			if (m_ActiveColumn == Column::FillColour)
 				(*m_Annot)[m_ActiveRow].Repres()->FillColor(color);
-			sendActionMessage("UpdateVectorRepres");
+			sendActionMessage("UpdateAnnotRepres");
 		}
 	}
 }
@@ -262,7 +269,7 @@ void AnnotViewerModel::sliderValueChanged(juce::Slider* slider)
 	if (m_ActiveColumn == Column::PenWidth) {
 		if ((*m_Annot)[m_ActiveRow].Repres()->Size() != (int)slider->getValue()) {
 			(*m_Annot)[m_ActiveRow].Repres()->Size((uint8_t)slider->getValue());
-			sendActionMessage("UpdateVectorRepres");
+			sendActionMessage("UpdateAnnotRepres");
 		}
 	}
 }
@@ -273,8 +280,10 @@ void AnnotViewerModel::sliderValueChanged(juce::Slider* slider)
 AnnotViewer::AnnotViewer()
 {
 	m_Annot = nullptr;
+	m_bDirty = false;
 	setTitle(juce::translate("Annotations"));
 	m_Model.addActionListener(this);
+	m_Model.SetTable(&m_Table);
 	// Bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_Table.setOutlineThickness(1);
@@ -290,6 +299,16 @@ AnnotViewer::AnnotViewer()
 	m_Table.setSize(377, 200);
 	m_Table.setModel(&m_Model);
 	addAndMakeVisible(m_Table);
+	// Boutons
+	m_btnImport.setButtonText(juce::translate("Import"));
+	m_btnExport.setButtonText(juce::translate("Export"));
+	m_btnClear.setButtonText(juce::translate("Clear"));
+	m_btnImport.onClick = [this] { ImportAnnotation(); };
+	m_btnExport.onClick = [this] { ExportAnnotation(); };
+	m_btnClear.onClick = [this] { if (m_Annot != nullptr) m_Annot->clear(); sendActionMessage("Repaint"); m_Table.updateContent(); };
+	addAndMakeVisible(m_btnImport);
+	addAndMakeVisible(m_btnExport);
+	addAndMakeVisible(m_btnClear);
 }
 
 //==============================================================================
@@ -301,6 +320,25 @@ void AnnotViewer::Translate()
 	m_Table.getHeader().setColumnName(AnnotViewerModel::Column::PenWidth, juce::translate("Width"));
 	m_Table.getHeader().setColumnName(AnnotViewerModel::Column::PenColour, juce::translate("Pen"));
 	m_Table.getHeader().setColumnName(AnnotViewerModel::Column::FillColour, juce::translate("Brush"));
+	m_btnImport.setButtonText(juce::translate("Import"));
+	m_btnExport.setButtonText(juce::translate("Export"));
+	m_btnClear.setButtonText(juce::translate("Clear"));
+}
+
+//==============================================================================
+// Redimensionnement
+//==============================================================================
+void AnnotViewer::resized()
+{
+	auto b = getLocalBounds();
+	m_Table.setTopLeftPosition(0, 0);
+	m_Table.setSize(b.getWidth(), b.getHeight() - 50);
+	m_btnImport.setTopLeftPosition(0, b.getHeight() - 40);
+	m_btnImport.setSize(80, 24);
+	m_btnExport.setTopLeftPosition(85, b.getHeight() - 40);
+	m_btnExport.setSize(80, 24);
+	m_btnClear.setTopLeftPosition(170, b.getHeight() - 40);
+	m_btnClear.setSize(80, 24);
 }
 
 //==============================================================================
@@ -315,12 +353,13 @@ void AnnotViewer::actionListenerCallback(const juce::String& message)
 		return;
 	}
 	if (message == "UpdateClass") {
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateAnnotation");
 		return;
 	}
-	if (message == "UpdateVectorRepres") {
+	if (message == "UpdateAnnotRepres") {
 		m_Table.repaint();
-		sendActionMessage("UpdateVector");
+		sendActionMessage("Repaint");
+		m_bDirty = true;
 		return;
 	}
 
@@ -332,25 +371,34 @@ void AnnotViewer::actionListenerCallback(const juce::String& message)
 			T.push_back(&((*m_Annot)[i]));
 	}
 
-	if (message == "UpdateVectorVisibility") {
+	if (message == "UpdateAnnotVisibility") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
-		sendActionMessage("UpdateVector");
+		sendActionMessage("Repaint");
 		return;
 	}
-	if (message == "UpdateVectorSelectability") {
+	if (message == "UpdateAnnotSelectability") {
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Selectable(!T[i]->Selectable());
 		m_Table.repaint();
 		return;
 	}
-	if (message == "RemoveVectorClass") {
-		
+	if (message == "RemoveAnnotation") {
+		int count = 0;
+		std::vector<XAnnotation>::iterator iter = m_Annot->begin();
+		while(iter != m_Annot->end()) {
+			if (S.contains(count))
+				iter = m_Annot->erase(iter);
+			else
+				iter++;
+			count++;
+		}
 		m_Table.deselectAllRows();
+		m_Table.updateContent();
 		m_Table.repaint();
-		sendActionMessage("UpdateSelectFeatures");
-		sendActionMessage("UpdateVector");
+		sendActionMessage("Repaint");
+		m_bDirty = true;
 		return;
 	}
 
@@ -371,21 +419,26 @@ void AnnotViewer::itemDropped(const SourceDetails& details)
 	if (item >= m_Annot->size())
 		return;
 	int row = m_Table.getRowContainingPosition(details.localPosition.x, details.localPosition.y);
-	if (row < 0)
-		return;
 	if (row == item)
 		return;
+
 	std::vector<XAnnotation>::iterator iter = m_Annot->begin() + item;
 	XAnnotation A = *iter;
 	m_Annot->erase(iter);
-	if (item >= row)
-		m_Annot->insert(m_Annot->begin() + row, A);
-	else
-		m_Annot->insert(m_Annot->begin() + row - 1, A);
+
+	if (row < 0)	// On est sous le dernier item
+		m_Annot->push_back(A);
+	else {
+		if (item >= row)
+			m_Annot->insert(m_Annot->begin() + row, A);
+		else
+			m_Annot->insert(m_Annot->begin() + row - 1, A);
+	}
 
 	m_Table.updateContent();
 	m_Table.repaint();
-	m_Model.sendActionMessage("UpdateVector");
+	m_Model.sendActionMessage("UpdateAnnotation");
+	m_bDirty = true;
 }
 
 bool AnnotViewer::isInterestedInDragSource(const SourceDetails& details)
@@ -393,4 +446,50 @@ bool AnnotViewer::isInterestedInDragSource(const SourceDetails& details)
 	if (details.sourceComponent.get() != &m_Table)
 		return false;
 	return true;
+}
+
+//==============================================================================
+// Import des annotations
+//==============================================================================
+void AnnotViewer::ImportAnnotation()
+{
+	juce::String filename = AppUtil::OpenFile("AnnotationPath", juce::translate("Open annotation file"), "*.xml;*.kml");
+
+	XParserXML parser;
+	if (!parser.Parse(AppUtil::GetStringFilename(filename).c_str())) {
+		return ;
+	}
+
+	// Recherche des donnees en entree
+	std::vector<XParserXML> vec;
+	if (parser.FindAllSubParsers("/annotations/xannotation", &vec) < 1)
+		return;
+	for (uint32_t i = 0; i < vec.size(); i++) {
+		XAnnotation annot;
+		XParserXML sub = vec[i];
+		if (annot.XmlRead(&sub))
+			m_Annot->push_back(annot);
+	}
+	m_bDirty = true;
+}
+
+//==============================================================================
+// Export des annotations
+//==============================================================================
+void AnnotViewer::ExportAnnotation()
+{
+	juce::String filename = AppUtil::SaveFile("AnnotationPath", juce::translate("Open annotation file"), "*.xml;*.kml");
+
+	std::ofstream out;
+	out.open(AppUtil::GetStringFilename(filename).c_str());
+	if (!out.good()) {
+		return;
+	}
+	out.setf(std::ios::fixed);
+	out.precision(6);
+	out << "<annotations>" << std::endl;
+	for (uint32_t i = 0; i < m_Annot->size(); i++)
+		(*m_Annot)[i].XmlWrite(&out);
+	out << "</annotations>" << std::endl;
+	m_bDirty = false;
 }

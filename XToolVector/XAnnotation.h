@@ -31,7 +31,7 @@ public:
 
   void Clear();
 
-  ePrimitive Primitive() { return m_Primitive;}
+  ePrimitive Primitive() const { return m_Primitive;}
   std::string Text() { return m_strText;}
   virtual uint32_t NbPt() const;
   virtual uint32_t NbPart() const { return 1;}

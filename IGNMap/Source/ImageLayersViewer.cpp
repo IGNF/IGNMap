@@ -101,6 +101,8 @@ void ImageViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 		g.drawText(juce::String(100 - geoLayer->Repres()->Transparency()), 0, 0, width, height, juce::Justification::centred);
 		break;
 	case Column::FillColour:// brush
+		g.setColour(juce::Colours::white);
+		g.fillRect(0, 0, width, height);
 		g.setColour(juce::Colour(geoLayer->Repres()->FillColor()));
 		g.fillRect(0, 0, width, height);
 		break;

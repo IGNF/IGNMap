@@ -19,13 +19,30 @@
 //==============================================================================
 class EditableTextCustomAnnotation final : public juce::Label {
 public:
-	EditableTextCustomAnnotation(std::vector<XAnnotation>* A, int rowNumber)
+	EditableTextCustomAnnotation(juce::TableListBox* tb, std::vector<XAnnotation>* A, int rowNumber)
 	{
+		m_Table = tb;
 		m_Annot = A;
 		m_nRowNumber = rowNumber;
 		setEditable(false, true, false);
 		if (m_nRowNumber < m_Annot->size())
 			setText((*m_Annot)[m_nRowNumber].Text(), juce::dontSendNotification);
+	}
+
+	void mouseDown(const juce::MouseEvent& event) override
+	{
+		// single click on the label should simply select the row
+		if (m_Table != nullptr)
+			m_Table->selectRowsBasedOnModifierKeys(m_nRowNumber, event.mods, false);
+		juce::Label::mouseDown(event);
+	}
+
+	void 	mouseDrag(const juce::MouseEvent& event) override
+	{
+		juce::SparseSet<int> set;
+		set.addRange(juce::Range<int>(m_nRowNumber, m_nRowNumber+1));
+		juce::String message(m_nRowNumber);
+		m_Table->startDragAndDrop(event, set, message, false);
 	}
 
 	void textWasEdited() override
@@ -43,6 +60,7 @@ public:
 	}
 
 private:
+	juce::TableListBox* m_Table = nullptr;
 	std::vector<XAnnotation>* m_Annot = nullptr;
 	int		m_nRowNumber;
 };
@@ -72,8 +90,10 @@ public:
 	void actionListenerCallback(const juce::String& message) override { sendActionMessage(message); }
 
 	void SetAnnot(std::vector<XAnnotation>* T) { m_Annot = T; }
+	void SetTable(juce::TableListBox* tb) { m_Table = tb; }
 
 private:
+	juce::TableListBox*		m_Table;
 	std::vector<XAnnotation>* m_Annot;
 	int										m_ActiveRow;
 	int										m_ActiveColumn;
@@ -91,8 +111,9 @@ public:
 	AnnotViewer();
 
 	void SetAnnot(std::vector<XAnnotation>* T) { m_Annot = T;  m_Model.SetAnnot(T); m_Table.updateContent(); m_Table.repaint(); }
+	void Update() { m_Table.updateContent(); m_Table.repaint(); m_bDirty = true; }
 	void Translate();
-	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
+	void resized() override;
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;
 
@@ -103,10 +124,18 @@ public:
 	void itemDragMove(const SourceDetails&) override { ; }
 	void itemDragExit(const SourceDetails&) override { ; }
 
+	// Import / Export des annotations
+	void ImportAnnotation();
+	void ExportAnnotation();
+
 private:
 	std::vector<XAnnotation>* m_Annot;
+	bool		m_bDirty;		// Indique que les mises à jours n'ont pas ete sauvees
 	juce::TableListBox	m_Table;
 	AnnotViewerModel		m_Model;
+	juce::TextButton		m_btnImport;
+	juce::TextButton		m_btnExport;
+	juce::TextButton		m_btnClear;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AnnotViewer)
 };

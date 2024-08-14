@@ -250,6 +250,8 @@ void ClassifModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int
 		g.drawText(LasShader::ClassificationName((uint8_t)rowNumber), 0, 0, width, height, juce::Justification::centredLeft);
 		break;
 	case Column::Colour:
+		g.setColour(juce::Colours::white);
+		g.fillRect(0, 0, width, height);
 		g.setColour(LasShader::ClassificationColor((uint8_t)rowNumber));
 		g.fillRect(0, 0, width, height);
 		break;

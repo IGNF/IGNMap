@@ -240,6 +240,8 @@ void DtmRangeModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, in
 			g.drawText(" > " + juce::String(DtmShader::m_Z[rowNumber-1]), 0, 0, width, height, juce::Justification::centred);
 		break;
 	case Column::Colour:
+		g.setColour(juce::Colours::white);
+		g.fillRect(0, 0, width, height);
 		g.setColour(DtmShader::m_Colour[rowNumber]);
 		g.fillRect(0, 0, width, height);
 		break;

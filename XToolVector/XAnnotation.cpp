@@ -855,7 +855,6 @@ bool XAnnotation::WriteHtml(std::ostream* out)
 
   *out << "<hr style=\"width: 100%; height: 2px;\">";
   XPt2D P;
-  double z;
   uint32_t part = 1;
   for (uint32_t i = 0; i < NbPt(); i++) {
     P = Pt(i);
