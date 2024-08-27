@@ -46,8 +46,7 @@ public:
   // Liste des commandes de l'application
   enum CommandIDs
   {
-    menuNew = 1, menuQuit,
-    menuUndo,
+    menuNew = 1, menuQuit, menuUndo,
     menuTranslate, menuTest, menuPreferences,
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile,
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,

@@ -214,6 +214,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	}
 	else if (menuIndex == 1) // Edit
 	{
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuUndo);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
 		//menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuPreferences);
@@ -308,6 +309,10 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuQuit:
 		result.setInfo(juce::translate("Quit"), juce::translate("Quit IGNMap"), "Menu", 0);
 		result.addDefaultKeypress('q', juce::ModifierKeys::ctrlModifier);
+		break;
+	case CommandIDs::menuUndo:
+		result.setInfo(juce::translate("Undo"), juce::translate("Undo"), "Menu", 0);
+		result.addDefaultKeypress('z', juce::ModifierKeys::ctrlModifier);
 		break;
 	case CommandIDs::menuTranslate:
 		result.setInfo(juce::translate("Translate"), juce::translate("Load a translation file"), "Menu", 0);
@@ -472,6 +477,10 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuQuit:
 		Clear();
 		juce::JUCEApplication::quit();
+		break;
+	case CommandIDs::menuUndo:
+		m_GeoBase.ClearSelection();
+		actionListenerCallback("UpdateSelectFeatures");
 		break;
 	case CommandIDs::menuTranslate:
 		Translate();

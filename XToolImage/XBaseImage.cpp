@@ -552,7 +552,7 @@ void XBaseImage::SwitchRGB2BGR(uint8_t* buf, uint32_t nb_pix)
 //-----------------------------------------------------------------------------
 void XBaseImage::Gray2RGB(uint8_t* buf, uint32_t nb_pix)
 {
-  uint8_t* ptr = &buf[nb_pix];
+  uint8_t* ptr = &buf[nb_pix-1];
   for (uint32_t i = 1; i <= nb_pix; i++) {
     memset(&buf[3 * nb_pix - i * 3], *ptr, 3);
     ptr--;
