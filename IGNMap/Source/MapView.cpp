@@ -19,6 +19,7 @@ MapView::MapView(juce::String name) : m_MapThread(name)
 	Clear();
 	setOpaque(true);
 	startTimerHz(5);
+	setWantsKeyboardFocus(true);
 	m_MapThread.addListener(this);
 }
 
@@ -285,6 +286,19 @@ void MapView::EndMouseAction()
 {
 	m_bDrag = m_bZoom = m_bSelect = false;
 	// m_DragPt = juce::Point<int>(0, 0);
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool MapView::keyPressed(const juce::KeyPress& key)
+{
+	if ((key.getKeyCode() == juce::KeyPress::deleteKey) || (key.getKeyCode() == juce::KeyPress::backspaceKey)) {
+		if (m_bDrawing) {
+			m_Annotation.RemovePt();
+		}
+	}
+	return true;
 }
 
 //==============================================================================

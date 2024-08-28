@@ -37,13 +37,15 @@ protected:
   std::ifstream* m_ActiveStream;
 
 public:
-  XGeoFDtm() {m_dGSD = 0.; m_dZmin = m_dZmax = XGEO_NO_DATA; m_bValid = false; m_dNoData = -9999.; m_nOffset=0; m_nNbNoZ=0;}
+	XGeoFDtm() {
+		m_dGSD = 0.; m_dZmin = m_dZmax = XGEO_NO_DATA; m_bValid = m_bTmpFile = false; m_ActiveStream = nullptr;
+							m_dNoData = -9999.; m_nOffset=0; m_nNbNoZ = m_nW = m_nH = 0;}
   virtual ~XGeoFDtm() {Close();}
   bool OpenDtm(const char* filename, const char* tmpname);
   virtual void Close();
 
 	virtual eTypeVector TypeVector () const { return DTM;}
-	inline bool Valid() { return m_bValid;}
+	inline bool Valid() const { return m_bValid;}
 
 	virtual inline double Zmin() const { return m_dZmin;}
 	virtual inline double Zmax() const { return m_dZmax;}

@@ -65,6 +65,7 @@ public:
   void mouseDrag(const juce::MouseEvent& event) override;
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
+  bool keyPressed(const juce::KeyPress& key) override;
 
   enum MouseMode { Move = 1, Select = 2, Zoom = 3, Select3D = 4, Polyline = 5, Polygone = 6, Rectangle = 7, Text = 8};
   void SetMouseMode(MouseMode mode);

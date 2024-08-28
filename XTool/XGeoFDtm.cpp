@@ -290,7 +290,7 @@ bool XGeoFDtm::XmlRead(XParserXML* parser, uint32_t /*num*/, XError* /*error*/)
 	XPath P;
 	std::string filename = parser->Filename();
 	m_strPath = P.Path(filename.c_str());
-  m_strFilename = m_strPath + "/" + m_strFilename;
+  m_strFilename = m_strPath + "\\" + m_strFilename;
   m_strImageName = m_strFilename;
 
   m_In.Close();

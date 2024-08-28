@@ -5,6 +5,7 @@ countries: fr be mc ch lu
 "Name :" = "Nom :"
 "Value" = "Valeur"
 "Quit" = "Quitter"
+"Undo" = "Annuler"
 "About IGNMap" = "A propos de IGNMap"
 "Help"="Aide"
 "Selection" = "Sélection"
@@ -109,3 +110,5 @@ countries: fr be mc ch lu
 "Copy Attributes" = "Copier les attributs"
 "Object Frame"="Emprise de l'objet"
 "Add Image"="Ajout d'une image"
+"Annotation Center" = "Centre de l'annoatation"
+"Annotation Frame" = "Cadre de l'annotation"
