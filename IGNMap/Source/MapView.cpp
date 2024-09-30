@@ -204,7 +204,8 @@ void MapView::mouseDrag(const juce::MouseEvent& event)
 {
 	m_DragPt.x = event.getDistanceFromDragStartX();
 	m_DragPt.y = event.getDistanceFromDragStartY();
-	repaint();
+	if ((abs(m_DragPt.x) > 1) && (abs(m_DragPt.y) > 1))
+		repaint();
 }
 
 void MapView::mouseUp(const juce::MouseEvent& event)

@@ -133,6 +133,7 @@
 		68651EEEB2CD55AFFB357CF1 /* jchuff.c */ = {isa = PBXBuildFile; fileRef = 43EEAA59C774C3BA819ED8E7; };
 		698B2515AC1A5F30D742E10D /* mqc.c */ = {isa = PBXBuildFile; fileRef = C910B2683B00281DD1AE22DD; };
 		69CE4A9F06E0AC118C7CDCB0 /* Cocoa.framework */ = {isa = PBXBuildFile; fileRef = 6C29FACF0F54151154BDB588; };
+		6B44ECC598D77FDD2879FB9E /* include_juce_graphics_Sheenbidi.c */ = {isa = PBXBuildFile; fileRef = 8F3D428F048797ED483206D0; };
 		6B8F16BE6D898A87239EA881 /* bit_reader_utils.c */ = {isa = PBXBuildFile; fileRef = 4DB067DB9A1F522B13078129; };
 		6B9AF281DA3A62395F4D8F5B /* laszip_dll.cpp */ = {isa = PBXBuildFile; fileRef = F92EA692924F10C9AEF1FDA9; };
 		6C360C601A2B072337AA69BA /* cost_sse2.c */ = {isa = PBXBuildFile; fileRef = 36416A0EE04FFC718069B5CF; };
@@ -605,6 +606,7 @@
 		8D370E907A22F1BEADC17DE8 /* lasindex.cpp */ /* lasindex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lasindex.cpp; path = ../../../LASzip/src/lasindex.cpp; sourceTree = SOURCE_ROOT; };
 		8DFC7EF5001088E92266D737 /* Main.cpp */ /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Source/Main.cpp; sourceTree = SOURCE_ROOT; };
 		8E8C08D4BFD96F238B3E9675 /* XWebMercator.cpp */ /* XWebMercator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XWebMercator.cpp; path = ../../../XToolGeod/XWebMercator.cpp; sourceTree = SOURCE_ROOT; };
+		8F3D428F048797ED483206D0 /* include_juce_graphics_Sheenbidi.c */ /* include_juce_graphics_Sheenbidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = include_juce_graphics_Sheenbidi.c; path = ../../JuceLibraryCode/include_juce_graphics_Sheenbidi.c; sourceTree = SOURCE_ROOT; };
 		8FF4C747E7008E83D3CCC628 /* bio.c */ /* bio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bio.c; path = ../../../openjpeg/src/lib/openjp2/bio.c; sourceTree = SOURCE_ROOT; };
 		90926BBC8D550F1F920A242F /* rescaler_mips32.c */ /* rescaler_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rescaler_mips32.c; path = "../../../libwebp-1.3.2/src/dsp/rescaler_mips32.c"; sourceTree = SOURCE_ROOT; };
 		9187182B971FFFA6256E01BE /* QuartzCore.framework */ /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -1109,6 +1111,7 @@
 				C908E66E39D3F43FEC33A57C,
 				A509A2531937279CCCD07605,
 				04998B5C04EC2FC75F4C976A,
+				8F3D428F048797ED483206D0,
 				C742F1D06F0C722A3755D3D9,
 				8022BB0897F6CB189821DF15,
 				79F9353DF68742876119A801,
@@ -2031,6 +2034,7 @@
 				C89BCC6D91064279EDE0E67E,
 				678BCB62890623902D9BECD1,
 				5A6E8C9BC71D00DDA47678BD,
+				6B44ECC598D77FDD2879FB9E,
 				56D8DE498B5E3B77AAC2ED86,
 				8A4845F4BB8B4DB7236AA758,
 				2C5B2152B1C68A3ADBAC3E2C,
@@ -2152,7 +2156,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_DEBUG=1",
 					"DEBUG=1",
-					"JUCE_PROJUCER_VERSION=0x80001",
+					"JUCE_PROJUCER_VERSION=0x80002",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",
@@ -2215,7 +2219,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_NDEBUG=1",
 					"NDEBUG=1",
-					"JUCE_PROJUCER_VERSION=0x80001",
+					"JUCE_PROJUCER_VERSION=0x80002",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",

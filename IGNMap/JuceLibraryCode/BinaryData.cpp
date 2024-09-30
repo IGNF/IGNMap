@@ -3242,6 +3242,7 @@ static const unsigned char temp_binary_data_16[] =
 "\"Name :\" = \"Nom :\"\r\n"
 "\"Value\" = \"Valeur\"\r\n"
 "\"Quit\" = \"Quitter\"\r\n"
+"\"Undo\" = \"Annuler\"\r\n"
 "\"About IGNMap\" = \"A propos de IGNMap\"\r\n"
 "\"Help\"=\"Aide\"\r\n"
 "\"Selection\" = \"S\xc3\xa9lection\"\r\n"
@@ -3345,7 +3346,9 @@ static const unsigned char temp_binary_data_16[] =
 "\"LAS color : P palette ; O raster\" = \"Couleur des points LAS : P palette ; O fond image\"\r\n"
 "\"Copy Attributes\" = \"Copier les attributs\"\r\n"
 "\"Object Frame\"=\"Emprise de l'objet\"\r\n"
-"\"Add Image\"=\"Ajout d'une image\"\r\n";
+"\"Add Image\"=\"Ajout d'une image\"\r\n"
+"\"Annotation Center\" = \"Centre de l'annoatation\"\r\n"
+"\"Annotation Frame\" = \"Cadre de l'annotation\"\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_16;
 
@@ -3377,7 +3380,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 4482; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 4597; return Translation_fr_txt;
         default: break;
     }
 
