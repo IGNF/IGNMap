@@ -304,15 +304,15 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	{
 	case CommandIDs::menuNew:
 		result.setInfo(juce::translate("New Window"), juce::translate("Clear the content of IGNMap"), "Menu", 0);
-		result.addDefaultKeypress('n', juce::ModifierKeys::ctrlModifier);
+		result.addDefaultKeypress('n', juce::ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::menuQuit:
 		result.setInfo(juce::translate("Quit"), juce::translate("Quit IGNMap"), "Menu", 0);
-		result.addDefaultKeypress('q', juce::ModifierKeys::ctrlModifier);
+		result.addDefaultKeypress('q', juce::ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::menuUndo:
 		result.setInfo(juce::translate("Undo"), juce::translate("Undo"), "Menu", 0);
-		result.addDefaultKeypress('z', juce::ModifierKeys::ctrlModifier);
+		result.addDefaultKeypress('z', juce::ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::menuTranslate:
 		result.setInfo(juce::translate("Translate"), juce::translate("Load a translation file"), "Menu", 0);

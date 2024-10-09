@@ -298,8 +298,9 @@ bool MapView::keyPressed(const juce::KeyPress& key)
 		if (m_bDrawing) {
 			m_Annotation.RemovePt();
 		}
+		return true;
 	}
-	return true;
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================
