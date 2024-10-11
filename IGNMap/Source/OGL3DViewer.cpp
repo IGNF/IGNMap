@@ -57,7 +57,7 @@ OGLWidget::OGLWidget()
   m_VectorWidth = 2.f;
   m_DtmLineWidth = 1.f;
   m_nDtmW = m_nDtmH = 300;
-  m_bViewLas = m_bViewDtm = m_bViewVector = true;
+  m_bViewLas = m_bViewDtm = m_bViewVector = m_bViewRepere = true;
   m_dDeltaZ = m_dOffsetZ = 0.;
   m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
   m_bUpdateDtmColor = m_bDtmTextured = false;
@@ -297,6 +297,8 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("LAS color : P palette ; O raster");
   g.drawText(help, b.getX(), b.getY() + 245, b.getWidth(), 40, juce::Justification::left);
+  help = juce::translate("E : view axis");
+  g.drawText(help, b.getX(), b.getY() + 275, b.getWidth(), 40, juce::Justification::left);
 }
 
 //==============================================================================
@@ -398,11 +400,13 @@ void OGLWidget::render()
     UpdateBase();
 
   // Dessin du repere orthonorme
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_RepereID);
-  m_Attributes->enable();
-  glLineWidth(3.0); // Ne marche pas sur MacOS
-  glDrawArrays(GL_LINES, 0, 6);
-  m_Attributes->disable();
+  if (m_bViewRepere) {
+    openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_RepereID);
+    m_Attributes->enable();
+    glLineWidth(3.0); // Ne marche pas sur MacOS
+    glDrawArrays(GL_LINES, 0, 6);
+    m_Attributes->disable();
+  }
 
   // Gestion des selections de points
   if (m_bNeedLasPoint)
@@ -525,6 +529,8 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_bViewLas = (!m_bViewLas);
   if ((key.getTextCharacter() == 'M') || (key.getTextCharacter() == 'm'))
     m_bViewDtm = (!m_bViewDtm);
+  if ((key.getTextCharacter() == 'E') || (key.getTextCharacter() == 'e'))
+    m_bViewRepere = (!m_bViewRepere);
 
   if ((key.getTextCharacter() == 'Y') || (key.getTextCharacter() == 'y')) {
     m_dDeltaZ = 1.;
@@ -547,6 +553,7 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_bUpdateDtmColor = true;
     m_bNeedUpdate = true;
   }
+
   repaint();
   return true;
 }

@@ -117,6 +117,7 @@ private:
   bool      m_bViewLas;         // Affichages points LAS
   bool      m_bViewDtm;         // Affichages des MNT
   bool      m_bViewVector;      // Affichages des donnees vectorielles
+  bool      m_bViewRepere;      // Affichage du repere
   uint32_t  m_nDtmW;            // Dimensions du MNT
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
@@ -236,6 +237,17 @@ public:
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
+
+  bool keyPressed(const juce::KeyPress& key) override {
+    if (key.getKeyCode() == juce::KeyPress::F2Key) {
+      juce::Image image = createComponentSnapshot(getBounds());
+      juce::PNGImageFormat png;
+      juce::FileOutputStream fileStream(juce::File("D:\\Test.png"));
+      png.writeImageToStream(image, fileStream);
+      return true;
+    }
+    return false;
+  }
 
 private:
   OGLWidget   m_OGLWidget;

@@ -122,6 +122,7 @@ private:
   void Translate();
   void Preferences();
   void ShowHidePanel(juce::Component* component);
+  void SaveComponent(juce::Component* component);
 
   XGeoClass* ImportDataFolder(juce::String foldername, XGeoVector::eTypeVector type);
 

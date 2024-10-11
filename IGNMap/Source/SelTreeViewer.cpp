@@ -136,7 +136,8 @@ int SelTreeItem::getItemWidth() const
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr))
     return TreeViewItem::getItemWidth();
-  return juce::Font(juce::FontOptions(15.0f)).getStringWidth(m_AttName + m_AttValue) + m_Margin;
+  //return juce::Font(juce::FontOptions(15.0f)).getStringWidth(m_AttName + m_AttValue) + m_Margin;
+  return juce::GlyphArrangement::getStringWidthInt(juce::Font(juce::FontOptions(15.0f)), m_AttName + m_AttValue) + m_Margin;
 }
 
 //==============================================================================

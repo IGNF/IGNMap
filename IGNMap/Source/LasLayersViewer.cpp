@@ -617,23 +617,34 @@ void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
 	if (!m_drwZRect.hitTest(event.getMouseDownX(), event.getMouseDownY()))
 		return;
 	m_nLasGradient += 1;
-	m_nLasGradient = m_nLasGradient % 4;
-
-	juce::Colour col1 = juce::Colours::darkblue, col2 = juce::Colours::green, col3 = juce::Colours::lightcoral;
-	if (m_nLasGradient == 2) {
-		col1 = juce::Colours::aqua; col2 = juce::Colours::darkorange; col3 = juce::Colours::lawngreen;
-	}
-	if (m_nLasGradient == 3) {
-		col1 = juce::Colours::darkgreen; col2 = juce::Colours::lightskyblue; col3 = juce::Colours::rebeccapurple;
+	m_nLasGradient = m_nLasGradient % 6;
+	std::vector<juce::Colour> T;
+	switch (m_nLasGradient) {
+	case 1 : T.push_back(juce::Colours::darkblue); T.push_back(juce::Colours::green); T.push_back(juce::Colours::lightcoral);
+		break;
+	case 2 : T.push_back(juce::Colours::aqua); T.push_back(juce::Colours::darkorange); T.push_back(juce::Colours::lawngreen);
+		break;
+	case 3 : T.push_back(juce::Colours::darkgreen); T.push_back(juce::Colours::lightskyblue); T.push_back(juce::Colours::rebeccapurple);
+		break;
+	case 4 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::red);
+		break;
+	case 5 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::blue); T.push_back(juce::Colours::green);
+		T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::orange); T.push_back(juce::Colours::red); T.push_back(juce::Colours::white);
+		break;
+	default:;
 	}
 	if (m_nLasGradient > 0) {
-		juce::ColourGradient gradient1(col1, 0., 0., col2, 128., 128., false);
-		juce::ColourGradient gradient2(col2, 0., 0., col3, 128., 128., false);
 		LasShader shader;
-		for (int i = 0; i < 128; i++)
-			shader.AltiColor(gradient1.getColourAtPosition(i / 128.), (uint8_t)i);
-		for (int i = 128; i < 256; i++)
-			shader.AltiColor(gradient2.getColourAtPosition((i - 128) / 128.), (uint8_t)i);
+		int nb_grad = T.size() - 1;
+		double nb_step = 256. / nb_grad;
+		int cmpt = 0;
+		for (int step = 0; step < T.size() - 1; step++) {
+			juce::ColourGradient gradient(T[step], 0., 0., T[step+1], 256. / nb_grad, 256. / nb_grad, false);
+			for (int i = 0; i < nb_step; i++) {
+				shader.AltiColor(gradient.getColourAtPosition(i / nb_step), (uint8_t)XMin(cmpt, 255));
+				cmpt++;
+			}
+		}
 	}
 	else
 		LasShader::InitAltiColor();

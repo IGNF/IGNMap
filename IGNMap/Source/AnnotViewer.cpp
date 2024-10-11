@@ -213,7 +213,7 @@ juce::var AnnotViewerModel::getDragSourceDescription(const juce::SparseSet<int>&
 //==============================================================================
 // Composant custom pour l'edition des textes
 //==============================================================================
-juce::Component* AnnotViewerModel::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected,
+juce::Component* AnnotViewerModel::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/,
 																													 juce::Component* existingComponentToUpdate)
 {
 	if (columnId != Column::Name ) // Pas de composant custom

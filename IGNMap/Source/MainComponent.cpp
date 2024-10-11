@@ -528,7 +528,8 @@ bool MainComponent::perform(const InvocationInfo& info)
 		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.1950-1965", "PM", "png", 256, 256, 18);
 		break;
 	case CommandIDs::menuAddGeoportailSatellite:
-		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHO-SAT.SPOT.2021", "PM", "jpeg", 256, 256, 17);
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHO-SAT.SPOT.2023", "PM", "jpeg", 256, 256, 17);
+		//AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2024", "PM_0_19", "jpeg", 256, 256, 19);
 		break;
 	case CommandIDs::menuAddGeoportailCartes:
 		AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
@@ -657,6 +658,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 	}
 	if (message == "Repaint") {
 		m_MapView.get()->RenderMap(false, false, false, false, false);
+		return;
+	}
+	if (message == "SaveMapView") {
+		SaveComponent(m_MapView.get());
 		return;
 	}
 	if (message == "StopMapThread") {
@@ -1211,20 +1216,23 @@ bool MainComponent::AddOSMServer()
 //==============================================================================
 bool MainComponent::AddWmtsServer()
 {
-	juce::AlertWindow alert(juce::translate("Add a WMTS server"), juce::translate("URL of the WMTS server"), juce::AlertWindow::QuestionIcon);
-	alert.addButton(juce::translate("Cancel"), 0);
-	alert.addButton(juce::translate("OK"), 1);
-	alert.addTextEditor("Server", "https://wxs.ign.fr/ortho/geoportail/wmts", juce::translate("Server : "));
-	alert.addTextEditor("Layer", "", juce::translate("Layer : "));
-	alert.addTextEditor("TMS", "", juce::translate("TMS : "));
-	alert.addTextEditor("Format", "jpeg", juce::translate("Format : "));
+	auto alert = new juce::AlertWindow(juce::translate("Add a WMTS server"), juce::translate("URL of the WMTS server"), juce::AlertWindow::QuestionIcon);
+	alert->addButton(juce::translate("Cancel"), 0);
+	alert->addButton(juce::translate("OK"), 1);
+	alert->addTextEditor("Server", "data.geopf.fr/wmts", juce::translate("Server : "));
+	alert->addTextEditor("Layer", "ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2024", juce::translate("Layer : "));
+	alert->addTextEditor("TMS", "PM_0_19", juce::translate("TMS : "));
+	alert->addTextEditor("Format", "jpeg", juce::translate("Format : "));
 
+	std::function< void(int)> myFunc = [=](int result) {
+		if (result)
+			AddWmtsServer(alert->getTextEditorContents("Server").toStdString(), alert->getTextEditorContents("Layer").toStdString(),
+										alert->getTextEditorContents("TMS").toStdString(), alert->getTextEditorContents("Format").toStdString());
+		};
 
-	if (alert.runModalLoop() == 0)
-		return false;
-	AddWmtsServer(alert.getTextEditorContents("Server").toStdString(), alert.getTextEditorContents("Layer").toStdString(),
-		alert.getTextEditorContents("TMS").toStdString(), alert.getTextEditorContents("Format").toStdString());
-	return false;
+	alert->enterModalState(false, juce::ModalCallbackFunction::create(myFunc), true);
+	
+	return true;
 }
 
 //==============================================================================
@@ -1380,6 +1388,21 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 		component->setVisible(true);
 		m_Panel.get()->expandPanelFully(component, true);
 	}
+}
+
+//==============================================================================
+// Sauvegarde l'image d'un composant dans un fichier image
+//==============================================================================
+void MainComponent::SaveComponent(juce::Component* component)
+{
+	juce::String filename = AppUtil::SaveFile("ComponentImagePath", juce::translate("Save Image"), "*.png;");
+	if (filename.isEmpty())
+		return;
+	juce::Image image = component->createComponentSnapshot(component->getLocalBounds());
+	juce::PNGImageFormat png;
+	juce::File file(filename); 
+	file.deleteFile();
+	png.writeImageToStream(image, juce::FileOutputStream(juce::File(filename)));
 }
 
 //==============================================================================

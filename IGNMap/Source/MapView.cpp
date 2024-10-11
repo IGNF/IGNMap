@@ -300,6 +300,10 @@ bool MapView::keyPressed(const juce::KeyPress& key)
 		}
 		return true;
 	}
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		sendActionMessage("SaveMapView");
+		return true;
+	}
 	return false;	// On transmet l'evenement sans le traiter
 }
 
