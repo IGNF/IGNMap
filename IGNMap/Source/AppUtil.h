@@ -21,4 +21,5 @@ namespace AppUtil {
 	void SaveAppOption(juce::String name, juce::String value);
 
 	std::string GetStringFilename(juce::String filename);
+	void SaveComponent(juce::Component* component);
 }

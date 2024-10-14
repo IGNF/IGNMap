@@ -16,6 +16,7 @@
 #include "../../XTool/XGeoVector.h"
 #include "LasShader.h"
 #include "DtmShader.h"
+#include "AppUtil.h"
 
 //==============================================================================
 // OGL3DViewer
@@ -48,7 +49,7 @@ OGLWidget::OGLWidget()
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
-  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = false;
+  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -285,7 +286,7 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("DTM : D (point / triangle), F (fill triangles)");
   g.drawText(help, b.getX(), b.getY() + 65, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Visibility: K (Vector) ; L (Las) ; M (DTM)");
+  help = juce::translate("Visibility : J (Axis) ; K (Vector) ; L (Las) ; M (DTM)");
   g.drawText(help, b.getX(), b.getY() + 95, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("Z scale: PageUp ; PageDown");
   g.drawText(help, b.getX(), b.getY() + 125, b.getWidth(), 40, juce::Justification::left);
@@ -297,8 +298,6 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("LAS color : P palette ; O raster");
   g.drawText(help, b.getX(), b.getY() + 245, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("E : view axis");
-  g.drawText(help, b.getX(), b.getY() + 275, b.getWidth(), 40, juce::Justification::left);
 }
 
 //==============================================================================
@@ -308,6 +307,15 @@ void OGLWidget::render()
 {
   using namespace ::juce::gl;
   const juce::ScopedLock lock(m_Mutex);
+
+  juce::OpenGLFrameBuffer* buffer = nullptr;
+  juce::Image snapshotImage;
+  if (m_bSaveImage) {
+    snapshotImage = juce::Image(juce::OpenGLImageType().create(juce::Image::ARGB, getWidth(), getHeight(), true));
+    buffer = juce::OpenGLImageType::getFrameBufferFrom(snapshotImage);
+    if (buffer != nullptr)
+      buffer->makeCurrentRenderingTarget();
+  }
 
   auto desktopScale = (float)openGLContext.getRenderingScale();
   juce::OpenGLHelpers::clear(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
@@ -417,6 +425,20 @@ void OGLWidget::render()
   glDrawArrays(GL_POINTS, 0, 1);
   m_Attributes->disable();
 
+  // Sauvegarde de l'image
+  if (m_bSaveImage) {
+    if (buffer != nullptr)
+      buffer->releaseAsRenderingTarget();
+    juce::File imageFile(m_strFileSave);
+    if (imageFile.existsAsFile())
+      imageFile.deleteFile();
+
+    juce::FileOutputStream outputFileStream(imageFile);
+    juce::PNGImageFormat imageFormatter;
+    imageFormatter.writeImageToStream(snapshotImage, outputFileStream);
+    m_bSaveImage = false;
+  }
+
   // Reset the element buffers so child Components draw correctly
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
   openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -523,14 +545,14 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_bDtmTriangle = (!m_bDtmTriangle);
   if ((key.getTextCharacter() == 'F') || (key.getTextCharacter() == 'f'))
     m_bDtmFill = (!m_bDtmFill);
+  if ((key.getTextCharacter() == 'J') || (key.getTextCharacter() == 'j'))
+    m_bViewRepere = (!m_bViewRepere);
   if ((key.getTextCharacter() == 'K') || (key.getTextCharacter() == 'k'))
     m_bViewVector = (!m_bViewVector);
   if ((key.getTextCharacter() == 'L') || (key.getTextCharacter() == 'l'))
     m_bViewLas = (!m_bViewLas);
   if ((key.getTextCharacter() == 'M') || (key.getTextCharacter() == 'm'))
     m_bViewDtm = (!m_bViewDtm);
-  if ((key.getTextCharacter() == 'E') || (key.getTextCharacter() == 'e'))
-    m_bViewRepere = (!m_bViewRepere);
 
   if ((key.getTextCharacter() == 'Y') || (key.getTextCharacter() == 'y')) {
     m_dDeltaZ = 1.;
@@ -552,6 +574,12 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
     m_bUpdateDtmColor = true;
     m_bNeedUpdate = true;
+  }
+
+  if (key.getKeyCode() == juce::KeyPress::F2Key) {
+    m_strFileSave = AppUtil::SaveFile("Image3DPath", juce::translate("Save Image"), "*.png;");
+    if (!m_strFileSave.isEmpty())
+      m_bSaveImage = true;
   }
 
   repaint();

@@ -660,10 +660,6 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(false, false, false, false, false);
 		return;
 	}
-	if (message == "SaveMapView") {
-		SaveComponent(m_MapView.get());
-		return;
-	}
 	if (message == "StopMapThread") {
 		m_MapView.get()->StopThread();
 		return;
@@ -1388,21 +1384,6 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 		component->setVisible(true);
 		m_Panel.get()->expandPanelFully(component, true);
 	}
-}
-
-//==============================================================================
-// Sauvegarde l'image d'un composant dans un fichier image
-//==============================================================================
-void MainComponent::SaveComponent(juce::Component* component)
-{
-	juce::String filename = AppUtil::SaveFile("ComponentImagePath", juce::translate("Save Image"), "*.png;");
-	if (filename.isEmpty())
-		return;
-	juce::Image image = component->createComponentSnapshot(component->getLocalBounds());
-	juce::PNGImageFormat png;
-	juce::File file(filename); 
-	file.deleteFile();
-	png.writeImageToStream(image, juce::FileOutputStream(juce::File(filename)));
 }
 
 //==============================================================================

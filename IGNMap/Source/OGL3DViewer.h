@@ -81,8 +81,9 @@ private:
   double    m_dX0, m_dY0, m_dZ0, m_dGsd; // Transformation terrain -> pixel
   XFrame    m_Frame;
   XGeoBase* m_Base;
-  juce::Image m_RawDtm;
-  juce::Image m_QuickLook;
+  juce::Image   m_RawDtm;
+  juce::Image   m_QuickLook;
+  juce::String  m_strFileSave;
 
   uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
   uint32_t  m_nMaxPolyPt;        // Nombre maximum de points polygone
@@ -109,6 +110,7 @@ private:
   bool      m_bNeedUpdate;
   bool      m_bAutoRotation;    // Rotation automatique de la scene 3D
   bool      m_bNeedLasPoint;
+  bool      m_bSaveImage;       // Sauvegarde dans un fichier du rendu
   float     m_LasPointSize;     // Taille des points LAS
   float     m_VectorWidth;      // Epaisseur des lignes des donnees vectorielles
   float     m_DtmLineWidth;     // Epaisseur des lignes des MNT
@@ -237,17 +239,6 @@ public:
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
-
-  bool keyPressed(const juce::KeyPress& key) override {
-    if (key.getKeyCode() == juce::KeyPress::F2Key) {
-      juce::Image image = createComponentSnapshot(getBounds());
-      juce::PNGImageFormat png;
-      juce::FileOutputStream fileStream(juce::File("D:\\Test.png"));
-      png.writeImageToStream(image, fileStream);
-      return true;
-    }
-    return false;
-  }
 
 private:
   OGLWidget   m_OGLWidget;

@@ -11,6 +11,7 @@
 
 #include "MapView.h"
 #include "../../XTool/XGeoBase.h"
+#include "AppUtil.h"
 
 //==============================================================================
 MapView::MapView(juce::String name) : m_MapThread(name)
@@ -301,7 +302,7 @@ bool MapView::keyPressed(const juce::KeyPress& key)
 		return true;
 	}
 	if (key.getKeyCode() == juce::KeyPress::F2Key) {
-		sendActionMessage("SaveMapView");
+		AppUtil::SaveComponent(this);
 		return true;
 	}
 	return false;	// On transmet l'evenement sans le traiter

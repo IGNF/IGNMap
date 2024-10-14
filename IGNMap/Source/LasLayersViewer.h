@@ -88,6 +88,7 @@ public:
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	void sliderValueChanged(juce::Slider* slider) override;
 	void mouseDoubleClick(const juce::MouseEvent& event) override;
+	bool keyPressed(const juce::KeyPress& key) override;
 
 	// Drag&Drop
 	void itemDropped(const SourceDetails& details) override;

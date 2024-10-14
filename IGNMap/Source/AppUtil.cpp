@@ -123,3 +123,20 @@ std::string AppUtil::GetStringFilename(juce::String filename)
 #endif
 	return pathname;
 }
+
+//==============================================================================
+// Sauvegarde un composant sous forme d'image PNG
+//==============================================================================
+void AppUtil::SaveComponent(juce::Component* component)
+{
+	juce::String filename = AppUtil::SaveFile("ComponentImagePath", juce::translate("Save Image"), "*.png;");
+	if (filename.isEmpty())
+		return;
+	juce::Image image = component->createComponentSnapshot(component->getLocalBounds());
+	juce::File file(filename);
+	if (file.existsAsFile())
+		file.deleteFile();
+	juce::FileOutputStream outputFileStream(file);
+	juce::PNGImageFormat png;
+	png.writeImageToStream(image, outputFileStream);
+}

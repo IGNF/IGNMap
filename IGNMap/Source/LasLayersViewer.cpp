@@ -321,6 +321,7 @@ LasLayersViewer::LasLayersViewer()
 	m_nLasGradient = 0;
 
 	setName("LAS Layers");
+	setWantsKeyboardFocus(true);
 	m_ModelLas.addActionListener(this);
 	// Bordure
 	m_TableLas.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -335,6 +336,7 @@ LasLayersViewer::LasLayersViewer()
 	m_TableLas.getHeader().addColumn(juce::translate("Zmax"), LasViewerModel::Column::Zmax, 50);
 	m_TableLas.getHeader().addColumn(juce::translate(" "), LasViewerModel::Column::Options, 50);
 	m_TableLas.setSize(377, 200);
+	m_TableLas.setAutoSizeMenuOptionShown(false);
 	m_TableLas.setModel(&m_ModelLas);
 	addAndMakeVisible(m_TableLas);
 
@@ -399,12 +401,15 @@ LasLayersViewer::LasLayersViewer()
 	m_TableClassif.setOutlineThickness(1);
 	m_TableClassif.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
-	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Visibility, 25);
-	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Selectable, 25);
-	m_TableClassif.getHeader().addColumn(juce::translate("Number"), ClassifModel::Column::Number, 50);
-	m_TableClassif.getHeader().addColumn(juce::translate("Name"), ClassifModel::Column::Name, 200);
-	m_TableClassif.getHeader().addColumn(juce::translate("Color"), ClassifModel::Column::Colour, 50);
+	juce::TableHeaderComponent::ColumnPropertyFlags noSort = juce::TableHeaderComponent::ColumnPropertyFlags::notSortable;
+	juce::TableHeaderComponent::ColumnPropertyFlags visible = juce::TableHeaderComponent::ColumnPropertyFlags::visible;
+	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Visibility, 25, 30, -1, visible);
+	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Selectable, 25, 30, -1, visible);
+	m_TableClassif.getHeader().addColumn(juce::translate("Value"), ClassifModel::Column::Number, 50, 30, -1, noSort);
+	m_TableClassif.getHeader().addColumn(juce::translate("Name"), ClassifModel::Column::Name, 200, 30, -1, noSort);
+	m_TableClassif.getHeader().addColumn(juce::translate("Colour"), ClassifModel::Column::Colour, 50, 30, -1, noSort);
 	m_TableClassif.setSize(352, 200);
+	m_TableClassif.setAutoSizeMenuOptionShown(false);
 	m_TableClassif.setModel(&m_ModelClassif);
 	addAndMakeVisible(m_TableClassif);
 	if (LasShader::Mode() != LasShader::ShaderMode::Classification)
@@ -450,9 +455,9 @@ void LasLayersViewer::Translate()
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmin, juce::translate("Nb. Elem"));
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmin, juce::translate("Zmin"));
 	m_TableLas.getHeader().setColumnName(LasViewerModel::Column::Zmax, juce::translate("Zmax"));
-	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Number, juce::translate("Number"));
+	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Number, juce::translate("Value"));
 	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Name, juce::translate("Name"));
-	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Colour, juce::translate("Color"));
+	m_TableClassif.getHeader().setColumnName(ClassifModel::Column::Colour, juce::translate("Colour"));
 
 	m_Mode.changeItemText(1, juce::translate("Altitude"));
 	m_Mode.changeItemText(2, juce::translate("RGB"));
@@ -651,6 +656,19 @@ void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
 	UpdateAltiColors();
 	repaint();
 	m_ModelLas.sendActionMessage("UpdateLasOptions");
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool LasLayersViewer::keyPressed(const juce::KeyPress& key)
+{
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		m_TableClassif.setSize(500, 1000);
+		AppUtil::SaveComponent(&m_TableClassif);
+		return true;
+	}
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================
