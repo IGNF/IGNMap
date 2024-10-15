@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "ImageOptionsViewer.h"
+#include "AppUtil.h"
 #include "GeoBase.h"
 #include "../../XTool/XGeoBase.h"
 
@@ -19,6 +20,7 @@
 ImageOptionsViewer::ImageOptionsViewer()
 {
   m_Image = nullptr;
+	setWantsKeyboardFocus(true);
 
   addAndMakeVisible(m_lblImageName);
   m_lblImageName.setText(juce::translate("Name :"), juce::dontSendNotification);
@@ -232,6 +234,18 @@ void ImageOptionsViewer::buttonClicked(juce::Button* button)
     }
     sendActionMessage("UpdateRaster");
   }
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool ImageOptionsViewer::keyPressed(const juce::KeyPress& key)
+{
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		AppUtil::SaveTableComponent(&m_tblPixels);
+		return true;
+	}
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================

@@ -280,7 +280,7 @@ void OGLWidget::paint(juce::Graphics& g)
   b.expand(-5, -5);
   g.setFillType(juce::FillType(juce::Colours::darkblue));
   g.setFont(18);
-  help = juce::translate("Help : F1");
+  help = juce::translate("Help : F1 ; Copy image : F2");
   g.drawText(help, b.getX(), b.getY() + 5, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)");
   g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);

@@ -11,8 +11,8 @@
 
 #include "VectorLayersViewer.h"
 #include "ClassViewer.h"
-#include "Utilities.h"
 #include "ThreadClassProcessor.h"
+#include "AppUtil.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XToolVector/XShapefileConverter.h"
 
@@ -295,6 +295,7 @@ VectorLayersViewer::VectorLayersViewer()
 {
 	m_Base = nullptr;
 	setTitle(juce::translate("Vector Layers"));
+	setWantsKeyboardFocus(true);
 	m_Model.addActionListener(this);
 	// Bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -322,6 +323,18 @@ void VectorLayersViewer::Translate()
 	m_Table.getHeader().setColumnName(VectorViewerModel::Column::PenWidth, juce::translate("Width"));
 	m_Table.getHeader().setColumnName(VectorViewerModel::Column::PenColour, juce::translate("Pen"));
 	m_Table.getHeader().setColumnName(VectorViewerModel::Column::FillColour, juce::translate("Brush"));
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool VectorLayersViewer::keyPressed(const juce::KeyPress& key)
+{
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		AppUtil::SaveTableComponent(&m_Table);
+		return true;
+	}
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================

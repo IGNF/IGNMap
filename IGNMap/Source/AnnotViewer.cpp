@@ -282,6 +282,7 @@ AnnotViewer::AnnotViewer()
 	m_Annot = nullptr;
 	m_bDirty = false;
 	setTitle(juce::translate("Annotations"));
+	setWantsKeyboardFocus(true);
 	m_Model.addActionListener(this);
 	m_Model.SetTable(&m_Table);
 	// Bordure
@@ -403,6 +404,18 @@ void AnnotViewer::actionListenerCallback(const juce::String& message)
 	}
 
 	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool AnnotViewer::keyPressed(const juce::KeyPress& key)
+{
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		AppUtil::SaveTableComponent(&m_Table);
+		return true;
+	}
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================

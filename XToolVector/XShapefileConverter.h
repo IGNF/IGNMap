@@ -29,7 +29,7 @@ public:
 
 	void ConvertVisibleOnly(bool flag) { m_bVisibleOnly = flag;}
 
-	virtual bool LoadVector(XGeoVector* vector);
+	bool LoadVector(XGeoVector* vector);
 };
 
 #endif //_XSHAPEFILECONVERTER_H

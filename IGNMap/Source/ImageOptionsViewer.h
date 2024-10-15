@@ -63,6 +63,7 @@ public:
 	virtual void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	virtual void sliderValueChanged(juce::Slider* slider) override;
 	virtual void buttonClicked(juce::Button*) override;
+	bool keyPressed(const juce::KeyPress& key) override;
 
 private:
 	juce::Label m_lblImageName;

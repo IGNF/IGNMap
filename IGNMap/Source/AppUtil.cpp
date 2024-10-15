@@ -140,3 +140,16 @@ void AppUtil::SaveComponent(juce::Component* component)
 	juce::PNGImageFormat png;
 	png.writeImageToStream(image, outputFileStream);
 }
+
+//==============================================================================
+// Sauvegarde une table sous forme d'image PNG
+//==============================================================================
+void AppUtil::SaveTableComponent(juce::TableListBox* table)
+{
+	auto b = table->getLocalBounds();
+	int w = table->getHeader().getTotalWidth() + 10;
+	int h = table->getNumRows() * table->getRowHeight() + table->getHeader().getHeight() + 10;
+	table->setSize(w, h);
+	AppUtil::SaveComponent(table);
+	table->setSize(b.getWidth(), b.getHeight());
+}

@@ -11,7 +11,6 @@
 
 #include "ImageLayersViewer.h"
 #include "ClassViewer.h"
-#include "Utilities.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
 

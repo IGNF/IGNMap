@@ -22,4 +22,5 @@ namespace AppUtil {
 
 	std::string GetStringFilename(juce::String filename);
 	void SaveComponent(juce::Component* component);
+	void SaveTableComponent(juce::TableListBox* table);
 }

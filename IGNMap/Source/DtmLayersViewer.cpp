@@ -15,6 +15,7 @@
 #include "DtmShader.h"
 #include "ThreadClassProcessor.h"
 #include "GeoBase.h"
+#include "AppUtil.h"
 
 //==============================================================================
 // DtmViewerModel : constructeur
@@ -370,6 +371,7 @@ DtmLayersViewer::DtmLayersViewer()
 	m_Cache = GeoTools::CreateCacheDir("DTM");
 	DtmShader shader;	// Necessaire pour initialiser les plages et les couleurs
 	setName("DTM Layers");
+	setWantsKeyboardFocus(true);
 	m_ModelDtm.addActionListener(this);
 	// Bordure
 	m_TableDtm.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -489,6 +491,18 @@ void DtmLayersViewer::resized()
 	m_Azimuth.setSize(b.getWidth() / 4, 100);
 	m_Zenith.setTopLeftPosition(3 * b.getWidth() / 4, b.getHeight() / 2 + 30);
 	m_Zenith.setSize(b.getWidth() / 4, 100);
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool DtmLayersViewer::keyPressed(const juce::KeyPress& key)
+{
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		AppUtil::SaveTableComponent(&m_TableRange);
+		return true;
+	}
+	return false;	// On transmet l'evenement sans le traiter
 }
 
 //==============================================================================

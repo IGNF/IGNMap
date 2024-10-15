@@ -62,6 +62,7 @@ public:
 	void Translate();
 	void RenameAndViewLastClass(juce::String newName);
 	void resized() override { auto b = getLocalBounds(); m_Table.setSize(b.getWidth(), b.getHeight()); }
+	bool keyPressed(const juce::KeyPress& key) override;
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;
 

@@ -114,6 +114,7 @@ public:
 	void Update() { m_Table.updateContent(); m_Table.repaint(); m_bDirty = true; }
 	void Translate();
 	void resized() override;
+	bool keyPressed(const juce::KeyPress& key) override;
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override;
 

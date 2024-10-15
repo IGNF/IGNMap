@@ -640,7 +640,7 @@ void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
 	}
 	if (m_nLasGradient > 0) {
 		LasShader shader;
-		int nb_grad = T.size() - 1;
+		int nb_grad = (int)T.size() - 1;
 		double nb_step = 256. / nb_grad;
 		int cmpt = 0;
 		for (int step = 0; step < T.size() - 1; step++) {
@@ -664,8 +664,7 @@ void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
 bool LasLayersViewer::keyPressed(const juce::KeyPress& key)
 {
 	if (key.getKeyCode() == juce::KeyPress::F2Key) {
-		m_TableClassif.setSize(500, 1000);
-		AppUtil::SaveComponent(&m_TableClassif);
+		AppUtil::SaveTableComponent(&m_TableClassif);
 		return true;
 	}
 	return false;	// On transmet l'evenement sans le traiter
