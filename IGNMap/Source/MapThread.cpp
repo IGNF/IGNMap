@@ -414,9 +414,16 @@ bool MapThread::DrawPolyline(XGeoVector* G)
 	XPt* P = G->Pt();
 	if (P == nullptr)
 		return false;
-	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
-	for (uint32_t i = 1; i < G->NbPt(); i++)
-		m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
+	float X = (float)((P[0].X - m_dX0) / m_dGsd), Y = (float)((m_dY0 - P[0].Y) / m_dGsd), Xi = 0.f, Yi = 0.f;
+	m_Path.startNewSubPath(X , Y);
+	for (uint32_t i = 1; i < G->NbPt(); i++) {
+		Xi = (float)((P[i].X - m_dX0) / m_dGsd);
+		Yi = (float)((m_dY0 - P[i].Y) / m_dGsd);
+		if ((fabs(Xi - X) + fabs(Yi - Y)) >= 1.f) {
+			m_Path.lineTo(Xi, Yi);
+			X = Xi; Y = Yi;
+		}
+	}
 	return true;
 }
 
@@ -443,17 +450,25 @@ bool MapThread::DrawMultiLine(XGeoVector* G)
 	if ((P == nullptr) || (Parts == nullptr))
 		return false;
 
-	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
+	float X = (float)((P[0].X - m_dX0) / m_dGsd), Y = (float)((m_dY0 - P[0].Y) / m_dGsd), Xi = 0.f, Yi = 0.f;
+	m_Path.startNewSubPath(X, Y);
 	bool new_ring = false;
 	for (uint32_t i = 1; i < G->NbPt(); i++) {
 		for (uint32_t j = 1; j < G->NbPart(); j++) {
 			if (i == G->Part(j))
 				new_ring = true;
 		}
-		if (new_ring) 
-			m_Path.startNewSubPath((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
-		else {
-			m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
+		if (new_ring) {
+			X = (float)((P[i].X - m_dX0) / m_dGsd);
+			Y = (float)((m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.startNewSubPath(X, Y);
+		} else {
+			Xi = (float)((P[i].X - m_dX0) / m_dGsd);
+			Yi = (float)((m_dY0 - P[i].Y) / m_dGsd);
+			if ((fabs(Xi - X) + fabs(Yi - Y)) >= 1.f) {
+				m_Path.lineTo(Xi, Yi);
+				X = Xi; Y = Yi;
+			}
 		}
 		new_ring = false;
 	}
@@ -471,8 +486,9 @@ bool MapThread::DrawMultiPolygon(XGeoVector* G)
 	int* Parts = G->Parts();
 	if ((P == nullptr)||(Parts == nullptr))
 		return false;
-
-	m_Path.startNewSubPath((float)((P[0].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[0].Y) / m_dGsd));
+	
+	float X = (float)((P[0].X - m_dX0) / m_dGsd), Y = (float)((m_dY0 - P[0].Y) / m_dGsd), Xi = 0.f, Yi = 0.f;
+	m_Path.startNewSubPath(X, Y);
 	bool new_ring = false;
 	for (uint32_t i = 1; i < G->NbPt(); i++) {
 		for (uint32_t j = 1; j < G->NbPart(); j++) {
@@ -481,9 +497,16 @@ bool MapThread::DrawMultiPolygon(XGeoVector* G)
 		}
 		if (new_ring) {
 			m_Path.closeSubPath();
-			m_Path.startNewSubPath((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
+			X = (float)((P[i].X - m_dX0) / m_dGsd);
+			Y = (float)((m_dY0 - P[i].Y) / m_dGsd);
+			m_Path.startNewSubPath(X, Y);
 		} else {
-			m_Path.lineTo((float)((P[i].X - m_dX0) / m_dGsd), (float)((m_dY0 - P[i].Y) / m_dGsd));
+			Xi = (float)((P[i].X - m_dX0) / m_dGsd);
+			Yi = (float)((m_dY0 - P[i].Y) / m_dGsd);
+			if ((fabs(Xi - X) + fabs(Yi - Y)) >= 1.f) {
+				m_Path.lineTo(Xi, Yi);
+				X = Xi; Y = Yi;
+			}
 		}
 		new_ring = false;
 	}
