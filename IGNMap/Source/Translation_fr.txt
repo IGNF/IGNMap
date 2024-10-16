@@ -101,7 +101,7 @@ countries: fr be mc ch lu
 "New Caledonia" = "Nouvelle-Calédonie"
 "French Guiana" = "Guyane"
 "Reunion" = "Réunion"
-"Help : F1 ; Copy image : F2" = "Aide : F1 ; Copier l'image : F2'"
+"Help : F1 ; Copy image : F2" = "Aide : F1 ; Copier l'image : F2"
 "Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)" = "Dimension des points : Q/S (LAS) ; W/X (MNT) ; C/V (Vecteurs)"
 "DTM : D (point / triangle), F (fill triangles)" = "MNT : D (affichage par points / par triangles), F (remplissage des triangles)"
 "Visibility : J (Axis) ; K (Vector) ; L (Las) ; M (DTM)" = "Visibilité : J (Axes) ; K (Vecteurs) ; L (Las) ; M (MNT)"

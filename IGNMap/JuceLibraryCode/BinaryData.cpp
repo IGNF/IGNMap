@@ -3338,7 +3338,7 @@ static const unsigned char temp_binary_data_16[] =
 "\"New Caledonia\" = \"Nouvelle-Cal\xc3\xa9""donie\"\n"
 "\"French Guiana\" = \"Guyane\"\n"
 "\"Reunion\" = \"R\xc3\xa9union\"\n"
-"\"Help : F1 ; Copy image : F2\" = \"Aide : F1 ; Copier l'image : F2'\"\n"
+"\"Help : F1 ; Copy image : F2\" = \"Aide : F1 ; Copier l'image : F2\"\n"
 "\"Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)\" = \"Dimension des points : Q/S (LAS) ; W/X (MNT) ; C/V (Vecteurs)\"\n"
 "\"DTM : D (point / triangle), F (fill triangles)\" = \"MNT : D (affichage par points / par triangles), F (remplissage des triangles)\"\n"
 "\"Visibility : J (Axis) ; K (Vector) ; L (Las) ; M (DTM)\" = \"Visibilit\xc3\xa9 : J (Axes) ; K (Vecteurs) ; L (Las) ; M (MNT)\"\n"
@@ -3388,7 +3388,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 4788; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 4787; return Translation_fr_txt;
         default: break;
     }
 
