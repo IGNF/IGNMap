@@ -90,6 +90,7 @@ public:
 	static bool ZoomArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t nbbyte);
 	static bool ZoomAreaRGB(uint8_t* R, uint8_t* G, uint8_t* B, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout);
 	static void SwitchRGB2BGR(uint8_t* buf, uint32_t nb_pix);
+	static void SwitchARGB2BGR(uint8_t* buf, uint32_t nb_pix);
 	static void Gray2RGB(uint8_t* buf, uint32_t nb_pix);
 	static void RGB2RGBA(uint8_t* buf, uint32_t nb_pix, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
 	static void RGB2BGRA(uint8_t* buf, uint32_t nb_pix, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);

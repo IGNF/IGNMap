@@ -176,8 +176,8 @@ void ExportImageDlg::timerCallback()
 {
   if (m_MapThread.isThreadRunning())
     return;
- 
-  juce::Image image(juce::Image::PixelFormat::RGB, m_MapThread.ImageWidth(), m_MapThread.ImageHeight(), true);
+ 	// Sur Mac, on n'a que des images ARGB
+  juce::Image image(juce::Image::PixelFormat::ARGB, m_MapThread.ImageWidth(), m_MapThread.ImageHeight(), true);
   juce::Graphics g(image);
   m_MapThread.Draw(g);
 
@@ -188,8 +188,10 @@ void ExportImageDlg::timerCallback()
   file.seekp(0, std::ios_base::end);
   for (int i = 0; i < (int)m_MapThread.ImageHeight(); i++) {
     uint8_t* line = bitmap.getLinePointer(i);
-    XBaseImage::SwitchRGB2BGR(line, m_MapThread.ImageWidth());
-    file.write((char*)line, m_MapThread.ImageWidth() * 3);
+    //XBaseImage::SwitchRGB2BGR(line, m_MapThread.ImageWidth());
+    //file.write((char*)line, m_MapThread.ImageWidth() * 3);
+		XBaseImage::SwitchARGB2BGR(line, m_MapThread.ImageWidth());
+		file.write((char*)line, m_MapThread.ImageWidth() * 3);
   }
   file.close();
   StartNextThread();

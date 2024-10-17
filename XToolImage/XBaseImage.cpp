@@ -548,6 +548,22 @@ void XBaseImage::SwitchRGB2BGR(uint8_t* buf, uint32_t nb_pix)
 }
 
 //-----------------------------------------------------------------------------
+// Inversion de triplet ARGB en triplet BGR : Windows travaille en BGR
+//-----------------------------------------------------------------------------
+void XBaseImage::SwitchARGB2BGR(uint8_t* buf, uint32_t nb_pix)
+{
+	uint8_t *ptr_bgr = buf, *ptr_argb = buf;
+	for (uint32_t i = 0; i < nb_pix; i++) {
+		ptr_argb[3] = ptr_argb[0]; // pour sauvegarder la valeur
+		ptr_bgr[0] = ptr_argb[2];
+		ptr_bgr[1] = ptr_argb[1];
+		ptr_bgr[2] = ptr_argb[3];
+		ptr_bgr+=3;
+		ptr_argb+=4;
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Conversion niveau de gris -> RGB
 //-----------------------------------------------------------------------------
 void XBaseImage::Gray2RGB(uint8_t* buf, uint32_t nb_pix)
