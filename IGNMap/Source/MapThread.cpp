@@ -226,7 +226,7 @@ void MapThread::run()
 	m_bRaster = m_bVector = m_bOverlay = false;
 }
 
-bool MapThread::Draw(juce::Graphics& g, int x0, int y0)
+bool MapThread::Draw(juce::Graphics& g, int x0, int y0, bool overlay)
 {
 	if (!m_bRasterDone)
 		return false;
@@ -240,7 +240,8 @@ bool MapThread::Draw(juce::Graphics& g, int x0, int y0)
 	g.setOpacity((float)LasShader::Opacity() * 0.01f);
 	g.drawImageAt(m_Las, x0, y0);
 	g.drawImageAt(m_Vector, x0, y0);
-	g.drawImageAt(m_Overlay, x0, y0);
+	if (overlay)
+		g.drawImageAt(m_Overlay, x0, y0);
 	return true;
 }
 

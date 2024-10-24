@@ -35,7 +35,7 @@ public:
   uint32_t ImageHeight() { return m_Raster.getHeight(); }
 
   virtual void 	run() override;
-  bool Draw(juce::Graphics& g, int x0 = 0, int y0 = 0);
+  bool Draw(juce::Graphics& g, int x0 = 0, int y0 = 0, bool overlay = true);
   juce::Image GetRaster(juce::Rectangle<int> R) { if (m_bRasterDone) return m_Raster.getClippedImage(R); return juce::Image(); }
 
 private:

@@ -106,7 +106,6 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
 
   m_btnExport.setButtonText(juce::translate("Cancel"));
 
-  m_strFilename = m_edtFilename.getText();
   double xmin = m_edtXmin.getText().getDoubleValue();
   double xmax = m_edtXmax.getText().getDoubleValue();
   double ymin = m_edtYmin.getText().getDoubleValue();
@@ -123,6 +122,7 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
   m_strFilename = AppUtil::SaveFile("ExportImageFile", juce::translate("File to save"), "*.tif");
   if (m_strFilename.isEmpty())
     return;
+  m_edtFilename.setText(m_strFilename, false);
   XTiffWriter tiff;
   tiff.SetGeoTiff(m_dX0, m_dY0, m_dGSD);
   tiff.Write(m_strFilename.toStdString().c_str(), m_nW, m_nH, 3, 8);
@@ -178,21 +178,22 @@ void ExportImageDlg::timerCallback()
     return;
  	// Sur Mac, on n'a que des images ARGB
   juce::Image image(juce::Image::PixelFormat::ARGB, m_MapThread.ImageWidth(), m_MapThread.ImageHeight(), true);
-  juce::Graphics g(image);
-  m_MapThread.Draw(g);
+  { // Scope pour Direct2D
+    juce::Graphics g(image);
+    m_MapThread.Draw(g, 0, 0, false);
+  }
 
   juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readOnly);
-  
+
   std::ofstream file;
   file.open(m_strFilename.toStdString().c_str(), std::ios::out | std::ios::binary | std::ios::app);
   file.seekp(0, std::ios_base::end);
   for (int i = 0; i < (int)m_MapThread.ImageHeight(); i++) {
     uint8_t* line = bitmap.getLinePointer(i);
-    //XBaseImage::SwitchRGB2BGR(line, m_MapThread.ImageWidth());
-    //file.write((char*)line, m_MapThread.ImageWidth() * 3);
-		XBaseImage::SwitchARGB2BGR(line, m_MapThread.ImageWidth());
-		file.write((char*)line, m_MapThread.ImageWidth() * 3);
-  }
+    XBaseImage::SwitchARGB2BGR(line, m_MapThread.ImageWidth());
+    file.write((char*)line, m_MapThread.ImageWidth() * 3);
+   }
   file.close();
+
   StartNextThread();
 }
