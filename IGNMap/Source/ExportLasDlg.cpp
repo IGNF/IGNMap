@@ -300,7 +300,6 @@ void ExportLasDlg::buttonClicked(juce::Button* button)
 
   m_btnExport.setButtonText(juce::translate("Cancel"));
 
-  m_strFilename = m_edtFilename.getText();
   m_Frame.Xmin = m_edtXmin.getText().getDoubleValue();
   m_Frame.Xmax = m_edtXmax.getText().getDoubleValue();
   m_Frame.Ymin = m_edtYmin.getText().getDoubleValue();
@@ -315,6 +314,7 @@ void ExportLasDlg::buttonClicked(juce::Button* button)
   m_strFilename = AppUtil::SaveFile("ExportLasFile", juce::translate("File to save"), ext);
   if (m_strFilename.isEmpty())
     return;
+  m_edtFilename.setText(m_strFilename, false);
 
   m_ExportThread.signalThreadShouldExit();
   if (m_ExportThread.isThreadRunning()) {
