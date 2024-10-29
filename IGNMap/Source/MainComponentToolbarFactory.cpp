@@ -73,7 +73,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     //drawable_on->setImage(getImageFromAssets("Move.png"));
     drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    drawable_on->setOverlayColour(juce::Colours::yellow);
     button = new juce::ToolbarButton(Move, juce::translate("Move"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -88,7 +88,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    drawable_on->setOverlayColour(juce::Colours::yellow);
     button = new juce::ToolbarButton(Select, juce::translate("Select"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
@@ -102,7 +102,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    drawable_on->setOverlayColour(juce::Colours::yellow);
     button = new juce::ToolbarButton(Zoom, juce::translate("Zoom"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
@@ -116,7 +116,7 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     drawable_off->setImage(image);
     auto drawable_on = std::make_unique<juce::DrawableImage>();
     drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkcyan);
+    drawable_on->setOverlayColour(juce::Colours::yellow);
     button = new juce::ToolbarButton(Select3D, juce::translate("Select3D"), std::move(drawable_off), std::move(drawable_on));
     button->setClickingTogglesState(true);
     button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);

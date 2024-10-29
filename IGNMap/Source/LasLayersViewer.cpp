@@ -375,7 +375,7 @@ LasLayersViewer::LasLayersViewer()
 
 	// Sliders ZMin et ZMax
 	m_sldZRange.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-	m_sldZRange.setSliderStyle(juce::Slider::ThreeValueHorizontal);
+	m_sldZRange.setSliderStyle(juce::Slider::TwoValueHorizontal);
 	m_sldZRange.setRange(LasShader::Zmin(), LasShader::Zmax(), 1.);
 	m_sldZRange.setMinAndMaxValues(LasShader::Zmin(), LasShader::Zmax());
 	m_sldZRange.setPopupDisplayEnabled(true, false, this);
@@ -443,7 +443,6 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 	LasShader::Zmax(zmax);
 	m_sldZRange.setRange(zmin, zmax, 1.);
 	m_sldZRange.setMinAndMaxValues(zmin, zmax);
-	m_sldZRange.setValue((zmax + zmin) * 0.5, juce::dontSendNotification);
 }
 
 //==============================================================================
@@ -623,36 +622,7 @@ void LasLayersViewer::mouseDoubleClick(const juce::MouseEvent& event)
 		return;
 	m_nLasGradient += 1;
 	m_nLasGradient = m_nLasGradient % 6;
-	std::vector<juce::Colour> T;
-	switch (m_nLasGradient) {
-	case 1 : T.push_back(juce::Colours::darkblue); T.push_back(juce::Colours::green); T.push_back(juce::Colours::lightcoral);
-		break;
-	case 2 : T.push_back(juce::Colours::aqua); T.push_back(juce::Colours::darkorange); T.push_back(juce::Colours::lawngreen);
-		break;
-	case 3 : T.push_back(juce::Colours::darkgreen); T.push_back(juce::Colours::lightskyblue); T.push_back(juce::Colours::rebeccapurple);
-		break;
-	case 4 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::red);
-		break;
-	case 5 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::blue); T.push_back(juce::Colours::green);
-		T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::orange); T.push_back(juce::Colours::red); T.push_back(juce::Colours::white);
-		break;
-	default:;
-	}
-	if (m_nLasGradient > 0) {
-		LasShader shader;
-		int nb_grad = (int)T.size() - 1;
-		double nb_step = 256. / nb_grad;
-		int cmpt = 0;
-		for (int step = 0; step < T.size() - 1; step++) {
-			juce::ColourGradient gradient(T[step], 0., 0., T[step+1], 256. / nb_grad, 256. / nb_grad, false);
-			for (int i = 0; i < nb_step; i++) {
-				shader.AltiColor(gradient.getColourAtPosition(i / nb_step), (uint8_t)XMin(cmpt, 255));
-				cmpt++;
-			}
-		}
-	}
-	else
-		LasShader::InitAltiColor();
+	SetAltiColors();
 	UpdateAltiColors();
 	repaint();
 	m_ModelLas.sendActionMessage("UpdateLasOptions");
@@ -682,9 +652,6 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 	if (slider == &m_sldZRange) {
 		LasShader::Zmin(slider->getMinValue());
 		LasShader::Zmax(slider->getMaxValue());
-		double value = (slider->getValue() - slider->getMinValue()) / (slider->getMaxValue() - slider->getMinValue());
-		uint8_t middle = (uint8_t)(value * 255.);
-		LasShader::InitAltiColor(middle);
 		m_drwZRect.repaint();
 		UpdateAltiColors();
 	}
@@ -716,6 +683,43 @@ bool LasLayersViewer::isInterestedInDragSource(const SourceDetails& details)
 	if (details.sourceComponent.get() != &m_TableLas)
 		return false;
 	return true;
+}
+
+//==============================================================================
+// Fixe les couleurs de la palette altimetrique
+//==============================================================================
+void LasLayersViewer::SetAltiColors()
+{
+	std::vector<juce::Colour> T;
+	switch (m_nLasGradient) {
+	case 1 : T.push_back(juce::Colours::darkblue); T.push_back(juce::Colours::green); T.push_back(juce::Colours::lightcoral);
+		break;
+	case 2 : T.push_back(juce::Colours::aqua); T.push_back(juce::Colours::darkorange); T.push_back(juce::Colours::lawngreen);
+		break;
+	case 3 : T.push_back(juce::Colours::darkgreen); T.push_back(juce::Colours::lightskyblue); T.push_back(juce::Colours::rebeccapurple);
+		break;
+	case 4 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::red);
+		break;
+	case 5 : T.push_back(juce::Colours::purple); T.push_back(juce::Colours::blue); T.push_back(juce::Colours::green);
+		T.push_back(juce::Colours::yellow); T.push_back(juce::Colours::orange); T.push_back(juce::Colours::red); T.push_back(juce::Colours::white);
+		break;
+		default: m_nLasGradient = 0;
+	}
+	if (m_nLasGradient > 0) {
+		LasShader shader;
+		int nb_grad = (int)T.size() - 1;
+		double nb_step = 256. / nb_grad;
+		int cmpt = 0;
+		for (int step = 0; step < T.size() - 1; step++) {
+			juce::ColourGradient gradient(T[step], 0., 0., T[step+1], 256. / nb_grad, 256. / nb_grad, false);
+			for (int i = 0; i < nb_step; i++) {
+				shader.AltiColor(gradient.getColourAtPosition(i / nb_step), (uint8_t)XMin(cmpt, 255));
+				cmpt++;
+			}
+		}
+	}
+	else
+		LasShader::InitAltiColor();
 }
 
 //==============================================================================

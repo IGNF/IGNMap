@@ -114,6 +114,8 @@ private:
 	juce::TableListBox	m_TableClassif;
 	ClassifModel				m_ModelClassif;
 	int									m_nLasGradient;
+		
+	void SetAltiColors();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LasLayersViewer)
 };
