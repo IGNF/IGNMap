@@ -130,4 +130,20 @@ public:
   void getAllToolbarItemIds(juce::Array<int>& ids) override;
   void getDefaultItemSet(juce::Array<int>& ids) override;
   juce::ToolbarItemComponent* createItem(int itemId) override;
+  void Translate();
+
+private:
+  juce::ToolbarButton* m_btnMove = nullptr;
+  juce::ToolbarButton* m_btnSelect = nullptr;
+  juce::ToolbarButton* m_btnZoom = nullptr;
+  juce::ToolbarButton* m_btnSelect3D = nullptr;
+  juce::ToolbarButton* m_btnPolyline = nullptr;
+  juce::ToolbarButton* m_btnPolygon = nullptr;
+  juce::ToolbarButton* m_btnRectangle = nullptr;
+  juce::ToolbarButton* m_btnText = nullptr;
+  juce::ToolbarButton* m_btnGsd = nullptr;
+  juce::ToolbarButton* m_btnSearch = nullptr;
+
+  juce::ToolbarButton* CreateButton(int id, juce::String label, juce::String tooltip, int groupId, bool toggle,
+                                    const void* imageData, int dataSize);
 };

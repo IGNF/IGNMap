@@ -62,148 +62,101 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
   if (m_Listener == nullptr)  // Le Listener doit etre fixe
     return nullptr;
   juce::ToolbarButton* button = nullptr;
-  switch (itemId)
-  {
+  switch (itemId) {
   case Move:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Move_png, BinaryData::Move_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    //drawable_off->setImage(getImageFromAssets("Move.png"));
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    //drawable_on->setImage(getImageFromAssets("Move.png"));
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::yellow);
-    button = new juce::ToolbarButton(Move, juce::translate("Move"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setToggleState(true, juce::NotificationType::dontSendNotification);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Move ; Shift : select ; Ctrl : zoom"));
-    break;
-  }
+    m_btnMove = CreateButton(Move, juce::translate("Move"), juce::translate("Move ; Shift : select ; Ctrl : zoom"), 1, true, BinaryData::Move_png, BinaryData::Move_pngSize);
+    return m_btnMove;
   case Select:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Select_png, BinaryData::Select_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::yellow);
-    button = new juce::ToolbarButton(Select, juce::translate("Select"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Select one or several objects"));
-    break;
-  }
+    m_btnSelect = CreateButton(Select, juce::translate("Select"), juce::translate("Select one or several objects"), 1, false, BinaryData::Select_png, BinaryData::Select_pngSize);
+    return m_btnSelect;
   case Zoom:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Zoom_png, BinaryData::Zoom_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::yellow);
-    button = new juce::ToolbarButton(Zoom, juce::translate("Zoom"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Zoom"));
-    break;
-  }
+    m_btnZoom = CreateButton(Zoom, juce::translate("Zoom"), juce::translate("Zoom"), 1, false, BinaryData::Zoom_png, BinaryData::Zoom_pngSize);
+    return m_btnZoom;
   case Select3D:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Select3D_png, BinaryData::Select3D_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::yellow);
-    button = new juce::ToolbarButton(Select3D, juce::translate("Select3D"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Select 3D view"));
-    break;
-  }
+    m_btnSelect3D = CreateButton(Select3D, juce::translate("Select3D"), juce::translate("Select 3D view"), 1, false, BinaryData::Select3D_png, BinaryData::Select3D_pngSize);
+    return m_btnSelect3D;
+ 
   // Slider de GSD
   case Gsd:
   {
     auto image = juce::ImageCache::getFromMemory(BinaryData::GSD_png, BinaryData::GSD_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
     drawable_off->setImage(image);
-    button = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
-    button->setTooltip(juce::translate("GSD of the view"));
-    break;
+    m_btnGsd = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
+    m_btnGsd->setTooltip(juce::translate("GSD of the view"));
+    m_btnGsd->addListener(m_Listener);
+    return m_btnGsd;
   }
+
   // Recherche textuelle
   case Search:
   {
     auto image = juce::ImageCache::getFromMemory(BinaryData::Search_png, BinaryData::Search_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
     drawable_off->setImage(image);
-    button = new TextToolbarButton(Search, juce::translate("0."), std::move(drawable_off), nullptr);
-    button->setTooltip(juce::translate("Search"));
-    break;
+    m_btnSearch = new TextToolbarButton(Search, juce::translate("0."), std::move(drawable_off), nullptr);
+    m_btnSearch->setTooltip(juce::translate("Search"));
+    m_btnSearch->addListener(m_Listener);
+    return m_btnSearch;
   }
 
   // Outils de dessin
   case Polyline:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Polyline_png, BinaryData::Polyline_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Polyline, juce::translate("Polyline"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Polyline"));
-    break;
-  }
+    m_btnPolyline = CreateButton(Polyline, juce::translate("Polyline"), juce::translate("Polyline"), 1, false, BinaryData::Polyline_png, BinaryData::Polyline_pngSize);
+    return m_btnPolyline;
   case Polygone:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Polygone_png, BinaryData::Polygone_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Polygone, juce::translate("Polygone"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Polygone"));
-    break;
-  }
+    m_btnPolygon = CreateButton(Polygone, juce::translate("Polygone"), juce::translate("Polygone"), 1, false, BinaryData::Polygone_png, BinaryData::Polygone_pngSize);
+    return m_btnPolygon;
   case Rectangle:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Rectangle_png, BinaryData::Rectangle_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Rectangle, juce::translate("Rectangle"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Rectangle"));
-    break;
-  }
+    m_btnRectangle = CreateButton(Rectangle, juce::translate("Rectangle"), juce::translate("Rectangle"), 1, false, BinaryData::Rectangle_png, BinaryData::Rectangle_pngSize);
+    return m_btnRectangle;
   case Text:
-  {
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Text_png, BinaryData::Text_pngSize);
-    auto drawable_off = std::make_unique<juce::DrawableImage>();
-    drawable_off->setImage(image);
-    auto drawable_on = std::make_unique<juce::DrawableImage>();
-    drawable_on->setImage(image);
-    drawable_on->setOverlayColour(juce::Colours::darkred);
-    button = new juce::ToolbarButton(Text, juce::translate("Text"), std::move(drawable_off), std::move(drawable_on));
-    button->setClickingTogglesState(true);
-    button->setRadioGroupId(1, juce::NotificationType::dontSendNotification);
-    button->setTooltip(juce::translate("Text"));
-    break;
-  }
+    m_btnText = CreateButton(Text, juce::translate("Text"), juce::translate("Text"), 1, false, BinaryData::Text_png, BinaryData::Text_pngSize);
+    return m_btnText;
 
   default: return nullptr;
   }
+ 
+  return nullptr;
+}
+
+//==============================================================================
+// Creation d'un bouton de la barre d'outils
+//==============================================================================
+juce::ToolbarButton* MainComponentToolbarFactory::CreateButton(int id, juce::String label, juce::String tooltip, int groupId,
+                                                              bool toggle, const void* imageData, int dataSize)
+{
+  auto image = juce::ImageCache::getFromMemory(imageData, dataSize);
+  auto drawable_off = std::make_unique<juce::DrawableImage>();
+  //drawable_off->setImage(getImageFromAssets("Move.png"));
+  drawable_off->setImage(image);
+  auto drawable_on = std::make_unique<juce::DrawableImage>();
+  //drawable_on->setImage(getImageFromAssets("Move.png"));
+  drawable_on->setImage(image);
+  drawable_on->setOverlayColour(juce::Colours::yellow);
+  juce::ToolbarButton* button = new juce::ToolbarButton(id, label, std::move(drawable_off), std::move(drawable_on));
+  button->setClickingTogglesState(true);
+  if (toggle)
+    button->setToggleState(true, juce::NotificationType::dontSendNotification);
+  button->setRadioGroupId(groupId, juce::NotificationType::dontSendNotification);
+  button->setTooltip(tooltip);
   button->addListener(m_Listener);
   return button;
+}
+
+//==============================================================================
+// Traduction
+//==============================================================================
+void MainComponentToolbarFactory::Translate()
+{
+  m_btnMove->setTooltip(juce::translate("Move ; Shift : select ; Ctrl : zoom"));
+  m_btnSelect->setTooltip(juce::translate("Select one or several objects"));
+  m_btnZoom->setTooltip(juce::translate("Zoom"));
+  m_btnSelect3D->setTooltip(juce::translate("Select 3D view"));
+  m_btnPolyline->setTooltip(juce::translate("Polyline"));
+  m_btnPolygon->setTooltip(juce::translate("Polygone"));
+  m_btnRectangle->setTooltip(juce::translate("Rectangle"));
+  m_btnText->setTooltip(juce::translate("Text"));
+  m_btnGsd->setTooltip(juce::translate("GSD of the view"));
+  m_btnSearch->setTooltip(juce::translate("Search"));
 }

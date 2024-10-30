@@ -1336,6 +1336,7 @@ void MainComponent::Translate()
 	m_LasViewer.get()->Translate();
 	m_ImageOptionsViewer.get()->Translate();
 	m_AnnotViewer.get()->Translate();
+	m_ToolbarFactory.Translate();
 	for (int i = 0; i < m_Panel.get()->getNumPanels(); i++)
 		m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(i), nullptr, true);
 	m_Panel.get()->setCustomPanelHeader(m_Panel.get()->getPanel(0), new juce::TextButton(juce::translate("Vector Layers")), true);
