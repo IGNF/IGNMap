@@ -47,6 +47,7 @@ public:
 
   void LoadObjects(XGeoBase* base, XFrame* F);
   void SetQuickLook(juce::Image image) { m_QuickLook = image; }
+  void SetTarget(const XPt3D& P);
 
 protected:
   void LoadLasClass(XGeoClass* C);
@@ -62,6 +63,7 @@ protected:
   void DrawPolyVector(XGeoVector* V);
   void DrawLineVector(XGeoVector* V);
   void Select(int u, int v);
+  void DrawTarget();
 
   void CreateRepere();
 
@@ -107,9 +109,11 @@ private:
   GLuint    m_LineElementID;
   GLuint    m_RepereID;         // Points du repere
   GLuint    m_PtBufferID;       // Points selectionnes
+  GLuint    m_TargetID;         // Point cible
   bool      m_bNeedUpdate;
   bool      m_bAutoRotation;    // Rotation automatique de la scene 3D
   bool      m_bNeedLasPoint;
+  bool      m_bNeedTarget;
   bool      m_bSaveImage;       // Sauvegarde dans un fichier du rendu
   float     m_LasPointSize;     // Taille des points LAS
   float     m_VectorWidth;      // Epaisseur des lignes des donnees vectorielles
@@ -134,6 +138,7 @@ private:
 
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
+  XPt3D               m_Target;   // Point cible de la vue principale
 
 private:
   //==============================================================================
@@ -239,6 +244,7 @@ public:
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
+  void SetTarget(const XPt3D& P) { m_OGLWidget.SetTarget(P); }
 
 private:
   OGLWidget   m_OGLWidget;

@@ -51,12 +51,12 @@ void MapView::paint(juce::Graphics& g)
 		g.drawImageAt(m_Image, 0, 0);
 		g.setColour(juce::Colours::pink);
 		if (m_bZoom) g.setColour(juce::Colours::coral);
-		g.drawRect(juce::Rectangle<int>(m_StartPt, m_DragPt + m_StartPt), 2);
+		g.drawRect(juce::Rectangle<float>(m_StartPt, m_DragPt + m_StartPt), 2);
 		return;
 	}
 	if (m_bDrag) {
 		g.fillAll(juce::Colours::white);
-		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
+		g.drawImageAt(m_Image, (int)m_DragPt.x, (int)m_DragPt.y);
 		DrawAnnotation(&m_Annotation, g, m_DragPt.x, m_DragPt.y);
 		DrawTarget(g, m_DragPt.x, m_DragPt.y);
 		DrawDecoration(g, m_DragPt.x, m_DragPt.y);
@@ -65,7 +65,7 @@ void MapView::paint(juce::Graphics& g)
 
 	if (!m_MapThread.Draw(g)) {
 		g.fillAll(juce::Colours::white);
-		g.drawImageAt(m_Image, m_DragPt.x, m_DragPt.y);
+		g.drawImageAt(m_Image, (int)m_DragPt.x, (int)m_DragPt.y);
 	}
 	if (!m_MapThread.isThreadRunning())
 		DrawAllAnnotations(g);
@@ -86,7 +86,7 @@ void MapView::resized()
 //==============================================================================
 // Affichage des coordonnees, de l'emprise, de l'echelle ...
 //==============================================================================
-void MapView::DrawDecoration(juce::Graphics& g, int deltaX, int deltaY)
+void MapView::DrawDecoration(juce::Graphics& g, float deltaX, float deltaY)
 {
 	// Affichage des coordonnees, de l'emprise, de l'echelle ...
 	XFrame F = m_MapThread.Frame();
@@ -169,8 +169,8 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 {
 	juce::Graphics imaG(m_Image);
 	m_MapThread.Draw(imaG);
-	m_StartPt = event.getPosition();
-	m_DragPt = juce::Point<int>(0, 0);
+	m_StartPt = event.position;
+	m_DragPt = juce::Point<float>(0, 0);
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
 	if ((event.mods.isCtrlDown()) || (m_nMouseMode == Zoom)) {
 		m_bZoom = true;
@@ -203,8 +203,8 @@ void MapView::mouseMove(const juce::MouseEvent& event)
 
 void MapView::mouseDrag(const juce::MouseEvent& event)
 {
-	m_DragPt.x = event.getDistanceFromDragStartX();
-	m_DragPt.y = event.getDistanceFromDragStartY();
+	m_DragPt.x = (float)event.getDistanceFromDragStartX();
+	m_DragPt.y = (float)event.getDistanceFromDragStartY();
 	if ((abs(m_DragPt.x) > 1) && (abs(m_DragPt.y) > 1))
 		repaint();
 }
@@ -213,7 +213,8 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 {
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
 	double X0 = m_StartPt.x, Y0 = m_StartPt.y, X1 = m_StartPt.x + m_DragPt.x, Y1 = m_StartPt.y + m_DragPt.y;
-	m_SelImage = m_MapThread.GetRaster(juce::Rectangle<int>(m_StartPt, m_StartPt + m_DragPt));
+	juce::Point<int> corner1((int)X0, (int)Y0), corner2((int)X1, (int)Y1);
+	m_SelImage = m_MapThread.GetRaster(juce::Rectangle<int>(corner1, corner2));
 	Pixel2Ground(X0, Y0);
 	Pixel2Ground(X1, Y1);
 
@@ -241,7 +242,8 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		return;
 	}
 
-	double x = event.getPosition().x, y = event.getPosition().y;
+	double x = event.position.x, y = event.position.y;
+	double z = m_MapThread.GetZ(event.x, event.y);
 	Pixel2Ground(x, y);
 	if (m_bZoom) {	// Clic pour zoomer
 			if (event.mods.isRightButtonDown()) m_dScale *= (2.0);
@@ -260,7 +262,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	SetModeCursor();
 	sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
 	if (event.mods.isAltDown())
-		SetTarget(x, y);
+		SetTarget(x, y, z);
 	EndMouseAction();
 }
 
@@ -479,9 +481,9 @@ void MapView::SetFrame(XFrame F)
 //==============================================================================
 // Fixe le point cible de la vue
 //==============================================================================
-void MapView::SetTarget(double x, double y, bool notify)
+void MapView::SetTarget(double x, double y, double z, bool notify)
 { 
-	m_Target = XPt2D(x, y);
+	m_Target = XPt3D(x, y, z);
 	if (notify)
 		sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2));
 }
@@ -489,7 +491,7 @@ void MapView::SetTarget(double x, double y, bool notify)
 //==============================================================================
 // Dessin du point cible
 //==============================================================================
-void MapView::DrawTarget(juce::Graphics& g, int deltaX, int deltaY)
+void MapView::DrawTarget(juce::Graphics& g, float deltaX, float deltaY)
 {
 	XPt2D P0 = m_Target;
 	Ground2Pixel(P0.X, P0.Y);
@@ -576,7 +578,7 @@ void MapView::Update3DView(const double& X0, const double& Y0, const double& X1,
 //==============================================================================
 // Ajout d'un point a l'annotation en cours d'edition
 //==============================================================================
-void MapView::AddAnnotationPoint(juce::Point<int>& P)
+void MapView::AddAnnotationPoint(juce::Point<float>& P)
 {
 	double X0 = P.x, Y0 = P.y;
 	Pixel2Ground(X0, Y0);
@@ -605,7 +607,7 @@ void MapView::CloseAnnotation()
 //==============================================================================
 // Dessin de toutes les annotations
 //==============================================================================
-void MapView::DrawAllAnnotations(juce::Graphics& g, int deltaX, int deltaY)
+void MapView::DrawAllAnnotations(juce::Graphics& g, float deltaX, float deltaY)
 {
 	for (size_t i = 0; i < m_Annot.size(); i++)
 		DrawAnnotation(&m_Annot[i], g, deltaX, deltaY);
@@ -615,7 +617,7 @@ void MapView::DrawAllAnnotations(juce::Graphics& g, int deltaX, int deltaY)
 //==============================================================================
 // Dessin de l'annotation en cours
 //==============================================================================
-void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, int deltaX, int deltaY)
+void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX, float deltaY)
 {
 	if (annot->NbPt() < 1)
 		return;

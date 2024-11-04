@@ -43,13 +43,13 @@ public:
   void SelectFeatures(juce::Point<int>);
   void SelectFeatures(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1);
-  void DrawDecoration(juce::Graphics&, int deltaX = 0, int deltaY = 0);
-  void DrawAnnotation(XAnnotation* annot, juce::Graphics&, int deltaX = 0, int deltaY = 0);
-  void DrawAllAnnotations(juce::Graphics&, int deltaX = 0, int deltaY = 0);
+  void DrawDecoration(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
+  void DrawAnnotation(XAnnotation* annot, juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
+  void DrawAllAnnotations(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   double ComputeCartoScale(double cartoscale = 0.);
-  void SetTarget(double x, double y, bool notify = true);
-  XPt2D GetTarget() const { return m_Target; }
-  void DrawTarget(juce::Graphics&, int deltaX = 0, int deltaY = 0);
+  void SetTarget(double x, double y, double z, bool notify = true);
+  XPt3D GetTarget() const { return m_Target; }
+  void DrawTarget(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetSelectionFrame() { return m_SelectionFrame; }
   double GetGsd() const { return m_dScale; }
@@ -85,15 +85,15 @@ private:
   double        m_dY;
   double        m_dZ;
   int           m_nMouseMode;
-  juce::Point<int>  m_StartPt;
-  juce::Point<int>  m_DragPt;
+  juce::Point<float>  m_StartPt;
+  juce::Point<float>  m_DragPt;
   juce::Image   m_Image;    // Image de la vue
   juce::Image   m_SelImage; // Partie de l'image de la vue selectionnee
   MapThread     m_MapThread;
   XGeoBase*     m_GeoBase;
   XAnnotation   m_Annotation; // Annotation en cours d'edition
   std::vector<XAnnotation>  m_Annot;  // Liste des annotations
-  XPt2D         m_Target;     // Point cible
+  XPt3D         m_Target;     // Point cible
   XFrame        m_SelectionFrame;  // Rectangle de selection
   XFrame        m_3DFrame;         // Rectangle de vue 3D
   uint64_t      m_nFrameCounter;
@@ -101,7 +101,7 @@ private:
   void timerCallback() override { repaint(); }
 
   void EndMouseAction();
-  void AddAnnotationPoint(juce::Point<int>&);
+  void AddAnnotationPoint(juce::Point<float>&);
   void CloseAnnotation();
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MapView)

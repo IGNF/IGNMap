@@ -49,7 +49,7 @@ OGLWidget::OGLWidget()
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
-  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = false;
+  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -135,6 +135,11 @@ void OGLWidget::initialise()
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
   openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 1 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
+  // Creation du buffer de points pour la cible
+  openGLContext.extensions.glGenBuffers(1, &m_TargetID);
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
+  openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+
   CreateRepere();
 }
 
@@ -156,6 +161,7 @@ void OGLWidget::shutdown()
 
   openGLContext.extensions.glDeleteBuffers(1, &m_RepereID);
   openGLContext.extensions.glDeleteBuffers(1, &m_PtBufferID);
+  openGLContext.extensions.glDeleteBuffers(1, &m_TargetID);
   m_Shader.reset();
   m_Attributes.reset();
   m_Uniforms.reset();
@@ -425,6 +431,15 @@ void OGLWidget::render()
   glDrawArrays(GL_POINTS, 0, 1);
   m_Attributes->disable();
 
+  // Dessin de la cible
+  if (m_bNeedTarget)
+    DrawTarget();
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
+  m_Attributes->enable();
+  glLineWidth(3.0); // Ne marche pas sur MacOS
+  glDrawArrays(GL_LINES, 0, 2);
+  m_Attributes->disable();
+
   // Sauvegarde de l'image
   if (m_bSaveImage) {
     if (buffer != nullptr)
@@ -604,6 +619,16 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
     m_dGsd = F->Height() / 4.;
   m_dZ0 = base->Z(F->Center());
   m_dDeltaZ = m_dOffsetZ = 0.;
+}
+
+//==============================================================================
+// Fixe la cible
+//==============================================================================
+void OGLWidget::SetTarget(const XPt3D& P)
+{
+  m_Target = P;
+  m_bNeedTarget = true;
+  repaint();
 }
 
 //==============================================================================
@@ -1280,6 +1305,29 @@ void OGLWidget::CreateRepere()
 }
 
 //==============================================================================
+// Fixe la cible
+//==============================================================================
+void OGLWidget::DrawTarget()
+{
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+  Vertex M[2];
+  M[0].colour[0] = M[0].colour[3] = M[0].colour[2] = 1.f;
+  M[0].colour[1] = 0.f;
+  M[1].colour[0] = M[1].colour[3] = M[1].colour[2] = 1.f;
+  M[1].colour[1] = 0.f;
+  M[0].position[0] = (float)((m_Target.X - m_dX0) / m_dGsd);
+  M[0].position[1] = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  M[0].position[2] = (float)(1.0);
+  M[1].position[0] = (float)((m_Target.X - m_dX0) / m_dGsd);
+  M[1].position[1] = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  M[1].position[2] = (float)(-1.0);
+  m_bNeedTarget = false;
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
+  openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M), &M);
+}
+
+//==============================================================================
 // Selection
 //==============================================================================
 void OGLWidget::Select(int u, int v)
@@ -1298,8 +1346,8 @@ void OGLWidget::Select(int u, int v)
   viewport[3] = juce::roundToInt(desktopScale * (float)getHeight());
 
   GLfloat winX = 0.0, winY = 0.0, winZ = 0.0;
-  winX = (GLfloat)u;
-  winY = (GLfloat)(viewport[3] - v);
+  winX = (GLfloat)u * desktopScale;
+  winY = (GLfloat)(viewport[3] - v * desktopScale);
 
   // Z du DEPTH buffer
   glReadPixels((GLint)winX, (GLint)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);

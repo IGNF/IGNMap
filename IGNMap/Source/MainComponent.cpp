@@ -741,6 +741,7 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			m_OGL3DViewer.get()->toFront(true);
 			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
 			m_OGL3DViewer.get()->SetQuickLook(m_MapView.get()->GetSelImage());
+			m_OGL3DViewer.get()->SetTarget(m_MapView.get()->GetTarget());
 		}
 		return;
 	}
@@ -779,6 +780,8 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			juce::MemoryBlock block(message.getCharPointer(), message.length());
 			sendMessage(block);
 		}
+		if (m_OGL3DViewer.get() != nullptr)
+			m_OGL3DViewer.get()->SetTarget(m_MapView.get()->GetTarget());
 	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {
