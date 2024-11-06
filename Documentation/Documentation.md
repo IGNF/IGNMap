@@ -55,7 +55,7 @@ Dans le mode déplacement, on peut accéder directement aux deux autres modes en
 * en maintenant la touche `Ctrl`, on passe en mode zoom (voir ci-dessous)
 
 En maintenant la touche `Alt` et en cliquant, on définit la position du point cible. Ce point sera visible dans la vue 3D.
-Il permet aussi de définir la position quand on utilise les menus *Afficher* *Google Maps* ou *Bing Maps*.
+Il permet aussi de définir la position quand on utilise les menus **Afficher** **Google Maps** ou **Bing Maps**.
 
 ### Le mode sélection
 Ce mode est accessible via le bouton <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
