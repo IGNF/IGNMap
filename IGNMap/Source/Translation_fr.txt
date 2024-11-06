@@ -29,7 +29,7 @@ countries: fr be mc ch lu
 "Translate" = "Traduire"
 "Preferences" = "Préférences"
 "Application settings" = "Préférences de l'application"
-"Move ; Shift : select ; Ctrl : zoom" = "Déplacement ; Shift : sélection ; Ctrl : zoom"
+"Move ; Shift : select ; Ctrl : zoom ; Alt : target" = "Déplacement ; Shift : sélection ; Ctrl : zoom ; Alt : cible"
 "Select one or several objects" = "Sélection d'un ou plusieurs objets"
 "GSD of the view" = "Résolution de la vue"
 "Search" = "Recherche"

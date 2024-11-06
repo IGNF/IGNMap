@@ -262,7 +262,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	SetModeCursor();
 	sendActionMessage("UpdateGroundPos:" + juce::String(X0, 2) + ":" + juce::String(Y0, 2));
 	if (event.mods.isAltDown())
-		SetTarget(x, y, z);
+		SetTarget(XPt3D(x, y, z));
 	EndMouseAction();
 }
 
@@ -481,11 +481,12 @@ void MapView::SetFrame(XFrame F)
 //==============================================================================
 // Fixe le point cible de la vue
 //==============================================================================
-void MapView::SetTarget(double x, double y, double z, bool notify)
+void MapView::SetTarget(const XPt3D& P, bool notify)
 { 
-	m_Target = XPt3D(x, y, z);
+	m_Target = P;
 	if (notify)
-		sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2));
+		sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
+																					+ ":" + juce::String(m_Target.Z, 2));
 }
 
 //==============================================================================

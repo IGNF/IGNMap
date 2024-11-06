@@ -995,7 +995,7 @@ bool MainComponent::ImportImageFile(juce::String rasterfile)
 }
 
 //==============================================================================
-// Import d'un repertoire de fichiers LAS/LAZ
+// Import d'un repertoire de fichiers MNT
 //==============================================================================
 void MainComponent::ImportDtmFolder()
 {
@@ -1150,7 +1150,7 @@ void MainComponent::ImportLasFolder()
 		return;
 	ImportDataFolder(folderName, XGeoVector::LAS);
 	m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
-	//m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	m_MapView.get()->RenderMap(false, false, false, false, true, true);
 }
 
 //==============================================================================
@@ -1182,7 +1182,7 @@ bool MainComponent::ImportLasFile(juce::String lasfile)
 
 	m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	//m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	m_MapView.get()->RenderMap(false, false, false, false, true, true);
 
 	return true;
 }
@@ -1522,11 +1522,12 @@ void MainComponent::messageReceived(const juce::MemoryBlock& message)
 		return;
 	}
 	if (T[0] == "UpdateTargetPos") {
-		if (T.size() < 3)
+		if (T.size() < 4)
 			return;
 		double X = T[1].getDoubleValue();
 		double Y = T[2].getDoubleValue();
-		m_MapView.get()->SetTarget(X, Y, false);
+		double Z = T[3].getDoubleValue();
+		m_MapView.get()->SetTarget(XPt3D(X, Y, Z), false);
 		return;
 	}
 

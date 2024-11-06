@@ -61,10 +61,9 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
 {
   if (m_Listener == nullptr)  // Le Listener doit etre fixe
     return nullptr;
-  juce::ToolbarButton* button = nullptr;
   switch (itemId) {
   case Move:
-    m_btnMove = CreateButton(Move, juce::translate("Move"), juce::translate("Move ; Shift : select ; Ctrl : zoom"), 1, true, BinaryData::Move_png, BinaryData::Move_pngSize);
+    m_btnMove = CreateButton(Move, juce::translate("Move"), juce::translate("Move ; Shift : select ; Ctrl : zoom ; Alt : target"), 1, true, BinaryData::Move_png, BinaryData::Move_pngSize);
     return m_btnMove;
   case Select:
     m_btnSelect = CreateButton(Select, juce::translate("Select"), juce::translate("Select one or several objects"), 1, false, BinaryData::Select_png, BinaryData::Select_pngSize);
@@ -149,7 +148,7 @@ juce::ToolbarButton* MainComponentToolbarFactory::CreateButton(int id, juce::Str
 //==============================================================================
 void MainComponentToolbarFactory::Translate()
 {
-  m_btnMove->setTooltip(juce::translate("Move ; Shift : select ; Ctrl : zoom"));
+  m_btnMove->setTooltip(juce::translate("Move ; Shift : select ; Ctrl : zoom ; Alt : target"));
   m_btnSelect->setTooltip(juce::translate("Select one or several objects"));
   m_btnZoom->setTooltip(juce::translate("Zoom"));
   m_btnSelect3D->setTooltip(juce::translate("Select 3D view"));

@@ -288,6 +288,8 @@ bool XOpenJp2Image::FindGeorefUuidBox(const char* filename)
       return flag;
     }
     in.seekg(data_size, std::ios_base::cur);
+    if (!in.good())
+      break;
   } while (true);
   return false;
 }

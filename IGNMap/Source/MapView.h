@@ -47,7 +47,7 @@ public:
   void DrawAnnotation(XAnnotation* annot, juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawAllAnnotations(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   double ComputeCartoScale(double cartoscale = 0.);
-  void SetTarget(double x, double y, double z, bool notify = true);
+  void SetTarget(const XPt3D& P, bool notify = true);
   XPt3D GetTarget() const { return m_Target; }
   void DrawTarget(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);

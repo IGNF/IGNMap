@@ -138,7 +138,7 @@ void OGLWidget::initialise()
   // Creation du buffer de points pour la cible
   openGLContext.extensions.glGenBuffers(1, &m_TargetID);
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
-  openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+  openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
   CreateRepere();
 }
@@ -437,7 +437,7 @@ void OGLWidget::render()
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
   m_Attributes->enable();
   glLineWidth(3.0); // Ne marche pas sur MacOS
-  glDrawArrays(GL_LINES, 0, 2);
+  glDrawArrays(GL_LINES, 0, 6);
   m_Attributes->disable();
 
   // Sauvegarde de l'image
@@ -981,6 +981,14 @@ void OGLWidget::MoveZ(float dZ)
     ptr_vertex++;
   }
   glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Cible
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < 6; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
 
   m_bNeedUpdate = false;
   //openGLContext.setContinuousRepainting(true);
@@ -1311,17 +1319,38 @@ void OGLWidget::DrawTarget()
 {
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
-  Vertex M[2];
-  M[0].colour[0] = M[0].colour[3] = M[0].colour[2] = 1.f;
-  M[0].colour[1] = 0.f;
-  M[1].colour[0] = M[1].colour[3] = M[1].colour[2] = 1.f;
-  M[1].colour[1] = 0.f;
-  M[0].position[0] = (float)((m_Target.X - m_dX0) / m_dGsd);
-  M[0].position[1] = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  Vertex M[6];
+  // Couleur
+  for (int i = 0; i < 6; i++) {
+    M[i].colour[0] = M[i].colour[3] = M[i].colour[2] = 1.f;
+    M[i].colour[1] = 0.f;
+  }
+
+  float X = (float)((m_Target.X - m_dX0) / m_dGsd);
+  float Y = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  float Z = (float)((m_Target.Z - m_dZ0) / m_dGsd) + m_dOffsetZ;
+  // Axe Z
+  M[0].position[0] = X;
+  M[0].position[1] = Y;
   M[0].position[2] = (float)(1.0);
-  M[1].position[0] = (float)((m_Target.X - m_dX0) / m_dGsd);
-  M[1].position[1] = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  M[1].position[0] = X;
+  M[1].position[1] = Y;
   M[1].position[2] = (float)(-1.0);
+  // Axe X
+  M[2].position[0] = X - 0.1f;
+  M[2].position[1] = Y;
+  M[2].position[2] = Z;
+  M[3].position[0] = X + 0.1f;
+  M[3].position[1] = Y;
+  M[3].position[2] = Z;
+  // Axe Y
+  M[4].position[0] = X;
+  M[4].position[1] = Y - 0.1f;
+  M[4].position[2] = Z;
+  M[5].position[0] = X;
+  M[5].position[1] = Y + 0.1f;
+  M[5].position[2] = Z;
+
   m_bNeedTarget = false;
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
   openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M), &M);
