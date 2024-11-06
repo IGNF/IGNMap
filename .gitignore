@@ -2,8 +2,16 @@ IGNMap/Builds/VisualStudio2022/x64/Release/*
 IGNMap/Builds/VisualStudio2022/x64/Debug/*
 IGNMap/Builds/LinuxMakefile/build/intermediate/*
 IGNMap/Builds/VisualStudio2022/.vs/*
+IGNMap/Builds/MacOSX/build/Release/*
+IGNMap/Builds/MacOSX/build/Debug/*
+IGNMap/.DS_Store
+IGNMap/Builds/.DS_Store
+IGNMap/Builds/MacOSX/.DS_Store
+IGNMap/Builds/MacOSX/IGNMap.xcodeproj
 jpeg-9f/*
 JUCE/*
+JUCE-master/*
+JUCE-develop/*
 LASzip/*
 libwebp-1.3.2/*
 openjpeg/*

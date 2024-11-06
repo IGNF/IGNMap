@@ -54,6 +54,9 @@ Dans le mode déplacement, on peut accéder directement aux deux autres modes en
 * en maintenant la touche `Shift`, on passe en mode sélection (voir ci-dessous)
 * en maintenant la touche `Ctrl`, on passe en mode zoom (voir ci-dessous)
 
+En maintenant la touche `Alt` et en cliquant, on définit la position du point cible. Ce point sera visible dans la vue 3D.
+Il permet aussi de définir la position quand on utilise les menus *Afficher* *Google Maps* ou *Bing Maps*.
+
 ### Le mode sélection
 Ce mode est accessible via le bouton <img alt="Select" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Select.png"> de la barre d’outils.
 Un clic souris bouton gauche permet de sélectionner le ou les données se trouvant sous la souris.
@@ -130,14 +133,20 @@ Dans la vue 3D, en maintenant le bouton gauche de la souris enfoncé, on peut mo
 La molette de la souris permet de zoomer / dézoomer.  
 Les flèches du clavier permettent de se déplacer.  
 Les touches `PageUp` et `PageDown` permettent de changer l’échelle altimétrique.
+La touche F1 permet d'afficher une aide.
 
 Les touches suivantes du clavier permettent de modifier l’affichage :
 * A : rotation automatique de la vue 3D
+* R : remise à 0 des angles de rotation
 * Q et S : dimension des points des nuages de points
 * W et X : épaisseur de l’affichage des MNT
 * C et V : épaisseur de l’affichage des données vectorielles
 * D : affichage des MNT sous forme de points ou de triangles
 * F : remplissage ou non des triangles des MNT
+* J : affichage des axes
 * K : affichage ou non des données vectorielles
 * L : affichage ou non des données LAS
 * M : affichage ou non des données MNT
+* Y et H : position en Z
+* P et O : affichage des points LAS avec la palette (P) ou une image (O)
+* F2 : copie de l'image 3D dans un fichier
