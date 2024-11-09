@@ -76,6 +76,7 @@ MainComponent::MainComponent()
 
 	m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, juce::DocumentWindow::allButtons));
 	m_OGL3DViewer.get()->setVisible(false);
+	m_OGL3DViewer.get()->SetListener(this);
 
   m_Panel.reset(new juce::ConcertinaPanel);
   addAndMakeVisible(m_Panel.get());
@@ -780,8 +781,14 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			juce::MemoryBlock block(message.getCharPointer(), message.length());
 			sendMessage(block);
 		}
+		XPt3D target;
+		target.X = T[1].getDoubleValue();
+		target.Y = T[2].getDoubleValue();
+		target.Z = T[3].getDoubleValue();
 		if (m_OGL3DViewer.get() != nullptr)
-			m_OGL3DViewer.get()->SetTarget(m_MapView.get()->GetTarget());
+			m_OGL3DViewer.get()->SetTarget(target);
+		if (m_MapView.get() != nullptr)
+			m_MapView.get()->SetTarget(target, false);
 	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {

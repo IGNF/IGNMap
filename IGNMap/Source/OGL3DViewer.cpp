@@ -43,13 +43,13 @@ OGLWidget::OGLWidget()
   fragmentShader = nullptr;
   m_nNbLasVertex = m_nNbPolyVertex = m_nNbLineVertex = m_nNbDtmVertex = 0;
   m_nNbPoly = m_nNbLine = 0;
-  m_LasBufferID = m_RepereID = m_PtBufferID = 0;
+  m_LasBufferID = m_RepereID = m_PtBufferID = m_TargetID = 0;
   m_DtmBufferID = m_DtmVertexArrayID = m_DtmElementID = 0;
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
-  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = false;
+  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -271,6 +271,13 @@ void OGLWidget::paint(juce::Graphics& g)
   nbPoint += " | " + juce::String(m_nNbLineVertex) + " Line";
   g.drawText(nbPoint, 25, 40, 300, 30, juce::Justification::left);
 
+  // Cible
+  juce::String target = "T = " + juce::String(m_Target.X, 2) + " ; " + juce::String(m_Target.Y, 2) + " ; " + juce::String(m_Target.Z, 2);
+  g.setColour(juce::Colours::magenta);
+  g.drawText(target, 25, 60, 300, 30, juce::Justification::left);
+  g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
+
+  // Point clique
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
   g.drawText(lastPt, 25, 80, 300, 30, juce::Justification::left);
   g.drawLine(20, 20, 170, 20);
@@ -493,23 +500,41 @@ void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
 void OGLWidget::mouseDrag(const juce::MouseEvent& event)
 {
   juce::Point<float> delta = event.position - m_LastPos;
-  m_R.Z += (delta.getX() * 0.01);
-  m_R.X += ((delta.getY() * 0.01));
+  if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
+    m_Target.X += (cos(m_R.Z) * delta.getX() - sin(m_R.Z) * delta.getY());  // A revoir
+    m_Target.Y += (sin(m_R.Z) * delta.getX() + cos(m_R.Z) * delta.getY());
+    m_bNeedTarget = true;
+  }
+  else { // Changement de rotation de la vue 3D
+    m_R.Z += (delta.getX() * 0.01);
+    m_R.X += ((delta.getY() * 0.01));
+  }
   
   m_LastPos = event.position;
   repaint();  // Pour l'affichage des informations
 }
 
-void OGLWidget::mouseWheelMove(const juce::MouseEvent& /*event*/, const juce::MouseWheelDetails& wheel)
+void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
 {
+  if (event.mods.isAltDown()) { // Changement de Z du point cible
+    m_Target.Z += wheel.deltaY;
+    m_bNeedTarget = true;
+    repaint();
+    return;
+  }
+
   double scale = wheel.deltaY / 10.;
   m_S += XPt3D(scale, scale, scale);
   repaint();
 }
 
-void OGLWidget::mouseDoubleClick(const juce::MouseEvent& /*event*/)
+void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
 {
   m_bNeedLasPoint = true;
+  if (event.mods.isAltDown()) {
+    m_bUpdateTarget = true;
+    m_bNeedTarget = true;
+  }
   repaint();
 }
 
@@ -1328,7 +1353,7 @@ void OGLWidget::DrawTarget()
 
   float X = (float)((m_Target.X - m_dX0) / m_dGsd);
   float Y = (float)((m_Target.Y - m_dY0) / m_dGsd);
-  float Z = (float)((m_Target.Z - m_dZ0) / m_dGsd) + m_dOffsetZ;
+  float Z = (float)((m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ);
   // Axe Z
   M[0].position[0] = X;
   M[0].position[1] = Y;
@@ -1386,12 +1411,21 @@ void OGLWidget::Select(int u, int v)
   M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
   M.colour[1] = 0.f;
   glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
-  m_LastPt = XPt3D(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
-  m_LastPt *= m_dGsd;
-  m_LastPt += XPt3D(m_dX0, m_dY0, m_dZ0);
+  XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
+  A *= m_dGsd;
+  A += XPt3D(m_dX0, m_dY0, m_dZ0);
   m_bNeedLasPoint = false;
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
-  openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M), &M);
+  if (m_bUpdateTarget) {  // Mise a jour de la cible
+    m_Target = A;
+    m_bUpdateTarget = false;
+    sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
+      + ":" + juce::String(m_Target.Z, 2));
+  }
+  else {
+    m_LastPt = A;
+    openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
+    openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M), &M);
+  }
 }
 
 //-----------------------------------------------------------------------------

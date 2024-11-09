@@ -10,6 +10,7 @@
 #ifndef _XTIME_H
 #define _XTIME_H
 
+#include <cstdint>
 #include <string>
 
 namespace XTime {

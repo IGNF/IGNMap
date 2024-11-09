@@ -19,7 +19,7 @@ MapView::MapView(juce::String name) : m_MapThread(name)
 	m_strName = name;
 	Clear();
 	setOpaque(true);
-	startTimerHz(5);
+	startTimerHz(10);
 	setWantsKeyboardFocus(true);
 	m_MapThread.addListener(this);
 }
@@ -199,6 +199,8 @@ void MapView::mouseMove(const juce::MouseEvent& event)
 	m_dY = event.y;
 	m_dZ = m_MapThread.GetZ(event.x, event.y);
 	Pixel2Ground(m_dX, m_dY);
+	if (event.mods.isAltDown())
+		SetTarget(XPt3D(m_dX, m_dY, m_dZ));
 }
 
 void MapView::mouseDrag(const juce::MouseEvent& event)

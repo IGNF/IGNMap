@@ -14,6 +14,7 @@
 #define _XBASE_H
 
 #include <cstdlib>
+#include <cstdint>
 #include <cmath>
 #include <string>
 #include <fstream>

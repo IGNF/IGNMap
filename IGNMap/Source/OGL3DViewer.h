@@ -22,7 +22,7 @@ class XGeoVector;
 class GeoLAS;
 class GeoDTM;
 
-class OGLWidget : public juce::OpenGLAppComponent {
+class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster {
 public:
   OGLWidget();
   ~OGLWidget() { shutdownOpenGL(); }
@@ -112,8 +112,9 @@ private:
   GLuint    m_TargetID;         // Point cible
   bool      m_bNeedUpdate;
   bool      m_bAutoRotation;    // Rotation automatique de la scene 3D
-  bool      m_bNeedLasPoint;
-  bool      m_bNeedTarget;
+  bool      m_bNeedLasPoint;    // Indique que l'on veut recuperer la position du point double-clique
+  bool      m_bNeedTarget;      // Indique que l'on veut recuperer la position du point cible
+  bool      m_bUpdateTarget;    // Indique que l'on modifie la position du point cible
   bool      m_bSaveImage;       // Sauvegarde dans un fichier du rendu
   float     m_LasPointSize;     // Taille des points LAS
   float     m_VectorWidth;      // Epaisseur des lignes des donnees vectorielles
@@ -245,6 +246,7 @@ public:
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
   void SetTarget(const XPt3D& P) { m_OGLWidget.SetTarget(P); }
+  void SetListener(juce::ActionListener* listener) { m_OGLWidget.addActionListener(listener); }
 
 private:
   OGLWidget   m_OGLWidget;
