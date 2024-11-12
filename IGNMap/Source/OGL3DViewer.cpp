@@ -499,13 +499,13 @@ void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
 
 void OGLWidget::mouseDrag(const juce::MouseEvent& event)
 {
-  juce::Point<float> delta = event.position - m_LastPos;
   if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
-    m_Target.X += (cos(m_R.Z) * delta.getX() - sin(m_R.Z) * delta.getY());  // A revoir
-    m_Target.Y += (sin(m_R.Z) * delta.getX() + cos(m_R.Z) * delta.getY());
+    m_bNeedLasPoint = true;
+    m_bUpdateTarget = true;
     m_bNeedTarget = true;
   }
   else { // Changement de rotation de la vue 3D
+    juce::Point<float> delta = event.position - m_LastPos;
     m_R.Z += (delta.getX() * 0.01);
     m_R.X += ((delta.getY() * 0.01));
   }
