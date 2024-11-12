@@ -3266,7 +3266,7 @@ static const unsigned char temp_binary_data_16[] =
 "\"Translate\" = \"Traduire\"\r\n"
 "\"Preferences\" = \"Pr\xc3\xa9""f\xc3\xa9rences\"\r\n"
 "\"Application settings\" = \"Pr\xc3\xa9""f\xc3\xa9rences de l'application\"\r\n"
-"\"Move ; Shift : select ; Ctrl : zoom\" = \"D\xc3\xa9placement ; Shift : s\xc3\xa9lection ; Ctrl : zoom\"\r\n"
+"\"Move ; Shift : select ; Ctrl : zoom ; Alt : target\" = \"D\xc3\xa9placement ; Shift : s\xc3\xa9lection ; Ctrl : zoom ; Alt : cible\"\r\n"
 "\"Select one or several objects\" = \"S\xc3\xa9lection d'un ou plusieurs objets\"\r\n"
 "\"GSD of the view\" = \"R\xc3\xa9solution de la vue\"\r\n"
 "\"Search\" = \"Recherche\"\r\n"
@@ -3392,7 +3392,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 5142; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 5171; return Translation_fr_txt;
         default: break;
     }
 
