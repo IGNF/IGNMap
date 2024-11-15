@@ -388,10 +388,28 @@ LasLayersViewer::LasLayersViewer()
 	m_drwZRect.setInterceptsMouseClicks(true, true);
 	m_drwZRect.addMouseListener(this, true);
 	addAndMakeVisible(m_drwZRect);
-	if (LasShader::Mode() == LasShader::ShaderMode::Classification) {
+	if (LasShader::Mode() != LasShader::ShaderMode::Altitude) {
 		m_sldZRange.setVisible(false);
 		m_lblZRange.setVisible(false);
 		m_drwZRect.setVisible(false);
+	}
+
+	// Slider intensite
+	m_sldIntensity.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+	m_sldIntensity.setSliderStyle(juce::Slider::LinearHorizontal);
+	m_sldIntensity.setRange(1., 256., 1.);
+	m_sldIntensity.setValue(256. - LasShader::IntensityGain(), juce::dontSendNotification);
+	m_sldIntensity.setPopupDisplayEnabled(true, false, this);
+	m_sldIntensity.setSkewFactorFromMidPoint(240);
+	m_sldIntensity.addListener(this);
+	m_sldIntensity.setChangeNotificationOnlyOnRelease(true);
+	addAndMakeVisible(m_sldIntensity);
+	m_lblIntensity.setText(juce::translate("Gain :"), juce::dontSendNotification);
+	addAndMakeVisible(m_lblIntensity);
+	m_lblIntensity.attachToComponent(&m_sldIntensity, true);
+	if (LasShader::Mode() != LasShader::ShaderMode::Intensity) {
+		m_sldIntensity.setVisible(false);
+		m_lblIntensity.setVisible(false);
 	}
 
 	// Couleurs des classifications
@@ -499,6 +517,8 @@ void LasLayersViewer::resized()
 	m_TableClassif.setSize(b.getWidth(), 200);
 	m_sldZRange.setTopLeftPosition(100, b.getHeight() / 2 + 90);
 	m_sldZRange.setSize(b.getWidth() - 100, 24);
+	m_sldIntensity.setTopLeftPosition(100, b.getHeight() / 2 + 90);
+	m_sldIntensity.setSize(b.getWidth() - 100, 24);
 	// Palette coloree des altitudes
 	UpdateAltiColors();
 	m_drwZRect.setRectangle(juce::Parallelogram<float>(juce::Rectangle<float>(0.f, b.getHeight() / 2 + 120.f, (float)b.getWidth(), 24.f)));
@@ -603,13 +623,20 @@ void LasLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		LasShader shader;
 		shader.Mode((LasShader::ShaderMode)(m_Mode.getSelectedId()));
 		m_ModelLas.sendActionMessage("UpdateLasOptions");
-		bool ZRangeVisible = true;
+		bool ZRangeVisible = false, IntensityVisible = false, ClassifVisible = false;
 		if (LasShader::Mode() == LasShader::ShaderMode::Classification) 
-			ZRangeVisible = false;
-		m_TableClassif.setVisible(!ZRangeVisible);
+			ClassifVisible = true;
+		if (LasShader::Mode() == LasShader::ShaderMode::Altitude)
+			ZRangeVisible = true;
+		if (LasShader::Mode() == LasShader::ShaderMode::Intensity)
+			IntensityVisible = true;
+		m_TableClassif.setVisible(ClassifVisible);
 		m_sldZRange.setVisible(ZRangeVisible);
 		m_lblZRange.setVisible(ZRangeVisible);
-		m_drwZRect.setVisible(ZRangeVisible);
+		m_sldIntensity.setVisible(IntensityVisible);
+		m_lblIntensity.setVisible(IntensityVisible);
+
+		m_drwZRect.setVisible(ZRangeVisible || IntensityVisible);
 	}
 }
 
@@ -652,8 +679,11 @@ void LasLayersViewer::sliderValueChanged(juce::Slider* slider)
 	if (slider == &m_sldZRange) {
 		LasShader::Zmin(slider->getMinValue());
 		LasShader::Zmax(slider->getMaxValue());
-		m_drwZRect.repaint();
-		UpdateAltiColors();
+		//m_drwZRect.repaint();
+		//UpdateAltiColors();
+	}
+	if (slider == &m_sldIntensity) {
+		LasShader::IntensityGain(256 - slider->getValue());
 	}
 
 	m_ModelLas.sendActionMessage("UpdateLasOptions");

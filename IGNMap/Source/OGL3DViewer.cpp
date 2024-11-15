@@ -789,8 +789,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
 
     switch (shader.Mode()) {
     case LasShader::ShaderMode::Altitude:
-      col = shader.AltiColor((uint8_t)((Z - Z0) * 255 / deltaZ));
-      *data_ptr = (uint32_t)col.getARGB();
+      *data_ptr = shader.AltiColorARGB((uint8_t)((Z - Z0) * 255 / deltaZ));
       break;
     case LasShader::ShaderMode::RGB:
       data[0] = (uint8_t)(point->rgb[2] / 256);
@@ -810,7 +809,8 @@ void OGLWidget::DrawLas(GeoLAS* las)
       break;
     case LasShader::ShaderMode::Intensity:
       //data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
-      memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+      //memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+      *data_ptr = shader.IntensityColorARGB(point->intensity);
       break;
     case LasShader::ShaderMode::Angle:
       if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006

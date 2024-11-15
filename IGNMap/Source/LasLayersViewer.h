@@ -112,6 +112,8 @@ private:
 	juce::Label					m_lblZRange;
 	juce::DrawableRectangle m_drwZRect;
 	juce::TableListBox	m_TableClassif;
+	juce::Slider				m_sldIntensity;
+	juce::Label					m_lblIntensity;
 	ClassifModel				m_ModelClassif;
 	int									m_nLasGradient;
 		

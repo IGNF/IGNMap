@@ -911,8 +911,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 			continue;
 		switch (LasShader::Mode()) {
 		case LasShader::ShaderMode::Altitude:
-			col = LasShader::AltiColor((uint8_t)((Z - Z0) * deltaZ));
-			*data_ptr = (uint32_t)col.getARGB();
+			*data_ptr = LasShader::AltiColorARGB((uint8_t)((Z - Z0) * deltaZ));
 			break;
 		case LasShader::ShaderMode::RGB:
 			data[0] = (uint8_t)(point->rgb[2] / 256);
@@ -932,7 +931,8 @@ bool MapThread::DrawLas(GeoLAS* las)
 			break;
 		case LasShader::ShaderMode::Intensity:
 			//data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
-			memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+			//memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+			*data_ptr = LasShader::IntensityColorARGB(point->intensity);
 			break;
 		case LasShader::ShaderMode::Angle:
 			if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006

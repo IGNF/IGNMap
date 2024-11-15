@@ -715,7 +715,7 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS"
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;JUCE_WEB_BROWSER=0"
                 userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
                 smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>

@@ -16,6 +16,7 @@ double LasShader::m_Opacity = 100.0;
 double LasShader::m_MaxGsd = 5.0;
 double LasShader::m_Zmin = -10000.;
 double LasShader::m_Zmax = 10000.;
+double LasShader::m_IntensityGain = 6.;
 LasShader::ShaderMode LasShader::m_Mode = LasShader::ShaderMode::Altitude; // Mode d'affichage
 juce::Colour LasShader::m_ClassifColors[256];	// Classification ASPRS
 juce::Colour LasShader::m_AltiColors[256];
@@ -126,4 +127,21 @@ juce::String LasShader::ClassificationName(uint8_t classif)
   case 22: return "Temporal Exclusion";
   }
   return "";
+}
+
+//==============================================================================
+// Couleur en fonction de l'intensite
+//==============================================================================
+juce::Colour LasShader::IntensityColor(uint16_t intensity)
+{
+  double val = intensity / m_IntensityGain;
+  if (val > 255.) val = 255.;
+  return m_AltiColors[(uint8_t)val];
+}
+
+uint32_t LasShader::IntensityColorARGB(uint16_t intensity)
+{
+  double val = intensity / m_IntensityGain;
+  if (val > 255.) val = 255.;
+  return m_AltiColors[(uint8_t)val].getARGB();
 }
