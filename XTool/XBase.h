@@ -82,6 +82,34 @@ inline double XRound(double x, double prec)
 // Fonction XAbs : valeur absolue
 template<class T> inline const T& XAbs(const T& x) { return (x >=0)? x : -x;}
 
+// Calcul de la moyenne / ecart-type / variance avec l'algorithme de B. P. Welford / Donald Knuth
+class InlineStat {
+private:
+	int m_nCount;
+	double m_dOldM, m_dNewM, m_dOldS, m_dNewS;
+public:
+	InlineStat() : m_nCount(0) { m_dOldM = m_dNewM = m_dOldS = m_dNewS = 0.; }
+	void Clear() { m_nCount = 0;}
+	int NumValues() const { return m_nCount;}
+	double Mean() const { return (m_nCount > 0) ? m_dNewM : 0.0; }
+	double Variance() const { return ((m_nCount > 1) ? m_dNewS / (m_nCount - 1) : 0.0);}
+	double StandardDeviation() const { return sqrt(Variance()); }
+
+	void AddValue(double x) // See Knuth TAOCP vol 2, 3rd edition, page 232
+	{
+		m_nCount++;	
+		if (m_nCount == 1) {
+			m_dOldM = m_dNewM = x;
+			m_dOldS = 0.0;
+		} else {
+			m_dNewM = m_dOldM + (x - m_dOldM) / m_nCount;
+			m_dNewS = m_dOldS + (x - m_dOldM) * (x - m_dNewM);
+			m_dOldM = m_dNewM;
+			m_dOldS = m_dNewS;
+		}
+	}
+};
+
 // Macro pour les assertions
 #ifndef _DEBUG
 #define XAssert(expr)	(void(0))

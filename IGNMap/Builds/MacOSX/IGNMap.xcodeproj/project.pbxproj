@@ -243,6 +243,7 @@
 		C7A730BB78B5086DBA47DFB9 /* XAlgoGeod.cpp */ = {isa = PBXBuildFile; fileRef = CD113E1EE6434FA7021D5E7E; };
 		C89BCC6D91064279EDE0E67E /* include_juce_events.mm */ = {isa = PBXBuildFile; fileRef = C908E66E39D3F43FEC33A57C; };
 		CA0830CCBB98D406170F4535 /* enc_sse41.c */ = {isa = PBXBuildFile; fileRef = 2708D9F9290E9636E828B11B; };
+		CAC6B796D9A701FDA8798775 /* TmsLayer.cpp */ = {isa = PBXBuildFile; fileRef = 417739CB53AEE9ACF694097F; };
 		CB5189E8ABFCB23326B7D2B5 /* upsampling_neon.c */ = {isa = PBXBuildFile; fileRef = 97EEAE14E17946B9F81CEB03; };
 		CBFB683E84A7DDBC06792A39 /* quant_dec.c */ = {isa = PBXBuildFile; fileRef = 1F13BD8498C8F8963F8875D2; };
 		CC177BED51A847199EAD3A70 /* quant_levels_dec_utils.c */ = {isa = PBXBuildFile; fileRef = 459FF57649D2FBA7DAEB4B77; };
@@ -427,6 +428,7 @@
 		3EB34F19F140328045371C4F /* XGeodGrid.h */ /* XGeodGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XGeodGrid.h; path = ../../../XToolGeod/XGeodGrid.h; sourceTree = SOURCE_ROOT; };
 		405DC0EA72ACBD8C2551C4A2 /* XPolygone2D.h */ /* XPolygone2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XPolygone2D.h; path = ../../../XTool/XPolygone2D.h; sourceTree = SOURCE_ROOT; };
 		41608A7E92528DA22320AF04 /* MainComponent.h */ /* MainComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainComponent.h; path = ../../Source/MainComponent.h; sourceTree = SOURCE_ROOT; };
+		417739CB53AEE9ACF694097F /* TmsLayer.cpp */ /* TmsLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TmsLayer.cpp; path = ../../Source/TmsLayer.cpp; sourceTree = SOURCE_ROOT; };
 		41D791C80F58CB3D381FA64A /* random_utils.h */ /* random_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = random_utils.h; path = "../../../libwebp-1.3.2/src/utils/random_utils.h"; sourceTree = SOURCE_ROOT; };
 		430146CA3F4E01AF9B80E0F0 /* alpha_processing_sse2.c */ /* alpha_processing_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = alpha_processing_sse2.c; path = "../../../libwebp-1.3.2/src/dsp/alpha_processing_sse2.c"; sourceTree = SOURCE_ROOT; };
 		43545E6B0569D48ADE56381B /* XZlibCodec.cpp */ /* XZlibCodec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XZlibCodec.cpp; path = ../../../XToolImage/XZlibCodec.cpp; sourceTree = SOURCE_ROOT; };
@@ -796,6 +798,7 @@
 		DFA4DD0886866DE311A87BFF /* juce_core */ /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = ../../../JUCE/modules/juce_core; sourceTree = SOURCE_ROOT; };
 		DFE3EFCDE2AC8518EDF52571 /* crc32.h */ /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = "../../../zlib-1.3.1/crc32.h"; sourceTree = SOURCE_ROOT; };
 		E0704DF4008F394C74076CD7 /* BinaryData.cpp */ /* BinaryData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BinaryData.cpp; path = ../../JuceLibraryCode/BinaryData.cpp; sourceTree = SOURCE_ROOT; };
+		E074E99A64F1A3B33BF70A32 /* TmsLayer.h */ /* TmsLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TmsLayer.h; path = ../../Source/TmsLayer.h; sourceTree = SOURCE_ROOT; };
 		E1423FB9E8ACC523D1C5FB3D /* XTiffTileImage.h */ /* XTiffTileImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XTiffTileImage.h; path = ../../../XToolImage/XTiffTileImage.h; sourceTree = SOURCE_ROOT; };
 		E143042D6B012B9BB7AAF450 /* mct.h */ /* mct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mct.h; path = ../../../openjpeg/src/lib/openjp2/mct.h; sourceTree = SOURCE_ROOT; };
 		E2E1B29ECF839BE9A671EB32 /* filters_mips_dsp_r2.c */ /* filters_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = filters_mips_dsp_r2.c; path = "../../../libwebp-1.3.2/src/dsp/filters_mips_dsp_r2.c"; sourceTree = SOURCE_ROOT; };
@@ -1073,6 +1076,8 @@
 				6A6ABCBE377E763574C3AC9E,
 				2C6ED58B0D32FF287DF00C27,
 				8CD2ADAF8B3C1550F00AA8D4,
+				417739CB53AEE9ACF694097F,
+				E074E99A64F1A3B33BF70A32,
 				9489D5D89F63AB9F7B5A36C8,
 				1011C7FFFDE4399369FBA1D0,
 				8C0985FA0759F7A278D6A6DD,
@@ -1945,6 +1950,7 @@
 				2A571F625C7ED3865E3BDAAB,
 				94B40103E2F63409693D1655,
 				F5FE92DDF65E01AEB1858B37,
+				CAC6B796D9A701FDA8798775,
 				1E6B50F866B94899C70AFCB9,
 				A267D2A10733B3E02028E1FA,
 				6553AD9E82112F136CC76A6D,
@@ -2156,7 +2162,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_DEBUG=1",
 					"DEBUG=1",
-					"JUCE_PROJUCER_VERSION=0x80003",
+					"JUCE_PROJUCER_VERSION=0x80004",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",
@@ -2219,7 +2225,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_NDEBUG=1",
 					"NDEBUG=1",
-					"JUCE_PROJUCER_VERSION=0x80003",
+					"JUCE_PROJUCER_VERSION=0x80004",
 					"JUCE_MODULE_AVAILABLE_juce_core=1",
 					"JUCE_MODULE_AVAILABLE_juce_data_structures=1",
 					"JUCE_MODULE_AVAILABLE_juce_events=1",

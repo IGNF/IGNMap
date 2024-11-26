@@ -225,6 +225,14 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 		return XErrorError(error, "TLasFile::ComputeDtm", XError::eAllocation);
 	}
 	::memset(count, 0, W * H * sizeof(uint16_t));
+  InlineStat* Stat = nullptr;
+  if (algo == StdDev) {
+    Stat = new InlineStat[W * H];
+    if (Stat == nullptr) {
+      delete[] area; delete[] count;
+      return XErrorError(error, "TLasFile::ComputeDtm", XError::eAllocation);
+    }
+  }
 
 	double X = 0., Y = 0., Z = 0.;
 	int u = 0, v = 0;
@@ -249,6 +257,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 		if (count[v * W + u] == 0) {	// Premier Z dans la cellule
 			area[v * W + u] = (float)Z;
 			count[v * W + u] += 1;
+      if (Stat != nullptr) Stat[v * W + u].AddValue(Z);
 			continue;
 		}
 
@@ -259,6 +268,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 				break;
 			case ZMaximum: if (area[v * W + u] < Z) area[v * W + u] = (float)Z;
 				break;
+      case StdDev: Stat[v * W + u].AddValue(Z);
+        break;
 			}
 		count[v * W + u] += 1;
 	}
@@ -267,6 +278,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 		if (count[i] > 0) {
 			if (algo == ZAverage)
 				area[i] = area[i] / count[i];
+      if (algo == StdDev)
+        area[i] = (float)Stat[i].StandardDeviation();
 		}
 		else
 			area[i] = -9999;
@@ -278,6 +291,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 
 	delete[] area;
 	delete[] count;
+  if (Stat != nullptr) delete[] Stat;
   CloseIfNeeded();
 
 	return true;

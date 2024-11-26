@@ -54,7 +54,7 @@ public:
     menuZoomTotal, menuScale1k, menuScale10k, menuScale25k, menuScale100k, menuScale250k,
     menuShowSidePanel, menuShow3DViewer,
     menuShowVectorLayers, menuShowImageLayers, menuShowDtmLayers, menuShowLasLayers, menuShowSelection, menuShowImageOptions,
-    menuShowAnnotations, menuAddOSM, menuAddWmtsServer,
+    menuShowAnnotations, menuAddOSM, menuAddWmtsServer, menuAddTmsServer,
     menuAddGeoportailOrthophoto, menuAddGeoportailOrthophotoIRC, menuAddGeoportailOrthohisto, menuAddGeoportailSatellite,
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
@@ -142,6 +142,7 @@ private:
   bool AddWmtsServer();
   bool AddWmtsServer(std::string server, std::string layer, std::string TMS, std::string format,
                      uint32_t tileW = 256, uint32_t tileH = 256, uint32_t max_zoom = 19, std::string apikey = "");
+  bool AddTmsServer();
 
   void Test();
 

@@ -487,6 +487,8 @@
       <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>
       <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
             file="Source/ThreadClassProcessor.h"/>
+      <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>
+      <FILE id="s4tT9M" name="TmsLayer.h" compile="0" resource="0" file="Source/TmsLayer.h"/>
       <FILE id="sAzanD" name="Translation_fr.txt" compile="0" resource="1"
             file="Source/Translation_fr.txt"/>
       <FILE id="lv0bzz" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>

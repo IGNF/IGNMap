@@ -13,6 +13,7 @@
 #include "AppUtil.h"
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
+#include "TmsLayer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
@@ -203,6 +204,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailSCAN50Histo);
 		WmtsSubMenu.addSubMenu(juce::translate("Geoplateforme (France)"), GeoportailSubMenu);
 		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddWmtsServer);
+		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddTmsServer);
 		ImportSubMenu.addSubMenu(juce::translate("Import WMTS / TMS server"), WmtsSubMenu);
 
 		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
@@ -291,7 +293,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailOrthohisto, CommandIDs::menuAddGeoportailSatellite, CommandIDs::menuAddGeoportailCartes,
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
 		CommandIDs::menuAddGeoportailSCAN50Histo,
-		CommandIDs::menuAddWmtsServer, CommandIDs::menuSynchronize,
+		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuGoogle, CommandIDs::menuBing, CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
@@ -375,6 +377,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAddWmtsServer:
 		result.setInfo(juce::translate("WMTS Server"), juce::translate("WMTS Server"), "Menu", 0);
+		break;
+	case CommandIDs::menuAddTmsServer:
+		result.setInfo(juce::translate("TMS Server"), juce::translate("TMS Server"), "Menu", 0);
 		break;
 	case CommandIDs::menuExportImage:
 		result.setInfo(juce::translate("Export image"), juce::translate("Export image"), "Menu", 0);
@@ -547,6 +552,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuAddWmtsServer:
 		AddWmtsServer();
+		break;
+	case CommandIDs::menuAddTmsServer:
+		AddTmsServer();
 		break;
 	case CommandIDs::menuExportImage:
 		ExportImage();
@@ -1267,6 +1275,38 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 }
 
 //==============================================================================
+// Ajout d'un serveur TMS
+//==============================================================================
+bool MainComponent::AddTmsServer()
+{
+	auto alert = new juce::AlertWindow(juce::translate("Add a TMS server"), juce::translate("URL of the TMS server"), juce::AlertWindow::QuestionIcon);
+	alert->addButton(juce::translate("Cancel"), 0);
+	alert->addButton(juce::translate("OK"), 1);
+	alert->addTextEditor("Server", "https://data.geopf.fr/tms/1.0.0/LANDUSE.AGRICULTURE2023", juce::translate("Server : "));
+
+	std::function< void(int)> myFunc = [=](int result) {
+		if (result) {
+			TmsLayer* tms = new TmsLayer;
+			if (!tms->ReadServer(alert->getTextEditorContents("Server"))) {
+				delete tms;
+				return;
+			}
+			if (!GeoTools::RegisterObject(&m_GeoBase, tms, "TMS", "TMS", tms->Name())) {
+				delete tms;
+				return;
+			}
+			m_MapView.get()->SetFrame(m_GeoBase.Frame());
+			m_MapView.get()->RenderMap(false, true, false, false, false, true);
+			m_ImageViewer.get()->SetBase(&m_GeoBase);
+		}
+	};
+
+	alert->enterModalState(false, juce::ModalCallbackFunction::create(myFunc), true);
+
+	return true;
+}
+
+//==============================================================================
 // Export sous forme d'image
 //==============================================================================
 bool MainComponent::ExportImage()
@@ -1403,6 +1443,21 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	TmsLayer* tms = new TmsLayer;
+	if (!tms->ReadServer("https://data.geopf.fr/tms/1.0.0/PCRS.LAMB93")) {
+		delete tms;
+		return;
+	}
+	
+	if (!GeoTools::RegisterObject(&m_GeoBase, tms, "TMS", "TMS", tms->Name())) {
+		delete tms;
+		return;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
+
 	/*
 	XTiffWriter writer;
 	writer.SetGeoTiff(500000., 6500000., 1.);

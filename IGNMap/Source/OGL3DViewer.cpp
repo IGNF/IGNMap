@@ -816,12 +816,12 @@ void OGLWidget::DrawLas(GeoLAS* las)
       if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
         data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
         data[1] = 0;
-        data[0] = 255 - data[0];
+        data[0] = 0; // 255 - data[2];
       }
       else {
         data[2] = 0;
         data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
-        data[0] = 255 - data[1];
+        data[0] = 0; // 255 - data[1];
       }
       break;
     }
