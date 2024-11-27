@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "TmsLayer.h"
-//#include <algorithm>
+#include <algorithm>
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 
@@ -83,7 +83,7 @@ bool TmsLayer::ReadServer(juce::String serverUrl)
 		set.m_strHRef = tileSet->getStringAttribute("href");
 		m_TileSet.push_back(set);
 	}
-	std::sort(m_TileSet.begin(), m_TileSet.end());
+	std::sort(m_TileSet.begin(), m_TileSet.end(), TileSet::predTileSet);
 	if (m_TileSet.size() < 1)
 		return false;
 
@@ -204,10 +204,14 @@ juce::Image& TmsLayer::GetAreaImage(const XFrame& F, double gsd)
 	uint32_t hout = (uint32_t)(F.Height() / gsd);
 
 	// Recherche du niveau de zoom adapte
-	int index = m_TileSet.size() - 1;
+	int index = (int)m_TileSet.size() - 1;
 	for (int i = 0; i < m_TileSet.size(); i++) {
 		if (gsd >= m_TileSet[i].m_dGsd) {
 			index = i;
+			if (i > 0) {
+				if (gsd > (m_TileSet[i].m_dGsd + m_TileSet[i-1].m_dGsd)*0.5)
+					index = i - 1;
+			}
 			break;
 		}
 	}

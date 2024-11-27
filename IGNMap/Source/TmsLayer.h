@@ -28,6 +28,7 @@ private:
 		uint32_t m_nMaxCol = 0;
 		double m_dGsd = 0.;
 		bool operator<(const TileSet& a) { return (this->m_dGsd > a.m_dGsd); }
+		static bool predTileSet(const TileSet& a, const TileSet& b) {return (b.m_dGsd < a.m_dGsd);}
 	};
 
 protected:
