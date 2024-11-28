@@ -1060,6 +1060,9 @@
     <ClCompile Include="..\..\..\XToolAlgo\XTime.cpp">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\XToolAlgo\XWmts.cpp">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\XToolGeod\XAlgoGeod.cpp">
       <Filter>IGNMap\XToolGeod</Filter>
     </ClCompile>
@@ -3586,6 +3589,9 @@
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolAlgo\XTime.h">
+      <Filter>IGNMap\XToolAlgo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\XToolAlgo\XWmts.h">
       <Filter>IGNMap\XToolAlgo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\XToolGeod\XAlgoGeod.h">

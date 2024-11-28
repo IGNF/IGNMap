@@ -115,6 +115,7 @@
 		5A6E8C9BC71D00DDA47678BD /* include_juce_graphics_Harfbuzz.cpp */ = {isa = PBXBuildFile; fileRef = 04998B5C04EC2FC75F4C976A; };
 		5AABB9B594D7066E68C66B10 /* alpha_processing_sse2.c */ = {isa = PBXBuildFile; fileRef = 430146CA3F4E01AF9B80E0F0; };
 		5B718334E60AE2D6C1736C07 /* LasShader.cpp */ = {isa = PBXBuildFile; fileRef = 67170055D9E04D92263D9C7D; };
+		5C12619558367FBD47B43B5D /* XWmts.cpp */ = {isa = PBXBuildFile; fileRef = A3B58AAC15BBFA7740358BED; };
 		5CD2ED49D74D4BD43EE37AB0 /* jidctflt.c */ = {isa = PBXBuildFile; fileRef = 057DEF49C88B7A5B53C2DFFA; };
 		5D24871A00575ECC1F7C3C97 /* XDxf.cpp */ = {isa = PBXBuildFile; fileRef = DBACDDCCB4754E666BF16616; };
 		5D77E15DD095A8EE46BE680B /* cost_mips32.c */ = {isa = PBXBuildFile; fileRef = 4365D9EBCBAAAC6A5E6C258C; };
@@ -633,6 +634,7 @@
 		9A1DF9C3020E6F6128213258 /* XTiffStripImage.h */ /* XTiffStripImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XTiffStripImage.h; path = ../../../XToolImage/XTiffStripImage.h; sourceTree = SOURCE_ROOT; };
 		9AD025D473AF3E11689EE1C7 /* inftrees.h */ /* inftrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = inftrees.h; path = "../../../zlib-1.3.1/inftrees.h"; sourceTree = SOURCE_ROOT; };
 		9B4A19D0E40B8397302E002C /* alpha_processing_mips_dsp_r2.c */ /* alpha_processing_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = alpha_processing_mips_dsp_r2.c; path = "../../../libwebp-1.3.2/src/dsp/alpha_processing_mips_dsp_r2.c"; sourceTree = SOURCE_ROOT; };
+		9DFA0309F13D936B50D9F5FE /* XWmts.h */ /* XWmts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XWmts.h; path = ../../../XToolAlgo/XWmts.h; sourceTree = SOURCE_ROOT; };
 		9E6166414CE68BCDDB207391 /* neon.h */ /* neon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = neon.h; path = "../../../libwebp-1.3.2/src/dsp/neon.h"; sourceTree = SOURCE_ROOT; };
 		A026404AC9FD85876E69AF60 /* enc.c */ /* enc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = enc.c; path = "../../../libwebp-1.3.2/src/dsp/enc.c"; sourceTree = SOURCE_ROOT; };
 		A0DC0015B92673546E34D5BB /* ImageOptionsViewer.h */ /* ImageOptionsViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageOptionsViewer.h; path = ../../Source/ImageOptionsViewer.h; sourceTree = SOURCE_ROOT; };
@@ -641,6 +643,7 @@
 		A1DF99F0C5878FB31DA67872 /* XOpenJp2Image.cpp */ /* XOpenJp2Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XOpenJp2Image.cpp; path = ../../../XToolImage/XOpenJp2Image.cpp; sourceTree = SOURCE_ROOT; };
 		A268B579E2831B1AF534BD5B /* bytestreamin_file.hpp */ /* bytestreamin_file.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bytestreamin_file.hpp; path = ../../../LASzip/src/bytestreamin_file.hpp; sourceTree = SOURCE_ROOT; };
 		A26C05D745DC9B3F095CD9D4 /* dec_sse2.c */ /* dec_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dec_sse2.c; path = "../../../libwebp-1.3.2/src/dsp/dec_sse2.c"; sourceTree = SOURCE_ROOT; };
+		A3B58AAC15BBFA7740358BED /* XWmts.cpp */ /* XWmts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XWmts.cpp; path = ../../../XToolAlgo/XWmts.cpp; sourceTree = SOURCE_ROOT; };
 		A43D30290BDE1799D1C2A65B /* idec_dec.c */ /* idec_dec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = idec_dec.c; path = "../../../libwebp-1.3.2/src/dec/idec_dec.c"; sourceTree = SOURCE_ROOT; };
 		A4737785DDD6B1648D036636 /* XGeoRepres.cpp */ /* XGeoRepres.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XGeoRepres.cpp; path = ../../../XTool/XGeoRepres.cpp; sourceTree = SOURCE_ROOT; };
 		A4DDED118A470C7F4DEE4080 /* opj_malloc.h */ /* opj_malloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = opj_malloc.h; path = ../../../openjpeg/src/lib/openjp2/opj_malloc.h; sourceTree = SOURCE_ROOT; };
@@ -1243,6 +1246,8 @@
 				A65EFBC07E4BCF3CF64ECA0E,
 				4EC4F4FB6CFF5ED7539038D5,
 				86BADE9168C6B02F94846627,
+				A3B58AAC15BBFA7740358BED,
+				9DFA0309F13D936B50D9F5FE,
 			);
 			name = XToolAlgo;
 			sourceTree = "<group>";
@@ -1978,6 +1983,7 @@
 				2D152293849DDF803454F11D,
 				7955EB0952E77017B995A166,
 				E2ADB6450A3171FCE27A9620,
+				5C12619558367FBD47B43B5D,
 				C7A730BB78B5086DBA47DFB9,
 				8524090A36F88A8F87AD38DE,
 				3727360636CC5ACAD7B161B7,

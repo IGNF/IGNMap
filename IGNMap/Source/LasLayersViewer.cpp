@@ -741,7 +741,7 @@ void LasLayersViewer::SetAltiColors()
 		double nb_step = 256. / nb_grad;
 		int cmpt = 0;
 		for (int step = 0; step < T.size() - 1; step++) {
-			juce::ColourGradient gradient(T[step], 0., 0., T[step+1], 256. / nb_grad, 256. / nb_grad, false);
+			juce::ColourGradient gradient(T[step], 0.f, 0.f, T[step+1], (float)(256. / nb_grad), (float)(256. / nb_grad), false);
 			for (int i = 0; i < nb_step; i++) {
 				shader.AltiColor(gradient.getColourAtPosition(i / nb_step), (uint8_t)XMin(cmpt, 255));
 				cmpt++;

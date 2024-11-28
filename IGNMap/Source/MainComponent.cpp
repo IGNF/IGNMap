@@ -20,6 +20,7 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
+#include "../../XToolAlgo/XWmts.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -1443,20 +1444,16 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	TmsLayer* tms = new TmsLayer;
-	if (!tms->ReadServer("https://data.geopf.fr/tms/1.0.0/PCRS.LAMB93")) {
-		delete tms;
-		return;
-	}
-	
-	if (!GeoTools::RegisterObject(&m_GeoBase, tms, "TMS", "TMS", tms->Name())) {
-		delete tms;
-		return;
-	}
+	juce::URL url("https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities");
+	juce::String content = url.readEntireTextStream();
+	std::istringstream stream(content.toStdString());
+	XParserXML parser;
+	parser.Parse(&stream);
+	XWmtsCapabilities cap;
+	cap.XmlRead(&parser);
 
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	XWmtsLayerTMS layer;
+	cap.SetLayerTMS(&layer, "PCRS.LAMB93", "2154_5cm_6_22");
 
 	/*
 	XTiffWriter writer;

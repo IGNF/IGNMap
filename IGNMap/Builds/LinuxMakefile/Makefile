@@ -298,6 +298,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XInternetMap_ca70d833.o \
   $(JUCE_OBJDIR)/XLasFile_52021412.o \
   $(JUCE_OBJDIR)/XTime_636b2fbf.o \
+  $(JUCE_OBJDIR)/XWmts_7b5ed8c7.o \
   $(JUCE_OBJDIR)/XAlgoGeod_b79ba2f8.o \
   $(JUCE_OBJDIR)/XDomGeod_f9f0910d.o \
   $(JUCE_OBJDIR)/XGeodGrid_bc53526b.o \
@@ -1506,6 +1507,11 @@ $(JUCE_OBJDIR)/XLasFile_52021412.o: ../../../XToolAlgo/XLasFile.cpp
 $(JUCE_OBJDIR)/XTime_636b2fbf.o: ../../../XToolAlgo/XTime.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XTime.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XWmts_7b5ed8c7.o: ../../../XToolAlgo/XWmts.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XWmts.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XAlgoGeod_b79ba2f8.o: ../../../XToolGeod/XAlgoGeod.cpp
