@@ -44,7 +44,7 @@ public:
 
   static bool predTileMatrix(const XTileMatrix& A, const XTileMatrix& B)
   {
-    return (A.GSD() < B.GSD());
+    return (A.GSD() > B.GSD());
   }
 };
 
@@ -131,8 +131,8 @@ protected:
   std::string   m_strAbstract;
   std::string   m_strId;
   std::string   m_strFormat;
-  std::vector<XTileMatrix> m_T;
-  std::vector<XTileMatrixLimits> m_L;
+  XTileMatrixSet m_TMS;
+  std::vector<XTileMatrixLimits> m_Limits;
 
 public:
   

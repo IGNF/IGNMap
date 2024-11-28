@@ -16,6 +16,8 @@
 #include "GeoBase.h"
 #include "../../XTool/XParserXML.h"
 #include "../../XTool/XFrame.h"
+#include "../../XToolAlgo/XWmts.h"
+#include "../../XToolGeod/XGeoProjection.h"
 
 // Layer WMTS
 class WmtsLayer : public GeoInternetImage {
@@ -41,5 +43,24 @@ public:
   inline virtual double Resolution() const { return 6378137. * 2 * XPI / pow(2, (m_nMaxZoom + 8)); } // resolution max a l'Equateur
 
   bool LoadFrame(const XFrame& F, int zoomlevel);
+  virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
+};
+
+// Layer WMTS + Pyramide associee
+class WmtsLayerTMS : public GeoInternetImage, public XWmtsLayerTMS {
+protected:
+  juce::String m_strServer;
+  juce::String m_strApiKey;
+  XGeoProjection::XProjCode m_ProjCode;
+
+  juce::String LoadTile(uint32_t x, uint32_t y, std::string idLevel);
+
+public:
+  WmtsLayerTMS(juce::String server) { m_strServer = server; m_ProjCode = XGeoProjection::Unknown; }
+
+  virtual std::string Name() { return m_strId; }
+
+  bool FindProjection();
+  bool LoadFrame(const XFrame& F, int numMatrix);
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
 };

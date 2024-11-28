@@ -20,7 +20,6 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
-#include "../../XToolAlgo/XWmts.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -1452,8 +1451,18 @@ void MainComponent::Test()
 	XWmtsCapabilities cap;
 	cap.XmlRead(&parser);
 
-	XWmtsLayerTMS layer;
-	cap.SetLayerTMS(&layer, "PCRS.LAMB93", "2154_5cm_6_22");
+	WmtsLayerTMS* layer = new WmtsLayerTMS("https://data.geopf.fr/wmts");
+	if (cap.SetLayerTMS(layer, "PCRS.LAMB93", "2154_5cm_6_22")) {
+		if (layer->FindProjection()) {
+			if (GeoTools::RegisterObject(&m_GeoBase, layer, "WMTS", "WMTS", layer->Name())) {
+				m_MapView.get()->SetFrame(m_GeoBase.Frame());
+				m_MapView.get()->RenderMap(false, true, false, false, false, true);
+				m_ImageViewer.get()->SetBase(&m_GeoBase);
+				return;
+			}
+		}
+	}
+	delete layer;
 
 	/*
 	XTiffWriter writer;

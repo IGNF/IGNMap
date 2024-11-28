@@ -244,18 +244,17 @@ bool XWmtsCapabilities::SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, s
   layer->m_strAbstract = m_Layer[indexLayer].m_strAbstract;
   layer->m_strTitle = m_Layer[indexLayer].m_strTitle;
 
-  layer->m_T.clear();
-  layer->m_T = m_MatrixSet[indexTms].TileMatrix();
+  layer->m_TMS = m_MatrixSet[indexTms];
 
   // Construction des limites
-  layer->m_L.clear();
-  for (int i = 0; i < layer->m_T.size(); i++) {
+  layer->m_Limits.clear();
+  for (int i = 0; i < layer->m_TMS.NbTile(); i++) {
     XTileMatrixLimits L;
-    layer->m_L.push_back(L);
+    layer->m_Limits.push_back(L);
     for (int j = 0; j < m_Layer[indexLayer].m_SetLink[indexLink].NbLimits(); j++) {
       XTileMatrixLimits limits = m_Layer[indexLayer].m_SetLink[indexLink].Limits(j);
-      if (limits.Id() == layer->m_T[i].Id())
-        layer->m_L[i] = limits;
+      if (limits.Id() == layer->m_TMS.Tile(i).Id())
+        layer->m_Limits[i] = limits;
     }
   }
 
