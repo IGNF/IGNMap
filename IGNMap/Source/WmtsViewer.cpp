@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------------
 
 #include "WmtsViewer.h"
+#include "WmtsLayer.h"
+#include "GeoBase.h"
 
 WmtsViewerMgr gWmtsViewerMgr;	// Le manager de toutes les fenetres ClassViewer
 
@@ -63,15 +65,30 @@ void WmtsViewerModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 }
 
 //==============================================================================
-// ClassViewer : constructeur
+// Double-clic : chargement du layer
 //==============================================================================
-WmtsViewer::WmtsViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons,
-												juce::ActionListener* listener)
-	: juce::DocumentWindow(name, backgroundColour, requiredButtons)
+void WmtsViewerModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const juce::MouseEvent&)
 {
+	juce::String message = "LoadLayer" + juce::String(rowNumber);
+	sendActionMessage(message);
+}
+
+//==============================================================================
+// WmtsViewerComponent : constructeur
+//==============================================================================
+WmtsViewerComponent::WmtsViewerComponent()
+{
+	m_Base = nullptr;
+	setWantsKeyboardFocus(true);
+
+	addAndMakeVisible(m_lblUrl);
+	m_lblUrl.setText(juce::translate("Server URL :"), juce::dontSendNotification);
+	addAndMakeVisible(m_txtUrl);
+	m_txtUrl.setText("https://data.geopf.fr/wmts", juce::dontSendNotification);
+	m_txtUrl.addListener(this);
+
 	m_Model.addActionListener(this);
-	if (listener != nullptr)
-		addActionListener(listener);
+
 	// Ajout d'une bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_Table.setOutlineThickness(1);
@@ -84,10 +101,61 @@ WmtsViewer::WmtsViewer(const juce::String& name, juce::Colour backgroundColour, 
 	m_Table.setSize(600, 200);
 
 	m_Table.setModel(&m_Model);
+	addAndMakeVisible(m_Table);
+}
 
-	setContentOwned(&m_Table, true);
+//==============================================================================
+// Redimensionnement du composant
+//==============================================================================
+void WmtsViewerComponent::resized()
+{
+	auto b = getLocalBounds();
+	m_lblUrl.setBounds(5, 5, 90, 25);
+	m_txtUrl.setBounds(100, 5, XMax(300, b.getWidth() - 110), 25);
+	m_Table.setBounds(5, 40, XMax(300, b.getWidth() - 10), XMax(300, b.getHeight() - 45));
+}
+
+//==============================================================================
+// Chargement d'une URL
+//==============================================================================
+void WmtsViewerComponent:: textEditorReturnKeyPressed(juce::TextEditor& textEdit)
+{
+	juce::MouseCursor::showWaitCursor();
+	juce::String query = m_txtUrl.getText() + "?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities";
+	juce::URL url(query);
+	juce::String content = url.readEntireTextStream();
+	std::istringstream stream(content.toStdString());
+	XParserXML parser;
+	parser.Parse(&stream);
+	XWmtsCapabilities cap;
+	cap.XmlRead(&parser);
+
+	std::vector<XWmtsCapabilities::LayerInfo> L;
+	cap.GetLayerInfo(m_Model.m_Proxy);
+	m_Table.updateContent();
+	juce::MouseCursor::hideWaitCursor();
+}
+
+//==============================================================================
+// Gestion des messages
+//==============================================================================
+void WmtsViewerComponent::actionListenerCallback(const juce::String& message)
+{
+
+}
+
+//==============================================================================
+// WmtsViewer : constructeur
+//==============================================================================
+WmtsViewer::WmtsViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons,
+												juce::ActionListener* listener, XGeoBase* base)
+	: juce::DocumentWindow(name, backgroundColour, requiredButtons)
+{
+	m_Component.SetBase(base);
+	setContentOwned(&m_Component, true);
 	setResizable(true, true);
 	setAlwaysOnTop(false);
+	setSize(400, 400);
 }
 
 //==============================================================================
@@ -104,6 +172,7 @@ void WmtsViewer::closeButtonPressed()
 //==============================================================================
 void WmtsViewer::actionListenerCallback(const juce::String& message)
 {
+	/*
 	if (message == "UpdateSort") {
 		m_Table.repaint();
 		return;
@@ -114,16 +183,16 @@ void WmtsViewer::actionListenerCallback(const juce::String& message)
 	for (int i = 0; i < S.size(); i++) {
 		
 	}
-
+	*/
 	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
 //==============================================================================
 // Ajout d'un Viewer au gestionnaire de Viewer
 //==============================================================================
-void WmtsViewerMgr::AddWmtsViewer(const juce::String& name, juce::ActionListener* listener)
+void WmtsViewerMgr::AddWmtsViewer(const juce::String& name, juce::ActionListener* listener, XGeoBase* base)
 {
-	WmtsViewer* viewer = new WmtsViewer(name, juce::Colours::grey, juce::DocumentWindow::allButtons, listener);
+	WmtsViewer* viewer = new WmtsViewer(name, juce::Colours::grey, juce::DocumentWindow::allButtons, listener, base);
 	viewer->setVisible(true);
 	m_Viewer.push_back(viewer);
 }

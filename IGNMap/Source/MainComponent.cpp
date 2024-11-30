@@ -14,6 +14,7 @@
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
 #include "TmsLayer.h"
+#include "WmtsViewer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
@@ -1443,6 +1444,8 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	gWmtsViewerMgr.AddWmtsViewer("WMTS", this, &m_GeoBase);
+	/*
 	juce::URL url("https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities");
 	juce::String content = url.readEntireTextStream();
 	std::istringstream stream(content.toStdString());
@@ -1466,6 +1469,7 @@ void MainComponent::Test()
 		}
 	}
 	delete layer;
+	*/
 
 	/*
 	XTiffWriter writer;
