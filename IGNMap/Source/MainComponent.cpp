@@ -1451,6 +1451,9 @@ void MainComponent::Test()
 	XWmtsCapabilities cap;
 	cap.XmlRead(&parser);
 
+	std::vector<XWmtsCapabilities::LayerInfo> L;
+	cap.GetLayerInfo(L);
+
 	WmtsLayerTMS* layer = new WmtsLayerTMS("https://data.geopf.fr/wmts");
 	if (cap.SetLayerTMS(layer, "PCRS.LAMB93", "2154_5cm_6_22")) {
 		if (layer->FindProjection()) {

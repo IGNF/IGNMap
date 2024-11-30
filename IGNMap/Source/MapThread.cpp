@@ -726,6 +726,8 @@ bool MapThread::DrawFileRaster(GeoFileImage* image)
 bool MapThread::DrawInternetRaster(GeoInternetImage* image)
 {
 	juce::Image tmpImage = image->GetAreaImage(m_Frame, m_dGsd);
+	if (tmpImage.isNull())
+		return false;
 	float opacity = 1.0f;
 	XGeoRepres* repres = image->Repres();
 	if (repres != nullptr)

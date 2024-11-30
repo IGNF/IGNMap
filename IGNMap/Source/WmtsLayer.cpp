@@ -273,6 +273,7 @@ bool WmtsLayerTMS::LoadFrame(const XFrame& F, int numMatrix)
   juce::Graphics g(m_SourceImage);
   g.setOpacity(1.0f);
 
+  int nb_image_drawn = 0;
   for (uint32_t i = 0; i < nb_tiley; i++) {
     uint32_t y = firstY + i;
     if ((y < limits.MinTileRow()) || (y > limits.MaxTileRow()))
@@ -289,8 +290,11 @@ bool WmtsLayerTMS::LoadFrame(const XFrame& F, int numMatrix)
         continue;
       }
       g.drawImageAt(image, j * tm.TileW(), i * tm.TileH());
+      nb_image_drawn++;
     }
   }
+  if (nb_image_drawn < 1) // L'image est vide
+    return false;
 
   int xcrop = XRint((xmin - firstX) * tm.TileW());
   int ycrop = XRint((ymin - firstY) * tm.TileH());
@@ -326,10 +330,12 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
     }
   }
 
+  m_ProjImage = juce::Image();
   // Si on est dans la bonne projection
   XGeoPref pref;
   if (pref.Projection() == m_ProjCode) {
-    LoadFrame(F, index);
+    if (!LoadFrame(F, index))
+      return m_ProjImage;
     m_ProjImage = m_SourceImage.rescaled(wout, hout);
     return m_ProjImage;
   }
@@ -349,7 +355,8 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
   FwebMerc.Ymin = XMin(y0, y3);
   FwebMerc.Ymax = XMax(y1, y2);
 
-  LoadFrame(FwebMerc, index);
+  if (!LoadFrame(FwebMerc, index))
+    return m_ProjImage;
   m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));
 
   // Reechantillonage dans la projection souhaitee

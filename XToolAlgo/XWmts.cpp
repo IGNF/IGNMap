@@ -260,3 +260,28 @@ bool XWmtsCapabilities::SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, s
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+// XWmtsCapabilities : recupere les informations sur tous les layers
+//-----------------------------------------------------------------------------
+bool XWmtsCapabilities::GetLayerInfo(std::vector<LayerInfo>& L)
+{
+  L.clear();
+  for (size_t i = 0; i < m_Layer.size(); i++) {
+    for (size_t j = 0; j < m_Layer[i].m_SetLink.size(); j++) {
+      LayerInfo info;
+      info.Id = m_Layer[i].m_strId;
+      info.Title = m_Layer[i].m_strTitle;
+      info.TMS = m_Layer[i].m_SetLink[j].Id();
+      // Recherche de la pyramide dans la collection de pyramide
+      for (size_t k = 0; k < m_MatrixSet.size(); k++) {
+        if (info.TMS == m_MatrixSet[k].Id()) {
+          info.Projection = m_MatrixSet[k].Crs();
+          L.push_back(info);
+          break;
+        }
+      }
+    }
+  }
+  return true;
+}

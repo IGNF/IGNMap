@@ -344,6 +344,7 @@
     <ClCompile Include="..\..\Source\TmsLayer.cpp"/>
     <ClCompile Include="..\..\Source\VectorLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\WmtsLayer.cpp"/>
+    <ClCompile Include="..\..\Source\WmtsViewer.cpp"/>
     <ClCompile Include="..\..\..\Sqlite\sqlite3.c"/>
     <ClCompile Include="..\..\..\XTool\XEndian.cpp"/>
     <ClCompile Include="..\..\..\XTool\XFile.cpp"/>
@@ -2290,6 +2291,7 @@
     <ClInclude Include="..\..\Source\Utilities.h"/>
     <ClInclude Include="..\..\Source\VectorLayersViewer.h"/>
     <ClInclude Include="..\..\Source\WmtsLayer.h"/>
+    <ClInclude Include="..\..\Source\WmtsViewer.h"/>
     <ClInclude Include="..\..\..\Sqlite\sqlite3.h"/>
     <ClInclude Include="..\..\..\XTool\XBase.h"/>
     <ClInclude Include="..\..\..\XTool\XEndian.h"/>

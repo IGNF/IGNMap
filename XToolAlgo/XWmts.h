@@ -148,8 +148,15 @@ protected:
 
 public:
   virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
-
   bool SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, std::string tmsId);
+
+  struct LayerInfo {
+    std::string Id;
+    std::string Title;
+    std::string Projection;
+    std::string TMS;
+  };
+  bool GetLayerInfo(std::vector<LayerInfo>& L);
 };
 
 #endif //XWMTS_H

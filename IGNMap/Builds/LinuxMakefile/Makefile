@@ -273,6 +273,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o \
   $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
   $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
+  $(JUCE_OBJDIR)/WmtsViewer_c80e0450.o \
   $(JUCE_OBJDIR)/sqlite3_31f93e88.o \
   $(JUCE_OBJDIR)/XEndian_2fd684da.o \
   $(JUCE_OBJDIR)/XFile_699380bb.o \
@@ -1382,6 +1383,11 @@ $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o: ../../Source/VectorLayersViewer.cp
 $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o: ../../Source/WmtsLayer.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling WmtsLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WmtsViewer_c80e0450.o: ../../Source/WmtsViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WmtsViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/sqlite3_31f93e88.o: ../../../Sqlite/sqlite3.c
