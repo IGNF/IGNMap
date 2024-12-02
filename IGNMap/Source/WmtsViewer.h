@@ -24,7 +24,7 @@ class WmtsViewerModel : public juce::TableListBoxModel, public juce::ActionBroad
 	friend class WmtsViewerComponent;
 public:
 	typedef enum { Id = 1, Title = 2, Projection = 3, TMS = 4 } Column;
-	WmtsViewerModel() { ; }
+	WmtsViewerModel() { m_Base = nullptr; }
 
 	int getNumRows() override { return (int)m_Proxy.size(); }
 	void paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
@@ -32,8 +32,10 @@ public:
 	void cellClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent&) override { ; }
 	void cellDoubleClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent&) override;
 	void sortOrderChanged(int newSortColumnId, bool isForwards) override;
+	int getColumnAutoSizeWidth(int columnId) override;
 
 private:
+	XGeoBase* m_Base;
 	std::vector<XWmtsCapabilities::LayerInfo> m_Proxy;
 };
 
@@ -45,13 +47,14 @@ class WmtsViewerComponent : public juce::Component, public juce::ActionListener,
 public:
 	WmtsViewerComponent();
 	void actionListenerCallback(const juce::String& message) override;
-	void SetBase(XGeoBase* base) { m_Base = base; }
+	void SetBase(XGeoBase* base) { m_Base = base; m_Model.m_Base = base; }
 private:
 	XGeoBase* m_Base;
 	juce::TableListBox m_Table;
 	WmtsViewerModel m_Model;
 	juce::Label m_lblUrl;
 	juce::TextEditor m_txtUrl;
+	XWmtsCapabilities m_Capabilities;
 
 	void resized() override;
 	void textEditorReturnKeyPressed(juce::TextEditor&) override;
@@ -62,13 +65,12 @@ private:
 //==============================================================================
 // WmtsViewer : fenetre pour contenir le WmtsViewerModel
 //==============================================================================
-class WmtsViewer : public juce::DocumentWindow, public juce::ActionBroadcaster, public juce::ActionListener {
+class WmtsViewer : public juce::DocumentWindow {
 public:
 	WmtsViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons,
 						 juce::ActionListener* listener, XGeoBase* base);
 
 	void closeButtonPressed() override;
-	void actionListenerCallback(const juce::String& message) override;
 
 private:
 	WmtsViewerComponent m_Component;

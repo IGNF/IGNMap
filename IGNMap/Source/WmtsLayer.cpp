@@ -369,3 +369,18 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
 
   return m_ProjImage;
 }
+
+//-----------------------------------------------------------------------------
+// Attributs de l'objet WmtsLayer
+//-----------------------------------------------------------------------------
+bool WmtsLayerTMS::ReadAttributes(std::vector<std::string>& V)
+{
+  V.clear();
+  V.push_back("Server"); V.push_back(m_strServer.toStdString());
+  V.push_back("Layer"); V.push_back(m_strId);
+  V.push_back("Url"); V.push_back(m_strRequest.toStdString());
+  V.push_back("Title"); V.push_back(m_strTitle);
+  V.push_back("Abstract"); V.push_back(m_strAbstract);
+  V.push_back("Format"); V.push_back(m_strFormat);
+  return true;
+}

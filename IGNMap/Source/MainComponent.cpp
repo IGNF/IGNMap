@@ -735,6 +735,13 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_VectorViewer.get()->SetBase(&m_GeoBase);
 		return;
 	}
+	if (message == "AddWmtsLayer") {
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+		m_MapView.get()->RenderMap(false, true, false, false, false, true);
+		m_ImageViewer.get()->SetBase(&m_GeoBase);
+		m_Panel.get()->expandPanelFully(m_Panel.get()->getPanel(1), true);
+		return;
+	}
 
 	juce::StringArray T;
 	T.addTokens(message, ":", "");
@@ -866,6 +873,7 @@ void MainComponent::Clear()
 	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 	m_ImageOptionsViewer.get()->SetImage(nullptr);
 	ClearSearch();
+	gWmtsViewerMgr.RemoveAll();
 }
 
 void MainComponent::ClearSearch()

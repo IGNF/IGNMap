@@ -157,6 +157,15 @@ public:
     std::string TMS;
   };
   bool GetLayerInfo(std::vector<LayerInfo>& L);
+  static bool predLayerInfoId(const LayerInfo& A, const LayerInfo& B){
+    return (A.Id > B.Id);
+  }
+  static bool predLayerInfoProj(const LayerInfo& A, const LayerInfo& B) {
+    return (A.Projection > B.Projection);
+  }
+  static bool predLayerInfoTMS(const LayerInfo& A, const LayerInfo& B) {
+    return (A.TMS > B.TMS);
+  }
 };
 
 #endif //XWMTS_H

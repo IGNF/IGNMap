@@ -59,6 +59,7 @@ public:
   WmtsLayerTMS(juce::String server) { m_strServer = server; m_ProjCode = XGeoProjection::Unknown; }
 
   virtual std::string Name() { return m_strId; }
+  virtual	bool ReadAttributes(std::vector<std::string>& V);
 
   bool FindProjection();
   bool LoadFrame(const XFrame& F, int numMatrix);
