@@ -24,11 +24,11 @@ public:
 	PixelValuesModel() : juce::TableListBoxModel() { PixX = PixY = 0; WinSize = 3; NbSample = 0; PixValue = nullptr;}
 	~PixelValuesModel() { ClearPixels(); }
 
-	virtual void paintCell(juce::Graphics&, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-	virtual void paintRowBackground(juce::Graphics&, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/) override { ; }
-	virtual int getNumRows() override { return 2 * WinSize + 1; }
-	virtual void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
-	virtual juce::String getCellTooltip(int rowNumber, int columnId) override { return GetText(rowNumber, columnId); }
+	void paintCell(juce::Graphics&, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+	void paintRowBackground(juce::Graphics&, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/) override { ; }
+	int getNumRows() override { return 2 * WinSize + 1; }
+	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	juce::String getCellTooltip(int rowNumber, int columnId) override { return GetText(rowNumber, columnId); }
 
 	bool AllocPixels(uint32_t nbSample);
 	void ClearPixels() { if (PixValue != nullptr) { delete[] PixValue; PixValue = nullptr; } }
@@ -60,9 +60,9 @@ public:
 	void SetGroundPos(const double& X, const double& Y);
 	void SetPixPos(const int& X, const int& Y);
 
-	virtual void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
-	virtual void sliderValueChanged(juce::Slider* slider) override;
-	virtual void buttonClicked(juce::Button*) override;
+	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
+	void sliderValueChanged(juce::Slider* slider) override;
+	void buttonClicked(juce::Button*) override;
 	bool keyPressed(const juce::KeyPress& key) override;
 
 private:

@@ -72,6 +72,7 @@ public:
 	void cellDoubleClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent&) override;
 	void sortOrderChanged(int newSortColumnId, bool isForwards) override;
 	int getColumnAutoSizeWidth(int columnId) override;
+	juce::String getCellTooltip(int, int) override { return juce::translate("Double-click for loading the layer"); }
 
 private:
 	XGeoBase* m_Base;
@@ -151,6 +152,7 @@ public:
 	void cellDoubleClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent&) override;
 	void sortOrderChanged(int newSortColumnId, bool isForwards) override;
 	int getColumnAutoSizeWidth(int columnId) override;
+	juce::String getCellTooltip(int, int) override { return juce::translate("Double-click for loading the layer"); }
 
 private:
 	XGeoBase* m_Base;

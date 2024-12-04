@@ -149,6 +149,7 @@ WmtsViewerComponent::WmtsViewerComponent()
 	m_Table.setSize(600, 200);
 
 	m_Table.setModel(&m_Model);
+	m_Table.setTooltip(juce::translate("Double-click for loading the layer"));
 	addAndMakeVisible(m_Table);
 }
 
@@ -411,6 +412,7 @@ TmsViewerComponent::TmsViewerComponent()
 	m_Table.setSize(600, 200);
 
 	m_Table.setModel(&m_Model);
+	m_Table.setTooltip(juce::translate("Double-click for loading the layer"));
 	addAndMakeVisible(m_Table);
 }
 

@@ -124,3 +124,5 @@ countries: fr be mc ch lu
 "Layer : " = "Couche : "
 "TMS : " = "TMS : "
 "Format : " = "Format : "
+"Double-click for loading the layer" = "Double-cliquez pour charger la couche"
+"Server URL :" = "URL du serveur :"

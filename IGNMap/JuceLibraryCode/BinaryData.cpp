@@ -3360,7 +3360,9 @@ static const unsigned char temp_binary_data_16[] =
 "\"Server : \" = \"Serveur : \"\r\n"
 "\"Layer : \" = \"Couche : \"\r\n"
 "\"TMS : \" = \"TMS : \"\r\n"
-"\"Format : \" = \"Format : \"\r\n";
+"\"Format : \" = \"Format : \"\r\n"
+"\"Double-click for loading the layer\" = \"Double-cliquez pour charger la couche\"\r\n"
+"\"Server URL :\" = \"URL du serveur :\"";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_16;
 
@@ -3392,7 +3394,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 5151; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 5266; return Translation_fr_txt;
         default: break;
     }
 
