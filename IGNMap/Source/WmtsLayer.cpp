@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 // Constructeur
 //-----------------------------------------------------------------------------
-WmtsLayer::WmtsLayer(std::string server, std::string layer, std::string TMS, std::string format,
+WmtsLayerWebMerc::WmtsLayerWebMerc(std::string server, std::string layer, std::string TMS, std::string format,
   uint32_t tileW, uint32_t tileH, uint32_t max_zoom, std::string apikey)
 {
   m_strServer = server;
@@ -35,7 +35,7 @@ WmtsLayer::WmtsLayer(std::string server, std::string layer, std::string TMS, std
 //-----------------------------------------------------------------------------
 // Chargement d'un cadre en WebMercator a un zoom donne
 //-----------------------------------------------------------------------------
-bool WmtsLayer::LoadFrame(const XFrame& F, int zoomlevel)
+bool WmtsLayerWebMerc::LoadFrame(const XFrame& F, int zoomlevel)
 {
   // Dalles a charger pour couvrir l'emprise
   double a = 6378137;
@@ -82,7 +82,7 @@ bool WmtsLayer::LoadFrame(const XFrame& F, int zoomlevel)
 //-----------------------------------------------------------------------------
 // Chargement d'une dalle
 //-----------------------------------------------------------------------------
-juce::String WmtsLayer::LoadTile(int x, int y, int zoomlevel)
+juce::String WmtsLayerWebMerc::LoadTile(int x, int y, int zoomlevel)
 {
   juce::String filename = m_Cache.getFullPathName() + juce::File::getSeparatorString() + m_strLayer + "_" +
     juce::String(zoomlevel) + "_" + juce::String(x) + "_" + juce::String(y) + "." + m_strFormat;
@@ -114,7 +114,7 @@ juce::String WmtsLayer::LoadTile(int x, int y, int zoomlevel)
 //-----------------------------------------------------------------------------
 // Renvoie une image pour couvrir un cadre
 //-----------------------------------------------------------------------------
-juce::Image& WmtsLayer::GetAreaImage(const XFrame& F, double gsd)
+juce::Image& WmtsLayerWebMerc::GetAreaImage(const XFrame& F, double gsd)
 {
   if ((F == m_LastFrame) && (gsd == m_LastGsd))
     return m_ProjImage;
@@ -176,7 +176,7 @@ juce::Image& WmtsLayer::GetAreaImage(const XFrame& F, double gsd)
 //-----------------------------------------------------------------------------
 // Attributs de l'objet WmtsLayer
 //-----------------------------------------------------------------------------
-bool WmtsLayer::ReadAttributes(std::vector<std::string>& V)
+bool WmtsLayerWebMerc::ReadAttributes(std::vector<std::string>& V)
 {
   V.clear();
   V.push_back("Server"); V.push_back(m_strServer.toStdString());
@@ -195,8 +195,14 @@ bool WmtsLayerTMS::FindProjection()
 {
   m_ProjCode = XGeoProjection::Unknown;
   for (int proj = XGeoProjection::RGF93; proj < XGeoProjection::NC_RGNC91_UTM59; proj++) {
-    juce::String code = "EPSG:" + juce::String(XGeoProjection::EPSGCode((XGeoProjection::XProjCode)proj));
-    if (m_TMS.Crs() == code) {
+    juce::String numProj = juce::String(XGeoProjection::EPSGCode((XGeoProjection::XProjCode)proj));
+    juce::String code = "EPSG:" + numProj; // Cas EPSG:3857
+    if (m_TMS.Crs().find(code.toStdString()) != std::string::npos) {
+      m_ProjCode = (XGeoProjection::XProjCode)proj;
+      break;
+    }
+    code = "EPSG::" + numProj; // Cas URN:OGC:DEF:CRS:EPSG::3857
+    if (m_TMS.Crs().find(code.toStdString()) != std::string::npos) {
       m_ProjCode = (XGeoProjection::XProjCode)proj;
       break;
     }
@@ -220,13 +226,14 @@ juce::String WmtsLayerTMS::LoadTile(uint32_t x, uint32_t y, std::string idLevel)
 {
   juce::String filename = m_Cache.getFullPathName() + juce::File::getSeparatorString() + m_strId + "_" +
     idLevel + "_" + juce::String(x) + "_" + juce::String(y);
+  filename = juce::File::createLegalPathName(filename);
   juce::File cache(filename);
   if (cache.existsAsFile()) // Le fichier a deja ete telecharge
     return filename;
 
   // Telechargement du fichier
   m_strRequest = m_strServer + "?LAYER=" + m_strId + "&EXCEPTIONS=text/xml&FORMAT=" + m_strFormat +
-    "&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=" + m_TMS.Id() +
+    "&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=" + m_strStyle + "&TILEMATRIXSET=" + m_TMS.Id() +
     "&TILEMATRIX=" + idLevel + "&TILEROW=" + juce::String(y) + "&TILECOL=" + juce::String(x);
   if (m_strApiKey.isNotEmpty())
     m_strRequest += ("&apikey=" + m_strApiKey);
@@ -274,11 +281,11 @@ bool WmtsLayerTMS::LoadFrame(const XFrame& F, int numMatrix)
   g.setOpacity(1.0f);
 
   int nb_image_drawn = 0;
-  for (uint32_t i = 0; i < nb_tiley; i++) {
+  for (uint32_t i = 0; i < (uint32_t)nb_tiley; i++) {
     uint32_t y = firstY + i;
     if ((y < limits.MinTileRow()) || (y > limits.MaxTileRow()))
       continue;
-    for (uint32_t j = 0; j < nb_tilex; j++) {
+    for (uint32_t j = 0; j < (uint32_t)nb_tilex; j++) {
       uint32_t x = firstX + j;
       if ((x < limits.MinTileCol()) || (x > limits.MaxTileCol()))
         continue;
@@ -371,16 +378,12 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
 }
 
 //-----------------------------------------------------------------------------
-// Attributs de l'objet WmtsLayer
+// Attributs de l'objet WmtsLayerTMS
 //-----------------------------------------------------------------------------
 bool WmtsLayerTMS::ReadAttributes(std::vector<std::string>& V)
 {
-  V.clear();
+  XWmtsLayerTMS::ReadAttributes(V);
   V.push_back("Server"); V.push_back(m_strServer.toStdString());
-  V.push_back("Layer"); V.push_back(m_strId);
   V.push_back("Url"); V.push_back(m_strRequest.toStdString());
-  V.push_back("Title"); V.push_back(m_strTitle);
-  V.push_back("Abstract"); V.push_back(m_strAbstract);
-  V.push_back("Format"); V.push_back(m_strFormat);
   return true;
 }

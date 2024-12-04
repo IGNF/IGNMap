@@ -19,8 +19,8 @@
 #include "../../XToolAlgo/XWmts.h"
 #include "../../XToolGeod/XGeoProjection.h"
 
-// Layer WMTS
-class WmtsLayer : public GeoInternetImage {
+// Layer WMTS en WebMercator
+class WmtsLayerWebMerc : public GeoInternetImage {
 protected:
   juce::String m_strServer;
   juce::String m_strLayer;
@@ -35,9 +35,8 @@ protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
 
 public:
-  WmtsLayer(std::string server, std::string layer, std::string TMS, std::string format = "png", uint32_t tileW = 256,
+  WmtsLayerWebMerc(std::string server, std::string layer, std::string TMS, std::string format = "png", uint32_t tileW = 256,
     uint32_t tileH = 256, uint32_t max_zoom = 19, std::string apikey = "");
-  virtual ~WmtsLayer() { ; }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V);
   inline virtual double Resolution() const { return 6378137. * 2 * XPI / pow(2, (m_nMaxZoom + 8)); } // resolution max a l'Equateur
@@ -60,7 +59,7 @@ public:
 
   virtual std::string Name() { return m_strId; }
   virtual	bool ReadAttributes(std::vector<std::string>& V);
-
+  virtual double Resolution() const { return XWmtsLayerTMS::Resolution(); }
   bool FindProjection();
   bool LoadFrame(const XFrame& F, int numMatrix);
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);

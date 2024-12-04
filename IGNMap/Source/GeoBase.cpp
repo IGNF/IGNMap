@@ -615,7 +615,7 @@ bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName
 juce::File GeoTools::CreateCacheDir(juce::String name)
 {
 	juce::File tmpDir = juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory);
-	juce::File cache = tmpDir.getNonexistentChildFile(name, "");
+	juce::File cache = tmpDir.getNonexistentChildFile(juce::File::createLegalFileName(name), "");
 	cache.createDirectory();
 	return cache;
 }

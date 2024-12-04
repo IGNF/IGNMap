@@ -985,7 +985,7 @@
     <ClCompile Include="..\..\Source\WmtsLayer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\WmtsViewer.cpp">
+    <ClCompile Include="..\..\Source\WmtsTmsViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Sqlite\sqlite3.c">
@@ -3501,7 +3501,7 @@
     <ClInclude Include="..\..\Source\WmtsLayer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\WmtsViewer.h">
+    <ClInclude Include="..\..\Source\WmtsTmsViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Sqlite\sqlite3.h">

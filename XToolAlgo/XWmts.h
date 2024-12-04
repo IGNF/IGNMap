@@ -59,12 +59,12 @@ protected:
 
 public:
   virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
-  std::string Id() { return m_strId; }
-  std::string Crs() { return m_strCrs; }
+  std::string Id() const { return m_strId; }
+  std::string Crs() const { return m_strCrs; }
   std::vector<double> GSD();
-  int NbTile() { return (int)m_T.size(); }
-  XTileMatrix Tile(int i) { return m_T[i]; }
-  std::vector<XTileMatrix> TileMatrix() { return m_T; }
+  int NbTile() const { return (int)m_T.size(); }
+  XTileMatrix Tile(int i) const { return m_T[i]; }
+  std::vector<XTileMatrix> TileMatrix() const { return m_T; }
 };
 
 //-----------------------------------------------------------------------------
@@ -115,6 +115,7 @@ protected:
   std::string   m_strAbstract;
   std::string   m_strId;
   std::string   m_strFormat;
+  std::string   m_strStyle;
   std::vector<XTileMatrixSetLink> m_SetLink;
 
 public:
@@ -131,11 +132,13 @@ protected:
   std::string   m_strAbstract;
   std::string   m_strId;
   std::string   m_strFormat;
+  std::string   m_strStyle;
   XTileMatrixSet m_TMS;
   std::vector<XTileMatrixLimits> m_Limits;
 
 public:
-  
+  virtual	bool ReadAttributes(std::vector<std::string>& V);
+  double Resolution() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -147,6 +150,7 @@ protected:
   std::vector< XTileMatrixSet>  m_MatrixSet;
 
 public:
+  void Clear() { m_Layer.clear(); m_MatrixSet.clear(); }
   virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
   bool SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, std::string tmsId);
 

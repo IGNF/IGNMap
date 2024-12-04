@@ -11,6 +11,7 @@
 
 #include "XWmts.h"
 #include <algorithm>
+#include <sstream>
 #include "../../XTool/XParserXML.h"
 #include "../../XTool/XXml.h"
 
@@ -108,7 +109,7 @@ bool XTileMatrixSetLink::XmlRead(XParserXML* parser, uint32_t num)
   XParserXML limits;
   limits = tileset.FindSubParser("/TileMatrixSetLink/TileMatrixSetLimits");
   if (limits.IsEmpty())
-    return false;
+    return true;  // Il n'est pas obligatoire d'avoir des limites definies
   XParserXML tile;
   uint32_t nb_limits = 0;
   while (true) {
@@ -138,6 +139,11 @@ bool XWmtsLayer::XmlRead(XParserXML* parser, uint32_t num)
   m_strTitle = XXml::XmlToOem(layer.ReadNode("/Layer/ows:Title"));
   m_strAbstract = XXml::XmlToOem(layer.ReadNode("/Layer/ows:Abstract"));
   m_strFormat = XXml::XmlToOem(layer.ReadNode("/Layer/Format"));
+  XParserXML style = layer.FindSubParser("/Layer/Style");
+  if (style.IsEmpty())
+    return false;
+  // A faire : il faudrait choisir le style par defaut s'il y a plusieurs styles
+  m_strStyle = XXml::XmlToOem(style.ReadNode("/Style/ows:Identifier"));
 
   uint32_t nb_tileMatrixSetLink = 0;
   XParserXML tileMatrixSetLink;
@@ -243,6 +249,7 @@ bool XWmtsCapabilities::SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, s
   layer->m_strFormat = m_Layer[indexLayer].m_strFormat;
   layer->m_strAbstract = m_Layer[indexLayer].m_strAbstract;
   layer->m_strTitle = m_Layer[indexLayer].m_strTitle;
+  layer->m_strStyle = m_Layer[indexLayer].m_strStyle;
 
   layer->m_TMS = m_MatrixSet[indexTms];
 
@@ -284,4 +291,32 @@ bool XWmtsCapabilities::GetLayerInfo(std::vector<LayerInfo>& L)
     }
   }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+// Attributs de l'objet XWmtsLayerTMS
+//-----------------------------------------------------------------------------
+bool XWmtsLayerTMS::ReadAttributes(std::vector<std::string>& V)
+{
+  V.clear();
+  V.push_back("Layer"); V.push_back(m_strId);
+  V.push_back("Title"); V.push_back(m_strTitle);
+  V.push_back("Abstract"); V.push_back(m_strAbstract);
+  V.push_back("Format"); V.push_back(m_strFormat);
+  std::ostringstream Resol;
+  for (int i = 0; i < m_TMS.NbTile(); i++) {
+    Resol << m_TMS.Tile(i).GSD() << " ; ";
+  }
+  V.push_back("Resolutions"); V.push_back(Resol.str());
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Resolution maximale de l'objet XWmtsLayerTMS
+//-----------------------------------------------------------------------------
+double XWmtsLayerTMS::Resolution() const
+{
+  if (m_TMS.NbTile() < 1) 
+    return 10.;
+  return m_TMS.Tile(m_TMS.NbTile() - 1).GSD();
 }

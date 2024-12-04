@@ -498,8 +498,9 @@
             file="Source/VectorLayersViewer.h"/>
       <FILE id="TZTRTs" name="WmtsLayer.cpp" compile="1" resource="0" file="Source/WmtsLayer.cpp"/>
       <FILE id="pc4VuE" name="WmtsLayer.h" compile="0" resource="0" file="Source/WmtsLayer.h"/>
-      <FILE id="emxELT" name="WmtsViewer.cpp" compile="1" resource="0" file="Source/WmtsViewer.cpp"/>
-      <FILE id="dG5dic" name="WmtsViewer.h" compile="0" resource="0" file="Source/WmtsViewer.h"/>
+      <FILE id="emxELT" name="WmtsTmsViewer.cpp" compile="1" resource="0"
+            file="Source/WmtsTmsViewer.cpp"/>
+      <FILE id="dG5dic" name="WmtsTmsViewer.h" compile="0" resource="0" file="Source/WmtsTmsViewer.h"/>
     </GROUP>
     <GROUP id="{2D33714D-DC90-50C2-4B12-9E71B8D130C6}" name="Sqlite">
       <FILE id="PeYnjI" name="sqlite3.c" compile="1" resource="0" file="../Sqlite/sqlite3.c"/>

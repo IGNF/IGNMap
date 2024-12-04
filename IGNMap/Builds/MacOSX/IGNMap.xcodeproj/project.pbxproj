@@ -29,7 +29,6 @@
 		13E1809973B233102D2DB3DB /* lasreaditemcompressed_v2.cpp */ = {isa = PBXBuildFile; fileRef = 890DF3AEC24D7FD4E521E8B9; };
 		14081500C93F3AA786B8E67B /* openjpeg.c */ = {isa = PBXBuildFile; fileRef = E37C089F0C22294E9AD4C565; };
 		141643A8733802795D1B6825 /* XGeoRaster.cpp */ = {isa = PBXBuildFile; fileRef = C8A4DEE27A97365278670C00; };
-		147BE5A34C74E966CFD0AFF7 /* WmtsViewer.cpp */ = {isa = PBXBuildFile; fileRef = 63F89E7E6838E79F67A3ADF7; };
 		159FA78A10B565CF07D7A73A /* dec_sse2.c */ = {isa = PBXBuildFile; fileRef = A26C05D745DC9B3F095CD9D4; };
 		167C229562AC5678B9DB3C75 /* jfdctflt.c */ = {isa = PBXBuildFile; fileRef = 14BE70F37682A1949483B814; };
 		16FAC49188610422AE373C82 /* jerror.c */ = {isa = PBXBuildFile; fileRef = 592C0DC738C908DBBB822F73; };
@@ -256,6 +255,7 @@
 		CFCFAB06BA5809E254B93578 /* lasquadtree.cpp */ = {isa = PBXBuildFile; fileRef = B11F16D9E5D8FC0EC95FCC74; };
 		D16AFAEBE184F0C28074E1BC /* lossless_enc_mips32.c */ = {isa = PBXBuildFile; fileRef = 5F6D6355FD3C38A28CF186CE; };
 		D1D071B1DC4F8B3800613FF6 /* XGeoPoly.cpp */ = {isa = PBXBuildFile; fileRef = 556FAE3F434E0B8FC1301694; };
+		D20757D6860CDA5B8A961198 /* WmtsTmsViewer.cpp */ = {isa = PBXBuildFile; fileRef = 747B69943074BDE202D3B7F3; };
 		D351E3D25F57E6D4F59C9DA6 /* XBigTiffReader.cpp */ = {isa = PBXBuildFile; fileRef = BE3F17A4F898CF87E097A9C1; };
 		D35410F522C06EE2D83A6850 /* IOKit.framework */ = {isa = PBXBuildFile; fileRef = 66E289BF5DE1BC2594C0176E; };
 		D388E052563661F46D70BFD8 /* cost_neon.c */ = {isa = PBXBuildFile; fileRef = 2B3D6D65063DF707A4CD1FDC; };
@@ -492,7 +492,6 @@
 		56D10C3A98177ECEDD015797 /* jquant1.c */ /* jquant1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = "../../../jpeg-9f/jquant1.c"; sourceTree = SOURCE_ROOT; };
 		572708DECC48510C6270C3DE /* lossless_mips_dsp_r2.c */ /* lossless_mips_dsp_r2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_mips_dsp_r2.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_mips_dsp_r2.c"; sourceTree = SOURCE_ROOT; };
 		578C72670DCB057F5AF15D0C /* lossless_enc_sse2.c */ /* lossless_enc_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_enc_sse2.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_enc_sse2.c"; sourceTree = SOURCE_ROOT; };
-		580990CA2B55F103BEB9F60C /* WmtsViewer.h */ /* WmtsViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WmtsViewer.h; path = ../../Source/WmtsViewer.h; sourceTree = SOURCE_ROOT; };
 		58A1360D33A031C5FE416DFA /* MapThread.h */ /* MapThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapThread.h; path = ../../Source/MapThread.h; sourceTree = SOURCE_ROOT; };
 		58D7FD029EFA667E8A56C33B /* LasLayersViewer.h */ /* LasLayersViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LasLayersViewer.h; path = ../../Source/LasLayersViewer.h; sourceTree = SOURCE_ROOT; };
 		592C0DC738C908DBBB822F73 /* jerror.c */ /* jerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jerror.c; path = "../../../jpeg-9f/jerror.c"; sourceTree = SOURCE_ROOT; };
@@ -518,7 +517,6 @@
 		617F4961450FA6420C946D38 /* XGeoBase.cpp */ /* XGeoBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XGeoBase.cpp; path = ../../../XTool/XGeoBase.cpp; sourceTree = SOURCE_ROOT; };
 		62DB5DB0DD2451A13D59B5A2 /* jdarith.c */ /* jdarith.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jdarith.c; path = "../../../jpeg-9f/jdarith.c"; sourceTree = SOURCE_ROOT; };
 		63BBD3D423E4F3963C81E2D8 /* RecentFilesMenuTemplate.nib */ /* RecentFilesMenuTemplate.nib */ = {isa = PBXFileReference; lastKnownFileType = file.nib; name = RecentFilesMenuTemplate.nib; path = RecentFilesMenuTemplate.nib; sourceTree = SOURCE_ROOT; };
-		63F89E7E6838E79F67A3ADF7 /* WmtsViewer.cpp */ /* WmtsViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WmtsViewer.cpp; path = ../../Source/WmtsViewer.cpp; sourceTree = SOURCE_ROOT; };
 		643FFF3B59702491868172FC /* event.c */ /* event.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = event.c; path = ../../../openjpeg/src/lib/openjp2/event.c; sourceTree = SOURCE_ROOT; };
 		65B88696837BC4C6A4561229 /* PrefDlg.h */ /* PrefDlg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrefDlg.h; path = ../../Source/PrefDlg.h; sourceTree = SOURCE_ROOT; };
 		65F8792A210E41B6B281F490 /* endian.hpp */ /* endian.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = endian.hpp; path = ../../../LASzip/src/endian.hpp; sourceTree = SOURCE_ROOT; };
@@ -554,6 +552,7 @@
 		740C8CFBD85B0F9048CA5A3E /* MetalKit.framework */ /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		745B3E510C299EBA8819E535 /* j2k.c */ /* j2k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = j2k.c; path = ../../../openjpeg/src/lib/openjp2/j2k.c; sourceTree = SOURCE_ROOT; };
 		74629135C3CF45AB0C7C7090 /* lossless_neon.c */ /* lossless_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_neon.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_neon.c"; sourceTree = SOURCE_ROOT; };
+		747B69943074BDE202D3B7F3 /* WmtsTmsViewer.cpp */ /* WmtsTmsViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WmtsTmsViewer.cpp; path = ../../Source/WmtsTmsViewer.cpp; sourceTree = SOURCE_ROOT; };
 		747DA4608F63565F34B3F9C1 /* laszip_api.h */ /* laszip_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip_api.h; path = ../../../LASzip/dll/laszip_api.h; sourceTree = SOURCE_ROOT; };
 		748426EB60AF29EDED2E553D /* XShapefile.h */ /* XShapefile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XShapefile.h; path = ../../../XToolVector/XShapefile.h; sourceTree = SOURCE_ROOT; };
 		759013CB8674E662ECA73D0B /* XGeoFDtm.cpp */ /* XGeoFDtm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XGeoFDtm.cpp; path = ../../../XTool/XGeoFDtm.cpp; sourceTree = SOURCE_ROOT; };
@@ -575,6 +574,7 @@
 		7D4FC687FF3CDECD2AF9B0B5 /* vp8i_dec.h */ /* vp8i_dec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vp8i_dec.h; path = "../../../libwebp-1.3.2/src/dec/vp8i_dec.h"; sourceTree = SOURCE_ROOT; };
 		7D977354C1A8B8DBCFEF37CE /* thread.c */ /* thread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = thread.c; path = ../../../openjpeg/src/lib/openjp2/thread.c; sourceTree = SOURCE_ROOT; };
 		7D9D45E3CE8E380EFA66705E /* XTiffWriter.h */ /* XTiffWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XTiffWriter.h; path = ../../../XToolImage/XTiffWriter.h; sourceTree = SOURCE_ROOT; };
+		7DF1EA7F6E697C26EA4DC902 /* WmtsTmsViewer.h */ /* WmtsTmsViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WmtsTmsViewer.h; path = ../../Source/WmtsTmsViewer.h; sourceTree = SOURCE_ROOT; };
 		7E18B2FB615A0C5083034905 /* AffineImage.h */ /* AffineImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AffineImage.h; path = ../../Source/AffineImage.h; sourceTree = SOURCE_ROOT; };
 		7E25E5490F0B20EB43BF990D /* VectorLayersViewer.h */ /* VectorLayersViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VectorLayersViewer.h; path = ../../Source/VectorLayersViewer.h; sourceTree = SOURCE_ROOT; };
 		7F57B145729CCD9DE2A570FE /* gzlib.c */ /* gzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = "../../../zlib-1.3.1/gzlib.c"; sourceTree = SOURCE_ROOT; };
@@ -1090,8 +1090,8 @@
 				7E25E5490F0B20EB43BF990D,
 				A67799769640B67F32A1F973,
 				D1553A4A127FFA72E657E328,
-				63F89E7E6838E79F67A3ADF7,
-				580990CA2B55F103BEB9F60C,
+				747B69943074BDE202D3B7F3,
+				7DF1EA7F6E697C26EA4DC902,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1963,7 +1963,7 @@
 				CAC6B796D9A701FDA8798775,
 				1E6B50F866B94899C70AFCB9,
 				A267D2A10733B3E02028E1FA,
-				147BE5A34C74E966CFD0AFF7,
+				D20757D6860CDA5B8A961198,
 				6553AD9E82112F136CC76A6D,
 				BA4A48C84276D62BEFD4C1A7,
 				31563115E1D491A5EB333DEF,

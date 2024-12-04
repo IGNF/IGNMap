@@ -14,7 +14,7 @@
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
 #include "TmsLayer.h"
-#include "WmtsViewer.h"
+#include "WmtsTmsViewer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
@@ -75,10 +75,6 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_AnnotViewer.get());
 	m_AnnotViewer.get()->SetAnnot(m_MapView.get()->GetAnnot());
 	m_AnnotViewer.get()->addActionListener(this);
-
-	m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, juce::DocumentWindow::allButtons));
-	m_OGL3DViewer.get()->setVisible(false);
-	m_OGL3DViewer.get()->SetListener(this);
 
   m_Panel.reset(new juce::ConcertinaPanel);
   addAndMakeVisible(m_Panel.get());
@@ -191,8 +187,9 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuImportLasFile);
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuImportLasFolder);
 		ImportSubMenu.addSeparator();
-		juce::PopupMenu WmtsSubMenu;
-		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddOSM);
+		
+		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddWmtsServer);
+		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddTmsServer);
 		juce::PopupMenu GeoportailSubMenu;
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailOrthophoto);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailOrthophotoIRC);
@@ -203,10 +200,8 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailPlanIGN);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailParcelExpress);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailSCAN50Histo);
-		WmtsSubMenu.addSubMenu(juce::translate("Geoplateforme (France)"), GeoportailSubMenu);
-		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddWmtsServer);
-		WmtsSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddTmsServer);
-		ImportSubMenu.addSubMenu(juce::translate("Import WMTS / TMS server"), WmtsSubMenu);
+		ImportSubMenu.addSubMenu(juce::translate("Geoplateforme (France)"), GeoportailSubMenu);
+		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddOSM);
 
 		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
 
@@ -598,8 +593,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuShow3DViewer:
 		if (m_OGL3DViewer.get() == nullptr)
-			return false;
-		m_OGL3DViewer.get()->setVisible(!m_OGL3DViewer.get()->isVisible());
+			Create3DView();
+		else
+			m_OGL3DViewer.get()->setVisible(!m_OGL3DViewer.get()->isVisible());
 		break;
 	case CommandIDs::menuShowVectorLayers:
 		ShowHidePanel(m_VectorViewer.get());
@@ -749,6 +745,8 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 	if (T[0] == "Update3DView") {
 		if (T.size() < 5)
 			return;
+		if (m_OGL3DViewer.get() == nullptr)
+			Create3DView();
 		XFrame F;
 		F.Xmin = T[1].getDoubleValue();
 		F.Xmax = T[2].getDoubleValue();
@@ -873,7 +871,7 @@ void MainComponent::Clear()
 	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 	m_ImageOptionsViewer.get()->SetImage(nullptr);
 	ClearSearch();
-	gWmtsViewerMgr.RemoveAll();
+	gWmtsTmsViewerMgr.RemoveAll();
 }
 
 void MainComponent::ClearSearch()
@@ -1240,22 +1238,7 @@ bool MainComponent::AddOSMServer()
 //==============================================================================
 bool MainComponent::AddWmtsServer()
 {
-	auto alert = new juce::AlertWindow(juce::translate("Add a WMTS server"), juce::translate("URL of the WMTS server"), juce::AlertWindow::QuestionIcon);
-	alert->addButton(juce::translate("Cancel"), 0);
-	alert->addButton(juce::translate("OK"), 1);
-	alert->addTextEditor("Server", "data.geopf.fr/wmts", juce::translate("Server : "));
-	alert->addTextEditor("Layer", "ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2024", juce::translate("Layer : "));
-	alert->addTextEditor("TMS", "PM_0_19", juce::translate("TMS : "));
-	alert->addTextEditor("Format", "jpeg", juce::translate("Format : "));
-
-	std::function< void(int)> myFunc = [=](int result) {
-		if (result)
-			AddWmtsServer(alert->getTextEditorContents("Server").toStdString(), alert->getTextEditorContents("Layer").toStdString(),
-										alert->getTextEditorContents("TMS").toStdString(), alert->getTextEditorContents("Format").toStdString());
-		};
-
-	alert->enterModalState(false, juce::ModalCallbackFunction::create(myFunc), true);
-	
+	gWmtsTmsViewerMgr.AddWmtsViewer("WMTS", this, &m_GeoBase);
 	return true;
 }
 
@@ -1270,7 +1253,7 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
 
-	WmtsLayer* wmts = new WmtsLayer(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);
+	WmtsLayerWebMerc* wmts = new WmtsLayerWebMerc(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);
 	wmts->SetFrame(F);
 	if (!GeoTools::RegisterObject(&m_GeoBase, wmts, "WMTS", "WMTS", layer)) {
 		delete wmts;
@@ -1288,30 +1271,7 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 //==============================================================================
 bool MainComponent::AddTmsServer()
 {
-	auto alert = new juce::AlertWindow(juce::translate("Add a TMS server"), juce::translate("URL of the TMS server"), juce::AlertWindow::QuestionIcon);
-	alert->addButton(juce::translate("Cancel"), 0);
-	alert->addButton(juce::translate("OK"), 1);
-	alert->addTextEditor("Server", "https://data.geopf.fr/tms/1.0.0/LANDUSE.AGRICULTURE2023", juce::translate("Server : "));
-
-	std::function< void(int)> myFunc = [=](int result) {
-		if (result) {
-			TmsLayer* tms = new TmsLayer;
-			if (!tms->ReadServer(alert->getTextEditorContents("Server"))) {
-				delete tms;
-				return;
-			}
-			if (!GeoTools::RegisterObject(&m_GeoBase, tms, "TMS", "TMS", tms->Name())) {
-				delete tms;
-				return;
-			}
-			m_MapView.get()->SetFrame(m_GeoBase.Frame());
-			m_MapView.get()->RenderMap(false, true, false, false, false, true);
-			m_ImageViewer.get()->SetBase(&m_GeoBase);
-		}
-	};
-
-	alert->enterModalState(false, juce::ModalCallbackFunction::create(myFunc), true);
-
+	gWmtsTmsViewerMgr.AddTmsViewer("TMS", this, &m_GeoBase);
 	return true;
 }
 
@@ -1452,97 +1412,7 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	gWmtsViewerMgr.AddWmtsViewer("WMTS", this, &m_GeoBase);
-	/*
-	juce::URL url("https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities");
-	juce::String content = url.readEntireTextStream();
-	std::istringstream stream(content.toStdString());
-	XParserXML parser;
-	parser.Parse(&stream);
-	XWmtsCapabilities cap;
-	cap.XmlRead(&parser);
 
-	std::vector<XWmtsCapabilities::LayerInfo> L;
-	cap.GetLayerInfo(L);
-
-	WmtsLayerTMS* layer = new WmtsLayerTMS("https://data.geopf.fr/wmts");
-	if (cap.SetLayerTMS(layer, "PCRS.LAMB93", "2154_5cm_6_22")) {
-		if (layer->FindProjection()) {
-			if (GeoTools::RegisterObject(&m_GeoBase, layer, "WMTS", "WMTS", layer->Name())) {
-				m_MapView.get()->SetFrame(m_GeoBase.Frame());
-				m_MapView.get()->RenderMap(false, true, false, false, false, true);
-				m_ImageViewer.get()->SetBase(&m_GeoBase);
-				return;
-			}
-		}
-	}
-	delete layer;
-	*/
-
-	/*
-	XTiffWriter writer;
-	writer.SetGeoTiff(500000., 6500000., 1.);
-	writer.WriteTiled("D:\\Test_tile.tif", 1000, 1000, 1, 8, nullptr, 0, 256, 256);
-	std::ofstream file;
-	file.open("D:\\Test_tile.tif", std::ios::out | std::ios::binary | std::ios::app);
-	file.seekp(0, std::ios_base::end);
-
-	uint8_t* area = new uint8_t[256 * 256];
-	for (int i = 0; i < 16; i++) {
-		::memset(area, i * 16, 256 * 256 * sizeof(uint8_t));
-		file.write((const char*)area, 256 * 256 * sizeof(uint8_t));
-	}
-	file.close();
-	delete[] area;
-	*/
-	/*
-	auto bounds = m_MapView.get()->getBounds();
-	juce::AffineTransform transfo;
-	//transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY());
-	m_MapView.get()->setTransform(transfo.rotated(0.5, bounds.getCentreX(), bounds.getCentreY()));
-	*/
-	
-	/*
-	XGeoMap* map = m_GeoBase.Map("ROTATION");
-	if (map != NULL) {
-		for (uint32_t i = 0; i < map->NbObject(); i++) {
-			RotationImage* image = dynamic_cast<RotationImage*>(map->Object(i));
-			if (image != nullptr) {
-				image->AddRotation(XPI4 / 4);
-			}
-		}
-		m_MapView.get()->SetFrame(m_GeoBase.Frame());
-		m_MapView.get()->RenderMap(false, true, false, false, false, true);
-		return;
-	}
-
-	juce::String filename;
-	filename = AppUtil::OpenFile("RasterPath");
-	if (filename.isEmpty())
-		return;
-	juce::File file(filename);
-	juce::String name = file.getFileNameWithoutExtension();
-	RotationImage* affine = new RotationImage();
-	if (!affine->AnalyzeImage(filename.toStdString())) {
-		delete affine;
-		return;
-	}
-	// 465593,69 ; 6872112,785 93.04 
-	affine->SetPosition(668000., 6840000., 0.5);
-	affine->SetImageCenter(affine->GetImageW(), affine->GetImageH());
-	affine->SetRotation(XPI4);
-	//affine->SetPosition(465593.69, 6872112.785, 0.5);
-	//affine->SetRotation((93.04 / 180) * XPI - XPI2);
-	
-	if (!GeoTools::RegisterObject(&m_GeoBase, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
-		delete affine;
-		return ;
-	}
-
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
-	*/
 }
 
 //==============================================================================

@@ -11,6 +11,7 @@
 
 #include "TmsLayer.h"
 #include <algorithm>
+#include <limits>
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 
@@ -44,6 +45,7 @@ bool TmsLayer::ReadServer(juce::String serverUrl)
 	if (element != nullptr)
 		m_strSRS = element->getAllSubText();
 	else return false;
+	if (m_strSRS == "OSGEO:41001") m_strSRS = "EPSG:3857";	// Projection depreciee
 	element = root.get()->getChildByName("BoundingBox");
 	if (element != nullptr) {
 		m_F.Xmin = element->getDoubleAttribute("minx");
@@ -61,8 +63,8 @@ bool TmsLayer::ReadServer(juce::String serverUrl)
 	element = root.get()->getChildByName("TileFormat");
 	if (element != nullptr) {
 		m_strFormat = element->getStringAttribute("extension");
-		m_nW = element->getIntAttribute("width");
-		m_nH = element->getIntAttribute("height");
+		m_nW = (uint16_t)element->getIntAttribute("width");
+		m_nH = (uint16_t)element->getIntAttribute("height");
 	}
 	else return false;
 
@@ -76,10 +78,10 @@ bool TmsLayer::ReadServer(juce::String serverUrl)
 			continue;
 		TileSet set;
 		set.m_dGsd = tileSet->getDoubleAttribute("units-per-pixel");
-		set.m_nMinRow = tileSet->getIntAttribute("minrow");
-		set.m_nMaxRow = tileSet->getIntAttribute("maxrow");
-		set.m_nMinCol = tileSet->getIntAttribute("mincol");
-		set.m_nMaxCol = tileSet->getIntAttribute("maxcol");
+		set.m_nMinRow = tileSet->getIntAttribute("minrow", 0);
+		set.m_nMaxRow = tileSet->getIntAttribute("maxrow", std::numeric_limits<int>::max());
+		set.m_nMinCol = tileSet->getIntAttribute("mincol", 0);
+		set.m_nMaxCol = tileSet->getIntAttribute("maxcol", std::numeric_limits<int>::max());
 		set.m_strHRef = tileSet->getStringAttribute("href");
 		m_TileSet.push_back(set);
 	}
@@ -105,7 +107,7 @@ bool TmsLayer::ReadServer(juce::String serverUrl)
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, projF.Xmin, projF.Ymin);
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, projF.Xmax, projF.Ymax);
 
-	if (projF.IsIn(m_Frame))
+	if (projF.IsIn(m_Frame)||(m_ProjCode == XGeoProjection::WebMercator))
 		m_Frame = projF;
 
 	CreateCacheDir(m_strTitle);
@@ -120,6 +122,7 @@ juce::String TmsLayer::LoadTile(int x, int y, int zoomlevel)
 {
 	juce::String filename = m_Cache.getFullPathName() + juce::File::getSeparatorString() +
 		juce::String(zoomlevel) + "_" + juce::String(x) + "_" + juce::String(y) + "." + m_strFormat;
+	filename = juce::File::createLegalPathName(filename);
 	juce::File cache(filename);
 	if (cache.existsAsFile()) // Le fichier a deja ete telecharge
 		return filename;
@@ -165,11 +168,11 @@ bool TmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
 
 	for (int i = 0; i < nb_tiley; i++) {
 		int y = firstY + i;
-		if ((y < m_TileSet[zoomlevel].m_nMinRow) || (y > m_TileSet[zoomlevel].m_nMaxRow))
+		if ((y < (int)m_TileSet[zoomlevel].m_nMinRow) || (y > (int)m_TileSet[zoomlevel].m_nMaxRow))
 			continue;
 		for (int j = 0; j < nb_tilex; j++) {
 			int x = firstX + j;
-			if ((x < m_TileSet[zoomlevel].m_nMinCol) || (x > m_TileSet[zoomlevel].m_nMaxCol))
+			if ((x < (int)m_TileSet[zoomlevel].m_nMinCol) || (x > (int)m_TileSet[zoomlevel].m_nMaxCol))
 				continue;
 			juce::String filename = LoadTile(x, y, zoomlevel);
 			juce::Image image = juce::ImageFileFormat::loadFrom(juce::File(filename));
