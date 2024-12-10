@@ -105,11 +105,17 @@ void SelTreeItem::itemClicked(const juce::MouseEvent& event)
       int index = getIndexInParent();
       viewer->sendActionMessage("AddImageInObject:" + juce::String(index));
       };
+    std::function< void() > Remove = [=]() { // Retire l'objet de la selection
+      m_Base->UnselectFeature(m_Feature);
+      viewer->sendActionMessage("UpdateSelection");
+      viewer->SetBase(m_Base);
+      };
     
     juce::PopupMenu menu;
     menu.addItem(juce::translate("Copy Attributes"), CopyAttributes);
     menu.addItem(juce::translate("Object Frame"), ObjectFrame);
     menu.addItem(juce::translate("Add Image"), AddImage);
+    menu.addItem(juce::translate("Remove from list"), Remove);
     menu.showMenuAsync(juce::PopupMenu::Options());
   }
 }

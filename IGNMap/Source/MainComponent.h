@@ -46,11 +46,11 @@ public:
   // Liste des commandes de l'application
   enum CommandIDs
   {
-    menuNew = 1, menuQuit, menuUndo,
+    menuNew = 1, menuQuit, menuUndo, menuShowAll, menuHideOut, menuSelectOut, menuSelectOutStrict,
     menuTranslate, menuTest, menuPreferences,
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile,
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,
-    menuExportImage, menuExportLas,
+    menuExportVector, menuExportImage, menuExportLas,
     menuZoomTotal, menuScale1k, menuScale10k, menuScale25k, menuScale100k, menuScale250k,
     menuShowSidePanel, menuShow3DViewer,
     menuShowVectorLayers, menuShowImageLayers, menuShowDtmLayers, menuShowLasLayers, menuShowSelection, menuShowImageOptions,
@@ -140,6 +140,7 @@ private:
   bool ImportDtmFile(juce::String dtmfile = "");
   bool ImportLasFile(juce::String lasfile = "");
 
+  bool ExportVector(); 
   bool ExportImage();
   bool ExportLas();
 
@@ -148,6 +149,8 @@ private:
   bool AddWmtsServer(std::string server, std::string layer, std::string TMS, std::string format,
                      uint32_t tileW = 256, uint32_t tileH = 256, uint32_t max_zoom = 19, std::string apikey = "");
   bool AddTmsServer();
+
+  void ShowHideObjects(bool hide, bool select = false, bool strict = false);
 
   void Test();
 

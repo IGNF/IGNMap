@@ -28,8 +28,8 @@ public:
   void SetUpdate(bool overlay, bool raster, bool dtm, bool vector, bool las);
   bool NeedUpdate() { return m_bRaster; }
 
-  juce::int64 NumObjects() { return m_nNumObjects; }
-  XFrame Frame() { return m_Frame; }
+  juce::int64 NumObjects() const { return m_nNumObjects; }
+  XFrame Frame() const { return m_Frame; }
   float GetZ(int u, int v);
   uint32_t ImageWidth() { return m_Raster.getWidth(); }
   uint32_t ImageHeight() { return m_Raster.getHeight(); }

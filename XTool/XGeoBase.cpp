@@ -314,6 +314,19 @@ uint32_t XGeoBase::SelectFeatures(XFrame* F, bool only_visible)
 }
 
 //-----------------------------------------------------------------------------
+// Retire un objet de la selection
+//-----------------------------------------------------------------------------
+void XGeoBase::UnselectFeature(XGeoVector* V)
+{
+	for (std::vector<XGeoVector*>::iterator index = m_Selection.begin(); index != m_Selection.end(); index++) {
+		if (*index == V) {
+			m_Selection.erase(index);
+			return;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
 // Garde dans la selection uniquement les geometrie avec centroide inclus dans le cadre
 //-----------------------------------------------------------------------------
 bool XGeoBase::KeepClosestCentroid(XFrame* F)

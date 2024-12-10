@@ -21,6 +21,7 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
+#include "../../XToolVector/XShapefileConverter.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -206,6 +207,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
 
 		juce::PopupMenu ExportSubMenu;
+		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportVector);
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportImage);
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportLas);
 		menu.addSubMenu(juce::translate("Export"), ExportSubMenu);
@@ -215,6 +217,12 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	else if (menuIndex == 1) // Edit
 	{
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuUndo);
+		menu.addSeparator();
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuShowAll);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuHideOut);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSelectOut);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSelectOutStrict);
+		menu.addSeparator();
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuTranslate);
 		//menu.addCommandItem(&m_CommandManager, CommandIDs::menuTest);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuPreferences);
@@ -277,10 +285,11 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 {
 	juce::Array<juce::CommandID> commands{ CommandIDs::menuNew,
 		CommandIDs::menuQuit, CommandIDs::menuUndo, CommandIDs::menuTranslate, CommandIDs::menuPreferences,
+		CommandIDs::menuShowAll, CommandIDs::menuHideOut, CommandIDs::menuSelectOut, CommandIDs::menuSelectOutStrict,
 		CommandIDs::menuImportVectorFile, CommandIDs::menuImportVectorFolder, 
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
-		CommandIDs::menuExportImage, CommandIDs::menuExportLas,
+		CommandIDs::menuExportVector, CommandIDs::menuExportImage, CommandIDs::menuExportLas,
 		CommandIDs::menuZoomTotal,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
@@ -313,6 +322,18 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuUndo:
 		result.setInfo(juce::translate("Undo"), juce::translate("Undo"), "Menu", 0);
 		result.addDefaultKeypress('z', juce::ModifierKeys::commandModifier);
+		break;
+	case CommandIDs::menuShowAll:
+		result.setInfo(juce::translate("Show all"), juce::translate("Show all the objects"), "Menu", 0);
+		break;
+	case CommandIDs::menuHideOut:
+		result.setInfo(juce::translate("Hide Frame"), juce::translate("Hide objects outside frame"), "Menu", 0); 
+		break;
+	case CommandIDs::menuSelectOut:
+		result.setInfo(juce::translate("Hide Selection"), juce::translate("Hide objects outside selection"), "Menu", 0); 
+		break;
+	case CommandIDs::menuSelectOutStrict:
+		result.setInfo(juce::translate("Hide Selection (strict)"), juce::translate("Hide objects outside frame (strict)"), "Menu", 0);
 		break;
 	case CommandIDs::menuTranslate:
 		result.setInfo(juce::translate("Translate"), juce::translate("Load a translation file"), "Menu", 0);
@@ -376,6 +397,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAddTmsServer:
 		result.setInfo(juce::translate("TMS Server"), juce::translate("TMS Server"), "Menu", 0);
+		break;
+	case CommandIDs::menuExportVector:
+		result.setInfo(juce::translate("Export vector"), juce::translate("Export vector"), "Menu", 0);
 		break;
 	case CommandIDs::menuExportImage:
 		result.setInfo(juce::translate("Export image"), juce::translate("Export image"), "Menu", 0);
@@ -485,6 +509,18 @@ bool MainComponent::perform(const InvocationInfo& info)
 		m_GeoBase.ClearSelection();
 		actionListenerCallback("UpdateSelectFeatures");
 		break;
+	case CommandIDs::menuShowAll:
+		ShowHideObjects(false);
+		break;
+	case CommandIDs::menuHideOut:
+		ShowHideObjects(true);
+		break;
+	case CommandIDs::menuSelectOut:
+		ShowHideObjects(true, true);
+		break;
+	case CommandIDs::menuSelectOutStrict:
+		ShowHideObjects(true, true, true);
+		break;
 	case CommandIDs::menuTranslate:
 		Translate();
 		break;
@@ -551,6 +587,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuAddTmsServer:
 		AddTmsServer();
+		break;
+	case CommandIDs::menuExportVector:
+		ExportVector();
 		break;
 	case CommandIDs::menuExportImage:
 		ExportImage();
@@ -661,6 +700,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 	}
 	if (message == "UpdateLas") {
 		m_MapView.get()->RenderMap(false, false, false, false, true, true);
+		return;
+	}
+	if (message == "UpdateSelection") {
+		m_MapView.get()->RenderMap(true, false, false, false, false, true);
 		return;
 	}
 	if (message == "Repaint") {
@@ -1276,6 +1319,41 @@ bool MainComponent::AddTmsServer()
 }
 
 //==============================================================================
+// Export vectoriel
+//==============================================================================
+bool MainComponent::ExportVector()
+{
+	juce::String foldername = AppUtil::OpenFolder("ExportVector", juce::translate("Destination folder"));
+	if (foldername.isEmpty())
+		return false;
+	for (uint32_t i = 0; i < m_GeoBase.NbLayer(); i++) {
+		XGeoLayer* layer = m_GeoBase.Layer(i);
+		if (!layer->Visible())
+			continue;
+		bool visible = false;
+		for (uint32_t j = 0; j < layer->NbClass(); j++) {
+			XGeoClass* C = layer->Class(j);
+			if (C->Visible()) {
+				visible = true;
+				break;
+			}
+		}
+		if (!visible)
+			continue;
+		juce::String layer_folder = foldername + juce::File::getSeparatorString() + layer->Name();
+		juce::File folder(layer_folder);
+		folder.createDirectory();
+	}
+	juce::MouseCursor::showWaitCursor();
+	XShapefileConverter converter;
+	converter.ConvertVisibleOnly(true);
+	converter.ConvertBase(&m_GeoBase, foldername.toStdString().c_str());
+	juce::MouseCursor::hideWaitCursor();
+	juce::File(foldername).revealToUser();
+	return true;
+}
+
+//==============================================================================
 // Export sous forme d'image
 //==============================================================================
 bool MainComponent::ExportImage()
@@ -1413,6 +1491,35 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 void MainComponent::Test()
 {
 
+}
+
+//==============================================================================
+// Gestion de l'affichage des objets hors cadre / hors selection
+//==============================================================================
+void MainComponent::ShowHideObjects(bool hide, bool select, bool strict)
+{
+	juce::MouseCursor::showWaitCursor();
+	if (!hide) 	// On affiche tout
+		m_GeoBase.ShowAll();
+	else {
+		if (select) { // On cache les objets dans la selection
+			if (m_GeoBase.NbSelection() > 0) {
+				XGeoVector* V = m_GeoBase.Selection(0);
+				if (strict)
+					m_GeoBase.HideOutStrict(V);
+				else
+					m_GeoBase.HideOut(V);
+			}
+		}
+		else {	// On cache les objets hors cadre
+			XFrame F = m_MapView.get()->GetSelectionFrame();
+			if (F.IsEmpty())
+				F = m_MapView.get()->GetViewFrame();
+			m_GeoBase.HideOut(&F);
+		}
+	}
+	m_MapView.get()->RenderMap(true, true, true, true, true, true);
+	juce::MouseCursor::hideWaitCursor();
 }
 
 //==============================================================================
