@@ -365,7 +365,7 @@ bool XGeoJson::AnalyzeGeometry(std::istream* in, std::string &type, XFrame* F,
 //-----------------------------------------------------------------------------
 bool XGeoJson::AnalyzeFeature(std::istream* in)
 {
-  uint32_t pos = in->tellg();
+  uint32_t pos = (uint32_t)in->tellg();
   char sep;
   *in >> sep;
   if (sep != '{') {

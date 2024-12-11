@@ -78,7 +78,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 	if (schema->NbAttribut() < 1) {
 		vector = classe->Vector((uint32_t)0);
 		vector->ReadAttributes(V);
-		nb_att = V.size() / 2;
+		nb_att = (uint32_t)(V.size() / 2);
 		for (uint32_t i = 0; i < nb_att; i++)
 			dbase.AddField(V[i* 2].c_str(), 'C', 80);
 		if ((nb_att == 0)&&(vector->Name().size() > 0)) {

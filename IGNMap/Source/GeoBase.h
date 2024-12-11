@@ -134,6 +134,7 @@ namespace GeoTools {
   bool ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+	XGeoClass* ImportDataFolder(juce::String folderName, XGeoBase* base, XGeoVector::eTypeVector type);
 }
 
 //==============================================================================
@@ -148,3 +149,18 @@ namespace GeoTools {
   bool ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h, XFrame* F);
   bool AddImageInObect(XGeoBase* base, int index);
 }
+
+//==============================================================================
+// Traitement long
+//==============================================================================
+class GeoTask : public juce::ThreadWithProgressWindow, public XWait {
+public:
+	GeoTask() : ThreadWithProgressWindow("busy...", true, true) {;}
+	
+	virtual void SetRange(int min, int max) { m_nMin = min ; m_nMax = max;}
+	virtual void SetStep(int step) { m_nStep = step;}
+	virtual void StepIt() { m_nStep++; setProgress((double)(m_nMax - m_nMin) / m_nStep);}
+	virtual void SetStatus(const char* s) {setStatusMessage(s);}
+	virtual void Cancel() { m_bCancel = true; stopThread(100);}
+	virtual bool CheckCancel() { return threadShouldExit();}
+};

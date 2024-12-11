@@ -1068,9 +1068,10 @@ void MainComponent::ImportDtmFolder()
 	juce::String folderName = AppUtil::OpenFolder("DtmFolderPath");
 	if (folderName.isEmpty())
 		return;
-	ImportDataFolder(folderName, XGeoVector::DTM);
-	m_DtmViewer.get()->SetBase(&m_GeoBase);
-	m_MapView.get()->RenderMap(false, false, true, false, false, true);
+	if (ImportDataFolder(folderName, XGeoVector::DTM) != nullptr) {
+		m_DtmViewer.get()->SetBase(&m_GeoBase);
+		m_MapView.get()->RenderMap(false, false, true, false, false, true);
+	}
 }
 
 //==============================================================================
@@ -1113,97 +1114,10 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 //==============================================================================
 XGeoClass* MainComponent::ImportDataFolder(juce::String folderName, XGeoVector::eTypeVector type)
 {
-	if ((type != XGeoVector::DTM) && (type != XGeoVector::LAS) && (type != XGeoVector::Raster))
-		return nullptr;
-	std::string layerName = "DTM";
-	if (type == XGeoVector::LAS) layerName = "LAS";
-	if (type == XGeoVector::Raster) layerName = "Raster";
-
-	juce::File folder = folderName;
-	
-	XGeoMap* map = new XGeoMap;
-	map->Name(folderName.toStdString());
-	m_GeoBase.AddMap(map);
-	XGeoClass* data_class = m_GeoBase.AddClass(layerName.c_str(), folder.getFileName().toStdString().c_str());
-	if (data_class == nullptr)
-		return nullptr;
-	m_GeoBase.SortClass();
-
-	juce::Array<juce::File> T;
-	if (type == XGeoVector::LAS) {
-		T = folder.findChildFiles(juce::File::findFiles, false, "*.las");
-		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.laz"));
-	}
-	if (type == XGeoVector::DTM) {
-		T = folder.findChildFiles(juce::File::findFiles, false, "*.asc");
-		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.tif"));
-	}
-	if (type == XGeoVector::Raster) {
-		T = folder.findChildFiles(juce::File::findFiles, false, "*.jp2");
-		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.tif"));
-		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.cog"));
-		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.webp"));
-	}
-
-	class MyTask : public juce::ThreadWithProgressWindow {
-	public:
-		XGeoMap* map = nullptr;
-		XGeoClass* data_class = nullptr;
-		juce::Array<juce::File>* T = nullptr;
-		XGeoVector::eTypeVector type;
-		MyTask() : ThreadWithProgressWindow("busy...", true, true) { type = XGeoVector::LAS; }
-		void run()
-		{
-			for (int i = 0; i < T->size(); i++)
-			{
-				if (threadShouldExit())
-					break;
-				setProgress(i / (double)T->size());
-				XGeoVector* V = nullptr;
-				if (type == XGeoVector::LAS) {
-					GeoLAS* las = new GeoLAS;
-					if (!las->Open(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
-						delete las;
-						continue;
-					}
-					V = las;
-					las->CloseIfNeeded();	// Pour eviter d'utiliser trop de descripteurs de fichiers
-				}
-				if (type == XGeoVector::DTM) {
-					GeoDTM* dtm = new GeoDTM;
-					juce::File tmpFile = juce::File::createTempFile("tif");
-					if (!dtm->OpenDtm(AppUtil::GetStringFilename((*T)[i].getFullPathName()).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
-						delete dtm;
-						continue;
-					}
-					V = dtm;
-				}
-				if (type == XGeoVector::Raster) {
-					GeoFileImage* image = new GeoFileImage;
-					if (!image->AnalyzeImage(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
-						delete image;
-						continue;
-					}
-					V = image;
-				}
-
-				data_class->Vector(V);
-				V->Class(data_class);
-				map->AddObject(V);
-			}
-		}
-	};
-
-	MyTask m;
-	m.data_class = data_class;
-	m.map = map;
-	m.T = &T;
-	m.type = type;
-	m.runThread();
-
-	m_GeoBase.UpdateFrame();
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	return data_class;
+	XGeoClass* C = GeoTools::ImportDataFolder(folderName, &m_GeoBase, type);
+	if (C != nullptr)
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	return C;
 }
 
 //==============================================================================
@@ -1214,9 +1128,10 @@ void MainComponent::ImportLasFolder()
 	juce::String folderName = AppUtil::OpenFolder("LasFolderPath");
 	if (folderName.isEmpty())
 		return;
-	ImportDataFolder(folderName, XGeoVector::LAS);
-	m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
-	m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	if(ImportDataFolder(folderName, XGeoVector::LAS) != nullptr) {
+		m_LasViewer.get()->SetBase(&m_GeoBase); // Le LasViewer appele la mise a jour de la vue
+		m_MapView.get()->RenderMap(false, false, false, false, true, true);
+	}
 }
 
 //==============================================================================
@@ -1344,11 +1259,22 @@ bool MainComponent::ExportVector()
 		juce::File folder(layer_folder);
 		folder.createDirectory();
 	}
-	juce::MouseCursor::showWaitCursor();
-	XShapefileConverter converter;
-	converter.ConvertVisibleOnly(true);
-	converter.ConvertBase(&m_GeoBase, foldername.toStdString().c_str());
-	juce::MouseCursor::hideWaitCursor();
+	
+	class ExportTask : public GeoTask {
+	public:
+		XGeoBase* Base;
+		std::string Foldername;
+		void run() {
+			XShapefileConverter converter;
+			converter.ConvertVisibleOnly(true);
+			converter.ConvertBase(Base, Foldername.c_str(), this);
+		}
+	};
+	ExportTask task;
+	task.Base = &m_GeoBase;
+	task.Foldername = foldername.toStdString();
+	task.runThread();
+	
 	juce::File(foldername).revealToUser();
 	return true;
 }

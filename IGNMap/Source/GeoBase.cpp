@@ -564,6 +564,103 @@ bool GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
 }
 
 //-----------------------------------------------------------------------------
+// Import de donnees DTM, LAS ou Raster
+//-----------------------------------------------------------------------------
+XGeoClass* GeoTools::ImportDataFolder(juce::String folderName, XGeoBase* base, XGeoVector::eTypeVector type)
+{
+	if ((type != XGeoVector::DTM) && (type != XGeoVector::LAS) && (type != XGeoVector::Raster))
+		return nullptr;
+	std::string layerName = "DTM";
+	if (type == XGeoVector::LAS) layerName = "LAS";
+	if (type == XGeoVector::Raster) layerName = "Raster";
+
+	juce::File folder = folderName;
+	
+	XGeoMap* map = new XGeoMap;
+	map->Name(folderName.toStdString());
+	base->AddMap(map);
+	XGeoClass* data_class = base->AddClass(layerName.c_str(), folder.getFileName().toStdString().c_str());
+	if (data_class == nullptr)
+		return nullptr;
+	base->SortClass();
+
+	juce::Array<juce::File> T;
+	if (type == XGeoVector::LAS) {
+		T = folder.findChildFiles(juce::File::findFiles, false, "*.las");
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.laz"));
+	}
+	if (type == XGeoVector::DTM) {
+		T = folder.findChildFiles(juce::File::findFiles, false, "*.asc");
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.tif"));
+	}
+	if (type == XGeoVector::Raster) {
+		T = folder.findChildFiles(juce::File::findFiles, false, "*.jp2");
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.tif"));
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.cog"));
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.webp"));
+	}
+
+	class MyTask : public juce::ThreadWithProgressWindow {
+	public:
+		XGeoMap* map = nullptr;
+		XGeoClass* data_class = nullptr;
+		juce::Array<juce::File>* T = nullptr;
+		XGeoVector::eTypeVector type;
+		MyTask() : ThreadWithProgressWindow("busy...", true, true) { type = XGeoVector::LAS; }
+		void run()
+		{
+			for (int i = 0; i < T->size(); i++)
+			{
+				if (threadShouldExit())
+					break;
+				setProgress(i / (double)T->size());
+				XGeoVector* V = nullptr;
+				if (type == XGeoVector::LAS) {
+					GeoLAS* las = new GeoLAS;
+					if (!las->Open(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
+						delete las;
+						continue;
+					}
+					V = las;
+					las->CloseIfNeeded();	// Pour eviter d'utiliser trop de descripteurs de fichiers
+				}
+				if (type == XGeoVector::DTM) {
+					GeoDTM* dtm = new GeoDTM;
+					juce::File tmpFile = juce::File::createTempFile("tif");
+					if (!dtm->OpenDtm(AppUtil::GetStringFilename((*T)[i].getFullPathName()).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
+						delete dtm;
+						continue;
+					}
+					V = dtm;
+				}
+				if (type == XGeoVector::Raster) {
+					GeoFileImage* image = new GeoFileImage;
+					if (!image->AnalyzeImage(AppUtil::GetStringFilename((*T)[i].getFullPathName()))) {
+						delete image;
+						continue;
+					}
+					V = image;
+				}
+
+				data_class->Vector(V);
+				V->Class(data_class);
+				map->AddObject(V);
+			}
+		}
+	};
+
+	MyTask m;
+	m.data_class = data_class;
+	m.map = map;
+	m.T = &T;
+	m.type = type;
+	m.runThread();
+
+	base->UpdateFrame();
+	return data_class;
+}
+
+//-----------------------------------------------------------------------------
 // Colorisation des classes
 //-----------------------------------------------------------------------------
 void GeoTools::ColorizeClasses(XGeoBase* base)

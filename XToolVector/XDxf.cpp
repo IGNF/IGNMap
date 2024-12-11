@@ -81,7 +81,7 @@ bool XDxf::Read(const char* filename, XGeoBase* base, XError* error)
 			m_Line[strlen(m_Line) - 1] = 0;
 		value = m_Line;
 		std::transform(value.begin(), value.end(), value.begin(), tolower);
-		pos = m_In.tellg();
+		pos = (uint32_t)m_In.tellg();
 
 		flag3d = closed = noread = vertex = textflag = false;
 		text = layer = "";

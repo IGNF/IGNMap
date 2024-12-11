@@ -339,7 +339,7 @@ bool XShapefile::Write(const char* filename, XError* error)
 	if (!m_Header.Write(&shp, error))
 		return XErrorError(error, "XShapefile::Write (m_Header)", XError::eIOWrite);
 
-	m_Header.m_nFileLength = 50 + m_Data.size() * 4;
+	m_Header.m_nFileLength = (int)(50 + m_Data.size() * 4);
 	if (!m_Header.Write(&shx, error))
 		return XErrorError(error, "XShapefile::Write (m_Header)", XError::eIOWrite);
 
@@ -348,7 +348,7 @@ bool XShapefile::Write(const char* filename, XError* error)
 	for (i = 0; i < m_Data.size(); i++) {
 		record = (XShapefileRecord*)m_Data[i];
 		header = XShapefileRecordHeader (i + 1, record->ByteSize() / 2);
-		uint32_t pos = shp.tellp();
+		uint32_t pos = (uint32_t)shp.tellp();
 		header.Write(&shp, error);
 		record->Write(&shp, error);
 		header = XShapefileRecordHeader (pos / 2, record->ByteSize() / 2);
@@ -389,7 +389,7 @@ bool XShapefile::Convert(const char* file_in, const char* file_out, XGeodConvert
 			XErrorError(error, "XShapefile::Read", XError::eBadFormat);
 			break;
 		}
-    int pos = in->tellg();
+    int pos = (int)in->tellg();
     if (pos >= (m_Header.m_nFileLength * 2))
 			break;
 	}

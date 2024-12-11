@@ -181,7 +181,7 @@ uint32_t XGeoBase::Find(std::vector<XGeoVector*>* T, XPt2D& P, double dist)
 		}
 	}
 
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ uint32_t XGeoBase::Find(std::vector<XGeoVector*>* T, XFrame& F)
 		}
 	}
 
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -370,7 +370,7 @@ uint32_t XGeoBase::SortClass()
 	}
 
 	std::stable_sort(m_Class.begin(), m_Class.end(), ClassZOrder);
-	return m_Class.size();
+	return (uint32_t)m_Class.size();
 }
 
 //-----------------------------------------------------------------------------

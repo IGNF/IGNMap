@@ -32,7 +32,7 @@ protected:
   uint32_t      m_nMatrixH;
 
 public:
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
   inline std::string Id() const { return m_strId; }
   inline uint32_t TileW() const { return m_nTileW; }
   inline uint32_t TileH() const { return m_nTileH; }
@@ -58,7 +58,7 @@ protected:
   std::vector<XTileMatrix> m_T;
 
 public:
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
   std::string Id() const { return m_strId; }
   std::string Crs() const { return m_strCrs; }
   std::vector<double> GSD();
@@ -78,7 +78,7 @@ protected:
   uint32_t    m_nMinTileCol = 0;
   uint32_t    m_nMaxTileCol = 0xFFFFFFFF;
 public:
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
   inline uint32_t MinTileCol() const { return m_nMinTileCol; }
   inline uint32_t MaxTileCol() const { return m_nMaxTileCol; }
   inline uint32_t MinTileRow() const { return m_nMinTileRow; }
@@ -100,7 +100,7 @@ protected:
 
 public:
   std::string Id() { return m_strTileMatrixSetId; }
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
   int NbLimits() { return (int)m_L.size(); }
   XTileMatrixLimits Limits(int i) { return m_L[i]; }
 };
@@ -119,7 +119,7 @@ protected:
   std::vector<XTileMatrixSetLink> m_SetLink;
 
 public:
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
 };
 
 //-----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ protected:
   std::vector<XTileMatrixLimits> m_Limits;
 
 public:
-  virtual	bool ReadAttributes(std::vector<std::string>& V);
+  bool ReadAttributes(std::vector<std::string>& V);
   double Resolution() const;
 };
 
@@ -151,7 +151,7 @@ protected:
 
 public:
   void Clear() { m_Layer.clear(); m_MatrixSet.clear(); }
-  virtual bool XmlRead(XParserXML* parser, uint32_t num = 0);
+  bool XmlRead(XParserXML* parser, uint32_t num = 0);
   bool SetLayerTMS(XWmtsLayerTMS* layer, std::string layerId, std::string tmsId);
 
   struct LayerInfo {
