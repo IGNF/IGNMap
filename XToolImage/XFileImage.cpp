@@ -329,7 +329,7 @@ bool XFileImage::GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 //-----------------------------------------------------------------------------
 // Transforme les pixels en valeurs RGB
 //-----------------------------------------------------------------------------
-bool XFileImage::PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_t h, uint32_t factor)
+bool XFileImage::PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_t h, uint32_t /*factor*/)
 {
   if (m_Image->ColorMapSize() > 0) {  // Image palette
     m_Image->ApplyColorMap(val, area, w, h);
@@ -490,7 +490,7 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
   uint16_t espg;
   if (transfo->SetGeoref(&xmin, &ymax, &gsd, &espg))
     tiff.SetGeoTiff(xmin, ymax, gsd, espg);
-  if (!tiff.Write(file_out.c_str(), W, H, NbByte(), NbBits()))
+  if (!tiff.Write(file_out.c_str(), W, H, (uint16_t)NbByte(), NbBits()))
     return false;
 
   // Ecriture de la palette ...

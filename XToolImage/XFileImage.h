@@ -24,27 +24,27 @@ public:
 
   virtual bool AnalyzeImage(std::string path);
   virtual bool IsValid() { if (m_Image == nullptr) return false; return true; }
-  void Close();
+  virtual void Close();
 
-  uint32_t Width() { if (m_Image != nullptr) return m_Image->W(); return 0; }
-  uint32_t Height() { if (m_Image != nullptr) return m_Image->H(); return 0; }
-  bool GetGeoref(double* xmin, double* ymax, double* gsd)
+  virtual uint32_t Width() { if (m_Image != nullptr) return m_Image->W(); return 0; }
+  virtual uint32_t Height() { if (m_Image != nullptr) return m_Image->H(); return 0; }
+  virtual bool GetGeoref(double* xmin, double* ymax, double* gsd)
   {
     if (m_Image == nullptr) return false; *xmin = m_Image->X0(); *ymax = m_Image->Y0(); *gsd = m_Image->GSD(); if (*gsd <= 0.) return false; return true;
   }
-  void SetGeoref(double xmin, double ymax, double gsd)
+  virtual void SetGeoref(double xmin, double ymax, double gsd)
   {
     if (m_Image != nullptr) m_Image->SetGeoref(xmin, ymax, gsd);
   }
 
-  int NbByte();
+  virtual int NbByte();
   //int NbChannel();
-  uint16_t NbBits() { if (m_Image == nullptr) return 0; return m_Image->NbBits(); }
-  uint16_t NbSample() { if (m_Image == nullptr) return 0; return m_Image->NbSample(); }
-  std::string Format() { if (m_Image == nullptr) return ""; return m_Image->Format(); }
+  virtual uint16_t NbBits() { if (m_Image == nullptr) return 0; return m_Image->NbBits(); }
+  virtual uint16_t NbSample() { if (m_Image == nullptr) return 0; return m_Image->NbSample(); }
+  virtual std::string Format() { if (m_Image == nullptr) return ""; return m_Image->Format(); }
 
-  std::string GetMetadata() { if (m_Image == NULL) return ""; return m_Image->Metadata(); }
-  std::string GetXmlMetadata() { if (m_Image == NULL) return ""; return m_Image->XmlMetadata(); }
+  virtual std::string GetMetadata() { if (m_Image == nullptr) return ""; return m_Image->Metadata(); }
+  virtual std::string GetXmlMetadata() { if (m_Image == nullptr) return ""; return m_Image->XmlMetadata(); }
 
   virtual bool GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area);
   virtual bool GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor);

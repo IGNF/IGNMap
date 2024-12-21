@@ -26,7 +26,7 @@ public:
   void SetWorld(const double& X0, const double& Y0, const double& gsd, const int& W, const int& H, bool force_vector);
   void SetGeoBase(XGeoBase* base) { m_GeoBase = base; }
   void SetUpdate(bool overlay, bool raster, bool dtm, bool vector, bool las);
-  bool NeedUpdate() { return m_bRaster; }
+  bool NeedUpdate() const { return m_bRaster; }
 
   juce::int64 NumObjects() const { return m_nNumObjects; }
   XFrame Frame() const { return m_Frame; }
@@ -74,7 +74,7 @@ private:
   bool DrawMultiPoint(XGeoVector* G);
   
   bool DrawRasterClass(XGeoClass* C);
-  bool DrawFileRaster(GeoFileImage* image);
+  bool DrawFileRaster(XFileImage* image, XGeoRepres* repres = nullptr);
   bool DrawInternetRaster(GeoInternetImage* image);
   bool DrawDtmClass(XGeoClass* C);
   bool DrawDtm(GeoDTM* poDataset);

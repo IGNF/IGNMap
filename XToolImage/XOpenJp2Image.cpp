@@ -13,6 +13,7 @@
 #include <sstream>
 #include <cstring>
 #include "../XTool/XEndian.h"
+#include "../XTool/XParserXML.h"
 #include "XOpenJp2Image.h"
 #include "XTiffReader.h"
 
@@ -62,6 +63,7 @@ XOpenJp2Image::XOpenJp2Image(const char* filename)
   ClearCodec();
 
   FindGeorefUuidBox(filename);
+  FindGeorefXmlBox(filename);
 }
 
 //-----------------------------------------------------------------------------
@@ -256,43 +258,166 @@ bool XOpenJp2Image::FindGeorefUuidBox(const char* filename)
   if (!in.good())
     return false;
 
-  XEndian endian;
-  uint32_t box_size, box_type;
-  uint64_t box_ext_size, data_size;
   do {
-    endian.Read(&in, false, &box_size, 4);
-    endian.Read(&in, false, &box_type, 4);
-    if (box_size == 0)
-      break;
-    if (box_size == 1) {  // Presence d'une taille etendue
-      endian.Read(&in, false, &box_ext_size, 8);
-      data_size = box_ext_size - 16;
-    }
-    else
-      data_size = (uint64_t)box_size - 8;
+    Jp2Box box;
+    if (!ReadJp2Box(&in, box))
+      return false;
 
-    if (box_type == 0x75756964) { // uuid box
+    if (box.box_type == 0x75756964) { // uuid box
       char ID[16];
       in.read(ID, 16);
       if (strncmp(mrsid_uuid, ID, 16) != 0) {
-        in.seekg(data_size - 16, std::ios_base::cur);
+        in.seekg(box.data_size - 16, std::ios_base::cur);
         continue;
       }
       
-      char* buf = new char[data_size - 16];
-      in.read(buf, data_size - 16);
-      std::string data_uuid(buf, data_size - 16);
+      char* buf = new char[box.data_size - 16];
+      in.read(buf, box.data_size - 16);
+      std::string data_uuid(buf, box.data_size - 16);
       std::istringstream istr(data_uuid);
       bool flag = ReadGeorefUuid(&istr);
       delete[] buf;
       return flag;
     }
-    in.seekg(data_size, std::ios_base::cur);
+    in.seekg(box.data_size, std::ios_base::cur);
     if (!in.good())
       break;
   } while (true);
   return false;
 }
 
+//-----------------------------------------------------------------------------
+// Recherche de la box XML contenant du geo-referencement GEOJP2
+//-----------------------------------------------------------------------------
+bool XOpenJp2Image::FindGeorefXmlBox(const char* filename)
+{
+  std::ifstream in;
+  in.open(filename, std::ios_base::binary | std::ifstream::in);
+  if (!in.good())
+    return false;
+
+  do {
+    Jp2Box root;
+    if (!ReadJp2Box(&in, root))
+      return false;
+    if (root.box_type != 0x61736f63) { // jp2_association_4cc box
+      in.seekg(root.data_size, std::ios_base::cur);
+      continue;
+    }
+    Jp2Box label_root;
+    if (!ReadJp2Box(&in, label_root))
+      return false;
+    if (label_root.box_type != 0x6c626c20) { //jp2_label_4cc box
+      in.seekg(label_root.data_size, std::ios_base::cur);
+      continue;
+    }
+    char* label = new char[label_root.data_size];
+    in.read(label, label_root.data_size);
+    int result = strncmp("gml.data", label, 8);
+    delete[] label;
+    if (result != 0)
+      continue;
+
+    Jp2Box assoc_gml;
+    if (!ReadJp2Box(&in, assoc_gml))
+      return false;
+    if (assoc_gml.box_type != 0x61736f63) { // jp2_association_4cc box
+      in.seekg(assoc_gml.data_size, std::ios_base::cur);
+      continue;
+    }
+
+    Jp2Box label_gml;
+    if (!ReadJp2Box(&in, label_gml))
+      return false;
+    if (label_gml.box_type != 0x6c626c20) { //jp2_label_4cc box
+      in.seekg(label_gml.data_size, std::ios_base::cur);
+      continue;
+    }
+    label = new char[label_gml.data_size];
+    in.read(label, label_gml.data_size);
+    result = strncmp("gml.root-instance", label, 17);
+    delete[] label;
+    if (result != 0)
+      continue;
+
+    Jp2Box xml_box;
+    if (!ReadJp2Box(&in, xml_box))
+      return false;
+    if (xml_box.box_type != 0x786d6c20) { //jp2_xml_4cc box
+      in.seekg(xml_box.data_size, std::ios_base::cur);
+      continue;
+    }
+
+    char* buf = new char[xml_box.data_size];
+    in.read(buf, xml_box.data_size);
+    m_strXmlMetadata = std::string(buf, xml_box.data_size);
+    delete[] buf;
+    return ReadGeorefXml();
+  } while (in.good());
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture d'une box JPEG2000
+//-----------------------------------------------------------------------------
+bool XOpenJp2Image::ReadJp2Box(std::istream* in, Jp2Box& box)
+{
+  XEndian endian;
+  endian.Read(in, false, &box.box_size, 4);
+  endian.Read(in, false, &box.box_type, 4);
+  if (box.box_size == 0)
+    return false;
+  if (box.box_size == 1) {  // Presence d'une taille etendue
+    endian.Read(in, false, &box.box_ext_size, 8);
+    box.data_size = box.box_ext_size - 16;
+  }
+  else
+    box.data_size = (uint64_t)box.box_size - 8;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture du geo-referencement GMLJP2 (nouvelle methode)
+//-----------------------------------------------------------------------------
+bool XOpenJp2Image::ReadGeorefXml()
+{
+  if (m_strXmlMetadata.length() < 1)
+    return false;
+  std::istringstream xml;
+  xml.str(m_strXmlMetadata.c_str());
+  XParserXML parser;
+  if (!parser.Parse(&xml))
+    return false;
+  std::string origin = parser.ReadNode("/gml:FeatureCollection/gml:featureMember/gml:FeatureCollection/gml:featureMember/gml:RectifiedGridCoverage/gml:rectifiedGridDomain/gml:RectifiedGrid/gml:origin/gml:Point/gml:pos");
+  if (origin.size() < 1)
+    return false;
+
+  std::vector<std::string> vec;
+  if (parser.ReadArrayNode("/gml:FeatureCollection/gml:featureMember/gml:FeatureCollection/gml:featureMember/gml:RectifiedGridCoverage/gml:rectifiedGridDomain/gml:RectifiedGrid/gml:offsetVector", &vec) < 1)
+    return false;
+
+  double x0, y0, x, y, dx = 0., dy = 0.;
+  sscanf(origin.c_str(), "%lf %lf", &x0, &y0);
+  for (uint32_t i = 0; i < vec.size(); i++) {
+    sscanf(vec[i].c_str(), "%lf %lf", &x, &y);
+    dx += x;
+    dy += y;
+  }
+  if (fabs(fabs(dx) - fabs(dy)) > 0.1)
+    return false;
+  if (dx > 0.)
+    m_dX0 = x0;
+  else
+    m_dX0 = x0 + m_nW * dx;
+  if (dy < 0.)
+    m_dY0 = y0;
+  else
+    m_dY0 = y0 + m_nH * dy;
+
+  m_dGSD = fabs(dx);
+  m_dX0 -= m_dGSD * 0.5;  // On rajoute un demi-pixel
+  m_dY0 += m_dGSD * 0.5;
+  return true;
+}
 
 #endif //OPJ_STATIC

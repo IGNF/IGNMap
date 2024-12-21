@@ -107,8 +107,11 @@ MainComponent::MainComponent()
   addKeyListener(m_CommandManager.getKeyMappings());
 	setWantsKeyboardFocus(true);
 
-	juce::Rectangle< int > R = getParentMonitorArea();
-  setSize(R.getWidth() * 8 / 10, R.getHeight() * 8 / 10);
+	const juce::Displays::Display* display = juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
+	if (display != nullptr) {
+		juce::Rectangle< int > R = display->userArea;
+		setSize((int)(R.getWidth() * 0.8), (int)(R.getHeight() * 0.8));
+	}
 
   juce::RuntimePermissions::request(juce::RuntimePermissions::readExternalStorage,
     [](bool granted)
@@ -1416,7 +1419,44 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-
+	juce::String foldername = AppUtil::OpenFolder("Sentinel", juce::translate("Sentinel Folder"));
+	if (foldername.isEmpty())
+		return;
+	foldername = "\\\\?\\" + foldername;
+	juce::File folder(foldername);
+	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
+	for (int i = 0; i < T.size(); i++) {
+		GeoSentinelImage* scene = new GeoSentinelImage;
+		juce::File folder10m = T[i].getChildFile("R10m");
+		if (folder10m.exists()) {
+			juce::Array<juce::File> T10m;
+			T10m = folder10m.findChildFiles(juce::File::findFiles, false, "*.jp2");
+			T10m.addArray(folder10m.findChildFiles(juce::File::findFiles, false, "*.tif"));
+			T10m.addArray(folder10m.findChildFiles(juce::File::findFiles, false, "*.cog"));
+			for (int j = 0; j < T10m.size(); j++)
+				scene->ImportImage(T10m[j].getFullPathName().toStdString(), T10m[j].getFileName().toStdString());
+		}
+		juce::File folder20m = T[i].getChildFile("R20m");
+		if (folder20m.exists()) {
+			juce::Array<juce::File> T20m;
+			T20m = folder20m.findChildFiles(juce::File::findFiles, false, "*.jp2");
+			T20m.addArray(folder20m.findChildFiles(juce::File::findFiles, false, "*.tif"));
+			T20m.addArray(folder20m.findChildFiles(juce::File::findFiles, false, "*.cog"));
+			for (int j = 0; j < T20m.size(); j++)
+				scene->ImportImage(T20m[j].getFullPathName().toStdString(), T20m[j].getFileName().toStdString());
+		}
+		if (scene->NbImages() > 0) {
+			scene->ComputeFrame();
+			if (!GeoTools::RegisterObject(&m_GeoBase, scene, "SENTINEL", "Raster", scene->Name())) {
+				delete scene;
+			}
+		}
+		else
+			delete scene;
+	}
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
 }
 
 //==============================================================================

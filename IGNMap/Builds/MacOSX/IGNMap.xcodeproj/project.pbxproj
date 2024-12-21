@@ -284,6 +284,7 @@
 		E6F4F213860921BB6FFB466A /* yuv_mips32.c */ = {isa = PBXBuildFile; fileRef = 0575435C086B630E3C589E96; };
 		E728CD4B7DB6F6AB6E48B076 /* color_cache_utils.c */ = {isa = PBXBuildFile; fileRef = AEA7CB8075241921919D146C; };
 		E74DF6745754BEE4EDB24D3E /* XNCGeod.cpp */ = {isa = PBXBuildFile; fileRef = 4D7028205DBEF581E9331870; };
+		E827E5FB66A096799EA89A80 /* XSentinelScene.cpp */ = {isa = PBXBuildFile; fileRef = 28E1939C8388DC1FC64F8B37; };
 		E87A49C1A856873CC0558907 /* webp_dec.c */ = {isa = PBXBuildFile; fileRef = F2B7139A2219113DCA29E0F0; };
 		E91DCB84600FD43A3417EA40 /* jdmerge.c */ = {isa = PBXBuildFile; fileRef = BC662C9B70D770CB31A7767E; };
 		E93E73C07C1841BC2C9F4ABE /* pi.c */ = {isa = PBXBuildFile; fileRef = 4EFDA5A93EB711106B9D325E; };
@@ -388,6 +389,7 @@
 		28352C9CAE566DE9F6BA0320 /* rescaler.c */ /* rescaler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rescaler.c; path = "../../../libwebp-1.3.2/src/dsp/rescaler.c"; sourceTree = SOURCE_ROOT; };
 		2873626FCD54B48459CA4218 /* XBaseTiffReader.h */ /* XBaseTiffReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XBaseTiffReader.h; path = ../../../XToolImage/XBaseTiffReader.h; sourceTree = SOURCE_ROOT; };
 		28C59FA6AA79745A2E963B6E /* pi.h */ /* pi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pi.h; path = ../../../openjpeg/src/lib/openjp2/pi.h; sourceTree = SOURCE_ROOT; };
+		28E1939C8388DC1FC64F8B37 /* XSentinelScene.cpp */ /* XSentinelScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XSentinelScene.cpp; path = ../../../XToolAlgo/XSentinelScene.cpp; sourceTree = SOURCE_ROOT; };
 		28F5B7E1BAC3F37C3D5E63A3 /* arithmeticmodel.hpp */ /* arithmeticmodel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = arithmeticmodel.hpp; path = ../../../LASzip/src/arithmeticmodel.hpp; sourceTree = SOURCE_ROOT; };
 		29400DB05F6679E967C46B2F /* jmemmgr.c */ /* jmemmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jmemmgr.c; path = "../../../jpeg-9f/jmemmgr.c"; sourceTree = SOURCE_ROOT; };
 		296A511688DD4BA1DB0D7FCE /* arithmeticencoder.hpp */ /* arithmeticencoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = arithmeticencoder.hpp; path = ../../../LASzip/src/arithmeticencoder.hpp; sourceTree = SOURCE_ROOT; };
@@ -583,6 +585,7 @@
 		811E6B8F61DB48A17A350090 /* mydefs.hpp */ /* mydefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mydefs.hpp; path = ../../../LASzip/src/mydefs.hpp; sourceTree = SOURCE_ROOT; };
 		821047A9DDE297E881E285F8 /* lossless_enc_msa.c */ /* lossless_enc_msa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless_enc_msa.c; path = "../../../libwebp-1.3.2/src/dsp/lossless_enc_msa.c"; sourceTree = SOURCE_ROOT; };
 		82A7C7EC9969F74085E524C9 /* jidctint.c */ /* jidctint.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jidctint.c; path = "../../../jpeg-9f/jidctint.c"; sourceTree = SOURCE_ROOT; };
+		82EEFDE5B6364FC124C1AAE6 /* XSentinelScene.h */ /* XSentinelScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XSentinelScene.h; path = ../../../XToolAlgo/XSentinelScene.h; sourceTree = SOURCE_ROOT; };
 		83AADA29E4F15EED1961CE25 /* laszip_common_v2.hpp */ /* laszip_common_v2.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = laszip_common_v2.hpp; path = ../../../LASzip/src/laszip_common_v2.hpp; sourceTree = SOURCE_ROOT; };
 		844D17A74E7D1580E04221EE /* XShapefileVector.h */ /* XShapefileVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XShapefileVector.h; path = ../../../XToolVector/XShapefileVector.h; sourceTree = SOURCE_ROOT; };
 		8498C4385D9A095CE525B4B0 /* rescaler_utils.h */ /* rescaler_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rescaler_utils.h; path = "../../../libwebp-1.3.2/src/utils/rescaler_utils.h"; sourceTree = SOURCE_ROOT; };
@@ -1249,6 +1252,8 @@
 				707BEB2512FD65A6CACCDFDA,
 				95FE4351B745C3EC02F425D3,
 				A65EFBC07E4BCF3CF64ECA0E,
+				28E1939C8388DC1FC64F8B37,
+				82EEFDE5B6364FC124C1AAE6,
 				4EC4F4FB6CFF5ED7539038D5,
 				86BADE9168C6B02F94846627,
 				A3B58AAC15BBFA7740358BED,
@@ -1988,6 +1993,7 @@
 				2533787E82B5992DA4AB3BC5,
 				2D152293849DDF803454F11D,
 				7955EB0952E77017B995A166,
+				E827E5FB66A096799EA89A80,
 				E2ADB6450A3171FCE27A9620,
 				5C12619558367FBD47B43B5D,
 				C7A730BB78B5086DBA47DFB9,

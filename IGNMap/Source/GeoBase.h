@@ -18,6 +18,7 @@
 #include "../../XTool/XGeoVector.h"
 #include "../../XTool/XGeoFDtm.h"
 #include "../../XToolAlgo/XLasFile.h"
+#include "../../XToolAlgo/XSentinelScene.h"
 
 class XGeoBase;
 class XGeoMap;
@@ -72,6 +73,19 @@ public:
   void SetFrame(const XFrame& F) { m_Frame = F; }
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double scale) = 0;
+};
+
+//==============================================================================
+// Classe GeoSentinelImage : image liee a une scene Sentinel
+//==============================================================================
+class GeoSentinelImage : public GeoImage, public XSentinelScene {
+public:
+  GeoSentinelImage() { ; }
+
+  virtual std::string Name() { return m_strName; }
+  bool ComputeFrame();
+  //virtual	bool ReadAttributes(std::vector<std::string>& V);
+  //virtual inline double Resolution() const { if (m_Image == nullptr) return 10.; return m_Image->GSD(); }
 };
 
 //==============================================================================

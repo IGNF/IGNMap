@@ -312,8 +312,10 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 		V->Unload();
 		return false;
 	}
-	if (!AllocPoints(V->NbPt()))
+	if (!AllocPoints(V->NbPt())) {
+		V->Unload();
 		return false;
+	}
 
 	bool flag = false;
 	switch (V->TypeVector()) {
@@ -638,6 +640,8 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 		if (threadShouldExit())
 			return false;
 		GeoImage* image = dynamic_cast<GeoImage*>(C->Vector(i));
+		if (image == nullptr)
+			continue;
 		if (!image->Visible())
 			continue;
 		if (!m_Frame.Intersect(image->Frame()))
@@ -645,9 +649,9 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 		const juce::MessageManagerLock mml(Thread::getCurrentThread());
 		if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
 			continue;
-		GeoFileImage* fileImage = dynamic_cast<GeoFileImage*>(image);
+		XFileImage* fileImage = dynamic_cast<XFileImage*>(image);
 		if (fileImage != nullptr)
-			flag |= DrawFileRaster(fileImage);
+			flag |= DrawFileRaster(fileImage, image->Repres());
 		GeoInternetImage* internetImage = dynamic_cast<GeoInternetImage*>(image);
 		if (internetImage != nullptr)
 			flag |= DrawInternetRaster(internetImage);
@@ -658,7 +662,7 @@ bool MapThread::DrawRasterClass(XGeoClass* C)
 //==============================================================================
 // Dessin d'une image provenant d'un fichier
 //==============================================================================
-bool MapThread::DrawFileRaster(GeoFileImage* image)
+bool MapThread::DrawFileRaster(XFileImage* image, XGeoRepres* repres)
 {
 	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
 	if (!image->PrepareRasterDraw(&m_Frame, m_Frame.Width() / m_Raster.getWidth(), U0, V0, win, hin, nbBand, R0, S0, wout, hout))
@@ -676,7 +680,6 @@ bool MapThread::DrawFileRaster(GeoFileImage* image)
 	juce::Image::PixelFormat format = juce::Image::PixelFormat::RGB;
 	float opacity = 1.0f;
 	uint8_t r = 0, g = 0, b = 0, alpha = 255;
-	XGeoRepres* repres = image->Repres();
 	if (repres != nullptr) {
 		opacity = 1.0f - repres->Transparency() / 100.0f;
 		repres->FillColor(r, g, b, alpha);

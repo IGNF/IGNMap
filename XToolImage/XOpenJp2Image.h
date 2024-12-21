@@ -29,9 +29,17 @@ protected:
   //bool ReadGeorefXml();
   bool ReadGeorefUuid(std::istream* uuid);
   bool FindGeorefUuidBox(const char* filename);
+  bool FindGeorefXmlBox(const char* filename);
 
   bool CreateCodec();
   void ClearCodec();
+
+  typedef struct {
+    uint32_t box_size, box_type;
+    uint64_t box_ext_size, data_size;
+  } Jp2Box;
+  bool ReadJp2Box(std::istream* in, Jp2Box& box);
+  bool ReadGeorefXml();
 
 public:
   XOpenJp2Image(const char* filename);
@@ -43,7 +51,7 @@ public:
 
   virtual bool GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area);
   virtual bool GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor);
-  virtual bool GetLine(XFile* file, uint32_t num, uint8_t* area) { return false; }
+  virtual bool GetLine(XFile* /*file*/, uint32_t /*num*/, uint8_t* /*area*/) { return false; }
 
   virtual uint32_t FileSize() { return 0; }
 

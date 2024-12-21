@@ -48,7 +48,10 @@ bool GeoFileImage::ReadAttributes(std::vector<std::string>& V)
 {
 	char buf[64];
 	V.clear();
+	juce::File file(m_strFilename);
 	V.push_back("Nom");
+	V.push_back(file.getFileName().toStdString());
+	V.push_back("Fichier");
 	V.push_back(m_strFilename);
 
 	double gsd = 0., xmin = 0., ymax = 0.;
@@ -194,6 +197,18 @@ bool GeoInternetImage::Resample(XTransfo* transfo)
 	delete[] value;
 	delete[] pix;
 
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Calcul du cadre
+//-----------------------------------------------------------------------------
+bool GeoSentinelImage::ComputeFrame()
+{
+	double xmin, ymax, gsd;
+	if (!GetGeoref(&xmin, &ymax, &gsd))
+		return false;
+	m_Frame = XFrame(xmin, ymax - gsd * Height(), xmin + gsd * Width(), ymax);
 	return true;
 }
 

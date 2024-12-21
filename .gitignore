@@ -8,6 +8,7 @@ IGNMap/.DS_Store
 IGNMap/Builds/.DS_Store
 IGNMap/Builds/MacOSX/.DS_Store
 IGNMap/Builds/MacOSX/IGNMap.xcodeproj
+IGNMap/IGNMap_Kakadu.jucer
 jpeg-9f/*
 JUCE/*
 JUCE-master/*
@@ -16,7 +17,7 @@ LASzip/*
 libwebp-1.3.2/*
 openjpeg/*
 Sqlite/*
+Kakadu/*
 v6_4-00841C/*
 zlib-1.3.1/*
-Stereo/*
 **/.DS_Store

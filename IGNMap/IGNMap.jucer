@@ -562,6 +562,10 @@
       <FILE id="wfXTdH" name="XInternetMap.h" compile="0" resource="0" file="../XToolAlgo/XInternetMap.h"/>
       <FILE id="v2dLJ0" name="XLasFile.cpp" compile="1" resource="0" file="../XToolAlgo/XLasFile.cpp"/>
       <FILE id="aLJf7D" name="XLasFile.h" compile="0" resource="0" file="../XToolAlgo/XLasFile.h"/>
+      <FILE id="Y5d2Yf" name="XSentinelScene.cpp" compile="1" resource="0"
+            file="../XToolAlgo/XSentinelScene.cpp"/>
+      <FILE id="Eiy29q" name="XSentinelScene.h" compile="0" resource="0"
+            file="../XToolAlgo/XSentinelScene.h"/>
       <FILE id="QpqOKx" name="XTime.cpp" compile="1" resource="0" file="../XToolAlgo/XTime.cpp"/>
       <FILE id="PRYRGz" name="XTime.h" compile="0" resource="0" file="../XToolAlgo/XTime.h"/>
       <FILE id="IVBq4N" name="XWmts.cpp" compile="1" resource="0" file="../XToolAlgo/XWmts.cpp"/>
