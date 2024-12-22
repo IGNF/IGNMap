@@ -12,6 +12,7 @@
 #ifndef  XSENTINELSCENE_H
 #define XSENTINELSCENE_H
 
+#include <vector>
 #include "../XToolImage/XFileImage.h"
 
 class XSentinelScene : public XFileImage {
@@ -39,6 +40,8 @@ public:
 	ViewMode GetViewMode() const { return m_ViewMode; }
 	bool CheckViewMode(XFileImage* &imaA, XFileImage*& imaB, XFileImage*& imaC) const;
 	int NbImages() const;
+	double GetActiveResolution() const { return m_nResol; }
+	bool SentinelAttributes(std::vector<std::string>& V);
 
 protected:
 	XFileImage* m_Ima10m[16];	// Images a 10m

@@ -84,8 +84,8 @@ public:
 
   virtual std::string Name() { return m_strName; }
   bool ComputeFrame();
-  //virtual	bool ReadAttributes(std::vector<std::string>& V);
-  //virtual inline double Resolution() const { if (m_Image == nullptr) return 10.; return m_Image->GSD(); }
+  virtual	bool ReadAttributes(std::vector<std::string>& V) { return SentinelAttributes(V); }
+  virtual inline double Resolution() const { return GetActiveResolution(); }
 };
 
 //==============================================================================

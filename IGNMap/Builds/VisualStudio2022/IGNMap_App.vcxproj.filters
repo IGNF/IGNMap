@@ -976,6 +976,9 @@
     <ClCompile Include="..\..\Source\SelTreeViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SentinelViewer.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\TmsLayer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -3487,6 +3490,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SelTreeViewer.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SentinelViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ThreadClassProcessor.h">

@@ -171,6 +171,7 @@
 		84597B4DEB840CAEA83D8575 /* upsampling.c */ = {isa = PBXBuildFile; fileRef = DC7911F322CE364B62D71347; };
 		8524090A36F88A8F87AD38DE /* XDomGeod.cpp */ = {isa = PBXBuildFile; fileRef = 27EB0FC1DDF90F631EE7D691; };
 		87B48D9611C1D8E83690B1D6 /* ssim.c */ = {isa = PBXBuildFile; fileRef = 8995F766EBFA324E65AD911E; };
+		8922464391E891A0B1C8DB27 /* SentinelViewer.cpp */ = {isa = PBXBuildFile; fileRef = 911136B0BB1D1D33FAD16361; };
 		8A4845F4BB8B4DB7236AA758 /* include_juce_gui_extra.mm */ = {isa = PBXBuildFile; fileRef = 8022BB0897F6CB189821DF15; };
 		8AEC4781F4FF4DFB70B56E6D /* XInterpol.cpp */ = {isa = PBXBuildFile; fileRef = C32AC2F934395362C81B6DE4; };
 		8BC463DDCE54A8A9490EFC6B /* dec_mips32.c */ = {isa = PBXBuildFile; fileRef = BDD077477F71725BDEAABD78; };
@@ -618,6 +619,7 @@
 		8F3D428F048797ED483206D0 /* include_juce_graphics_Sheenbidi.c */ /* include_juce_graphics_Sheenbidi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = include_juce_graphics_Sheenbidi.c; path = ../../JuceLibraryCode/include_juce_graphics_Sheenbidi.c; sourceTree = SOURCE_ROOT; };
 		8FF4C747E7008E83D3CCC628 /* bio.c */ /* bio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bio.c; path = ../../../openjpeg/src/lib/openjp2/bio.c; sourceTree = SOURCE_ROOT; };
 		90926BBC8D550F1F920A242F /* rescaler_mips32.c */ /* rescaler_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rescaler_mips32.c; path = "../../../libwebp-1.3.2/src/dsp/rescaler_mips32.c"; sourceTree = SOURCE_ROOT; };
+		911136B0BB1D1D33FAD16361 /* SentinelViewer.cpp */ /* SentinelViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SentinelViewer.cpp; path = ../../Source/SentinelViewer.cpp; sourceTree = SOURCE_ROOT; };
 		9187182B971FFFA6256E01BE /* QuartzCore.framework */ /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		91CC4CC45B0D2B652A205B11 /* jaricom.c */ /* jaricom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jaricom.c; path = "../../../jpeg-9f/jaricom.c"; sourceTree = SOURCE_ROOT; };
 		92812C4DBC083984C07222A4 /* MapThread.cpp */ /* MapThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MapThread.cpp; path = ../../Source/MapThread.cpp; sourceTree = SOURCE_ROOT; };
@@ -708,6 +710,7 @@
 		BC1BA3925DC64C4A32D2B450 /* jcmarker.c */ /* jcmarker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jcmarker.c; path = "../../../jpeg-9f/jcmarker.c"; sourceTree = SOURCE_ROOT; };
 		BC662C9B70D770CB31A7767E /* jdmerge.c */ /* jdmerge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = "../../../jpeg-9f/jdmerge.c"; sourceTree = SOURCE_ROOT; };
 		BD10940234BBA41C91F941BD /* t2.c */ /* t2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = t2.c; path = ../../../openjpeg/src/lib/openjp2/t2.c; sourceTree = SOURCE_ROOT; };
+		BD5ACF93C4E90C9FEEFC46AD /* SentinelViewer.h */ /* SentinelViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SentinelViewer.h; path = ../../Source/SentinelViewer.h; sourceTree = SOURCE_ROOT; };
 		BD5E771ACF2AE132300685CA /* jp2.c */ /* jp2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jp2.c; path = ../../../openjpeg/src/lib/openjp2/jp2.c; sourceTree = SOURCE_ROOT; };
 		BD7324F6E02161F2253A6F20 /* AnnotViewer.h */ /* AnnotViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AnnotViewer.h; path = ../../Source/AnnotViewer.h; sourceTree = SOURCE_ROOT; };
 		BDD077477F71725BDEAABD78 /* dec_mips32.c */ /* dec_mips32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dec_mips32.c; path = "../../../libwebp-1.3.2/src/dsp/dec_mips32.c"; sourceTree = SOURCE_ROOT; };
@@ -1084,6 +1087,8 @@
 				65B88696837BC4C6A4561229,
 				6A6ABCBE377E763574C3AC9E,
 				2C6ED58B0D32FF287DF00C27,
+				911136B0BB1D1D33FAD16361,
+				BD5ACF93C4E90C9FEEFC46AD,
 				8CD2ADAF8B3C1550F00AA8D4,
 				417739CB53AEE9ACF694097F,
 				E074E99A64F1A3B33BF70A32,
@@ -1965,6 +1970,7 @@
 				2A571F625C7ED3865E3BDAAB,
 				94B40103E2F63409693D1655,
 				F5FE92DDF65E01AEB1858B37,
+				8922464391E891A0B1C8DB27,
 				CAC6B796D9A701FDA8798775,
 				1E6B50F866B94899C70AFCB9,
 				A267D2A10733B3E02028E1FA,

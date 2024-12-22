@@ -18,6 +18,7 @@
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
+#include "SentinelViewer.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
@@ -1419,10 +1420,14 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	viewer->setVisible(true);
+	return;
+	/*
 	juce::String foldername = AppUtil::OpenFolder("Sentinel", juce::translate("Sentinel Folder"));
 	if (foldername.isEmpty())
 		return;
-	foldername = "\\\\?\\" + foldername;
+	//foldername = "\\\\?\\" + foldername;
 	juce::File folder(foldername);
 	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
 	for (int i = 0; i < T.size(); i++) {
@@ -1457,6 +1462,7 @@ void MainComponent::Test()
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->RenderMap(false, true, false, false, false, true);
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	*/
 }
 
 //==============================================================================

@@ -341,6 +341,7 @@
     <ClCompile Include="..\..\Source\OsmLayer.cpp"/>
     <ClCompile Include="..\..\Source\PrefDlg.cpp"/>
     <ClCompile Include="..\..\Source\SelTreeViewer.cpp"/>
+    <ClCompile Include="..\..\Source\SentinelViewer.cpp"/>
     <ClCompile Include="..\..\Source\TmsLayer.cpp"/>
     <ClCompile Include="..\..\Source\VectorLayersViewer.cpp"/>
     <ClCompile Include="..\..\Source\WmtsLayer.cpp"/>
@@ -2287,6 +2288,7 @@
     <ClInclude Include="..\..\Source\OsmLayer.h"/>
     <ClInclude Include="..\..\Source\PrefDlg.h"/>
     <ClInclude Include="..\..\Source\SelTreeViewer.h"/>
+    <ClInclude Include="..\..\Source\SentinelViewer.h"/>
     <ClInclude Include="..\..\Source\ThreadClassProcessor.h"/>
     <ClInclude Include="..\..\Source\TmsLayer.h"/>
     <ClInclude Include="..\..\Source\Utilities.h"/>

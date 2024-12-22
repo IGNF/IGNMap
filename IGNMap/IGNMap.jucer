@@ -485,6 +485,10 @@
       <FILE id="lvSmQO" name="SelTreeViewer.cpp" compile="1" resource="0"
             file="Source/SelTreeViewer.cpp"/>
       <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>
+      <FILE id="ULyULt" name="SentinelViewer.cpp" compile="1" resource="0"
+            file="Source/SentinelViewer.cpp"/>
+      <FILE id="z2IfmW" name="SentinelViewer.h" compile="0" resource="0"
+            file="Source/SentinelViewer.h"/>
       <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
             file="Source/ThreadClassProcessor.h"/>
       <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>

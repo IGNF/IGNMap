@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "XSentinelScene.h"
+#include <sstream>
 
 //-----------------------------------------------------------------------------
 // Constructeur
@@ -18,7 +19,7 @@ XSentinelScene::XSentinelScene()
 {
 	for (int i = 0; i < 16; i++) 
 		m_Ima10m[i] = m_Ima20m[i] = m_Ima60m[i] = nullptr;
-	m_nResol = 10;
+	m_nResol = 20;
 	m_ViewMode = RGB;
 }
 
@@ -65,37 +66,36 @@ int XSentinelScene::NbImages() const
 //-----------------------------------------------------------------------------
 bool XSentinelScene::CheckViewMode(XFileImage*& imaA, XFileImage*& imaB, XFileImage*& imaC) const
 {
+	imaA = imaB = imaC = nullptr;
 	if (m_ViewMode == RGB) {// B02 B03 B04
-		imaA = m_Ima10m[4];
-		imaB = m_Ima10m[3];
-		imaC = m_Ima10m[2];
+		if (m_nResol == 10) { imaA = m_Ima10m[4]; imaB = m_Ima10m[3]; imaC = m_Ima10m[2]; }
+		if (m_nResol == 20) { imaA = m_Ima20m[4]; imaB = m_Ima20m[3]; imaC = m_Ima20m[2]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[4]; imaB = m_Ima60m[3]; imaC = m_Ima60m[2]; }
 		if ((imaA != nullptr) && (imaB != nullptr) && (imaC != nullptr))
 			return true;
 		else
 			return false;
 	}
 	if (m_ViewMode == IRC) {// B03 B04 B08
-		imaA = m_Ima10m[8];
-		imaB = m_Ima10m[4];
-		imaC = m_Ima10m[3];
+		if (m_nResol == 10) { imaA = m_Ima10m[8]; imaB = m_Ima10m[4]; imaC = m_Ima10m[3]; }
+		if (m_nResol == 20) { imaA = m_Ima20m[8]; imaB = m_Ima20m[4]; imaC = m_Ima20m[3]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[8]; imaB = m_Ima60m[4]; imaC = m_Ima60m[3]; }
 		if ((imaA != nullptr) && (imaB != nullptr) && (imaC != nullptr))
 			return true;
 		else
 			return false;
 	}
 	if (m_ViewMode == URBAN) { // B12 / B11 / B04
-		imaA = m_Ima20m[12];
-		imaB = m_Ima20m[11];
-		imaC = m_Ima20m[4];
+		if (m_nResol == 20) { imaA = m_Ima20m[12]; imaB = m_Ima20m[11]; imaC = m_Ima20m[4]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[12]; imaB = m_Ima60m[11]; imaC = m_Ima60m[4]; }
 		if ((imaA != nullptr) && (imaB != nullptr) && (imaC != nullptr))
 			return true;
 		else
 			return false;
 	}
 	if (m_ViewMode == SWIR) { // B12 / B8A / B04
-		imaA = m_Ima20m[12];
-		imaB = m_Ima20m[8];
-		imaC = m_Ima20m[4];
+		if (m_nResol == 20) { imaA = m_Ima20m[12]; imaB = m_Ima20m[8]; imaC = m_Ima20m[4]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[12]; imaB = m_Ima60m[8]; imaC = m_Ima60m[4]; }
 		if ((imaA != nullptr) && (imaB != nullptr) && (imaC != nullptr))
 			return true;
 		else
@@ -103,16 +103,18 @@ bool XSentinelScene::CheckViewMode(XFileImage*& imaA, XFileImage*& imaB, XFileIm
 	}
 
 	if (m_ViewMode == NDVI) {// (B8 - B4) / (B8 + B4)
-		imaA = m_Ima10m[8];
-		imaB = m_Ima10m[4];
+		if (m_nResol == 10) { imaA = m_Ima10m[8]; imaB = m_Ima10m[4]; }
+		if (m_nResol == 20) { imaA = m_Ima20m[8]; imaB = m_Ima20m[4]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[8]; imaB = m_Ima60m[4]; }
 		if ((imaA != nullptr) && (imaB != nullptr))
 			return true;
 		else
 			return false;
 	}
 	if (m_ViewMode == NDWI) {// (B3 - B8) / (B3 + B8)
-		imaA = m_Ima10m[3];
-		imaB = m_Ima10m[8];
+		if (m_nResol == 10) { imaA = m_Ima10m[3]; imaB = m_Ima10m[8]; }
+		if (m_nResol == 20) { imaA = m_Ima20m[3]; imaB = m_Ima20m[8]; }
+		if (m_nResol == 60) { imaA = m_Ima60m[3]; imaB = m_Ima60m[8]; }
 		if ((imaA != nullptr) && (imaB != nullptr))
 			return true;
 		else
@@ -354,5 +356,35 @@ bool XSentinelScene::ImportImage(std::string path, std::string filename)
 		m_Ima20m[index] = image;
 	if (resol == "60m")
 		m_Ima60m[index] = image;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Attributs Sentinel
+//-----------------------------------------------------------------------------
+bool XSentinelScene::SentinelAttributes(std::vector<std::string>& V)
+{
+	V.push_back("Name"); V.push_back(m_strName);
+	V.push_back("ID"); V.push_back(m_strId);
+	V.push_back("Date"); V.push_back(m_strDate);
+	V.push_back("Projection"); V.push_back(m_strProjection);
+	int nb_images = 0;
+	for (int i = 0; i < 16; i++) if (m_Ima10m[i] != nullptr) nb_images++;
+	V.push_back("10m");
+	std::ostringstream out;
+	out << nb_images;
+	V.push_back(out.str());
+	nb_images = 0;
+	for (int i = 0; i < 16; i++) if (m_Ima20m[i] != nullptr) nb_images++;
+	V.push_back("20m");
+	out.str(""); out.clear();
+	out << nb_images;
+	V.push_back(out.str());
+	nb_images = 0;
+	for (int i = 0; i < 16; i++) if (m_Ima60m[i] != nullptr) nb_images++;
+	V.push_back("60m");
+	out.str(""); out.clear();
+	out << nb_images;
+	V.push_back(out.str());
 	return true;
 }
