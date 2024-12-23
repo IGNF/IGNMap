@@ -17,7 +17,7 @@
 
 class XSentinelScene : public XFileImage {
 public:
-	enum ViewMode { RGB, IRC, NDVI, NDWI, SWIR, URBAN };
+	enum ViewMode { RGB = 1, IRC, NDVI, NDWI, SWIR, URBAN };
 
 	XSentinelScene();
 	virtual ~XSentinelScene();
@@ -36,10 +36,12 @@ public:
 	virtual bool GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor);
 
 	bool ImportImage(std::string path, std::string filename);
-	void SetViewMode(ViewMode mode);
+	void SetViewMode(ViewMode mode, bool adjustResol = false);
 	ViewMode GetViewMode() const { return m_ViewMode; }
 	bool CheckViewMode(XFileImage* &imaA, XFileImage*& imaB, XFileImage*& imaC) const;
 	int NbImages() const;
+	void SetActiveResolution(int resol) { 
+		if (resol == 10) m_nResol = 10; if (resol == 20) m_nResol = 20;  if (resol == 60) m_nResol = 60;}
 	double GetActiveResolution() const { return m_nResol; }
 	bool SentinelAttributes(std::vector<std::string>& V);
 

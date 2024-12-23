@@ -38,12 +38,14 @@ XSentinelScene::~XSentinelScene()
 //-----------------------------------------------------------------------------
 // Fixe le mode d'affichage
 //-----------------------------------------------------------------------------
-void XSentinelScene::SetViewMode(ViewMode mode)
+void XSentinelScene::SetViewMode(ViewMode mode, bool adjustResol)
 {
-	if ((mode == RGB) || (mode == IRC) || (mode == NDVI) || (mode == NDWI))
-		m_nResol = 10;
-	if ((mode == URBAN) || (mode == SWIR))
-		m_nResol = 20;
+	if (adjustResol) {
+		if ((mode == RGB) || (mode == IRC) || (mode == NDVI) || (mode == NDWI))
+			m_nResol = 10;
+		if ((mode == URBAN) || (mode == SWIR))
+			m_nResol = 20;
+	}
 	m_ViewMode = mode;
 }
 

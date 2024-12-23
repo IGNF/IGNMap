@@ -919,6 +919,9 @@ void MainComponent::Clear()
 	m_ImageOptionsViewer.get()->SetImage(nullptr);
 	ClearSearch();
 	gWmtsTmsViewerMgr.RemoveAll();
+	for (size_t i = 0; i < m_ToolWindows.size(); i++)
+		delete m_ToolWindows[i];
+	m_ToolWindows.clear();
 }
 
 void MainComponent::ClearSearch()
@@ -1420,8 +1423,16 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
+		if (m_ToolWindows[i]->getName() == "Sentinel") {
+			m_ToolWindows[i]->setVisible(true);
+			m_ToolWindows[i]->toFront(true);
+			return;
+		}
+	}
 	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	viewer->setVisible(true);
+	m_ToolWindows.push_back(viewer);
 	return;
 	/*
 	juce::String foldername = AppUtil::OpenFolder("Sentinel", juce::translate("Sentinel Folder"));

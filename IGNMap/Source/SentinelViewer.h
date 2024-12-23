@@ -21,22 +21,29 @@ class GeoSentinelImage;
 // SentinelViewerComponent : composant principal
 //==============================================================================
 class SentinelViewerComponent : public juce::Component, public juce::ActionListener, public juce::ActionBroadcaster,
-																public juce::Button::Listener {
+																public juce::Button::Listener, public juce::ComboBox::Listener {
 public:
 	SentinelViewerComponent();
 	void SetBase(XGeoBase* base) { m_Base = base; }
 
 	void actionListenerCallback(const juce::String& message) override { ; }
 	void buttonClicked(juce::Button*) override;
+	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 private:
 	XGeoBase* m_Base;
+	juce::GroupComponent m_grpImport;
 	juce::TextButton m_btnImport;
+	juce::ToggleButton m_btn10m;
+	juce::ToggleButton m_btn20m;
+	juce::ToggleButton m_btn60m;
+	juce::ComboBox m_cbxResol;
+	juce::ComboBox m_cbxMode;
 
 	void resized() override;
 
 	void ImportScenes();
-	void ImportResol(GeoSentinelImage* scene, juce::File* folder);
+	void ImportResol(GeoSentinelImage* scene, juce::File* folder, int resol);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SentinelViewerComponent)
 };
@@ -54,10 +61,11 @@ public:
 		setAlwaysOnTop(false);
 		m_Sentinel.SetBase(base);
 		m_Sentinel.addActionListener(listener);
-		setContentComponent(&m_Sentinel);
+		setContentOwned(&m_Sentinel, true);
+		//setContentComponent(&m_Sentinel);
 	}
 
-	void closeButtonPressed() override { ; }
+	void closeButtonPressed() override { setVisible(false); }
 
 private:
 	SentinelViewerComponent		m_Sentinel;

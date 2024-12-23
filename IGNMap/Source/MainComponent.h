@@ -114,6 +114,7 @@ private:
 
   XGeoBase m_GeoBase;
   std::vector<GeoSearch*> m_Search;   // Recherche effectuees pendant la session
+  std::vector<juce::DocumentWindow*> m_ToolWindows;
 
   void Clear();
   void ClearSearch();
