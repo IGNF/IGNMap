@@ -52,6 +52,9 @@ SentinelViewerComponent::SentinelViewerComponent()
 	m_cbxResol.setSelectedId(10);
 	m_cbxResol.addListener(this);
 	addAndMakeVisible(m_cbxResol);
+	// Date
+	m_cbxDate.addListener(this);
+	addAndMakeVisible(m_cbxDate);
 
 	setSize(400, 400);
 }
@@ -70,6 +73,7 @@ void SentinelViewerComponent::resized()
 
 	m_cbxMode.setBounds(10, 130, 90, 25);
 	m_cbxResol.setBounds(120, 130, 90, 25);
+	m_cbxDate.setBounds(220, 130, 90, 25);
 }
 
 //==============================================================================
@@ -91,6 +95,7 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		return;
 	int resol = m_cbxResol.getSelectedId();
 	int mode = m_cbxMode.getSelectedId();
+	std::string date = m_cbxDate.getText().toStdString();
 	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
@@ -100,6 +105,12 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		}
 		if (comboBoxThatHasChanged == &m_cbxMode) {
 			scene->SetViewMode((XSentinelScene::ViewMode)mode);
+		}
+		if (comboBoxThatHasChanged == &m_cbxDate) {
+			if (date == scene->Date())
+				scene->Visible(true);
+			else
+				scene->Visible(false);
 		}
 	}
 	sendActionMessage("UpdateRaster");
@@ -140,9 +151,11 @@ void SentinelViewerComponent::ImportScenes()
 			scene->ComputeFrame();
 			scene->SetViewMode((XSentinelScene::ViewMode)mode);
 			scene->SetActiveResolution(resol);
-			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name())) {
+			scene->Visible(false);
+			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name())) 
 				delete scene;
-			}
+			else
+				m_cbxDate.addItem(scene->Date(), m_cbxDate.getNumItems() + 1);
 		}
 		else
 			delete scene;

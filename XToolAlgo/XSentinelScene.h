@@ -44,6 +44,7 @@ public:
 		if (resol == 10) m_nResol = 10; if (resol == 20) m_nResol = 20;  if (resol == 60) m_nResol = 60;}
 	double GetActiveResolution() const { return m_nResol; }
 	bool SentinelAttributes(std::vector<std::string>& V);
+	std::string Date() const { return m_strDate; }
 
 protected:
 	XFileImage* m_Ima10m[16];	// Images a 10m

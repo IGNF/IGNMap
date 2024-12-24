@@ -703,7 +703,6 @@ void GeoTools::ColorizeClasses(XGeoBase* base)
 bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
 														 int transparency, uint32_t color, uint32_t fill, uint32_t zorder, uint8_t size)
 {
-	XGeoMap* map = new XGeoMap(mapName);
 	XGeoClass* raster_class = base->AddClass(layerName.c_str(), className.c_str());
 	if (raster_class == nullptr)
 		return false;
@@ -714,9 +713,13 @@ bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName
 	raster_class->Repres()->Size(size);
 	raster_class->Vector(V);
 	V->Class(raster_class);
+	XGeoMap* map = base->Map(mapName.c_str());
+	if (map == nullptr) {
+		map = new XGeoMap(mapName);
+		base->AddMap(map);
+	}
 	map->AddObject(V);
-
-	base->AddMap(map);
+	map->UpdateFrame();
 	base->SortClass();
 	return true;
 }

@@ -39,6 +39,7 @@ private:
 	juce::ToggleButton m_btn60m;
 	juce::ComboBox m_cbxResol;
 	juce::ComboBox m_cbxMode;
+	juce::ComboBox m_cbxDate;
 
 	void resized() override;
 
