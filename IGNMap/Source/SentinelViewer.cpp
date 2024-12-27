@@ -56,6 +56,17 @@ SentinelViewerComponent::SentinelViewerComponent()
 	m_cbxDate.addListener(this);
 	addAndMakeVisible(m_cbxDate);
 
+	// Bordure
+	m_tblScene.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
+	m_tblScene.setOutlineThickness(1);
+	// Ajout des colonnes
+	m_tblScene.getHeader().addColumn(juce::translate(" "), SentinelSceneModel::Column::Visibility, 25);
+	m_tblScene.getHeader().addColumn(juce::translate(" "), SentinelSceneModel::Column::Selectable, 25);
+	m_tblScene.getHeader().addColumn(juce::translate("Name"), SentinelSceneModel::Column::Name, 200);
+	m_tblScene.getHeader().addColumn(juce::translate("Date"), SentinelSceneModel::Column::Date, 100);
+	m_tblScene.setModel(&m_mdlScene);
+	addAndMakeVisible(m_tblScene);
+
 	setSize(400, 400);
 }
 
@@ -74,6 +85,8 @@ void SentinelViewerComponent::resized()
 	m_cbxMode.setBounds(10, 130, 90, 25);
 	m_cbxResol.setBounds(120, 130, 90, 25);
 	m_cbxDate.setBounds(220, 130, 90, 25);
+
+	m_tblScene.setBounds(10, 160, getWidth() - 20, 200);
 }
 
 //==============================================================================
@@ -114,6 +127,8 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		}
 	}
 	sendActionMessage("UpdateRaster");
+	m_tblScene.updateContent();
+	m_tblScene.repaint();
 }
 
 //==============================================================================
@@ -175,4 +190,172 @@ void SentinelViewerComponent::ImportResol(GeoSentinelImage* scene, juce::File* f
 	for (int j = 0; j < T.size(); j++)
 		scene->ImportImage(T[j].getFullPathName().toStdString(), T[j].getFileName().toStdString());
 	scene->SetActiveResolution(resol);
+}
+
+//==============================================================================
+// SentinelSceneModel : Nombre de lignes de la table
+//==============================================================================
+int SentinelSceneModel::getNumRows()
+{
+	if (m_Base == nullptr)
+		return 0;
+	XGeoMap* map = m_Base->Map("*SENTINEL*");
+	if (map == nullptr)
+		return 0;
+	std::vector<XGeoClass*> T;
+	for (int i = 0; i < map->NbObject(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
+		if (scene == nullptr)
+			continue;
+		T.push_back(scene->Class());
+	}
+	std::sort(T.begin(), T.end());
+	std::vector<XGeoClass*>::iterator last = std::unique(T.begin(), T.end());
+	T.erase(last, T.end());
+	return (int)T.size();
+}
+
+//==============================================================================
+// SentinelSceneModel : Dessin du fond
+//==============================================================================
+void SentinelSceneModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+{
+	g.setColour(juce::Colours::lightblue);
+	if (rowIsSelected)
+		g.drawRect(g.getClipBounds());
+	g.setColour(juce::Colours::white);
+}
+
+//==============================================================================
+// SentinelSceneModel : Dessin des cellules
+//==============================================================================
+void SentinelSceneModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+{
+	juce::String date;
+	XGeoClass* geoLayer = FindScene(rowNumber, date);
+	if (geoLayer == nullptr)
+		return;
+	juce::Image icone;
+	switch (columnId) {
+	case Column::Visibility:
+		if (geoLayer->Visible())
+			icone = juce::ImageCache::getFromMemory(BinaryData::View_png, BinaryData::View_pngSize);
+		else
+			icone = juce::ImageCache::getFromMemory(BinaryData::NoView_png, BinaryData::NoView_pngSize);
+		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
+		break;
+	case Column::Selectable:
+		if (geoLayer->Selectable())
+			icone = juce::ImageCache::getFromMemory(BinaryData::Selectable_png, BinaryData::Selectable_pngSize);
+		else
+			icone = juce::ImageCache::getFromMemory(BinaryData::NoSelectable_png, BinaryData::NoSelectable_pngSize);
+		g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
+		break;
+	case Column::Name:// Name
+		g.drawText(juce::String(geoLayer->Name()), 0, 0, width, height, juce::Justification::centredLeft);
+		break;
+	case Column::Date:// Date
+		g.drawText(date, 0, 0, width, height, juce::Justification::centred);
+		break;
+	}
+}
+
+//==============================================================================
+// SentinelSceneModel : Clic dans une cellule
+//==============================================================================
+void SentinelSceneModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
+{
+	XGeoClass* geoLayer = nullptr; // FindVectorClass(rowNumber);
+	if (geoLayer == nullptr)
+		return;
+
+	m_ActiveRow = rowNumber;
+	m_ActiveColumn = columnId;
+	juce::Rectangle<int> bounds;
+	bounds.setCentre(event.getMouseDownScreenPosition());
+	bounds.setWidth(1); bounds.setHeight(1);
+
+	// Visibilite
+	if (columnId == Column::Visibility) {
+		sendActionMessage("UpdateVectorVisibility");
+		return;
+	}
+
+	// Selectable
+	if (columnId == Column::Selectable) {
+		sendActionMessage("UpdateVectorSelectability");
+		return;
+	}
+
+
+	// Choix d'une epaisseur
+	if (columnId == Column::Date) {
+		auto widthSelector = std::make_unique<juce::Slider>();
+		widthSelector->setRange(0., 20., 1.);
+		widthSelector->setValue(geoLayer->Repres()->Size());
+		widthSelector->setSliderStyle(juce::Slider::LinearHorizontal);
+		widthSelector->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+		widthSelector->setSize(200, 50);
+		widthSelector->setChangeNotificationOnlyOnRelease(true);
+		//widthSelector->addListener(this);
+		juce::CallOutBox::launchAsynchronously(std::move(widthSelector), bounds, nullptr);
+		return;
+	}
+
+	
+}
+
+//==============================================================================
+// SentinelSceneModel : DoubleClic dans une cellule
+//==============================================================================
+void SentinelSceneModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
+{
+	XGeoClass* geoLayer = nullptr; // FindVectorClass(rowNumber);
+	if (geoLayer == nullptr)
+		return;
+
+	// Nom du layer
+	if (columnId == Column::Name) {
+		XFrame F = geoLayer->Frame();
+		sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
+			juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+		return;
+	}
+
+}
+
+//==============================================================================
+// SentinelSceneModel : Trouve une scene et la date active
+//==============================================================================
+XGeoClass* SentinelSceneModel::FindScene(int number, juce::String& date)
+{
+	if (m_Base == nullptr)
+		return nullptr;
+	XGeoMap* map = m_Base->Map("*SENTINEL*");
+	if (map == nullptr)
+		return nullptr;
+	std::vector<XGeoClass*> T;
+	for (int i = 0; i < map->NbObject(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
+		if (scene == nullptr)
+			continue;
+		T.push_back(scene->Class());
+	}
+	std::sort(T.begin(), T.end());
+	std::vector<XGeoClass*>::iterator last = std::unique(T.begin(), T.end());
+	T.erase(last, T.end());
+	if (T.size() <= number)
+		return nullptr;
+	XGeoClass* C = T[number];
+	for (int i = 0; i < C->NbVector(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(C->Vector(i));
+		if (scene == nullptr)
+			continue;
+		if (scene->Visible()) {
+			date = scene->Date();
+			break;
+		}
+	}
+
+	return T[number];
 }

@@ -15,7 +15,31 @@
 #include <JuceHeader.h>
 
 class XGeoBase;
+class XGeoClass;
 class GeoSentinelImage;
+
+//==============================================================================
+// SentinelSceneModel : modele pour contenir les scenes Sentinel
+//==============================================================================
+class SentinelSceneModel : public juce::TableListBoxModel, public juce::ActionBroadcaster {
+public:
+	typedef enum { Visibility = 1, Selectable = 2, Name = 3, Date = 4 } Column;
+	SentinelSceneModel() : juce::TableListBoxModel() { m_Base = nullptr; m_ActiveRow = m_ActiveColumn = -1; }
+	~SentinelSceneModel() { ; }
+	void SetBase(XGeoBase* base) { m_Base = base; }
+	XGeoClass* FindScene(int number, juce::String& date);
+
+	void paintCell(juce::Graphics&, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+	void paintRowBackground(juce::Graphics&, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/) override;
+	int getNumRows() override;
+	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+
+private:
+	XGeoBase* m_Base;
+	int				m_ActiveRow;
+	int				m_ActiveColumn;
+};
 
 //==============================================================================
 // SentinelViewerComponent : composant principal
@@ -24,7 +48,7 @@ class SentinelViewerComponent : public juce::Component, public juce::ActionListe
 																public juce::Button::Listener, public juce::ComboBox::Listener {
 public:
 	SentinelViewerComponent();
-	void SetBase(XGeoBase* base) { m_Base = base; }
+	void SetBase(XGeoBase* base) { m_Base = base; m_mdlScene.SetBase(base); }
 
 	void actionListenerCallback(const juce::String& message) override { ; }
 	void buttonClicked(juce::Button*) override;
@@ -40,6 +64,8 @@ private:
 	juce::ComboBox m_cbxResol;
 	juce::ComboBox m_cbxMode;
 	juce::ComboBox m_cbxDate;
+	juce::TableListBox m_tblScene;
+	SentinelSceneModel m_mdlScene;
 
 	void resized() override;
 
