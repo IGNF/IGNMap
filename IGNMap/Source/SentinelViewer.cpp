@@ -52,9 +52,6 @@ SentinelViewerComponent::SentinelViewerComponent()
 	m_cbxResol.setSelectedId(10);
 	m_cbxResol.addListener(this);
 	addAndMakeVisible(m_cbxResol);
-	// Date
-	m_cbxDate.addListener(this);
-	addAndMakeVisible(m_cbxDate);
 
 	// Bordure
 	m_tblScene.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -66,6 +63,7 @@ SentinelViewerComponent::SentinelViewerComponent()
 	m_tblScene.getHeader().addColumn(juce::translate("Date"), SentinelSceneModel::Column::Date, 100);
 	m_tblScene.setModel(&m_mdlScene);
 	addAndMakeVisible(m_tblScene);
+	m_mdlScene.addActionListener(this);
 
 	setSize(400, 400);
 }
@@ -84,7 +82,6 @@ void SentinelViewerComponent::resized()
 
 	m_cbxMode.setBounds(10, 130, 90, 25);
 	m_cbxResol.setBounds(120, 130, 90, 25);
-	m_cbxDate.setBounds(220, 130, 90, 25);
 
 	m_tblScene.setBounds(10, 160, getWidth() - 20, 200);
 }
@@ -108,7 +105,6 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		return;
 	int resol = m_cbxResol.getSelectedId();
 	int mode = m_cbxMode.getSelectedId();
-	std::string date = m_cbxDate.getText().toStdString();
 	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
@@ -119,16 +115,9 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		if (comboBoxThatHasChanged == &m_cbxMode) {
 			scene->SetViewMode((XSentinelScene::ViewMode)mode);
 		}
-		if (comboBoxThatHasChanged == &m_cbxDate) {
-			if (date == scene->Date())
-				scene->Visible(true);
-			else
-				scene->Visible(false);
-		}
 	}
 	sendActionMessage("UpdateRaster");
 	m_tblScene.updateContent();
-	m_tblScene.repaint();
 }
 
 //==============================================================================
@@ -169,12 +158,11 @@ void SentinelViewerComponent::ImportScenes()
 			scene->Visible(false);
 			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name())) 
 				delete scene;
-			else
-				m_cbxDate.addItem(scene->Date(), m_cbxDate.getNumItems() + 1);
 		}
 		else
 			delete scene;
 	}
+	m_tblScene.updateContent();
 	sendActionMessage("UpdatePreferences");
 }
 
@@ -190,6 +178,22 @@ void SentinelViewerComponent::ImportResol(GeoSentinelImage* scene, juce::File* f
 	for (int j = 0; j < T.size(); j++)
 		scene->ImportImage(T[j].getFullPathName().toStdString(), T[j].getFileName().toStdString());
 	scene->SetActiveResolution(resol);
+}
+
+//==============================================================================
+// SentinelViewerComponent : Reponse aux actions
+//==============================================================================
+void SentinelViewerComponent::actionListenerCallback(const juce::String& message)
+{
+	if (message == "UpdateImageSelectability") {
+		m_tblScene.repaint();
+		return;
+	}
+	if (message == "UpdateImageVisibility") {
+		m_tblScene.repaint();
+		sendActionMessage("UpdateRaster");
+		return;
+	}
 }
 
 //==============================================================================
@@ -265,7 +269,8 @@ void SentinelSceneModel::paintCell(juce::Graphics& g, int rowNumber, int columnI
 //==============================================================================
 void SentinelSceneModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
-	XGeoClass* geoLayer = nullptr; // FindVectorClass(rowNumber);
+	juce::String date;
+	XGeoClass* geoLayer = FindScene(rowNumber, date);
 	if (geoLayer == nullptr)
 		return;
 
@@ -277,28 +282,32 @@ void SentinelSceneModel::cellClicked(int rowNumber, int columnId, const juce::Mo
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		sendActionMessage("UpdateVectorVisibility");
+		geoLayer->Visible(!geoLayer->Visible());
+		sendActionMessage("UpdateImageVisibility");
 		return;
 	}
 
 	// Selectable
 	if (columnId == Column::Selectable) {
-		sendActionMessage("UpdateVectorSelectability");
+		geoLayer->Selectable(!geoLayer->Selectable());
+		sendActionMessage("UpdateImageSelectability");
 		return;
 	}
 
 
 	// Choix d'une epaisseur
 	if (columnId == Column::Date) {
-		auto widthSelector = std::make_unique<juce::Slider>();
-		widthSelector->setRange(0., 20., 1.);
-		widthSelector->setValue(geoLayer->Repres()->Size());
-		widthSelector->setSliderStyle(juce::Slider::LinearHorizontal);
-		widthSelector->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
-		widthSelector->setSize(200, 50);
-		widthSelector->setChangeNotificationOnlyOnRelease(true);
-		//widthSelector->addListener(this);
-		juce::CallOutBox::launchAsynchronously(std::move(widthSelector), bounds, nullptr);
+		auto dateSelector = std::make_unique<juce::ComboBox>();
+		dateSelector->setSize(200, 30);
+		for (int i = 0; i < geoLayer->NbVector(); i++) {
+			GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(geoLayer->Vector(i));
+			if (scene == nullptr)
+				continue;
+			dateSelector->addItem(scene->Date(), i + 1);
+		}
+		dateSelector->setText(date, juce::NotificationType::dontSendNotification);
+		dateSelector->addListener(this);
+		juce::CallOutBox::launchAsynchronously(std::move(dateSelector), bounds, nullptr);
 		return;
 	}
 
@@ -358,4 +367,28 @@ XGeoClass* SentinelSceneModel::FindScene(int number, juce::String& date)
 	}
 
 	return T[number];
+}
+
+//==============================================================================
+// SentinelSceneModel : reponse aux changements de combo box
+//==============================================================================
+void SentinelSceneModel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+{
+	juce::String date;
+	XGeoClass* geoLayer = FindScene(m_ActiveRow, date);
+	if (geoLayer == nullptr)
+		return;
+
+	std::string newDate = comboBoxThatHasChanged->getText().toStdString();
+	for (uint32_t i = 0; i < geoLayer->NbVector(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(geoLayer->Vector(i));
+		if (scene == nullptr)
+			continue;
+
+		if (newDate == scene->Date())
+			scene->Visible(true);
+		else
+			scene->Visible(false);
+	}
+	sendActionMessage("UpdateImageVisibility");
 }

@@ -21,7 +21,7 @@ class GeoSentinelImage;
 //==============================================================================
 // SentinelSceneModel : modele pour contenir les scenes Sentinel
 //==============================================================================
-class SentinelSceneModel : public juce::TableListBoxModel, public juce::ActionBroadcaster {
+class SentinelSceneModel : public juce::TableListBoxModel, public juce::ActionBroadcaster, public juce::ComboBox::Listener {
 public:
 	typedef enum { Visibility = 1, Selectable = 2, Name = 3, Date = 4 } Column;
 	SentinelSceneModel() : juce::TableListBoxModel() { m_Base = nullptr; m_ActiveRow = m_ActiveColumn = -1; }
@@ -34,6 +34,7 @@ public:
 	int getNumRows() override;
 	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
 	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
+	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 private:
 	XGeoBase* m_Base;
@@ -50,7 +51,7 @@ public:
 	SentinelViewerComponent();
 	void SetBase(XGeoBase* base) { m_Base = base; m_mdlScene.SetBase(base); }
 
-	void actionListenerCallback(const juce::String& message) override { ; }
+	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
@@ -63,7 +64,6 @@ private:
 	juce::ToggleButton m_btn60m;
 	juce::ComboBox m_cbxResol;
 	juce::ComboBox m_cbxMode;
-	juce::ComboBox m_cbxDate;
 	juce::TableListBox m_tblScene;
 	SentinelSceneModel m_mdlScene;
 
