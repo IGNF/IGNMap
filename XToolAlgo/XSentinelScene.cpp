@@ -35,6 +35,16 @@ XSentinelScene::~XSentinelScene()
 	}
 }
 
+
+int XSentinelScene::NbByte()
+{
+	if (m_ViewMode >= RGB)
+		return 3;
+	if (m_ViewMode == TCI)
+		return 3;
+	return 1;
+}
+
 //-----------------------------------------------------------------------------
 // Fixe le mode d'affichage
 //-----------------------------------------------------------------------------
@@ -123,6 +133,17 @@ bool XSentinelScene::CheckViewMode(XFileImage*& imaA, XFileImage*& imaB, XFileIm
 			return false;
 	}
 
+	// Acces sur un seul canal
+	if ((m_ViewMode >= AOT)&&(m_ViewMode <= WVP)) {
+		if (m_nResol == 10) imaA = m_Ima10m[m_ViewMode];
+		if (m_nResol == 20) imaA = m_Ima20m[m_ViewMode];
+		if (m_nResol == 60) imaA = m_Ima60m[m_ViewMode];
+		if (imaA != nullptr)
+			return true;
+		else
+			return false;
+	}
+
 	return false;
 }
 
@@ -200,6 +221,9 @@ bool XSentinelScene::GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 	XFileImage* imaA, * imaB, * imaC;
 	if (!CheckViewMode(imaA, imaB, imaC))
 		return false;
+	// Acces sur un seul canal
+	if ((m_ViewMode >= AOT) && (m_ViewMode <= WVP))
+		return imaA->GetArea(x, y, w, h, area);
 	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
 		return BuildIndexImage(x, y, w, h, area, 1, imaA, imaB);
 	return BuildRGBImage(x, y, w, h, area, 1, imaA, imaB, imaC);
@@ -213,6 +237,9 @@ bool XSentinelScene::GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h,
 	XFileImage* imaA, * imaB, * imaC;
 	if (!CheckViewMode(imaA, imaB, imaC))
 		return false;
+	// Acces sur un seul canal
+	if ((m_ViewMode >= AOT) && (m_ViewMode <= WVP))
+		return imaA->GetZoomArea(x, y, w, h, area, factor);
 	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
 		return BuildIndexImage(x, y, w, h, area, factor, imaA, imaB);
 	return BuildRGBImage(x, y, w, h, area, factor, imaA, imaB, imaC);

@@ -17,7 +17,8 @@
 
 class XSentinelScene : public XFileImage {
 public:
-	enum ViewMode { RGB = 1, IRC, NDVI, NDWI, SWIR, URBAN };
+	enum ViewMode { AOT = 0, B01 = 1, B02 = 2, B03 = 3, B04 = 4, B05 = 5, B06 = 6, B07 = 7, B8A = 8, B09 = 9,
+									B11 = 11, B12 = 12, SCL = 13, TCI = 14, WVP = 15, RGB, IRC, NDVI, NDWI, SWIR, URBAN };
 
 	XSentinelScene();
 	virtual ~XSentinelScene();
@@ -28,7 +29,7 @@ public:
 		XFileImage* image = GetActiveImage(); if (image == nullptr) return false; return image->GetGeoref(xmin, ymax, gsd);
 	}
 
-	virtual int NbByte() { return 3; }
+	virtual int NbByte();
 	virtual std::string GetMetadata() { XFileImage* image = GetActiveImage(); if (image != nullptr) return image->GetMetadata(); return ""; }
 	virtual std::string GetXmlMetadata() { XFileImage* image = GetActiveImage(); if (image != nullptr) return image->GetXmlMetadata(); return ""; }
 

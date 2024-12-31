@@ -36,13 +36,30 @@ SentinelViewerComponent::SentinelViewerComponent()
 	addAndMakeVisible(m_btn60m);
 
 	// Mode de visualisation RGB, IRC, NDVI, NDWI, SWIR, URBAN
-	m_cbxMode.addItem("RGB", XSentinelScene::RGB);
-	m_cbxMode.addItem("IRC", XSentinelScene::IRC);
-	m_cbxMode.addItem("NDVI", XSentinelScene::NDVI);
-	m_cbxMode.addItem("NDWI", XSentinelScene::NDWI);
-	m_cbxMode.addItem("SWIR", XSentinelScene::SWIR);
-	m_cbxMode.addItem("URBAN", XSentinelScene::URBAN);
-	m_cbxMode.setSelectedId(XSentinelScene::RGB);
+	m_cbxMode.addItem("RGB", XSentinelScene::RGB + 1);	// ID = 0 n'est pas permis
+	m_cbxMode.addItem("IRC", XSentinelScene::IRC + 1);
+	m_cbxMode.addItem("NDVI", XSentinelScene::NDVI + 1);
+	m_cbxMode.addItem("NDWI", XSentinelScene::NDWI + 1);
+	m_cbxMode.addItem("SWIR", XSentinelScene::SWIR + 1);
+	m_cbxMode.addItem("URBAN", XSentinelScene::URBAN + 1);
+	m_cbxMode.addSeparator();
+	m_cbxMode.addItem("AOT", XSentinelScene::AOT + 1);
+	m_cbxMode.addItem("B01", XSentinelScene::B01 + 1);
+	m_cbxMode.addItem("B02", XSentinelScene::B02 + 1);
+	m_cbxMode.addItem("B03", XSentinelScene::B03 + 1);
+	m_cbxMode.addItem("B04", XSentinelScene::B04 + 1);
+	m_cbxMode.addItem("B05", XSentinelScene::B05 + 1);
+	m_cbxMode.addItem("B06", XSentinelScene::B06 + 1);
+	m_cbxMode.addItem("B07", XSentinelScene::B07 + 1);
+	m_cbxMode.addItem("B08/B8A", XSentinelScene::B8A + 1);
+	m_cbxMode.addItem("B09", XSentinelScene::B09 + 1);
+	m_cbxMode.addItem("B11", XSentinelScene::B11 + 1);
+	m_cbxMode.addItem("B12", XSentinelScene::B12 + 1);
+	m_cbxMode.addItem("SCL", XSentinelScene::SCL + 1);
+	m_cbxMode.addItem("TCI", XSentinelScene::TCI + 1);
+	m_cbxMode.addItem("WVP", XSentinelScene::WVP + 1);
+
+	m_cbxMode.setSelectedId(XSentinelScene::RGB + 1);
 	m_cbxMode.addListener(this);
 	addAndMakeVisible(m_cbxMode);
 	// Resolution de visualisation
@@ -104,7 +121,7 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 	if (map == nullptr)
 		return;
 	int resol = m_cbxResol.getSelectedId();
-	int mode = m_cbxMode.getSelectedId();
+	int mode = m_cbxMode.getSelectedId() - 1;	// ID commence a 1 ...
 	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
