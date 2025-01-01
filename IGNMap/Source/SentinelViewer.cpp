@@ -69,6 +69,7 @@ SentinelViewerComponent::SentinelViewerComponent()
 	m_cbxResol.setSelectedId(10);
 	m_cbxResol.addListener(this);
 	addAndMakeVisible(m_cbxResol);
+	EnableViewMode(10);
 
 	// Bordure
 	m_tblScene.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -122,6 +123,7 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		return;
 	int resol = m_cbxResol.getSelectedId();
 	int mode = m_cbxMode.getSelectedId() - 1;	// ID commence a 1 ...
+	EnableViewMode(resol);
 	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
@@ -138,6 +140,23 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 }
 
 //==============================================================================
+// SentinelViewerComponent : Active les modes de visualisation en fonction de la resolution
+//==============================================================================
+void SentinelViewerComponent::EnableViewMode(int resol)
+{
+	if (resol == 0)
+		resol = m_cbxResol.getSelectedId();
+	if (resol == 10) {
+		m_cbxMode.setItemEnabled(XSentinelScene::SWIR + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::URBAN + 1, false);
+	}
+	if ((resol == 20) || (resol == 60)) {
+		m_cbxMode.setItemEnabled(XSentinelScene::SWIR + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::URBAN + 1, true);
+	}
+}
+
+//==============================================================================
 // SentinelViewerComponent : Import de scenes Sentinel
 //==============================================================================
 void SentinelViewerComponent::ImportScenes()
@@ -147,7 +166,7 @@ void SentinelViewerComponent::ImportScenes()
 		return;
 	//foldername = "\\\\?\\" + foldername;
 	int resol = m_cbxResol.getSelectedId();
-	int mode = m_cbxMode.getSelectedId();
+	int mode = m_cbxMode.getSelectedId() - 1;	// Les ID commencent a 1
 	juce::File folder(foldername);
 	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
 	for (int i = 0; i < T.size(); i++) {

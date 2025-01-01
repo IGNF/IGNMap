@@ -28,6 +28,9 @@ public:
 	virtual bool GetGeoref(double* xmin, double* ymax, double* gsd) {
 		XFileImage* image = GetActiveImage(); if (image == nullptr) return false; return image->GetGeoref(xmin, ymax, gsd);
 	}
+	virtual uint16_t NbBits() { XFileImage* image = GetActiveImage(); if (image != nullptr) return image->NbBits(); return 0; }
+	virtual uint16_t NbSample();
+	virtual std::string Format() { XFileImage* image = GetActiveImage(); if (image != nullptr) return image->Format(); return ""; }
 
 	virtual int NbByte();
 	virtual std::string GetMetadata() { XFileImage* image = GetActiveImage(); if (image != nullptr) return image->GetMetadata(); return ""; }
@@ -35,6 +38,9 @@ public:
 
 	virtual bool GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area);
 	virtual bool GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor);
+
+	virtual bool GetRawPixel(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample);
+	virtual bool GetRawArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, float* pix, uint32_t* nb_sample, uint32_t factor = 1);
 
 	bool ImportImage(std::string path, std::string filename);
 	void SetViewMode(ViewMode mode, bool adjustResol = false);
@@ -70,6 +76,10 @@ protected:
 										XFileImage* imageR, XFileImage* imageG, XFileImage* imageB);
 	bool BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor,
 										XFileImage* imageA, XFileImage* imageB);
+	bool BuildRawPixelRGB(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample,
+										XFileImage* imageR, XFileImage* imageG, XFileImage* imageB);
+	bool BuildRawPixelIndex(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample,
+													XFileImage* imageA, XFileImage* imageB);
 
 };
 

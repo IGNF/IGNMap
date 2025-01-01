@@ -46,7 +46,6 @@ public:
   GeoFileImage() { ; }
 
   virtual bool AnalyzeImage(std::string path);
-	virtual std::string Filename() { return m_strFilename; }
 	virtual	bool ReadAttributes(std::vector<std::string>& V);
 	virtual inline double Resolution() const { if (m_Image == nullptr) return 10.; return m_Image->GSD(); }
 };

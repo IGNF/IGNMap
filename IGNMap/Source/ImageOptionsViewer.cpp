@@ -116,7 +116,7 @@ void ImageOptionsViewer::resized()
 //==============================================================================
 // SetImage : fixe l'image sur laquelle travailler
 //==============================================================================
-void ImageOptionsViewer::SetImage(GeoFileImage* image)
+void ImageOptionsViewer::SetImage(XFileImage* image)
 {
   if (image == nullptr) {
     m_Image = nullptr;
@@ -157,11 +157,11 @@ void ImageOptionsViewer::SetGeoBase(XGeoBase* base)
     SetImage(nullptr);
     return;
   }
-  GeoFileImage* image = nullptr;
+  XFileImage* image = nullptr;
   for (uint32_t i = 0; i < base->NbSelection(); i++) {
     XGeoVector* V = base->Selection(i);
     if (V->TypeVector() == XGeoVector::Raster) {
-      image = dynamic_cast<GeoFileImage*>(V);
+      image = dynamic_cast<XFileImage*>(V);
       if (image != nullptr)
         break;
     }
@@ -270,7 +270,7 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
 {
   if (m_Image == nullptr)
     return;
-  if ((X < 0) || (Y < 0) || (X >= (int)m_Image->XFileImage::Width()) || (Y >= (int)m_Image->XFileImage::Height())) {
+  if ((X < 0) || (Y < 0) || (X >= (int)m_Image->Width()) || (Y >= (int)m_Image->Height())) {
     m_PixModel.ClearPixels();  // Hors image
     m_tblPixels.updateContent();
     m_tblPixels.repaint();
@@ -281,15 +281,15 @@ void ImageOptionsViewer::SetPixPos(const int& X, const int& Y)
     m_PixModel.PixX = m_PixModel.WinSize + 1;
   else
     m_PixModel.PixX = (uint32_t)X;
-  if (m_PixModel.PixX >= (m_Image->XFileImage::Width() - m_PixModel.WinSize))
-    m_PixModel.PixX = m_Image->XFileImage::Width() - m_PixModel.WinSize -1;
+  if (m_PixModel.PixX >= (m_Image->Width() - m_PixModel.WinSize))
+    m_PixModel.PixX = m_Image->Width() - m_PixModel.WinSize -1;
 
   if (Y <= (int)m_PixModel.WinSize)
     m_PixModel.PixY = m_PixModel.WinSize + 1;
   else
     m_PixModel.PixY = (uint32_t)Y;
-  if (m_PixModel.PixY >= (m_Image->XFileImage::Height() - m_PixModel.WinSize))
-    m_PixModel.PixY = m_Image->XFileImage::Height() - m_PixModel.WinSize - 1;
+  if (m_PixModel.PixY >= (m_Image->Height() - m_PixModel.WinSize))
+    m_PixModel.PixY = m_Image->Height() - m_PixModel.WinSize - 1;
 
   m_PixModel.NbBits = (uint8_t)m_Image->NbBits();
   if (!m_PixModel.AllocPixels(m_Image->NbSample()))

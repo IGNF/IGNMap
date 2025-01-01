@@ -71,6 +71,7 @@ private:
 
 	void ImportScenes();
 	void ImportResol(GeoSentinelImage* scene, juce::File* folder, int resol);
+	void EnableViewMode(int resol = 0);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SentinelViewerComponent)
 };

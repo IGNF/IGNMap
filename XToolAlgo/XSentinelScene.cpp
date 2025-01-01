@@ -45,6 +45,17 @@ int XSentinelScene::NbByte()
 	return 1;
 }
 
+uint16_t XSentinelScene::NbSample()
+{
+	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
+		return 1;
+	if (m_ViewMode >= RGB)
+		return 3;
+	if (m_ViewMode == TCI)
+		return 3;
+	return 1;
+}
+
 //-----------------------------------------------------------------------------
 // Fixe le mode d'affichage
 //-----------------------------------------------------------------------------
@@ -152,11 +163,10 @@ bool XSentinelScene::CheckViewMode(XFileImage*& imaA, XFileImage*& imaB, XFileIm
 //-----------------------------------------------------------------------------
 XFileImage* XSentinelScene::GetActiveImage()
 {
-	XFileImage* image = nullptr;
-	if (m_nResol == 10) image = m_Ima10m[3];
-	if (m_nResol == 20) image = m_Ima20m[3];
-	if (m_nResol == 60) image = m_Ima60m[3];
-	return image;
+	XFileImage* imaA, * imaB, * imaC;
+	if (!CheckViewMode(imaA, imaB, imaC))
+		return nullptr;
+	return imaA;
 }
 
 //-----------------------------------------------------------------------------
@@ -320,8 +330,8 @@ bool XSentinelScene::BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_
 	uint8_t* ptr = area;
 	for (uint32_t i = 0; i < hout; i++) {
 		for (uint32_t j = 0; j < wout; j++) {
-			if (fabs(*ptrA - *ptrB) < 1e-6)
-				index = 0.f;
+			if (fabs(*ptrA + *ptrB) < 1e-6)
+				index = -1.f;
 			else
 				index = (*ptrA - *ptrB) / (*ptrA + *ptrB);
 			ptrA++;
@@ -343,6 +353,109 @@ bool XSentinelScene::BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_
 	delete[] pixB;
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Acces aux pixels en valeurs brutes d'une image composite RGB
+//-----------------------------------------------------------------------------
+bool XSentinelScene::BuildRawPixelRGB(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample,
+																			XFileImage* imageR, XFileImage* imageG, XFileImage* imageB)
+{
+	if ((imageR == nullptr) || (imageG == nullptr) || (imageB == nullptr))
+		return false;
+
+	if ((imageR->NbSample() != 1)||(imageG->NbSample() != 1) || (imageB->NbSample() != 1))
+		return false;
+	double* buf = new double[(2 * win + 1) * (2 * win + 1)];
+	if (!imageR->GetRawPixel(x, y, win, buf, nb_sample)) {
+		delete[] buf;
+		return false;
+	}
+	double* ptr = pix;
+	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
+		*ptr = buf[i]; ptr += 3;
+	}
+
+	if (!imageG->GetRawPixel(x, y, win, buf, nb_sample)) {
+		delete[] buf;
+		return false;
+	}
+	ptr = pix + 1;
+	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
+		*ptr = buf[i]; ptr += 3;
+	}
+
+	if (!imageB->GetRawPixel(x, y, win, buf, nb_sample)) {
+		delete[] buf;
+		return false;
+	}
+	ptr = pix + 2;
+	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
+		*ptr = buf[i]; ptr += 3;
+	}
+
+	*nb_sample = 3;
+	delete[] buf;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Acces aux pixels en valeurs brutes d'une image composite index
+//-----------------------------------------------------------------------------
+bool XSentinelScene::BuildRawPixelIndex(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample,
+																				XFileImage* imageA, XFileImage* imageB)
+{
+	if ((imageA == nullptr) || (imageB == nullptr))
+		return false;
+	uint32_t wout = 2 * win + 1;
+	uint32_t nb_sampleA, nb_sampleB;
+	double* pixA = new double[wout * wout];
+	if (!imageA->GetRawPixel(x, y, win, pixA, &nb_sampleA)) {
+		delete[] pixA;
+		return false;
+	}
+	double* pixB = new double[wout * wout];
+	if (!imageB->GetRawPixel(x, y, win, pixB, &nb_sampleB)) {
+		delete[] pixA;
+		delete[] pixB;
+		return false;
+	}
+	for (uint32_t i = 0; i < wout * wout; i++) {
+		if (fabs((pixA[i] + pixB[i]) < 1e-6))
+			pix[i] = -1.;
+		else
+			pix[i] = (pixA[i] - pixB[i]) / (pixA[i] + pixB[i]);
+	}
+
+	delete[] pixA;
+	delete[] pixB;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Acces aux pixels en valeurs brutes
+//-----------------------------------------------------------------------------
+bool XSentinelScene::GetRawPixel(uint32_t x, uint32_t y, uint32_t win, double* pix, uint32_t* nb_sample)
+{
+	XFileImage* imaA, * imaB, * imaC;
+	if (!CheckViewMode(imaA, imaB, imaC))
+		return false;
+	// Acces sur un seul canal
+	if ((m_ViewMode >= AOT) && (m_ViewMode <= WVP))
+		return imaA->GetRawPixel(x, y, win, pix, nb_sample);
+
+	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
+		return BuildRawPixelIndex(x, y, win, pix, nb_sample, imaA, imaB);
+
+	return BuildRawPixelRGB(x, y, win, pix, nb_sample, imaA, imaB, imaC);
+}
+
+//-----------------------------------------------------------------------------
+// Acces aux pixels en valeurs brutes avec un facteur de zoom
+//-----------------------------------------------------------------------------
+bool XSentinelScene::GetRawArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, float* pix, uint32_t* nb_sample, uint32_t factor)
+{
+	return false;
 }
 
 //-----------------------------------------------------------------------------

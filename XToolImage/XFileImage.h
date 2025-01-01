@@ -43,6 +43,7 @@ public:
   virtual uint16_t NbSample() { if (m_Image == nullptr) return 0; return m_Image->NbSample(); }
   virtual std::string Format() { if (m_Image == nullptr) return ""; return m_Image->Format(); }
 
+  virtual std::string Filename() { return m_strFilename; }
   virtual std::string GetMetadata() { if (m_Image == nullptr) return ""; return m_Image->Metadata(); }
   virtual std::string GetXmlMetadata() { if (m_Image == nullptr) return ""; return m_Image->XmlMetadata(); }
 

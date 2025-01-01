@@ -13,7 +13,7 @@
 
 #include <JuceHeader.h>
 #include "../../XTool/XBase.h"
-class GeoFileImage;
+class XFileImage;
 class XGeoBase;
 
 //==============================================================================
@@ -55,7 +55,7 @@ public:
 	ImageOptionsViewer();
 	void Translate();
 
-	void SetImage(GeoFileImage* image);
+	void SetImage(XFileImage* image);
 	void SetGeoBase(XGeoBase* base);
 	void SetGroundPos(const double& X, const double& Y);
 	void SetPixPos(const int& X, const int& Y);
@@ -80,7 +80,7 @@ private:
 	juce::ToggleButton m_btnPalette;
 	juce::TextEditor m_txtPalette;
 
-	GeoFileImage* m_Image;
+	XFileImage* m_Image;
 
 	void resized() override;
 
