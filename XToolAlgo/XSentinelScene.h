@@ -52,6 +52,7 @@ public:
 	double GetActiveResolution() const { return m_nResol; }
 	bool SentinelAttributes(std::vector<std::string>& V);
 	std::string Date() const { return m_strDate; }
+	std::string Projection() const { return m_strProjection; }
 
 protected:
 	XFileImage* m_Ima10m[16];	// Images a 10m

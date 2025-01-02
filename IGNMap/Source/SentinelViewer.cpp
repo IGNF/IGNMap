@@ -14,6 +14,7 @@
 #include "GeoBase.h"
 #include "../XTool/XGeoBase.h"
 #include "../XTool/XGeoMap.h"
+#include "../../XToolGeod/XGeoPref.h"
 
 //==============================================================================
 // SentinelViewerComponent : constructeur
@@ -149,11 +150,28 @@ void SentinelViewerComponent::EnableViewMode(int resol)
 	if (resol == 10) {
 		m_cbxMode.setItemEnabled(XSentinelScene::SWIR + 1, false);
 		m_cbxMode.setItemEnabled(XSentinelScene::URBAN + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B01 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B05 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B06 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B07 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B09 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B11 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::B12 + 1, false);
+		m_cbxMode.setItemEnabled(XSentinelScene::SCL + 1, false);
 	}
 	if ((resol == 20) || (resol == 60)) {
 		m_cbxMode.setItemEnabled(XSentinelScene::SWIR + 1, true);
 		m_cbxMode.setItemEnabled(XSentinelScene::URBAN + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B01 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B05 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B06 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B07 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B11 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::B12 + 1, true);
+		m_cbxMode.setItemEnabled(XSentinelScene::SCL + 1, true);
 	}
+	if (resol == 60)
+		m_cbxMode.setItemEnabled(XSentinelScene::B09 + 1, true);
 }
 
 //==============================================================================
@@ -192,8 +210,10 @@ void SentinelViewerComponent::ImportScenes()
 			scene->SetViewMode((XSentinelScene::ViewMode)mode);
 			scene->SetActiveResolution(resol);
 			scene->Visible(false);
-			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name())) 
+			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name()))
 				delete scene;
+			else
+				SetProjection(scene->Projection());
 		}
 		else
 			delete scene;
@@ -214,6 +234,25 @@ void SentinelViewerComponent::ImportResol(GeoSentinelImage* scene, juce::File* f
 	for (int j = 0; j < T.size(); j++)
 		scene->ImportImage(T[j].getFullPathName().toStdString(), T[j].getFileName().toStdString());
 	scene->SetActiveResolution(resol);
+}
+
+//==============================================================================
+// SentinelViewerComponent : Import d'une resolution
+//==============================================================================
+void SentinelViewerComponent::SetProjection(std::string projection)
+{
+	XGeoProjection::XProjCode projCode = Lambert93;
+	if (projection == "T30") projCode = ETRS89TM30;
+	if (projection == "T31") projCode = ETRS89TM31;
+	if (projection == "T32") projCode = ETRS89TM32;
+	if (projection == "T20") projCode = RGAF09;
+	if (projection == "T21") projCode = RGSPM06;
+	if (projection == "T22") projCode = RGFG95;
+	if (projection == "T38") projCode = RGM04;
+	if (projection == "T40") projCode = RGR92;
+	XGeoPref pref;
+	pref.Projection(projCode);
+	pref.ProjecView(projCode);
 }
 
 //==============================================================================
