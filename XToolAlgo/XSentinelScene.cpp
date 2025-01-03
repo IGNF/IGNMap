@@ -21,6 +21,8 @@ XSentinelScene::XSentinelScene()
 		m_Ima10m[i] = m_Ima20m[i] = m_Ima60m[i] = nullptr;
 	m_nResol = 20;
 	m_ViewMode = RGB;
+	m_CutNDVI = 0.6f;
+	m_CutNDWI = 0.f;
 }
 
 //-----------------------------------------------------------------------------
@@ -317,10 +319,10 @@ bool XSentinelScene::BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_
 		return false;
 	}
 
-	float cut_value = 0.f;
+	float cut_value = m_CutNDWI;
 	int chan_index = 2, chan_void1 = 0, chan_void2 = 1;
 	if (m_ViewMode == NDVI) {
-		cut_value = 0.6f;
+		cut_value = m_CutNDVI;
 		chan_index = 1;
 		chan_void2 = 2;
 	}

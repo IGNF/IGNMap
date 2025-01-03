@@ -46,7 +46,7 @@ private:
 // SentinelViewerComponent : composant principal
 //==============================================================================
 class SentinelViewerComponent : public juce::Component, public juce::ActionListener, public juce::ActionBroadcaster,
-																public juce::Button::Listener, public juce::ComboBox::Listener {
+																public juce::Button::Listener, public juce::ComboBox::Listener, public juce::Slider::Listener {
 public:
 	SentinelViewerComponent();
 	void SetBase(XGeoBase* base) { m_Base = base; m_mdlScene.SetBase(base); }
@@ -54,6 +54,7 @@ public:
 	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
+	void sliderValueChanged(juce::Slider* slider) override;
 
 private:
 	XGeoBase* m_Base;
@@ -64,6 +65,8 @@ private:
 	juce::ToggleButton m_btn60m;
 	juce::ComboBox m_cbxResol;
 	juce::ComboBox m_cbxMode;
+	juce::Label m_lblParam;
+	juce::Slider m_sldParam;
 	juce::TableListBox m_tblScene;
 	SentinelSceneModel m_mdlScene;
 

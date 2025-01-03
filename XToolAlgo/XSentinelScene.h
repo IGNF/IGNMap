@@ -53,6 +53,10 @@ public:
 	bool SentinelAttributes(std::vector<std::string>& V);
 	std::string Date() const { return m_strDate; }
 	std::string Projection() const { return m_strProjection; }
+	float CutNDVI() const { return m_CutNDVI; }
+	float CutNDWI() const { return m_CutNDWI; }
+	void CutNDVI(float cut) { if ((cut <= 1.f) && (cut >= -1.f))  m_CutNDVI = cut; }
+	void CutNDWI(float cut) { if ((cut <= 1.f) && (cut >= -1.f))  m_CutNDWI = cut; }
 
 protected:
 	XFileImage* m_Ima10m[16];	// Images a 10m
@@ -67,6 +71,8 @@ protected:
 
 	int m_nResol;	// Resolution active : 10, 20 ou 60m;
 	ViewMode m_ViewMode;
+	float m_CutNDVI;
+	float m_CutNDWI;
 
 	XFileImage* GetActiveImage();
 	bool AnalyzeFilename(std::string filename, std::string& proj, std::string& name, std::string& date, 

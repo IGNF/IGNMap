@@ -72,6 +72,15 @@ SentinelViewerComponent::SentinelViewerComponent()
 	addAndMakeVisible(m_cbxResol);
 	EnableViewMode(10);
 
+	// Slider de parametrage
+	m_lblParam.setText("Boost :", juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_lblParam);
+	m_sldParam.setSliderStyle(juce::Slider::LinearBar);
+	m_sldParam.setRange(0., 100., 0.1);
+	m_sldParam.setValue(0., juce::NotificationType::dontSendNotification);
+	m_sldParam.addListener(this);
+	addAndMakeVisible(m_sldParam);
+
 	// Bordure
 	m_tblScene.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
 	m_tblScene.setOutlineThickness(1);
@@ -101,6 +110,8 @@ void SentinelViewerComponent::resized()
 
 	m_cbxMode.setBounds(10, 130, 90, 25);
 	m_cbxResol.setBounds(120, 130, 90, 25);
+	m_lblParam.setBounds(240, 130, 60, 25);
+	m_sldParam.setBounds(300, 130, 80, 25);
 
 	m_tblScene.setBounds(10, 160, getWidth() - 20, 200);
 }
@@ -134,7 +145,45 @@ void SentinelViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasCha
 		}
 		if (comboBoxThatHasChanged == &m_cbxMode) {
 			scene->SetViewMode((XSentinelScene::ViewMode)mode);
+			if ((mode == XSentinelScene::ViewMode::NDVI) || (mode == XSentinelScene::ViewMode::NDWI)) {
+				m_sldParam.setRange(-1., 1., 0.01);
+				m_sldParam.setValue(scene->CutNDVI(), juce::NotificationType::dontSendNotification);
+				if (mode == XSentinelScene::ViewMode::NDWI)
+					m_sldParam.setValue(scene->CutNDWI(), juce::NotificationType::dontSendNotification);
+				m_lblParam.setText("Cut :", juce::NotificationType::dontSendNotification);
+			}
+			else {
+				m_sldParam.setRange(0, 100, 0.1);
+				m_lblParam.setText("Boost :", juce::NotificationType::dontSendNotification);
+			}
 		}
+	}
+	sendActionMessage("UpdateRaster");
+	m_tblScene.updateContent();
+}
+
+//==============================================================================
+// SentinelViewerComponent :modification des sliders
+//==============================================================================
+void SentinelViewerComponent::sliderValueChanged(juce::Slider* slider)
+{
+	XGeoMap* map = m_Base->Map("*SENTINEL*");
+	if (map == nullptr)
+		return;
+	int mode = m_cbxMode.getSelectedId() - 1;
+	double value = slider->getValue();
+	for (uint32_t i = 0; i < map->NbObject(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
+		if (scene == nullptr)
+			continue;
+		if (mode == XSentinelScene::ViewMode::NDVI)
+			scene->CutNDVI((float)value);
+		if (mode == XSentinelScene::ViewMode::NDWI)
+			scene->CutNDWI((float)value);
+	}
+	if ((mode != XSentinelScene::ViewMode::NDVI) && (mode != XSentinelScene::ViewMode::NDWI)) {
+		XBaseImage::MinValue = value * 32;
+		XBaseImage::MaxValue = 256*256 - value * 32;
 	}
 	sendActionMessage("UpdateRaster");
 	m_tblScene.updateContent();
