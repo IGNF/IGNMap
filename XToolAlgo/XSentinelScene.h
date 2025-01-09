@@ -57,6 +57,7 @@ public:
 	float CutNDWI() const { return m_CutNDWI; }
 	void CutNDVI(float cut) { if ((cut <= 1.f) && (cut >= -1.f))  m_CutNDVI = cut; }
 	void CutNDWI(float cut) { if ((cut <= 1.f) && (cut >= -1.f))  m_CutNDWI = cut; }
+	double GetIndex(double X, double Y, ViewMode indexMode);
 
 protected:
 	XFileImage* m_Ima10m[16];	// Images a 10m

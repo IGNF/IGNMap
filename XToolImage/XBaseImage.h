@@ -76,6 +76,8 @@ public:
   // Passage en 8 bits
   static double MinValue;
   static double MaxValue;
+	static double Boost_Hi;
+	static double Boost_Lo;
   static bool Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h);
   static bool Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h);
 

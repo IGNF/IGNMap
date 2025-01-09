@@ -24,3 +24,22 @@ namespace AppUtil {
 	void SaveComponent(juce::Component* component);
 	void SaveTableComponent(juce::TableListBox* table);
 }
+
+//==============================================================================
+// ToolWindow : class merer pour les fenetres container outils
+//==============================================================================
+class ToolWindow : public juce::DocumentWindow {
+public:
+	ToolWindow(const juce::String& name, juce::Colour backgroundColour, int requiredButtons)
+		: juce::DocumentWindow(name, backgroundColour, requiredButtons)
+	{
+		;
+	}
+
+	void closeButtonPressed() override { setVisible(false); }
+	virtual void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) = 0;
+
+private:
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ToolWindow)
+};

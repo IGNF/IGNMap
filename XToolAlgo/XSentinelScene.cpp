@@ -532,3 +532,35 @@ bool XSentinelScene::SentinelAttributes(std::vector<std::string>& V)
 	V.push_back(out.str());
 	return true;
 }
+
+//-----------------------------------------------------------------------------
+// Calcul du NDVI en un point
+//-----------------------------------------------------------------------------
+double XSentinelScene::GetIndex(double X, double Y, ViewMode indexMode)
+{
+	if ((indexMode != NDVI) && (indexMode != NDWI))
+		return -1.;
+	ViewMode mode = GetViewMode();
+	SetViewMode(indexMode);
+	XFileImage *imaA = nullptr, *imaB = nullptr, *imaC = nullptr;
+	if (!CheckViewMode(imaA, imaB, imaC)) {
+		SetViewMode(mode);
+		return -1.;
+	}
+	SetViewMode(mode);
+	int W = (int)imaA->Width();
+	int H = (int)imaA->Height();
+	double Xmin = 0., Ymax = 0., gsd = 1.;
+	imaA->GetGeoref(&Xmin, &Ymax, &gsd);
+	int U0 = XRint((X - Xmin) / gsd);
+	int V0 = XRint((Ymax - Y) / gsd);
+	if ((U0 <= 0) || (V0 <= 0) || (U0 >= (W - 1)) || (V0 >= (H - 1))) 
+		return -1.;
+	double pixA[9], pixB[9];
+	uint32_t nb_sample;
+	imaA->GetRawPixel(U0, V0, 1, pixA, &nb_sample);
+	imaB->GetRawPixel(U0, V0, 1, pixB, &nb_sample);
+	if ((pixA[4] + pixB[4]) < 1e-6)
+		return -1.;
+	return ((pixA[4] - pixB[4]) / (pixA[4] + pixB[4]));
+}

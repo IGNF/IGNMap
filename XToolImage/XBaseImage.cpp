@@ -13,10 +13,12 @@
 #include "../XTool/XInterpol.h"
 
 //-----------------------------------------------------------------------------
-// Valeurs min max pour la conversion en 8 bits
+// Valeurs min, max et boost pour la conversion en 8 bits
 //-----------------------------------------------------------------------------
 double XBaseImage::MinValue = 0.;
 double XBaseImage::MaxValue = 0.;
+double XBaseImage::Boost_Hi = 0.;
+double XBaseImage::Boost_Lo = 0.;
 
 //-----------------------------------------------------------------------------
 // Constructeur
@@ -388,6 +390,7 @@ bool XBaseImage::Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 {
 	// Recherche du min / max
   uint16_t val_min = (uint16_t)MinValue, val_max = (uint16_t)MaxValue;
+  double val_moy = 0.;
   if ((val_min == 0) && (val_max == 0)) {
 		val_min = 0xFFFF;
 		val_max = 0;
@@ -395,11 +398,19 @@ bool XBaseImage::Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 		for (uint32_t i = 0; i < w * h; i++) {
 			val_min = XMin(*ptr, val_min);
 			val_max = XMax(*ptr, val_max);
+      val_moy += (*ptr);
 			ptr++;
 		}
+    val_moy /= (w * h);
 	}
+
+  if (Boost_Hi > 0.)  // Application du boost
+    val_max = (uint16_t)XMin(val_max - (val_max - val_moy) * Boost_Hi, 65535.);
+  if (Boost_Lo > 0.)
+    val_min = (uint16_t)XMax(val_min + (val_moy - val_min) * Boost_Lo, 0.);
   if ((val_max - val_min) == 0)
-		return true;
+    return true;
+
   // Application de la transformation
 	uint16_t* ptr_val = (uint16_t*)buffer;
 	uint8_t* ptr_buf = buffer;
@@ -425,6 +436,7 @@ bool XBaseImage::Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 {
   // Recherche du min / max
   signed short val_min = (signed short)MinValue, val_max = (signed short)MaxValue;
+  double val_moy = 0.;
   if ((val_min == 0) && (val_max == 0)) {
     val_min = 32767;
     val_max = -32767;
@@ -432,9 +444,15 @@ bool XBaseImage::Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
     for (uint32_t i = 0; i < w * h; i++) {
       val_min = XMin(*ptr, val_min);
       val_max = XMax(*ptr, val_max);
+      val_moy += (*ptr);
       ptr++;
     }
+    val_moy /= (w * h);
   }
+  if (Boost_Hi > 0.)  // Application du boost
+    val_max = (uint16_t)XMin(val_max - (val_max - val_moy) * Boost_Hi, 32767.);
+  if (Boost_Lo > 0.)
+    val_min = (uint16_t)XMax(val_min + (val_moy - val_min) * Boost_Lo, -32767.);
   if ((val_max - val_min) == 0)
     return true;
   // Application de la transformation

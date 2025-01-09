@@ -28,6 +28,8 @@
 #include "AnnotViewer.h"
 #include "MainComponentToolbarFactory.h"
 
+class ToolWindow;
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -59,6 +61,7 @@ public:
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
     menuSynchronize, menuGoogle, menuBing,
+    menuToolSentinel,
     menuHelp, menuAbout
   };
 
@@ -114,7 +117,7 @@ private:
 
   XGeoBase m_GeoBase;
   std::vector<GeoSearch*> m_Search;   // Recherche effectuees pendant la session
-  std::vector<juce::DocumentWindow*> m_ToolWindows;
+  std::vector<ToolWindow*> m_ToolWindows;
 
   void Clear();
   void ClearSearch();
@@ -154,6 +157,7 @@ private:
   void ShowHideObjects(bool hide, bool select = false, bool strict = false);
 
   void Test();
+  void ToolSentinel();
 
   void Synchronize();
   void connectionMade() override;

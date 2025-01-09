@@ -234,6 +234,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	else if (menuIndex == 2) // Tools
 	{ 
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
 		menu.addItem(1000, "Test");
 	}
 	else if (menuIndex == 3)
@@ -304,7 +305,9 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailSCAN50Histo,
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
-		CommandIDs::menuGoogle, CommandIDs::menuBing, CommandIDs::menuHelp, CommandIDs::menuAbout };
+		CommandIDs::menuGoogle, CommandIDs::menuBing,
+		CommandIDs::menuToolSentinel,
+		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
 
@@ -488,6 +491,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAbout:
 		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
+		break;
+	case CommandIDs::menuToolSentinel:
+		result.setInfo(juce::translate("Sentinel Tools"), juce::translate("Sentinel Tools"), "Menu", 0);
 		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
@@ -676,6 +682,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuAbout:
 		AboutIGNMap();
 		break;
+	case CommandIDs::menuToolSentinel: 
+		ToolSentinel();
+		break;
 	default:
 		return false;
 	}
@@ -851,6 +860,8 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			m_OGL3DViewer.get()->SetTarget(target);
 		if (m_MapView.get() != nullptr)
 			m_MapView.get()->SetTarget(target, false);
+		for (size_t i = 0; i < m_ToolWindows.size(); i++)
+			m_ToolWindows[i]->SetTarget(target.X, target.Y, target.Z);
 	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {
@@ -1423,17 +1434,6 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "Sentinel") {
-			m_ToolWindows[i]->setVisible(true);
-			m_ToolWindows[i]->toFront(true);
-			return;
-		}
-	}
-	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
-	viewer->setVisible(true);
-	m_ToolWindows.push_back(viewer);
-	return;
 	/*
 	juce::String foldername = AppUtil::OpenFolder("Sentinel", juce::translate("Sentinel Folder"));
 	if (foldername.isEmpty())
@@ -1615,4 +1615,21 @@ void MainComponent::Search(juce::String query)
 	}
 	m_Search.push_back(search);
 	m_VectorViewer.get()->RenameAndViewLastClass(query);
+}
+
+//==============================================================================
+// Outil Sentinel
+//==============================================================================
+void MainComponent::ToolSentinel()
+{
+	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
+		if (m_ToolWindows[i]->getName() == "Sentinel") {
+			m_ToolWindows[i]->setVisible(true);
+			m_ToolWindows[i]->toFront(true);
+			return;
+		}
+	}
+	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	viewer->setVisible(true);
+	m_ToolWindows.push_back(viewer);
 }

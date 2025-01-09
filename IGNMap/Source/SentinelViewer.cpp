@@ -10,8 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "SentinelViewer.h"
-#include "AppUtil.h"
-#include "GeoBase.h"
+
 #include "../XTool/XGeoBase.h"
 #include "../XTool/XGeoMap.h"
 #include "../../XToolGeod/XGeoPref.h"
@@ -22,6 +21,7 @@
 SentinelViewerComponent::SentinelViewerComponent()
 {
 	m_Base = nullptr;
+	m_dX0 = m_dY0 = XGEO_NO_DATA;
 	// Options d'import
 	m_grpImport.setText(juce::translate("Import"));
 	addAndMakeVisible(m_grpImport);
@@ -75,7 +75,8 @@ SentinelViewerComponent::SentinelViewerComponent()
 	// Slider de parametrage
 	m_lblParam.setText("Boost :", juce::NotificationType::dontSendNotification);
 	addAndMakeVisible(m_lblParam);
-	m_sldParam.setSliderStyle(juce::Slider::LinearBar);
+	m_sldParam.setSliderStyle(juce::Slider::LinearHorizontal);
+	m_sldParam.setTextBoxStyle(juce::Slider::TextBoxAbove, false, 80, 25);
 	m_sldParam.setRange(0., 100., 0.1);
 	m_sldParam.setValue(0., juce::NotificationType::dontSendNotification);
 	m_sldParam.addListener(this);
@@ -87,13 +88,32 @@ SentinelViewerComponent::SentinelViewerComponent()
 	// Ajout des colonnes
 	m_tblScene.getHeader().addColumn(juce::translate(" "), SentinelSceneModel::Column::Visibility, 25);
 	m_tblScene.getHeader().addColumn(juce::translate(" "), SentinelSceneModel::Column::Selectable, 25);
-	m_tblScene.getHeader().addColumn(juce::translate("Name"), SentinelSceneModel::Column::Name, 200);
+	m_tblScene.getHeader().addColumn(juce::translate("Name"), SentinelSceneModel::Column::Name, 60);
+	m_tblScene.getHeader().addColumn(juce::translate("# Scenes"), SentinelSceneModel::Column::NbScene, 60);
 	m_tblScene.getHeader().addColumn(juce::translate("Date"), SentinelSceneModel::Column::Date, 100);
 	m_tblScene.setModel(&m_mdlScene);
 	addAndMakeVisible(m_tblScene);
 	m_mdlScene.addActionListener(this);
 
-	setSize(400, 400);
+	// Bouton d'analyse
+	m_btnAnalyze.setButtonText(juce::translate("Analyze"));
+	m_btnAnalyze.addListener(this);
+	addAndMakeVisible(m_btnAnalyze);
+
+	// Bordure
+	m_tblExtract.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
+	m_tblExtract.setOutlineThickness(1);
+	m_tblExtract.setModel(&m_mdlExtract);
+	m_tblExtract.setRowHeight(204);
+	addAndMakeVisible(m_tblExtract);
+	m_mdlExtract.addActionListener(this);
+	m_mdlExtract.m_Result = &m_AnalyzeResult;
+
+	// Dessin de l'analyse
+	m_DrawAnalyze.m_Result = &m_AnalyzeResult;
+	addAndMakeVisible(m_DrawAnalyze);
+
+	setSize(400, 780);
 }
 
 //==============================================================================
@@ -111,9 +131,13 @@ void SentinelViewerComponent::resized()
 	m_cbxMode.setBounds(10, 130, 90, 25);
 	m_cbxResol.setBounds(120, 130, 90, 25);
 	m_lblParam.setBounds(240, 130, 60, 25);
-	m_sldParam.setBounds(300, 130, 80, 25);
+	m_sldParam.setBounds(300, 125, 80, 35);
 
 	m_tblScene.setBounds(10, 160, getWidth() - 20, 200);
+
+	m_btnAnalyze.setBounds(b.getWidth() / 2 - 40, 380, 80, 25);
+	m_tblExtract.setBounds(5, 410, b.getWidth() - 10, 245);
+	m_DrawAnalyze.setBounds(5, 660, b.getWidth() - 10, 100);
 }
 
 //==============================================================================
@@ -123,6 +147,8 @@ void SentinelViewerComponent::buttonClicked(juce::Button* button)
 {
 	if (button == &m_btnImport)
 		return ImportScenes();
+	if (button == &m_btnAnalyze)
+		return Analyze();
 }
 
 //==============================================================================
@@ -182,8 +208,7 @@ void SentinelViewerComponent::sliderValueChanged(juce::Slider* slider)
 			scene->CutNDWI((float)value);
 	}
 	if ((mode != XSentinelScene::ViewMode::NDVI) && (mode != XSentinelScene::ViewMode::NDWI)) {
-		XBaseImage::MinValue = value * 32;
-		XBaseImage::MaxValue = 256*256 - value * 32;
+		XBaseImage::Boost_Hi = value * 0.01;
 	}
 	sendActionMessage("UpdateRaster");
 	m_tblScene.updateContent();
@@ -234,55 +259,16 @@ void SentinelViewerComponent::ImportScenes()
 	//foldername = "\\\\?\\" + foldername;
 	int resol = m_cbxResol.getSelectedId();
 	int mode = m_cbxMode.getSelectedId() - 1;	// Les ID commencent a 1
-	juce::File folder(foldername);
-	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
-	for (int i = 0; i < T.size(); i++) {
-		GeoSentinelImage* scene = new GeoSentinelImage;
-		if (m_btn10m.getToggleState()) {
-			juce::File folder10m = T[i].getChildFile("R10m");
-			if (folder10m.exists())
-				ImportResol(scene, &folder10m, 10);
-		}
-		if (m_btn20m.getToggleState()) {
-			juce::File folder20m = T[i].getChildFile("R20m");
-			if (folder20m.exists())
-				ImportResol(scene, &folder20m, 20);
-		}
-		if (m_btn60m.getToggleState()) {
-			juce::File folder60m = T[i].getChildFile("R60m");
-			if (folder60m.exists())
-				ImportResol(scene, &folder60m, 60);
-		}
 
-		if (scene->NbImages() > 0) {
-			scene->ComputeFrame();
-			scene->SetViewMode((XSentinelScene::ViewMode)mode);
-			scene->SetActiveResolution(resol);
-			scene->Visible(false);
-			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name()))
-				delete scene;
-			else
-				SetProjection(scene->Projection());
-		}
-		else
-			delete scene;
-	}
+	SentinelImportTask task;
+	task.SetImportParam(m_Base, foldername, m_btn10m.getToggleState(), m_btn20m.getToggleState(), m_btn60m.getToggleState());
+	task.SetActiveParam(resol, (XSentinelScene::ViewMode)mode);
+	task.runThread();
+
+	SetProjection(task.Projection());
 	m_tblScene.updateContent();
+	m_tblScene.repaint();
 	sendActionMessage("UpdatePreferences");
-}
-
-//==============================================================================
-// SentinelViewerComponent : Import d'une resolution
-//==============================================================================
-void SentinelViewerComponent::ImportResol(GeoSentinelImage* scene, juce::File* folder, int resol)
-{
-	juce::Array<juce::File> T;
-	T = folder->findChildFiles(juce::File::findFiles, false, "*.jp2");
-	T.addArray(folder->findChildFiles(juce::File::findFiles, false, "*.tif"));
-	T.addArray(folder->findChildFiles(juce::File::findFiles, false, "*.cog"));
-	for (int j = 0; j < T.size(); j++)
-		scene->ImportImage(T[j].getFullPathName().toStdString(), T[j].getFileName().toStdString());
-	scene->SetActiveResolution(resol);
 }
 
 //==============================================================================
@@ -318,6 +304,58 @@ void SentinelViewerComponent::actionListenerCallback(const juce::String& message
 		sendActionMessage("UpdateRaster");
 		return;
 	}
+	if (message == "UpdateExtractTable") {
+		m_tblExtract.repaint();
+		m_DrawAnalyze.repaint();
+		return;
+	}
+}
+
+//==============================================================================
+// SentinelViewerComponent : Fixe le point cible
+//==============================================================================
+void SentinelViewerComponent::SetTarget(const double& X, const double& Y, const double& /*Z*/)
+{
+	XGeoMap* map = m_Base->Map("*SENTINEL*");
+	if (map == nullptr)
+		return;
+	m_dX0 = X;
+	m_dY0 = Y;
+	
+	GeoSentinelImage* activeScene = nullptr;
+	for (uint32_t i = 0; i < map->NbObject(); i++) {
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
+		if (scene == nullptr)
+			continue;
+		if (!scene->Visible())
+			continue;
+		if (scene->Frame().IsIn(XPt2D(X, Y))) {
+			activeScene = scene;
+			break;
+		}
+	}
+	if (activeScene == nullptr)
+		return;
+}
+
+//==============================================================================
+// SentinelViewerComponent : Analyse de la zone
+//==============================================================================
+void SentinelViewerComponent::Analyze()
+{
+	XGeoMap* map = m_Base->Map("*SENTINEL*");
+	if (map == nullptr)
+		return;
+	m_tblExtract.getHeader().removeAllColumns();
+	SentinelAnalyzeTask task;
+	task.m_Map = map;
+	task.m_P = XPt2D(m_dX0, m_dY0);
+	task.runThread();
+	m_AnalyzeResult = task.m_Result;
+	m_DrawAnalyze.repaint();
+
+	for (int i = 0; i < (int)m_AnalyzeResult.size(); i++) 
+		m_tblExtract.getHeader().addColumn(m_AnalyzeResult[i].Scene->Date(), i + 1, 200);	// ID doit etre different de 0
 }
 
 //==============================================================================
@@ -331,7 +369,7 @@ int SentinelSceneModel::getNumRows()
 	if (map == nullptr)
 		return 0;
 	std::vector<XGeoClass*> T;
-	for (int i = 0; i < map->NbObject(); i++) {
+	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
 			continue;
@@ -382,6 +420,9 @@ void SentinelSceneModel::paintCell(juce::Graphics& g, int rowNumber, int columnI
 	case Column::Name:// Name
 		g.drawText(juce::String(geoLayer->Name()), 0, 0, width, height, juce::Justification::centredLeft);
 		break;
+	case Column::NbScene: // Nombre de scenes
+		g.drawText(juce::String(geoLayer->NbVector()), 0, 0, width, height, juce::Justification::centred);
+		break;
 	case Column::Date:// Date
 		g.drawText(date, 0, 0, width, height, juce::Justification::centred);
 		break;
@@ -418,30 +459,31 @@ void SentinelSceneModel::cellClicked(int rowNumber, int columnId, const juce::Mo
 		return;
 	}
 
-
-	// Choix d'une epaisseur
+	// Choix d'une date
 	if (columnId == Column::Date) {
 		auto dateSelector = std::make_unique<juce::ComboBox>();
 		dateSelector->setSize(200, 30);
-		for (int i = 0; i < geoLayer->NbVector(); i++) {
+		juce::StringArray T;
+		for (uint32_t i = 0; i < geoLayer->NbVector(); i++) {
 			GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(geoLayer->Vector(i));
 			if (scene == nullptr)
 				continue;
-			dateSelector->addItem(scene->Date(), i + 1);
+			T.add(scene->Date());
 		}
+		if (T.size() < 1) return;
+		T.sort(true);
+		dateSelector->addItemList(T, 1);
 		dateSelector->setText(date, juce::NotificationType::dontSendNotification);
 		dateSelector->addListener(this);
 		juce::CallOutBox::launchAsynchronously(std::move(dateSelector), bounds, nullptr);
 		return;
 	}
-
-	
 }
 
 //==============================================================================
 // SentinelSceneModel : DoubleClic dans une cellule
 //==============================================================================
-void SentinelSceneModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
+void SentinelSceneModel::cellDoubleClicked(int /*rowNumber*/, int columnId, const juce::MouseEvent& /*event*/)
 {
 	XGeoClass* geoLayer = nullptr; // FindVectorClass(rowNumber);
 	if (geoLayer == nullptr)
@@ -468,7 +510,7 @@ XGeoClass* SentinelSceneModel::FindScene(int number, juce::String& date)
 	if (map == nullptr)
 		return nullptr;
 	std::vector<XGeoClass*> T;
-	for (int i = 0; i < map->NbObject(); i++) {
+	for (uint32_t i = 0; i < map->NbObject(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(map->Object(i));
 		if (scene == nullptr)
 			continue;
@@ -480,7 +522,7 @@ XGeoClass* SentinelSceneModel::FindScene(int number, juce::String& date)
 	if (T.size() <= number)
 		return nullptr;
 	XGeoClass* C = T[number];
-	for (int i = 0; i < C->NbVector(); i++) {
+	for (uint32_t i = 0; i < C->NbVector(); i++) {
 		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(C->Vector(i));
 		if (scene == nullptr)
 			continue;
@@ -515,4 +557,239 @@ void SentinelSceneModel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 			scene->Visible(false);
 	}
 	sendActionMessage("UpdateImageVisibility");
+}
+
+//==============================================================================
+// SentinelSceneModel : Dessin du fond
+//==============================================================================
+void SentinelExtractModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+{
+	g.setColour(juce::Colours::lightblue);
+	if (rowIsSelected)
+		g.drawRect(g.getClipBounds());
+	g.setColour(juce::Colours::white);
+}
+
+//==============================================================================
+// SentinelSceneModel : Dessin des cellules
+//==============================================================================
+void SentinelExtractModel::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+{
+	if ((rowNumber != 0) || (m_Result == nullptr))
+		return;
+	int index = columnId - 1;	// Les ID de colonnes commencent à 1
+	if ((index < 0)||(index >= m_Result->size()))
+		return;
+	GeoSentinelImage* scene = (*m_Result)[index].Scene;
+	if (scene == nullptr)
+		return;
+	g.drawImageAt(juce::ImageCache::getFromHashCode((juce::int64)scene), 0, 0);
+	if ((*m_Result)[index].State == 0)
+		return;
+	if ((*m_Result)[index].State == 1) {
+		g.setColour(juce::Colours::orange);
+		g.drawRect(0, 0, width, height, 3);
+		return;
+	}
+	if ((*m_Result)[index].State == 2) {
+		g.setColour(juce::Colours::red);
+		g.drawLine(0.f, 0.f, (float)width, (float)height, 3.f);
+		g.drawLine(0.f, (float)height, (float)width, 0.f, 3.f);
+		return;
+	}
+}
+
+//==============================================================================
+// SentinelSceneModel : Clic dans une cellule
+//==============================================================================
+void SentinelExtractModel::cellClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent& /*event*/)
+{
+	
+}
+
+//==============================================================================
+// SentinelSceneModel : DoubleClic dans une cellule
+//==============================================================================
+void SentinelExtractModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
+{
+	if ((rowNumber != 0)||(m_Result == nullptr))
+		return;
+	int index = columnId - 1;	// Les ID de colonnes commencent à 1
+	if ((index < 0) || (index >= m_Result->size()))
+		return;
+	GeoSentinelImage* scene = (*m_Result)[index].Scene;
+	if (scene == nullptr)
+		return;
+	(*m_Result)[index].State = ((*m_Result)[index].State + 1) % 3;	// 3 etats possibles
+	sendActionMessage("UpdateExtractTable");
+}
+
+//==============================================================================
+// SentinelImportTask : Import d'une resolution
+//==============================================================================
+void SentinelImportTask::ImportResol(GeoSentinelImage* scene, juce::File* folder, int resol)
+{
+	juce::Array<juce::File> T;
+	T = folder->findChildFiles(juce::File::findFiles, false, "*.jp2");
+	T.addArray(folder->findChildFiles(juce::File::findFiles, false, "*.tif"));
+	T.addArray(folder->findChildFiles(juce::File::findFiles, false, "*.cog"));
+	for (int j = 0; j < T.size(); j++)
+		scene->ImportImage(T[j].getFullPathName().toStdString(), T[j].getFileName().toStdString());
+	scene->SetActiveResolution(resol);
+}
+
+//==============================================================================
+// SentinelImportTask : import d'une arborescence
+//==============================================================================
+void SentinelImportTask::run()
+{
+	if (m_Base == nullptr)	// Les parametres doivent etre definis au prealable !
+		return;
+	juce::File folder(m_strFoldername);
+	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
+	for (int i = 0; i < T.size(); i++) {
+		if (threadShouldExit())
+			break;
+		setProgress(i / (double)T.size());
+		GeoSentinelImage* scene = new GeoSentinelImage;
+		if (m_b10m) {
+			juce::File folder10m = T[i].getChildFile("R10m");
+			if (folder10m.exists())
+				ImportResol(scene, &folder10m, 10);
+		}
+		if (m_b20m) {
+			juce::File folder20m = T[i].getChildFile("R20m");
+			if (folder20m.exists())
+				ImportResol(scene, &folder20m, 20);
+		}
+		if (m_b60m) {
+			juce::File folder60m = T[i].getChildFile("R60m");
+			if (folder60m.exists())
+				ImportResol(scene, &folder60m, 60);
+		}
+
+		if (scene->NbImages() > 0) {
+			scene->ComputeFrame();
+			scene->SetViewMode(m_ViewMode);
+			scene->SetActiveResolution(m_nActiveResolution);
+			scene->Visible(false);
+			if (!GeoTools::RegisterObject(m_Base, scene, "*SENTINEL*", "Raster", scene->Name()))
+				delete scene;
+			else
+				m_strProjection = scene->Projection();
+		}
+		else
+			delete scene;
+	}
+}
+
+//==============================================================================
+// SentinelAnalyzeTask : analyse d'une zone
+//==============================================================================
+void SentinelAnalyzeTask::run()
+{
+	if (m_Map == nullptr)
+		return;
+	juce::ImageCache::releaseUnusedImages();
+	juce::ImageCache::setCacheTimeout(60000000);
+	m_Result.clear();
+
+	for (uint32_t i = 0; i < m_Map->NbObject(); i++) {
+		if (threadShouldExit())
+			break;
+		setProgress(i / (double)m_Map->NbObject());
+		GeoSentinelImage* scene = dynamic_cast<GeoSentinelImage*>(m_Map->Object(i));
+		if (scene == nullptr)
+			continue;
+		if (!scene->Frame().IsIn(m_P))
+			continue;
+
+		int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
+		double gsd = scene->GetActiveResolution();
+		double X0 = XRint(m_P.X / gsd) * gsd;
+		double Y0 = XRint(m_P.Y / gsd) * gsd;
+		XFrame F(X0 - gsd * 100, Y0 - gsd * 100, X0 + gsd * 100, Y0 + gsd * 100);
+		if (!scene->PrepareRasterDraw(&F, gsd, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
+			continue;
+
+		int factor = win / wout;
+		if (factor < 1)
+			factor = 1;
+		int wtmp = win / factor, htmp = hin / factor;
+		if ((wtmp == 0) || (htmp == 0))
+			continue;
+		juce::Image::PixelFormat format = juce::Image::PixelFormat::RGB;
+		juce::Image tmpImage(format, wtmp, htmp, true);
+		{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
+			juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
+			format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+
+			if (factor == 1)
+				scene->GetArea(U0, V0, win, hin, bitmap.data);
+			else
+				scene->GetZoomArea(U0, V0, win, hin, bitmap.data, factor);
+
+			if (format == juce::Image::PixelFormat::RGB) {
+				if (nbBand == 1)
+					XBaseImage::Gray2RGB(bitmap.data, wtmp * htmp);
+				else
+					XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
+				XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
+			}
+			else {
+				if (nbBand == 1)
+					XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp);
+				else
+					XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp);
+				XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+			}
+		}
+		juce::ImageCache::addImageToCache(tmpImage, (juce::int64)scene);
+		Result R;
+		R.Scene = scene;
+		R.Index = scene->GetIndex(X0, Y0, XSentinelScene::ViewMode::NDVI);
+		juce::String date = scene->Date();
+		date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+		R.Time = juce::Time::fromISO8601(date);
+		m_Result.push_back(R);
+	}
+	std::sort(m_Result.begin(), m_Result.end(), predDate);
+}
+
+//==============================================================================
+// SentinelAnalyzeDraw : dessin d'une analyse
+//==============================================================================
+void SentinelAnalyzeDraw::paint(juce::Graphics& g)
+{
+	if (m_Result == nullptr)
+		return;
+	g.setColour(juce::Colours::floralwhite);
+	g.fillRect(0, 0, getWidth(), getHeight());
+	double X0 = 5., Y0 = 5.;
+	double W = getWidth() - 2 * X0;
+	double H = getHeight() - 2 * Y0;
+	g.setColour(juce::Colours::lightgrey);
+	g.drawLine((float)X0, (float)(Y0 + H * 0.5), (float)W, (float)(Y0 + H * 0.5), 3.f);
+	for (int y = -10; y <= 10; y += 2) {
+		g.drawLine((float)X0, (float)(Y0 + H * 0.5 - y * H * 0.05), (float)W, (float)(Y0 + H * 0.5 - y * H * 0.05), 1.f);
+	}
+
+	if (m_Result->size() < 2)
+		return;
+	juce::int64 deltaT = (*m_Result)[m_Result->size() - 1].Time.toMilliseconds() - (*m_Result)[0].Time.toMilliseconds();
+	if (deltaT <= 0)
+		return;
+
+	for (size_t i = 0; i < m_Result->size(); i++) {
+		juce::int64 T = (*m_Result)[i].Time.toMilliseconds() - (*m_Result)[0].Time.toMilliseconds();
+		float x = (float)(X0 + (T * W) / deltaT);
+		float y = (float)(Y0 + H * 0.5 - (*m_Result)[i].Index * (H * 0.5));
+		switch ((*m_Result)[i].State) {
+		case 1: g.setColour(juce::Colours::orange); break;
+		case 2: g.setColour(juce::Colours::red); break;
+		default : g.setColour(juce::Colours::green);
+		}
+			
+		g.drawEllipse(x - 3.f, y - 3.f, 6.f, 6.f, 3.f);
+	}
 }
