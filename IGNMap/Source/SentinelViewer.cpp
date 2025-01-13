@@ -112,6 +112,7 @@ SentinelViewerComponent::SentinelViewerComponent()
 	// Dessin de l'analyse
 	m_DrawAnalyze.m_Result = &m_AnalyzeResult;
 	addAndMakeVisible(m_DrawAnalyze);
+	m_DrawAnalyze.addActionListener(this);
 
 	setSize(400, 780);
 }
@@ -307,6 +308,30 @@ void SentinelViewerComponent::actionListenerCallback(const juce::String& message
 	if (message == "UpdateExtractTable") {
 		m_tblExtract.repaint();
 		m_DrawAnalyze.repaint();
+		return;
+	}
+
+	juce::StringArray T;
+	T.addTokens(message, ":", "");
+
+	if (T[0] == "ShowDate") {
+		if (T.size() < 2)
+			return;
+		m_DrawAnalyze.SetDate(T[1].getLargeIntValue());
+		m_DrawAnalyze.repaint();
+		return;
+	}
+	if (T[0] == "ShowTime") {
+		if (T.size() < 2)
+			return;
+		juce::int64 time = T[1].getLargeIntValue();
+		for (size_t i = 0; i < m_AnalyzeResult.size() - 1; i++) {
+			if ((time >= m_AnalyzeResult[i].Time.toMilliseconds()) && (time < m_AnalyzeResult[i + 1].Time.toMilliseconds())) {
+				m_tblExtract.scrollToEnsureColumnIsOnscreen(i + 2);
+				m_tblExtract.scrollToEnsureColumnIsOnscreen(i+1);
+				break;
+			}
+		}
 		return;
 	}
 }
@@ -602,9 +627,17 @@ void SentinelExtractModel::paintCell(juce::Graphics& g, int rowNumber, int colum
 //==============================================================================
 // SentinelSceneModel : Clic dans une cellule
 //==============================================================================
-void SentinelExtractModel::cellClicked(int /*rowNumber*/, int /*columnId*/, const juce::MouseEvent& /*event*/)
+void SentinelExtractModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
-	
+	if (!event.mods.isRightButtonDown())
+		return;
+	if ((rowNumber != 0) || (m_Result == nullptr))
+		return;
+	int index = columnId - 1;	// Les ID de colonnes commencent à 1
+	if ((index < 0) || (index >= m_Result->size()))
+		return;
+	(*m_Result)[index].State = ((*m_Result)[index].State + 1) % 3;	// 3 etats possibles
+	sendActionMessage("UpdateExtractTable");
 }
 
 //==============================================================================
@@ -612,16 +645,12 @@ void SentinelExtractModel::cellClicked(int /*rowNumber*/, int /*columnId*/, cons
 //==============================================================================
 void SentinelExtractModel::cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& /*event*/)
 {
-	if ((rowNumber != 0)||(m_Result == nullptr))
+	if ((rowNumber != 0) || (m_Result == nullptr))
 		return;
 	int index = columnId - 1;	// Les ID de colonnes commencent à 1
 	if ((index < 0) || (index >= m_Result->size()))
 		return;
-	GeoSentinelImage* scene = (*m_Result)[index].Scene;
-	if (scene == nullptr)
-		return;
-	(*m_Result)[index].State = ((*m_Result)[index].State + 1) % 3;	// 3 etats possibles
-	sendActionMessage("UpdateExtractTable");
+	sendActionMessage("ShowDate:" + juce::String((*m_Result)[index].Time.toMilliseconds()));
 }
 
 //==============================================================================
@@ -748,6 +777,7 @@ void SentinelAnalyzeTask::run()
 		Result R;
 		R.Scene = scene;
 		R.Index = scene->GetIndex(X0, Y0, XSentinelScene::ViewMode::NDVI);
+		if (R.Index < (-0.99)) R.State = 1;
 		juce::String date = scene->Date();
 		date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
 		R.Time = juce::Time::fromISO8601(date);
@@ -780,16 +810,54 @@ void SentinelAnalyzeDraw::paint(juce::Graphics& g)
 	if (deltaT <= 0)
 		return;
 
+	if (m_ShowDate > 0) {
+		g.setColour(juce::Colours::lightpink);
+		juce::int64 T = m_ShowDate - (*m_Result)[0].Time.toMilliseconds();
+		float x = (float)(X0 + (T * W) / deltaT);
+		g.drawLine(x, Y0, x, Y0 + H, 3.f);
+	}
+
+	float lastX = 0.f, lastY = 0.f;
 	for (size_t i = 0; i < m_Result->size(); i++) {
 		juce::int64 T = (*m_Result)[i].Time.toMilliseconds() - (*m_Result)[0].Time.toMilliseconds();
 		float x = (float)(X0 + (T * W) / deltaT);
 		float y = (float)(Y0 + H * 0.5 - (*m_Result)[i].Index * (H * 0.5));
+		int state = (*m_Result)[i].State;
+
+		if ((lastX > 0.f) && (lastY > 0.f) && (state == 0)) {
+			g.setColour(juce::Colours::grey);
+			g.drawLine(lastX, lastY, x, y, 1.f);
+		}
+
 		switch ((*m_Result)[i].State) {
 		case 1: g.setColour(juce::Colours::orange); break;
 		case 2: g.setColour(juce::Colours::red); break;
 		default : g.setColour(juce::Colours::green);
 		}
-			
 		g.drawEllipse(x - 3.f, y - 3.f, 6.f, 6.f, 3.f);
+		if (state == 0) {
+			lastX = x;
+			lastY = y;
+		}
 	}
+}
+
+//==============================================================================
+// SentinelAnalyzeDraw : double-clic dans le dessin
+//==============================================================================
+void SentinelAnalyzeDraw::mouseDoubleClick(const juce::MouseEvent& event)
+{
+	if (m_Result == nullptr)
+		return;
+	if (m_Result->size() < 2)
+		return;
+	double X0 = 5.;
+	double W = getWidth() - 2 * X0;
+	
+	juce::int64 deltaT = (*m_Result)[m_Result->size() - 1].Time.toMilliseconds() - (*m_Result)[0].Time.toMilliseconds();
+	if (deltaT <= 0)
+		return;
+	SetDate(juce::int64(((event.position.getX() - X0) * deltaT) / W) + (*m_Result)[0].Time.toMilliseconds());
+	sendActionMessage("ShowTime:" + juce::String(m_ShowDate));
+	repaint();
 }

@@ -73,10 +73,14 @@ public:
 //==============================================================================
 // SentinelAnalyzeDraw : dessin d'une analyse
 //==============================================================================
-class SentinelAnalyzeDraw: public juce::Component {
+class SentinelAnalyzeDraw: public juce::Component, public juce::ActionBroadcaster, public juce::SettableTooltipClient {
 public:
 	void paint(juce::Graphics& g) override;
+	void mouseDoubleClick(const juce::MouseEvent& event) override;
+	void SetDate(juce::int64 time) { m_ShowDate = time; juce::Time T(time); setTooltip(T.toString(true, false)); }
+
 	std::vector<SentinelAnalyzeTask::Result>* m_Result = nullptr;
+	juce::int64 m_ShowDate = 0;
 };
 
 //==============================================================================

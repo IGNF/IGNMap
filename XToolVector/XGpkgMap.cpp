@@ -351,6 +351,8 @@ bool XGpkgMap::ReadAttributes(sqlite3_int64 id, std::vector<std::string>& V, XGe
 {
   if (!SetAttClass(C))
     return false;
+  if (m_Att.size() == 0)
+    return true;
 
   sqlite3_stmt *stmt = NULL;
   std::stringstream request;
@@ -385,7 +387,8 @@ bool XGpkgMap::ReadAttributes(sqlite3_int64 id, std::vector<std::string>& V, XGe
   sqlite3_finalize(stmt);
   stmt = NULL;
 
-  return true;}
+  return true;
+}
 
 //-----------------------------------------------------------------------------
 // Lecture de la geometrie
