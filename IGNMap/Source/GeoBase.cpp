@@ -213,6 +213,57 @@ bool GeoSentinelImage::ComputeFrame()
 }
 
 //-----------------------------------------------------------------------------
+// Calcul d'une imagette
+//-----------------------------------------------------------------------------
+juce::Image GeoSentinelImage::GetQuickView()
+{
+	ViewMode mode = GetViewMode();
+	SetViewMode(TCI);
+
+	juce::Image image(juce::Image::RGB, 256, 256, true);
+	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
+	XFrame F = Frame();
+	double gsd = F.Width() / 256.;
+	if (!PrepareRasterDraw(&F, gsd, U0, V0, win, hin, nbBand, R0, S0, wout, hout)) {
+		SetViewMode(mode);
+		return image;
+	}
+
+	int factor = win / wout;
+	if (factor < 1)
+		factor = 1;
+	int wtmp = win / factor, htmp = hin / factor;
+	if ((wtmp == 0) || (htmp == 0) || (nbBand != 3)) {
+		SetViewMode(mode);
+		return image;
+	}
+
+	juce::Image::PixelFormat format = juce::Image::PixelFormat::RGB;
+	juce::Image tmpImage(format, wtmp, htmp, true);
+	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
+		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
+		format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+
+		if (factor == 1)
+			GetArea(U0, V0, win, hin, bitmap.data);
+		else
+			GetZoomArea(U0, V0, win, hin, bitmap.data, factor);
+
+		if (format == juce::Image::PixelFormat::RGB) {
+			XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
+			XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
+		}
+		else {
+			XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp);
+			XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
+		}
+	}
+	SetViewMode(mode);
+	image = tmpImage.rescaled(256, 256);
+	return image;
+}
+
+//-----------------------------------------------------------------------------
 // Fermeture du MNT
 //-----------------------------------------------------------------------------
 void GeoDTM::Close()

@@ -101,6 +101,8 @@ public:
 	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
+	juce::Image m_QuickView;
+
 private:
 	XGeoBase* m_Base;
 	int				m_ActiveRow;
@@ -112,7 +114,6 @@ private:
 //==============================================================================
 class SentinelExtractModel : public juce::TableListBoxModel, public juce::ActionBroadcaster {
 public:
-	typedef enum { Visibility = 1, Selectable = 2, Date = 3, Image = 4} Column;
 	SentinelExtractModel() : juce::TableListBoxModel() { m_Result = nullptr; }
 	~SentinelExtractModel() { ; }
 
@@ -161,6 +162,7 @@ private:
 		juce::Slider m_sldParam;
 		juce::TableListBox m_tblScene;
 		SentinelSceneModel m_mdlScene;
+		juce::ImageComponent m_imcQuickView;
 	};
 	ViewPage m_ViewPage;
 

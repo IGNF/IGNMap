@@ -493,7 +493,7 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		result.setInfo(juce::translate("About IGNMap"), juce::translate("About IGNMap"), "Menu", 0);
 		break;
 	case CommandIDs::menuToolSentinel:
-		result.setInfo(juce::translate("Sentinel Tools"), juce::translate("Sentinel Tools"), "Menu", 0);
+		result.setInfo(juce::translate("Sentinel"), juce::translate("Sentinel"), "Menu", 0);
 		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);

@@ -85,6 +85,7 @@ public:
   bool ComputeFrame();
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return SentinelAttributes(V); }
   virtual inline double Resolution() const { return GetActiveResolution(); }
+  juce::Image GetQuickView();
 };
 
 //==============================================================================

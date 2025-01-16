@@ -23,8 +23,6 @@ SentinelViewerComponent::SentinelViewerComponent() : m_Tab(juce::TabbedButtonBar
 	m_Base = nullptr;
 	m_dX0 = m_dY0 = XGEO_NO_DATA;
 	// Options d'import
-	//m_grpImport.setText(juce::translate("Import"));
-	//addAndMakeVisible(m_grpImport);
 	m_ImportPage.m_btnImport.setButtonText(juce::translate("Import"));
 	m_ImportPage.m_btnImport.addListener(this);
 	m_ImportPage.addAndMakeVisible(m_ImportPage.m_btnImport);
@@ -95,6 +93,8 @@ SentinelViewerComponent::SentinelViewerComponent() : m_Tab(juce::TabbedButtonBar
 	m_ViewPage.addAndMakeVisible(m_ViewPage.m_tblScene);
 	m_ViewPage.m_mdlScene.addActionListener(this);
 
+	m_ViewPage.addAndMakeVisible(m_ViewPage.m_imcQuickView);	// Quickview
+
 	// Bouton d'analyse
 	m_AnalyzePage.m_btnAnalyze.setButtonText(juce::translate("Analyze"));
 	m_AnalyzePage.m_btnAnalyze.addListener(this);
@@ -115,7 +115,7 @@ SentinelViewerComponent::SentinelViewerComponent() : m_Tab(juce::TabbedButtonBar
 	m_AnalyzePage.m_DrawAnalyze.addActionListener(this);
 
 	// Tab pour contenir les pages
-	addAndMakeVisible(m_ImportPage);
+	//addAndMakeVisible(m_ImportPage);
 	auto colour = findColour(juce::ResizableWindow::backgroundColourId);
 	m_Tab.addTab(juce::translate("Import"), colour, &m_ImportPage, false);
 	m_Tab.addTab(juce::translate("View"), colour, &m_ViewPage, false);
@@ -152,7 +152,8 @@ void SentinelViewerComponent::resized()
 	m_ViewPage.m_lblParam.setBounds(240, 20, 60, 25);
 	m_ViewPage.m_sldParam.setBounds(300, 15, 80, 35);
 
-	m_ViewPage.m_tblScene.setBounds(10, 60, b.getWidth() - 30, b.getHeight() - 110);
+	m_ViewPage.m_tblScene.setBounds(10, 60, b.getWidth() - 30, /*b.getHeight() - */110);
+	m_ViewPage.m_imcQuickView.setBounds(b.getWidth() / 2 - 128, 180, 256, 256);
 
 	m_AnalyzePage.m_btnAnalyze.setBounds(b.getWidth() / 2 - 40, 20, 80, 25);
 	m_AnalyzePage.m_tblExtract.setBounds(5, 50, b.getWidth() - 20, 245);
@@ -320,6 +321,8 @@ void SentinelViewerComponent::actionListenerCallback(const juce::String& message
 	}
 	if (message == "UpdateImageVisibility") {
 		m_ViewPage.m_tblScene.repaint();
+		m_ViewPage.m_imcQuickView.setImage(m_ViewPage.m_mdlScene.m_QuickView);
+		m_ViewPage.m_imcQuickView.repaint();
 		sendActionMessage("UpdateRaster");
 		return;
 	}
@@ -594,8 +597,10 @@ void SentinelSceneModel::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		if (scene == nullptr)
 			continue;
 
-		if (newDate == scene->Date())
+		if (newDate == scene->Date()) {
 			scene->Visible(true);
+			m_QuickView = scene->GetQuickView();
+		}
 		else
 			scene->Visible(false);
 	}
