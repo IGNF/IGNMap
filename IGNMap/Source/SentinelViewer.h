@@ -133,7 +133,7 @@ class SentinelViewerComponent : public juce::Component, public juce::ActionListe
 																public juce::Button::Listener, public juce::ComboBox::Listener, public juce::Slider::Listener {
 public:
 	SentinelViewerComponent();
-	void SetBase(XGeoBase* base) { m_Base = base; m_mdlScene.SetBase(base); }
+	void SetBase(XGeoBase* base);
 
 	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
@@ -145,22 +145,35 @@ public:
 private:
 	XGeoBase* m_Base;
 	double m_dX0, m_dY0;
-	juce::GroupComponent m_grpImport;
-	juce::TextButton m_btnImport;
-	juce::ToggleButton m_btn10m;
-	juce::ToggleButton m_btn20m;
-	juce::ToggleButton m_btn60m;
-	juce::ComboBox m_cbxResol;
-	juce::ComboBox m_cbxMode;
-	juce::Label m_lblParam;
-	juce::Slider m_sldParam;
-	juce::TableListBox m_tblScene;
-	SentinelSceneModel m_mdlScene;
-	juce::TextButton m_btnAnalyze;
-	juce::TableListBox m_tblExtract;
-	SentinelExtractModel m_mdlExtract;
-	std::vector<SentinelAnalyzeTask::Result> m_AnalyzeResult;
-	SentinelAnalyzeDraw m_DrawAnalyze;
+
+	struct ImportPage final : public Component {
+		juce::TextButton m_btnImport;
+		juce::ToggleButton m_btn10m;
+		juce::ToggleButton m_btn20m;
+		juce::ToggleButton m_btn60m;
+	};
+	ImportPage m_ImportPage;
+
+	struct ViewPage final : public Component {
+		juce::ComboBox m_cbxResol;
+		juce::ComboBox m_cbxMode;
+		juce::Label m_lblParam;
+		juce::Slider m_sldParam;
+		juce::TableListBox m_tblScene;
+		SentinelSceneModel m_mdlScene;
+	};
+	ViewPage m_ViewPage;
+
+	struct AnalyzePage final : public Component {
+		juce::TextButton m_btnAnalyze;
+		juce::TableListBox m_tblExtract;
+		SentinelExtractModel m_mdlExtract;
+		std::vector<SentinelAnalyzeTask::Result> m_AnalyzeResult;
+		SentinelAnalyzeDraw m_DrawAnalyze;
+	};
+	AnalyzePage m_AnalyzePage;
+
+	juce::TabbedComponent m_Tab;
 
 	void resized() override;
 
@@ -186,6 +199,7 @@ public:
 		m_Sentinel.SetBase(base);
 		m_Sentinel.addActionListener(listener);
 		setContentOwned(&m_Sentinel, true);
+		setResizeLimits(400, 450, 10000, 10000);
 	}
 
 	void SetTarget(const double& X, const double& Y, const double& Z) override { m_Sentinel.SetTarget(X, Y, Z); }
