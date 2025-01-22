@@ -80,11 +80,14 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
       else
         m_Image.GetZoomArea(u0, v0, win, hin, bitmap.data, factor);
 
-      uint8_t r = 0, g = 0, b = 0, alpha = 255;
       if (m_Image.NbSample() == 1)
-        XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp, r, alpha);
-      else
-        XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
+        XBaseImage::Gray2RGB(bitmap.data, wtmp * htmp);  // Passage en RGB
+
+      if (m_ToneMapper != nullptr)
+        m_ToneMapper->process_8bit_rgb_image(bitmap.data, wtmp, htmp);
+
+      uint8_t r = 0, g = 0, b = 0, alpha = 255;
+      XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
       XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
     }
   }

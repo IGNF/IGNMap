@@ -70,6 +70,7 @@ public:
   GeoInternetImage() { m_LastGsd = 0.; }
   virtual ~GeoInternetImage() { m_Cache.deleteRecursively(); }
   void SetFrame(const XFrame& F) { m_Frame = F; }
+  void SetDirty() { m_LastGsd = -1.; }  // On force le reaffichage de l'image
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double scale) = 0;
 };
@@ -162,6 +163,7 @@ namespace GeoTools {
   void UpdateProjection(XGeoBase* base);
   bool ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h, XFrame* F);
   bool AddImageInObect(XGeoBase* base, int index);
+  bool AddRotationImage(XGeoBase* base, juce::String filename, double rot = 0., double Xc = 0., double Yc = 0., double gsd = 1.);
 }
 
 //==============================================================================

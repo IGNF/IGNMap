@@ -376,6 +376,7 @@
     <ClCompile Include="..\..\..\XToolAlgo\XLasFile.cpp"/>
     <ClCompile Include="..\..\..\XToolAlgo\XSentinelScene.cpp"/>
     <ClCompile Include="..\..\..\XToolAlgo\XTime.cpp"/>
+    <ClCompile Include="..\..\..\XToolAlgo\XToneMapper.cpp"/>
     <ClCompile Include="..\..\..\XToolAlgo\XWmts.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XAlgoGeod.cpp"/>
     <ClCompile Include="..\..\..\XToolGeod\XDomGeod.cpp"/>
@@ -2334,6 +2335,7 @@
     <ClInclude Include="..\..\..\XToolAlgo\XLasFile.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XSentinelScene.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XTime.h"/>
+    <ClInclude Include="..\..\..\XToolAlgo\XToneMapper.h"/>
     <ClInclude Include="..\..\..\XToolAlgo\XWmts.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XAlgoGeod.h"/>
     <ClInclude Include="..\..\..\XToolGeod\XDomGeod.h"/>

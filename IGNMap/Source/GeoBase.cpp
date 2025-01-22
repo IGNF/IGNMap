@@ -771,6 +771,7 @@ bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName
 	}
 	map->AddObject(V);
 	map->UpdateFrame();
+	base->UpdateFrame();
 	base->SortClass();
 	return true;
 }
@@ -918,6 +919,28 @@ bool GeoTools::AddImageInObect(XGeoBase* base, int index)
 		XPt2D S = V->Frame().Center();
 		affine->SetPosition(S.X, S.Y, gsd);
 	}
+
+	if (!GeoTools::RegisterObject(base, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
+		delete affine;
+		return false;
+	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Ajout d'une image avec une position et une rotation
+//-----------------------------------------------------------------------------
+bool GeoTools::AddRotationImage(XGeoBase* base, juce::String filename, double rot, double Xc, double Yc, double gsd)
+{
+	juce::File file(filename);
+	juce::String name = file.getFileNameWithoutExtension();
+	RotationImage* affine = new RotationImage();
+	if (!affine->AnalyzeImage(filename.toStdString())) {
+		delete affine;
+		return false;
+	}
+	affine->SetPosition(Xc, Yc, gsd);
+	affine->SetRotation(rot);
 
 	if (!GeoTools::RegisterObject(base, affine, "ROTATION", "Raster", name.toStdString().c_str())) {
 		delete affine;

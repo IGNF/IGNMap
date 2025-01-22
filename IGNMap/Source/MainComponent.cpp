@@ -19,6 +19,7 @@
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
+#include "AffineImage.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
@@ -134,6 +135,7 @@ MainComponent::MainComponent()
 	// Langue par defaut
 	if (juce::SystemStats::getDisplayLanguage().containsIgnoreCase("fr"))
 		Translate();
+	RunCommandLine();
 }
 
 MainComponent::~MainComponent()
@@ -958,6 +960,44 @@ void MainComponent::NewWindow()
 }
 
 //==============================================================================
+// Gestion de la ligne de commande eventuelle
+//==============================================================================
+void MainComponent::RunCommandLine()
+{
+	juce::StringArray T = juce::JUCEApplication::getCommandLineParameterArray();
+	if (T.size() <= 1)
+		return;
+	int index = 0;
+	while(index < T.size()) {
+		if (T[index] == "-i") { // Input d'un fichier image
+			index++;
+			if (index >= T.size())	// Nom du fichier image absent
+				break;
+			ImportImageFile(T[index]);
+			continue;
+		}
+		if (T[index] == "-v") { // Input d'un fichier vectoriel
+			index++;
+			if (index >= T.size())	// Nom du fichier vectoriel absent
+				break;
+			ImportVectorFile(T[index]);
+			continue;
+		}
+		if (T[index] == "-r") { // Input d'un fichier image avec rotation
+			index++;
+			if (index >= T.size())	// Nom du fichier image absent
+				break;
+			juce::String filename = T[index];
+			GeoTools::AddRotationImage(&m_GeoBase, filename, 0.7, 500000., 6500000., 0.5);
+			continue;
+		}
+		break;	// Si on arrive la, c'est qu'il y a un probleme ...
+	};
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->ZoomWorld();
+}
+
+//==============================================================================
 // A propos
 //==============================================================================
 void MainComponent::AboutIGNMap()
@@ -1434,46 +1474,19 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	/*
-	juce::String foldername = AppUtil::OpenFolder("Sentinel", juce::translate("Sentinel Folder"));
-	if (foldername.isEmpty())
-		return;
-	//foldername = "\\\\?\\" + foldername;
-	juce::File folder(foldername);
-	juce::Array<juce::File> T = folder.findChildFiles(juce::File::findDirectories, true, "IMG_DATA");
-	for (int i = 0; i < T.size(); i++) {
-		GeoSentinelImage* scene = new GeoSentinelImage;
-		juce::File folder10m = T[i].getChildFile("R10m");
-		if (folder10m.exists()) {
-			juce::Array<juce::File> T10m;
-			T10m = folder10m.findChildFiles(juce::File::findFiles, false, "*.jp2");
-			T10m.addArray(folder10m.findChildFiles(juce::File::findFiles, false, "*.tif"));
-			T10m.addArray(folder10m.findChildFiles(juce::File::findFiles, false, "*.cog"));
-			for (int j = 0; j < T10m.size(); j++)
-				scene->ImportImage(T10m[j].getFullPathName().toStdString(), T10m[j].getFileName().toStdString());
+	RotationImage* image = nullptr;
+	for (uint32_t i = 0; i < m_GeoBase.NbSelection(); i++) {
+		XGeoVector* V = m_GeoBase.Selection(i);
+		if (V->TypeVector() == XGeoVector::Raster) {
+			image = dynamic_cast<RotationImage*>(V);
+			if (image == nullptr)
+				continue;
+			//image->AddRotation(1.5);
+			image->AddToneMapper();
+			image->SetDirty();
+			m_MapView.get()->RenderMap(false, true, false, false, false, true);
 		}
-		juce::File folder20m = T[i].getChildFile("R20m");
-		if (folder20m.exists()) {
-			juce::Array<juce::File> T20m;
-			T20m = folder20m.findChildFiles(juce::File::findFiles, false, "*.jp2");
-			T20m.addArray(folder20m.findChildFiles(juce::File::findFiles, false, "*.tif"));
-			T20m.addArray(folder20m.findChildFiles(juce::File::findFiles, false, "*.cog"));
-			for (int j = 0; j < T20m.size(); j++)
-				scene->ImportImage(T20m[j].getFullPathName().toStdString(), T20m[j].getFileName().toStdString());
-		}
-		if (scene->NbImages() > 0) {
-			scene->ComputeFrame();
-			if (!GeoTools::RegisterObject(&m_GeoBase, scene, "SENTINEL", "Raster", scene->Name())) {
-				delete scene;
-			}
-		}
-		else
-			delete scene;
 	}
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
-	*/
 }
 
 //==============================================================================
@@ -1590,7 +1603,8 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 			ImportImageFile(filename);
 		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
 			ImportLasFile(filename);
-		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg") || ext.equalsIgnoreCase(".json"))
+		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg") || ext.equalsIgnoreCase(".json")
+			|| ext.equalsIgnoreCase(".xml"))
 			ImportVectorFile(filename);
 		if (ext.equalsIgnoreCase(".asc"))
 			ImportDtmFile(filename);

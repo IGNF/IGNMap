@@ -9,6 +9,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <algorithm>
 #include "XBaseImage.h"
 #include "../XTool/XInterpol.h"
 

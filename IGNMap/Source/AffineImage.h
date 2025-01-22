@@ -15,6 +15,7 @@
 #include "GeoBase.h"
 #include "../../XTool/XFrame.h"
 #include "../../XTool/XTransfo.h"
+#include "../../XToolAlgo/XToneMapper.h"
 
 class XTransfoRotation : public XTransfo {
 protected:
@@ -48,13 +49,14 @@ protected:
   double      m_dRot; // Rotation en radians
   uint32_t    m_nW;   // Largeur de l'image
   uint32_t    m_nH;   // Hauteur de l'image
+  XToneMapper::ToneMappingInt* m_ToneMapper;
 
   void Ground2Image(double x, double y, double* u, double* v);
   void Image2Ground(double u, double v, double* x, double* y);
 
 public:
-  RotationImage() { m_dGsd = 1.; m_dRot = 0.; m_nW = 0; m_nH = 0; }
-  virtual ~RotationImage() { ; }
+  RotationImage() { m_dGsd = 1.; m_dRot = 0.; m_nW = 0; m_nH = 0; m_ToneMapper = nullptr; }
+  virtual ~RotationImage() { if (m_ToneMapper != nullptr) delete m_ToneMapper; }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V);
   inline virtual double Resolution() const { return m_dGsd; }
@@ -68,4 +70,5 @@ public:
   uint32_t GetImageW() const { return m_nW; }
   uint32_t GetImageH() const { return m_nH; }
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
+  void AddToneMapper() { if (m_ToneMapper == nullptr) m_ToneMapper = new XToneMapper::ToneMappingInt; }
 };

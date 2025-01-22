@@ -572,6 +572,8 @@
             file="../XToolAlgo/XSentinelScene.h"/>
       <FILE id="QpqOKx" name="XTime.cpp" compile="1" resource="0" file="../XToolAlgo/XTime.cpp"/>
       <FILE id="PRYRGz" name="XTime.h" compile="0" resource="0" file="../XToolAlgo/XTime.h"/>
+      <FILE id="rmvQEQ" name="XToneMapper.cpp" compile="1" resource="0" file="../XToolAlgo/XToneMapper.cpp"/>
+      <FILE id="PsODTy" name="XToneMapper.h" compile="0" resource="0" file="../XToolAlgo/XToneMapper.h"/>
       <FILE id="IVBq4N" name="XWmts.cpp" compile="1" resource="0" file="../XToolAlgo/XWmts.cpp"/>
       <FILE id="Y76Mhs" name="XWmts.h" compile="0" resource="0" file="../XToolAlgo/XWmts.h"/>
     </GROUP>

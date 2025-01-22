@@ -93,6 +93,9 @@ public:
   bool isInterestedInFileDrag(const juce::StringArray&) override { return true; }
   void filesDropped(const juce::StringArray& filenames, int /*x*/, int /*y*/) override;
 
+  // Ligne de commande
+  void RunCommandLine();
+
   // Recherche
   void Search(juce::String query);
 

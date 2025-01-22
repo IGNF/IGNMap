@@ -93,6 +93,7 @@
 		46A187395DFBBF05735FD974 /* rescaler_mips_dsp_r2.c */ = {isa = PBXBuildFile; fileRef = C2137511DA6C0F8C8C299C59; };
 		46D29A6A72A61E5434AD6E81 /* jmemnobs.c */ = {isa = PBXBuildFile; fileRef = A9BD8E5EAE0F0F08B12187FD; };
 		46E87E0E68BD368B89BE011A /* image.c */ = {isa = PBXBuildFile; fileRef = FB9E6344DDC6AA54DF1B0D03; };
+		47EC35C9962EF7F95CD147F1 /* XToneMapper.cpp */ = {isa = PBXBuildFile; fileRef = A70C82FD2BCF7F94BE7C5C15; };
 		49D54629AB769C3C045127B6 /* bit_writer_utils.c */ = {isa = PBXBuildFile; fileRef = D5D8E2D5F8AD8E11B3F93906; };
 		4A1BFA2F69D27A4B6435040D /* jfdctfst.c */ = {isa = PBXBuildFile; fileRef = 6B8897EC6FB2F348F0EEF8EF; };
 		4A6C9A006049FC74D0B77A39 /* XTransfoGeod.cpp */ = {isa = PBXBuildFile; fileRef = CB6F618D6A1AAA4459B1E5DB; };
@@ -626,6 +627,7 @@
 		92EC77E30A6D0F542A201B8F /* lasreadpoint.hpp */ /* lasreadpoint.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lasreadpoint.hpp; path = ../../../LASzip/src/lasreadpoint.hpp; sourceTree = SOURCE_ROOT; };
 		9489D5D89F63AB9F7B5A36C8 /* Translation_fr.txt */ /* Translation_fr.txt */ = {isa = PBXFileReference; lastKnownFileType = text.txt; name = Translation_fr.txt; path = ../../Source/Translation_fr.txt; sourceTree = SOURCE_ROOT; };
 		94D7D815A8A790F0A0299D20 /* jcomapi.c */ /* jcomapi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jcomapi.c; path = "../../../jpeg-9f/jcomapi.c"; sourceTree = SOURCE_ROOT; };
+		9506EABE0CC67372ADC9FF97 /* XToneMapper.h */ /* XToneMapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XToneMapper.h; path = ../../../XToolAlgo/XToneMapper.h; sourceTree = SOURCE_ROOT; };
 		951655A0595543FE65214C89 /* GeoBase.h */ /* GeoBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GeoBase.h; path = ../../Source/GeoBase.h; sourceTree = SOURCE_ROOT; };
 		95C959F4148FE900D257E21F /* XDxf.h */ /* XDxf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XDxf.h; path = ../../../XToolVector/XDxf.h; sourceTree = SOURCE_ROOT; };
 		95FE4351B745C3EC02F425D3 /* XLasFile.cpp */ /* XLasFile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XLasFile.cpp; path = ../../../XToolAlgo/XLasFile.cpp; sourceTree = SOURCE_ROOT; };
@@ -661,6 +663,7 @@
 		A5D320A13A3883375D372204 /* mqc.h */ /* mqc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mqc.h; path = ../../../openjpeg/src/lib/openjp2/mqc.h; sourceTree = SOURCE_ROOT; };
 		A65EFBC07E4BCF3CF64ECA0E /* XLasFile.h */ /* XLasFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XLasFile.h; path = ../../../XToolAlgo/XLasFile.h; sourceTree = SOURCE_ROOT; };
 		A67799769640B67F32A1F973 /* WmtsLayer.cpp */ /* WmtsLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WmtsLayer.cpp; path = ../../Source/WmtsLayer.cpp; sourceTree = SOURCE_ROOT; };
+		A70C82FD2BCF7F94BE7C5C15 /* XToneMapper.cpp */ /* XToneMapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XToneMapper.cpp; path = ../../../XToolAlgo/XToneMapper.cpp; sourceTree = SOURCE_ROOT; };
 		A7250DABA730D9692A8E3390 /* filters_msa.c */ /* filters_msa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = filters_msa.c; path = "../../../libwebp-1.3.2/src/dsp/filters_msa.c"; sourceTree = SOURCE_ROOT; };
 		A7FAEDB2348BDC01759DE821 /* opj_includes.h */ /* opj_includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = opj_includes.h; path = ../../../openjpeg/src/lib/openjp2/opj_includes.h; sourceTree = SOURCE_ROOT; };
 		A8E9C822059996C9DC003185 /* lossless.c */ /* lossless.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lossless.c; path = "../../../libwebp-1.3.2/src/dsp/lossless.c"; sourceTree = SOURCE_ROOT; };
@@ -1261,6 +1264,8 @@
 				82EEFDE5B6364FC124C1AAE6,
 				4EC4F4FB6CFF5ED7539038D5,
 				86BADE9168C6B02F94846627,
+				A70C82FD2BCF7F94BE7C5C15,
+				9506EABE0CC67372ADC9FF97,
 				A3B58AAC15BBFA7740358BED,
 				9DFA0309F13D936B50D9F5FE,
 			);
@@ -2001,6 +2006,7 @@
 				7955EB0952E77017B995A166,
 				E827E5FB66A096799EA89A80,
 				E2ADB6450A3171FCE27A9620,
+				47EC35C9962EF7F95CD147F1,
 				5C12619558367FBD47B43B5D,
 				C7A730BB78B5086DBA47DFB9,
 				8524090A36F88A8F87AD38DE,
