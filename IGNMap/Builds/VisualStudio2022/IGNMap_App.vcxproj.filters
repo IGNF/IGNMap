@@ -964,6 +964,9 @@
     <ClCompile Include="..\..\Source\MapView.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ObjectViewer.cpp">
+      <Filter>IGNMap\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\OGL3DViewer.cpp">
       <Filter>IGNMap\Source</Filter>
     </ClCompile>
@@ -3484,6 +3487,9 @@
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MapView.h">
+      <Filter>IGNMap\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ObjectViewer.h">
       <Filter>IGNMap\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OGL3DViewer.h">

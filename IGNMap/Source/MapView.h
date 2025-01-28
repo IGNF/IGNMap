@@ -105,6 +105,7 @@ private:
   void EndMouseAction();
   void AddAnnotationPoint(juce::Point<float>&);
   void CloseAnnotation();
+  void SaveImage() { juce::Graphics imaG(m_Image); m_MapThread.Draw(imaG);}
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MapView)
 };

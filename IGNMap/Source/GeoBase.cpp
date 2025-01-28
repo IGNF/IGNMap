@@ -904,9 +904,12 @@ bool GeoTools::AddImageInObect(XGeoBase* base, int index)
 		XPt2D S = cliche->Centroide();
 		double gsd = cliche->Resol();
 		XPt2D C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() * 0.5);
-		if (!cliche->IsDigital()) {
-			gsd = (cliche->Resol() * 1000 * 0.24) / XMin(affine->GetImageW(), affine->GetImageH());
-			C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() - affine->GetImageW() * 0.5);
+		if (!cliche->IsDigital()) {	// Cliche argentique
+			uint32_t camW = cliche->CameraW(), camH = cliche->CameraH();
+			if ((camW == 0) || (camH == 0))
+				camW = camH = 230;	// Si la dimension n'est pas renseignee, on prend la dimension standard RC30 / RMK Top
+			gsd = ((cliche->Resol() * camW / affine->GetImageW()) + (cliche->Resol() * camH / affine->GetImageH())) * 0.5;
+			//C = XPt2D(affine->GetImageW() * 0.5, affine->GetImageH() - affine->GetImageW() * 0.5);
 		}
 		affine->SetPosition(S.X, S.Y, gsd);
 		affine->SetImageCenter(C.X, C.Y);

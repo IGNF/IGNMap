@@ -60,6 +60,8 @@ public:
 
   virtual	bool ReadAttributes(std::vector<std::string>& V);
   inline virtual double Resolution() const { return m_dGsd; }
+  inline double Rotation() const { return m_dRot; }
+  virtual XPt2D Centroide() { return m_C; }
   bool SetPosition(double X, double Y, double gsd) { m_C = XPt2D(X, Y); m_dGsd = gsd; return ComputeFrame();}
   bool SetImageCenter(double X, double Y) { m_O = XPt2D(X, Y);  return ComputeFrame(); }
   bool SetRotation(double rot) { m_dRot = rot; return ComputeFrame(); }
@@ -71,4 +73,25 @@ public:
   uint32_t GetImageH() const { return m_nH; }
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
   void AddToneMapper() { if (m_ToneMapper == nullptr) m_ToneMapper = new XToneMapper::ToneMappingInt; }
+  void RemoveToneMapper() {
+    if (m_ToneMapper != nullptr) { delete m_ToneMapper; m_ToneMapper = nullptr; }
+  }
+  void SetToneMapperPower(int power) {
+    bool flag = true;
+    if (power == 0) flag = false;
+    if (m_ToneMapper != nullptr) {
+      m_ToneMapper->set_enabled(0, flag);
+      m_ToneMapper->set_power(0, power);
+    }
+  }
+  int GetToneMapperPower() { if (m_ToneMapper != nullptr) return m_ToneMapper->get_power(0); return 0; }
+  void SetToneMapperSharpness(int sharp) { 
+    if (m_ToneMapper != nullptr) {
+      bool flag = true;
+      if (sharp == 0) flag = false;
+      m_ToneMapper->set_unsharp_mask_enabled(flag);
+      m_ToneMapper->set_unsharp_mask_power(sharp);
+    }
+  }
+  int GetToneMapperSharpness() { if (m_ToneMapper != nullptr) return m_ToneMapper->get_unsharp_mask_power(); return 0; }
 };

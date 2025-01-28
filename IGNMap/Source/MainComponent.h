@@ -95,6 +95,7 @@ public:
 
   // Ligne de commande
   void RunCommandLine();
+  bool ShowHideSidePanel();
 
   // Recherche
   void Search(juce::String query);

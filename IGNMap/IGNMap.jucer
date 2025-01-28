@@ -476,6 +476,9 @@
       <FILE id="GQfsNH" name="MapThread.h" compile="0" resource="0" file="Source/MapThread.h"/>
       <FILE id="Q3bCs3" name="MapView.cpp" compile="1" resource="0" file="Source/MapView.cpp"/>
       <FILE id="VoOZK7" name="MapView.h" compile="0" resource="0" file="Source/MapView.h"/>
+      <FILE id="Oktkma" name="ObjectViewer.cpp" compile="1" resource="0"
+            file="Source/ObjectViewer.cpp"/>
+      <FILE id="KeTIbU" name="ObjectViewer.h" compile="0" resource="0" file="Source/ObjectViewer.h"/>
       <FILE id="xd5aA4" name="OGL3DViewer.cpp" compile="1" resource="0" file="Source/OGL3DViewer.cpp"/>
       <FILE id="B2RtuV" name="OGL3DViewer.h" compile="0" resource="0" file="Source/OGL3DViewer.h"/>
       <FILE id="NiHs5i" name="OsmLayer.cpp" compile="1" resource="0" file="Source/OsmLayer.cpp"/>

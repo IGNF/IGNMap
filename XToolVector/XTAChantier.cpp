@@ -72,7 +72,7 @@ bool XTAChantier::Read(const char* filename, XError* error)
 
 	// Lecture des vols
 	uint32_t nb_vol = 0;
-	uint32_t date, orientation = 0;
+	uint32_t date, orientation = 0, camW = 0, camH = 0;
 	XParserXML vol;
 	while(true){
 		vol = chantier.FindSubParser("/chantier/vol", nb_vol);
@@ -83,9 +83,17 @@ bool XTAChantier::Read(const char* filename, XError* error)
 		XParserXML system;
 		system = vol.FindSubParser("/vol/system_sensor", 0);
 		if (!system.IsEmpty()) {
-			XParserXML sensor;
-			sensor = system.FindSubParser("/system_sensor/sensor", 0);
+			XParserXML sensor = system.FindSubParser("/system_sensor/sensor", 0);
 			orientation = sensor.ReadNodeAsUInt32("/sensor/orientation");
+			// Lecture de la dimension utile du sensor
+			XParserXML useful_frame = sensor.FindSubParser("/sensor/usefull-frame", 0);
+			if (!useful_frame.IsEmpty()) {
+				XParserXML rect = useful_frame.FindSubParser("/usefull-frame/rect", 0);
+				if (!rect.IsEmpty()) {
+					camW = rect.ReadNodeAsUInt32("/rect/w");
+					camH = rect.ReadNodeAsUInt32("/rect/h");
+				}
+			}
 		}
 		// Lecture des bandes
 		uint32_t nb_bande = 0;
@@ -109,6 +117,7 @@ bool XTAChantier::Read(const char* filename, XError* error)
 					delete cli;
 					break;
 				}
+				cli->SetCameraDimension(camW, camH);
 				nb_cli++;
 			}
 		nb_bande++;

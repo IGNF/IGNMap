@@ -50,6 +50,7 @@
 		217053E86B80C3B7A85BBA89 /* alpha_processing_sse41.c */ = {isa = PBXBuildFile; fileRef = 4B9DA02F54931F3540117D90; };
 		21ACD5C8DEA8ADBD10F0DE94 /* jcmaster.c */ = {isa = PBXBuildFile; fileRef = 505FCEF95B04CC2EA959BD57; };
 		226EAF92EF9924DC74B8975E /* lossless_neon.c */ = {isa = PBXBuildFile; fileRef = 74629135C3CF45AB0C7C7090; };
+		239460B77D05F28B463CC6BF /* ObjectViewer.cpp */ = {isa = PBXBuildFile; fileRef = 026F5B29F7FF5A694CCAEB1C; };
 		23EA973D769EB80672AA584B /* XGeoMap.cpp */ = {isa = PBXBuildFile; fileRef = 47975A1A57B44CC58E7930D1; };
 		2533787E82B5992DA4AB3BC5 /* XXml.cpp */ = {isa = PBXBuildFile; fileRef = E7FCBB62BFFDB4B1ACF67E16; };
 		26A2B8F0F55725BBEA9E4058 /* infback.c */ = {isa = PBXBuildFile; fileRef = B667D9477BF4097DEA0D8030; };
@@ -321,7 +322,9 @@
 /* Begin PBXFileReference section */
 		00AAB31E2D986319916C12E2 /* XGeoLayer.h */ /* XGeoLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XGeoLayer.h; path = ../../../XTool/XGeoLayer.h; sourceTree = SOURCE_ROOT; };
 		01B66EFAEE75578E7F279C12 /* quant_levels_utils.c */ /* quant_levels_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = quant_levels_utils.c; path = "../../../libwebp-1.3.2/src/utils/quant_levels_utils.c"; sourceTree = SOURCE_ROOT; };
+		026F5B29F7FF5A694CCAEB1C /* ObjectViewer.cpp */ /* ObjectViewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectViewer.cpp; path = ../../Source/ObjectViewer.cpp; sourceTree = SOURCE_ROOT; };
 		02A9B8D0AEB85E73F1E1E621 /* JuceHeader.h */ /* JuceHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JuceHeader.h; path = ../../JuceLibraryCode/JuceHeader.h; sourceTree = SOURCE_ROOT; };
+		046784EB358671ECAB30F344 /* ObjectViewer.h */ /* ObjectViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectViewer.h; path = ../../Source/ObjectViewer.h; sourceTree = SOURCE_ROOT; };
 		0496796325E209F9FC74D3CE /* jctrans.c */ /* jctrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = jctrans.c; path = "../../../jpeg-9f/jctrans.c"; sourceTree = SOURCE_ROOT; };
 		04998B5C04EC2FC75F4C976A /* include_juce_graphics_Harfbuzz.cpp */ /* include_juce_graphics_Harfbuzz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_graphics_Harfbuzz.cpp; path = ../../JuceLibraryCode/include_juce_graphics_Harfbuzz.cpp; sourceTree = SOURCE_ROOT; };
 		04A5331632305FB74B139840 /* XWKBGeom.cpp */ /* XWKBGeom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = XWKBGeom.cpp; path = ../../../XToolVector/XWKBGeom.cpp; sourceTree = SOURCE_ROOT; };
@@ -1082,6 +1085,8 @@
 				58A1360D33A031C5FE416DFA,
 				6105F8EC1D2849E8FF0DA2DF,
 				21A25B92B75006DEC3D8876E,
+				026F5B29F7FF5A694CCAEB1C,
+				046784EB358671ECAB30F344,
 				F1226B04BAD8797E939BEE03,
 				156C160EBE7E49FE60FB9E8B,
 				AD60B6C8D25C8F8EB6159B92,
@@ -1971,6 +1976,7 @@
 				6F4486951A151CF79FEF7219,
 				ED50FA2761D4A3B340A111D6,
 				B71C4E53701C684FDE7B7CB8,
+				239460B77D05F28B463CC6BF,
 				44C8B83A4B83A8DD9B87A66E,
 				2A571F625C7ED3865E3BDAAB,
 				94B40103E2F63409693D1655,

@@ -38,6 +38,7 @@ public:
 
 	void closeButtonPressed() override { setVisible(false); }
 	virtual void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) = 0;
+	virtual void SetSelection(void*) = 0;
 
 private:
 

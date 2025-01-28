@@ -341,6 +341,7 @@
     <ClCompile Include="..\..\Source\MainComponentToolbarFactory.cpp"/>
     <ClCompile Include="..\..\Source\MapThread.cpp"/>
     <ClCompile Include="..\..\Source\MapView.cpp"/>
+    <ClCompile Include="..\..\Source\ObjectViewer.cpp"/>
     <ClCompile Include="..\..\Source\OGL3DViewer.cpp"/>
     <ClCompile Include="..\..\Source\OsmLayer.cpp"/>
     <ClCompile Include="..\..\Source\PrefDlg.cpp"/>
@@ -2292,6 +2293,7 @@
     <ClInclude Include="..\..\Source\MainComponentToolbarFactory.h"/>
     <ClInclude Include="..\..\Source\MapThread.h"/>
     <ClInclude Include="..\..\Source\MapView.h"/>
+    <ClInclude Include="..\..\Source\ObjectViewer.h"/>
     <ClInclude Include="..\..\Source\OGL3DViewer.h"/>
     <ClInclude Include="..\..\Source\OsmLayer.h"/>
     <ClInclude Include="..\..\Source\PrefDlg.h"/>

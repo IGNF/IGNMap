@@ -82,9 +82,23 @@ protected:
 	double				m_dOmega;
 	double				m_dPhi;
 
+	// Donnees de la chambre pour les prises de vues argentiques
+	uint32_t			m_nCameraW;	// Largeur utile de la chambre en mm
+	uint32_t			m_nCameraH;	// Hauteur utile de la chambre en mm
+
 public:
 	XTACliche(XTAChantier* ta = NULL, uint32_t date = 0, uint32_t ori = 0) 
-							{ m_TA = ta; m_nDate = date; m_Orientation = (eOrientation)ori;}
+	{
+		m_TA = ta; m_nDate = date; m_Orientation = (eOrientation)ori; 
+		m_nCameraW = m_nCameraH = 0;
+		m_dKappa = m_dOmega = m_dPhi = m_dTime = 0.;
+		m_dResolMin = m_dResolMoy = m_dResolMax = m_dOverlap = m_dOverMin = m_dOverMax = m_dSunHeight = 0.;
+		m_bNavInterp = m_bZI = false;
+		m_nNum = m_nSection = 0;
+		m_Style = Standard;
+		m_Qualite = Bonne;
+		m_Visee = Verticale;
+	}
 
 	virtual void Unload() { ;}
 	virtual bool LoadGeom() { return true;}
@@ -94,10 +108,13 @@ public:
 
 	virtual inline XGeoMap* Map() const { return m_TA;}
 
-	double Resol() { return m_dResolMoy;}
-	double Cap() { 	double cap = 90. - (m_dKappa * 180.)/XPI; if(cap < 0) cap += 360.; return cap;}
-	bool IsDigital() { if (m_Style != Argentique) return true; return false;}
-	eOrientation Orientation() { return m_Orientation;}
+	double Resol() const { return m_dResolMoy;}
+	double Cap() const { 	double cap = 90. - (m_dKappa * 180.)/XPI; if(cap < 0) cap += 360.; return cap;}
+	bool IsDigital() const { if (m_Style != Argentique) return true; return false;}
+	eOrientation Orientation() const { return m_Orientation;}
+	void SetCameraDimension(uint32_t w, uint32_t h) { m_nCameraW = w; m_nCameraH = h; }
+	uint32_t CameraW() const { return m_nCameraW; }
+	uint32_t CameraH() const { return m_nCameraH; }
 
 	virtual XPt2D Centroide() { return m_S;}
 	virtual bool HasCentroide() { return true;}

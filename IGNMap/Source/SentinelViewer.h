@@ -205,6 +205,7 @@ public:
 	}
 
 	void SetTarget(const double& X, const double& Y, const double& Z) override { m_Sentinel.SetTarget(X, Y, Z); }
+	void SetSelection(void*) override { ; }
 
 private:
 	SentinelViewerComponent		m_Sentinel;

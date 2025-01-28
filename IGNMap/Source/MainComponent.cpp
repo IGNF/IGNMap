@@ -19,6 +19,7 @@
 #include "ExportLasDlg.h"
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
+#include "ObjectViewer.h"
 #include "AffineImage.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
@@ -628,20 +629,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		m_MapView.get()->ZoomScale(250000);
 		break;
 	case CommandIDs::menuShowSidePanel:
-		if ((m_VerticalDividerBar.get() == nullptr) || (m_Panel.get() == nullptr))
-			return false;
-		if (m_Panel.get()->isVisible()) {
-			m_VerticalDividerBar.get()->setVisible(false);
-			m_Panel.get()->setVisible(false);
-			m_VerticalLayout.setItemLayout(0, -1., -1., -1.);
-		}
-		else {
-			m_VerticalDividerBar.get()->setVisible(true);
-			m_Panel.get()->setVisible(true);
-			m_VerticalLayout.setItemLayout(0, -0.2, -1.0, -0.65);
-		}
-		resized();
-		break;
+		return ShowHideSidePanel();
 	case CommandIDs::menuShow3DViewer:
 		if (m_OGL3DViewer.get() == nullptr)
 			Create3DView();
@@ -733,6 +721,11 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 		m_ImageOptionsViewer.get()->SetGeoBase(&m_GeoBase);
 		m_MapView.get()->RenderMap(true, false, false, false, false);
+		XGeoVector* V = nullptr;
+		if (m_GeoBase.NbSelection() > 0)
+			V = m_GeoBase.Selection(0);
+		for (size_t i = 0; i < m_ToolWindows.size(); i++)
+			m_ToolWindows[i]->SetSelection(V);
 		return;
 	}
 	if (message == "CloseAnnotation") {
@@ -965,8 +958,10 @@ void MainComponent::NewWindow()
 void MainComponent::RunCommandLine()
 {
 	juce::StringArray T = juce::JUCEApplication::getCommandLineParameterArray();
-	if (T.size() <= 1)
-		return;
+	if (T.size() == 0) return;
+	if (T.size() <= 1) {
+		filesDropped(T, 0, 0);
+	}
 	int index = 0;
 	while(index < T.size()) {
 		if (T[index] == "-i") { // Input d'un fichier image
@@ -988,13 +983,35 @@ void MainComponent::RunCommandLine()
 			if (index >= T.size())	// Nom du fichier image absent
 				break;
 			juce::String filename = T[index];
-			GeoTools::AddRotationImage(&m_GeoBase, filename, 0.7, 500000., 6500000., 0.5);
+			GeoTools::AddRotationImage(&m_GeoBase, filename, -2.78 * 180. / XPI, 739200.24, 6916389.66, 10.14);
 			continue;
 		}
 		break;	// Si on arrive la, c'est qu'il y a un probleme ...
 	};
+	ShowHideSidePanel();
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->ZoomWorld();
+}
+
+//==============================================================================
+// Bascule pour afficher ou cacher le panneau lateral
+//==============================================================================
+bool MainComponent::ShowHideSidePanel()
+{
+	if ((m_VerticalDividerBar.get() == nullptr) || (m_Panel.get() == nullptr))
+		return false;
+	if (m_Panel.get()->isVisible()) {
+		m_VerticalDividerBar.get()->setVisible(false);
+		m_Panel.get()->setVisible(false);
+		m_VerticalLayout.setItemLayout(0, -1., -1., -1.);
+	}
+	else {
+		m_VerticalDividerBar.get()->setVisible(true);
+		m_Panel.get()->setVisible(true);
+		m_VerticalLayout.setItemLayout(0, -0.2, -1.0, -0.65);
+	}
+	resized();
+	return true;
 }
 
 //==============================================================================
@@ -1474,6 +1491,7 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	/*
 	RotationImage* image = nullptr;
 	for (uint32_t i = 0; i < m_GeoBase.NbSelection(); i++) {
 		XGeoVector* V = m_GeoBase.Selection(i);
@@ -1485,6 +1503,29 @@ void MainComponent::Test()
 			image->AddToneMapper();
 			image->SetDirty();
 			m_MapView.get()->RenderMap(false, true, false, false, false, true);
+		}
+	}
+	*/
+	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
+		if (m_ToolWindows[i]->getName() == "ObjectViewer") {
+			m_ToolWindows[i]->setVisible(true);
+			m_ToolWindows[i]->toFront(true);
+			return;
+		}
+	}
+	ObjectViewer* viewer = new ObjectViewer("ObjectViewer", juce::Colours::grey, juce::DocumentWindow::allButtons, this);
+	viewer->setVisible(true);
+	m_ToolWindows.push_back(viewer);
+
+	RotationImage* image = nullptr;
+	for (uint32_t i = 0; i < m_GeoBase.NbSelection(); i++) {
+		XGeoVector* V = m_GeoBase.Selection(i);
+		if (V->TypeVector() == XGeoVector::Raster) {
+			image = dynamic_cast<RotationImage*>(V);
+			if (image == nullptr)
+				continue;
+			viewer->SetSelection(image);
+			return;
 		}
 	}
 }

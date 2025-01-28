@@ -123,6 +123,10 @@ void MapView::DrawDecoration(juce::Graphics& g, float deltaX, float deltaY)
 //==============================================================================
 void MapView::RenderMap(bool overlay, bool raster, bool dtm, bool vector, bool las, bool totalUpdate)
 {
+	if (totalUpdate) {
+		m_DragPt = juce::Point<float>(0.f, 0.f);
+		SaveImage();
+	}
 	bool updateMode = totalUpdate;
 	m_MapThread.signalThreadShouldExit();
 	if (m_MapThread.isThreadRunning()) {
@@ -167,8 +171,7 @@ void MapView::SetModeCursor()
 //==============================================================================
 void MapView::mouseDown(const juce::MouseEvent& event)
 {
-	juce::Graphics imaG(m_Image);
-	m_MapThread.Draw(imaG);
+	SaveImage();
 	m_StartPt = event.position;
 	m_DragPt = juce::Point<float>(0, 0);
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
@@ -291,7 +294,8 @@ void MapView::mouseDoubleClick(const juce::MouseEvent& event)
 void MapView::EndMouseAction()
 {
 	m_bDrag = m_bZoom = m_bSelect = false;
-	// m_DragPt = juce::Point<int>(0, 0);
+	//m_DragPt = juce::Point<float>(0.f, 0.f);
+	//SaveImage();
 }
 
 //==============================================================================

@@ -113,27 +113,19 @@ class ToneMappingBase{
       return par;
     };
 
-    float get_enabled(int nstage) const { return par.stage[nstage].enabled;};
-    float get_blur(int nstage) const { return par.stage[nstage].blur;};
-    float get_power(int nstage) const { return par.stage[nstage].power;};
-    int get_low_saturation() const { return par.low_saturation;};
-    int get_high_saturation() const { return par.high_saturation;};
-    bool get_stretch_contrast() const { return par.stretch_contrast;};
-    int get_function_id() const { return par.function_id;};
-    bool get_info_fast_mode() const { return par.info_fast_mode;};
+    float get_enabled(int nstage) const { return par.stage[nstage].enabled;}
+    float get_blur(int nstage) const { return par.stage[nstage].blur;}
+    float get_power(int nstage) const { return par.stage[nstage].power;}
+    int get_low_saturation() const { return par.low_saturation;}
+    int get_high_saturation() const { return par.high_saturation;}
+    bool get_stretch_contrast() const { return par.stretch_contrast;}
+    int get_function_id() const { return par.function_id;}
+    bool get_info_fast_mode() const { return par.info_fast_mode;}
 
-    bool get_unsharp_mask_enabled(bool value){
-      return par.unsharp_mask.enabled;
-    };
-    float get_unsharp_mask_power(float value){
-      return par.unsharp_mask.power;
-    };
-    float get_unsharp_mask_(float value){
-      return par.unsharp_mask.blur;
-    };
-    int get_unsharp_mask_threshold(int value){
-      return par.unsharp_mask.threshold;
-    };
+    bool get_unsharp_mask_enabled() const { return par.unsharp_mask.enabled;}
+    float get_unsharp_mask_power() const { return par.unsharp_mask.power;}
+    float get_unsharp_mask_() const { return par.unsharp_mask.blur;}
+    int get_unsharp_mask_threshold() const { return par.unsharp_mask.threshold;}
 
     void set_current_stage(int nstage){
       current_process_power_value=par.get_power(nstage);
