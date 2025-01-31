@@ -15,6 +15,7 @@
 #include "AppUtil.h"
 
 class XGeoObject;
+class XGeoVector;
 class RotationImage;
 
 //==============================================================================
@@ -33,16 +34,25 @@ public:
 	bool SetSelection(void*);
 	bool SetRotationImage(RotationImage* image);
 	bool UpdateRotationImage(RotationImage* image);
+	bool SetGeoVector(XGeoVector* V);
 
 private:
 	XGeoObject* m_Object;
 
+	// Interface pour les images rotation
 	juce::Slider m_sldXCenter;
 	juce::Slider m_sldYCenter;
 	juce::Slider m_sldResolution;
 	juce::Slider m_sldRotation;
 	juce::Slider m_sldToneMappingPower;
 	juce::Slider m_sldToneMappingSharpness;
+
+	// Interface pour les objets vectoriels
+	ColourChangeButton m_btnPen;
+	ColourChangeButton m_btnFill;
+	juce::Slider m_sldPenWidth;
+	juce::TextButton m_btnApply;
+	juce::TextButton m_btnRestore;
 
 	void resized() override;
 
@@ -61,7 +71,7 @@ public:
 		setAlwaysOnTop(false);
 		m_Object.addActionListener(listener);
 		setContentOwned(&m_Object, true);
-		setResizeLimits(400, 400, 1000, 1000);
+		setResizeLimits(230, 400, 1000, 1000);
 	}
 
 	void SetTarget(const double& X, const double& Y, const double& Z) override { ; }

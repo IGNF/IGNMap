@@ -110,12 +110,17 @@ void SelTreeItem::itemClicked(const juce::MouseEvent& event)
       viewer->sendActionMessage("UpdateSelection");
       viewer->SetBase(m_Base);
       };
+    std::function< void() > Properties = [=]() { // Proprietes de l'objet
+      int index = getIndexInParent();
+      viewer->sendActionMessage("Properties:" + juce::String(index));
+      };
     
     juce::PopupMenu menu;
     menu.addItem(juce::translate("Copy Attributes"), CopyAttributes);
     menu.addItem(juce::translate("Object Frame"), ObjectFrame);
     menu.addItem(juce::translate("Add Image"), AddImage);
     menu.addItem(juce::translate("Remove from list"), Remove);
+    menu.addItem(juce::translate("Properties"), Properties);
     menu.showMenuAsync(juce::PopupMenu::Options());
   }
 }

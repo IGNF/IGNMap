@@ -20,6 +20,7 @@ ObjectViewerComponent::ObjectViewerComponent()
 { 
 	m_Object = nullptr; 
 
+	// Interface pour les RotationImage
 	m_sldXCenter.setSliderStyle(juce::Slider::LinearHorizontal);
 	m_sldXCenter.setRange(0., 100., 1.);
 	m_sldXCenter.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
@@ -61,7 +62,27 @@ ObjectViewerComponent::ObjectViewerComponent()
 	addAndMakeVisible(m_sldToneMappingSharpness);
 	m_sldToneMappingSharpness.addListener(this);
 
-	setSize(400, 450);
+	// Interface pour les objets vectoriels
+	m_btnPen.setButtonText(juce::translate("Pen"));
+	m_btnFill.setButtonText(juce::translate("Fill"));
+	addAndMakeVisible(m_btnPen);
+	addAndMakeVisible(m_btnFill);
+	m_btnPen.addListener(this);
+	m_btnFill.addListener(this);
+
+	m_sldPenWidth.setRange(0., 20., 1.);
+	m_sldPenWidth.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+	addAndMakeVisible(m_sldPenWidth);
+	m_sldPenWidth.addListener(this);
+
+	m_btnApply.setButtonText(juce::translate("Apply"));
+	m_btnRestore.setButtonText(juce::translate("Restore"));
+	m_btnApply.addListener(this);
+	m_btnRestore.addListener(this);
+	addAndMakeVisible(m_btnApply);
+	addAndMakeVisible(m_btnRestore);
+
+	setSize(230, 300);
 	SetSelection(nullptr);
 }
 
@@ -77,6 +98,12 @@ void ObjectViewerComponent::resized()
 	m_sldRotation.setBounds(55, 90, 120, 120);
 	m_sldToneMappingPower.setBounds(10, 220, 100, 40);
 	m_sldToneMappingSharpness.setBounds(120, 220, 100, 40);
+
+	m_btnPen.setBounds(10, 10, 100, 30);
+	m_btnFill.setBounds(120, 10, 100, 30);
+	m_sldPenWidth.setBounds(65, 50, 100, 30);
+	m_btnRestore.setBounds(10, 100, 100, 30);
+	m_btnApply.setBounds(120, 100, 100, 30);
 }
 
 //==============================================================================
@@ -110,7 +137,25 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 {
 	if (m_Object == nullptr)
 		return;
-
+	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
+	if (V != nullptr) {
+		if (button == &m_btnRestore) {
+			V->Repres(nullptr);
+			SetGeoVector(V);
+		}
+		if (button == &m_btnApply) {
+			XGeoRepres* R = new XGeoRepres;
+			R->Deletable(true);
+			juce::Colour color = m_btnPen.findColour(juce::TextButton::buttonColourId);
+			R->Color(color.getARGB());
+			color = m_btnFill.findColour(juce::TextButton::buttonColourId);
+			R->FillColor(color.getARGB());
+			R->Size((uint8_t)m_sldPenWidth.getValue());
+			V->Repres(R);
+		}
+		sendActionMessage("UpdateVector");
+		return;
+	}
 }
 
 
@@ -127,12 +172,20 @@ bool ObjectViewerComponent::SetSelection(void* S)
 		m_sldRotation.setVisible(false);
 		m_sldToneMappingPower.setVisible(false);
 		m_sldToneMappingSharpness.setVisible(false);
+		m_btnPen.setVisible(false);
+		m_btnFill.setVisible(false);
+		m_sldPenWidth.setVisible(false);
+		m_btnApply.setVisible(false);
+		m_btnRestore.setVisible(false);
 		return true;
 	}
 
 	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
 	if (image != nullptr)
 		return SetRotationImage(image);
+	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
+	if (V != nullptr)
+		return SetGeoVector(V);
 }
 
 //==============================================================================
@@ -182,5 +235,24 @@ bool ObjectViewerComponent::UpdateRotationImage(RotationImage* image)
 	image->AddToneMapper();
 	image->SetToneMapperPower((int)power);
 	image->SetToneMapperSharpness((int)sharp);
+	return true;
+}
+
+//==============================================================================
+// ObjectViewerComponent : choix d'une selection XGeoVector
+//==============================================================================
+bool ObjectViewerComponent::SetGeoVector(XGeoVector* V)
+{
+	m_btnPen.setVisible(true);
+	m_btnFill.setVisible(true);
+	m_sldPenWidth.setVisible(true);
+	m_btnApply.setVisible(true);
+	m_btnRestore.setVisible(true);
+	XGeoRepres* R = V->Repres();
+	if (R == nullptr)
+		return false;
+	m_btnPen.setColour(juce::TextButton::buttonColourId, juce::Colour(R->Color()));
+	m_btnFill.setColour(juce::TextButton::buttonColourId, juce::Colour(R->FillColor()));
+	m_sldPenWidth.setValue(R->Size(), juce::NotificationType::dontSendNotification);
 	return true;
 }

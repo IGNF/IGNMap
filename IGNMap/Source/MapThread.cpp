@@ -269,15 +269,19 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 				return;
 			if (!V->Visible())
 				continue;
+			XFrame F = V->Frame();
+			if (!m_Frame.Intersect(F))
+				continue;
+			XGeoRepres* R = V->Repres();
+			if (R == nullptr)
+				continue;
 
 			m_bFill = false;
 			if (V->IsClosed())
 				m_bFill = true;
-	
-			g.setColour(juce::Colour(C->Repres()->Color()));
-			XFrame F = V->Frame();
-			if (!m_Frame.Intersect(F))
-				continue;
+			
+			g.setColour(juce::Colour(R->Color()));
+
 
 			juce::Rectangle<int> frame = juce::Rectangle<int>((int)round((F.Xmin - m_dX0) / m_dGsd), (int)round((m_dY0 - F.Ymax) / m_dGsd),
 				(int)round(F.Width() / m_dGsd), (int)round(F.Height() / m_dGsd));
@@ -288,9 +292,9 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 				else {
 					if (!DrawCentroide(V))
 						DrawGeometry(V);
-					g.strokePath(m_Path, juce::PathStrokeType(C->Repres()->Size(), juce::PathStrokeType::beveled));
+					g.strokePath(m_Path, juce::PathStrokeType(R->Size(), juce::PathStrokeType::beveled));
 					if (m_bFill) {
-						g.setFillType(juce::FillType(juce::Colour(C->Repres()->FillColor())));
+						g.setFillType(juce::FillType(juce::Colour(R->FillColor())));
 						g.fillPath(m_Path);
 					}
 					m_Path.clear();

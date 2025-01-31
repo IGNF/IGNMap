@@ -162,6 +162,7 @@ private:
 
   void Test();
   void ToolSentinel();
+  void ShowProperties(uint32_t index);
 
   void Synchronize();
   void connectionMade() override;

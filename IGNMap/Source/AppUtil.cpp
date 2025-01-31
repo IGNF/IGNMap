@@ -156,3 +156,23 @@ void AppUtil::SaveTableComponent(juce::TableListBox* table)
 	AppUtil::SaveComponent(table);
 	table->setSize(b.getWidth(), b.getHeight());
 }
+
+//==============================================================================
+// Clic sur le bouton
+//==============================================================================
+void ColourChangeButton::clicked()
+{
+	auto colourSelector = std::make_unique<juce::ColourSelector>(juce::ColourSelector::showAlphaChannel
+		| juce::ColourSelector::showColourAtTop
+		| juce::ColourSelector::editableColour
+		| juce::ColourSelector::showSliders
+		| juce::ColourSelector::showColourspace);
+
+	colourSelector->setName("background");
+	colourSelector->setCurrentColour(findColour(juce::TextButton::buttonColourId));
+	colourSelector->addChangeListener(this);
+	colourSelector->setColour(juce::ColourSelector::backgroundColourId, juce::Colours::transparentBlack);
+	colourSelector->setSize(300, 400);
+
+	juce::CallOutBox::launchAsynchronously(std::move(colourSelector), getScreenBounds(), nullptr);
+}
