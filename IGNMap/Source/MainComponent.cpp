@@ -996,7 +996,7 @@ void MainComponent::RunCommandLine()
 			index += 4;
 			continue;
 		}
-		break;	// Si on arrive la, c'est qu'il y a un probleme ...
+		return;	// Si on arrive la, c'est qu'il y a un probleme ...
 	};
 	if (m_GeoBase.NbClass() == 1) {
 		XGeoClass* C = m_GeoBase.Class(0);
