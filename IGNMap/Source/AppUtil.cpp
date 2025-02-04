@@ -94,7 +94,7 @@ juce::String AppUtil::SaveFile(juce::String optionName, juce::String mes, juce::
 juce::String AppUtil::GetAppOption(juce::String name)
 {
 	juce::PropertiesFile::Options options;
-	options.applicationName = "IGNMapv3";
+	options.applicationName = juce::JUCEApplication::getInstance()->getApplicationName();
 	options.osxLibrarySubFolder = "Application Support";
 	juce::ApplicationProperties app;
 	app.setStorageParameters(options);
@@ -105,7 +105,7 @@ juce::String AppUtil::GetAppOption(juce::String name)
 void AppUtil::SaveAppOption(juce::String name, juce::String value)
 {
 	juce::PropertiesFile::Options options;
-	options.applicationName = "IGNMapv3";
+	options.applicationName = juce::JUCEApplication::getInstance()->getApplicationName();
 	options.osxLibrarySubFolder = "Application Support";
 	juce::ApplicationProperties app;
 	app.setStorageParameters(options);

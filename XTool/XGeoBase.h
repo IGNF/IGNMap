@@ -77,6 +77,7 @@ public:
 	XGeoVector* Selection(uint32_t i) { if (i < m_Selection.size()) return m_Selection[i]; return NULL; }
 	void ClearSelection() { m_Selection.clear(); }
 	void UnselectFeature(XGeoVector* V);
+	void SelectFeature(XGeoVector* V);
 	bool KeepClosestCentroid(XFrame* F);
 
 	double ComputeMinResol();

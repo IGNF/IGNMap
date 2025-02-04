@@ -58,11 +58,18 @@ public:
 
 	void clicked() override;
 
-  //using TextButton::clicked;
-
   void changeListenerCallback(juce::ChangeBroadcaster* source) override
   {
-    if (auto* cs = dynamic_cast<juce::ColourSelector*> (source))
-      setColour(juce::TextButton::buttonColourId, cs->getCurrentColour());
+		if (auto* cs = dynamic_cast<juce::ColourSelector*> (source)) {
+			juce::Colour color = cs->getCurrentColour();
+			setColour(juce::TextButton::buttonColourId, color);
+			setColour(juce::TextButton::textColourOffId, color.contrasting());
+		}
   }
+
+	juce::Colour GetColour() const { return findColour(juce::TextButton::buttonColourId); }
+	void SetColour(juce::Colour color) { 
+		setColour(juce::TextButton::buttonColourId, color); 
+		setColour(juce::TextButton::textColourOffId, color.contrasting());
+	}
 };

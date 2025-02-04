@@ -901,18 +901,18 @@ void MainComponent::buttonClicked(juce::Button* button)
 	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
 	if (tlb == nullptr)
 		return;
-	switch (tlb->getItemId()) {
-	case MainComponentToolbarFactory::Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
-	case MainComponentToolbarFactory::Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
-	case MainComponentToolbarFactory::Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
-	case MainComponentToolbarFactory::Select3D: m_MapView.get()->SetMouseMode(MapView::Select3D); break;
-	case MainComponentToolbarFactory::Polyline: m_MapView.get()->SetMouseMode(MapView::Polyline); break;
-	case MainComponentToolbarFactory::Polygone: m_MapView.get()->SetMouseMode(MapView::Polygone); break;
-	case MainComponentToolbarFactory::Rectangle: m_MapView.get()->SetMouseMode(MapView::Rectangle); break;
-	case MainComponentToolbarFactory::Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
-	case MainComponentToolbarFactory::Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
-	case MainComponentToolbarFactory::Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
-	}
+		switch (tlb->getItemId()) {
+		case MainComponentToolbarFactory::Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
+		case MainComponentToolbarFactory::Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
+		case MainComponentToolbarFactory::Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
+		case MainComponentToolbarFactory::Select3D: m_MapView.get()->SetMouseMode(MapView::Select3D); break;
+		case MainComponentToolbarFactory::Polyline: m_MapView.get()->SetMouseMode(MapView::Polyline); break;
+		case MainComponentToolbarFactory::Polygone: m_MapView.get()->SetMouseMode(MapView::Polygone); break;
+		case MainComponentToolbarFactory::Rectangle: m_MapView.get()->SetMouseMode(MapView::Rectangle); break;
+		case MainComponentToolbarFactory::Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
+		case MainComponentToolbarFactory::Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
+		case MainComponentToolbarFactory::Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
+		}
 }
 
 //==============================================================================
@@ -967,9 +967,10 @@ void MainComponent::RunCommandLine()
 	if (T.size() == 0) return;
 	if (T.size() <= 1) {
 		filesDropped(T, 0, 0);
+		return;
 	}
 	int index = 0;
-	while(index < T.size()) {
+	while (index < T.size()) {
 		if (T[index] == "-i") { // Input d'un fichier image
 			index++;
 			if (index >= T.size())	// Nom du fichier image absent
@@ -986,14 +987,26 @@ void MainComponent::RunCommandLine()
 		}
 		if (T[index] == "-r") { // Input d'un fichier image avec rotation
 			index++;
-			if (index >= T.size())	// Nom du fichier image absent
+			if (T.size() < index + 4)	// Parametres absents
 				break;
 			juce::String filename = T[index];
-			GeoTools::AddRotationImage(&m_GeoBase, filename, -2.78 * 180. / XPI, 739200.24, 6916389.66, 10.14);
+			double X = T[index + 1].getDoubleValue(), Y = T[index + 2].getDoubleValue();
+			double gsd = T[index + 3].getDoubleValue(), rot = 180. - T[index + 4].getDoubleValue();
+			GeoTools::AddRotationImage(&m_GeoBase, filename, rot * XPI / 180., X, Y, gsd);
+			index += 4;
 			continue;
 		}
 		break;	// Si on arrive la, c'est qu'il y a un probleme ...
 	};
+	if (m_GeoBase.NbClass() == 1) {
+		XGeoClass* C = m_GeoBase.Class(0);
+		if (C != nullptr) {
+			if (C->NbVector() == 1) {
+				m_GeoBase.SelectFeature(C->Vector((uint32_t)0));
+				ShowProperties(0);
+			}
+		}
+	}
 	ShowHideSidePanel();
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->ZoomWorld();

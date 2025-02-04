@@ -300,13 +300,13 @@ class ToneMappingFloat:public ToneMappingBase{
 
     inline void hsv2rgb(const float&h,const float&s,const float&v,
       float&r, float&g, float&b){
-      float hfi=floor(h/60.0);
-      float f=(h/60.0)-hfi;
+      float hfi = (float)floor(h/60.0);
+      float f = (float)(h/60.0)-hfi;
       int hi=((int)hfi)%6;
 
-      float p=v*(1.0-s);
-      float q=v*(1.0-f*s);
-      float t=v*(1.0-(1.0-f)*s);
+      float p = (float)(v*(1.0-s));
+      float q = (float)(v*(1.0-f*s));
+      float t = (float)(v*(1.0-(1.0-f)*s));
       switch (hi){
         case 0:
           r=v;g=t;b=p;

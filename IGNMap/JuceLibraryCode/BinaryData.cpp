@@ -3374,7 +3374,13 @@ static const unsigned char temp_binary_data_16[] =
 "\"Remove from list\" = \"Retirer de la liste\"\r\n"
 "\"Export vector\" = \"Export vectoriel\"\r\n"
 "\"Export image\" = \"Export sous forme d'image\"\r\n"
-"\"Export LAS\" = \"Export LAS\"";
+"\"Export LAS\" = \"Export LAS\"\r\n"
+"\"Properties\" = \"Propri\xc3\xa9t\xc3\xa9s\"\r\n"
+"\"Restore\" = \"Restaurer\"\r\n"
+"\"Fill\" = \"Fond\"\r\n"
+"\"Luminosity\" = \"Luminosit\xc3\xa9\"\r\n"
+"\"Sharpness\" = \"Nettet\xc3\xa9\"\r\n"
+"\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_16;
 
@@ -3406,7 +3412,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 5936; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 6069; return Translation_fr_txt;
         default: break;
     }
 

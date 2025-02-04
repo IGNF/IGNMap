@@ -81,17 +81,17 @@ public:
     if (power == 0) flag = false;
     if (m_ToneMapper != nullptr) {
       m_ToneMapper->set_enabled(0, flag);
-      m_ToneMapper->set_power(0, power);
+      m_ToneMapper->set_power(0, (float)power);
     }
   }
-  int GetToneMapperPower() { if (m_ToneMapper != nullptr) return m_ToneMapper->get_power(0); return 0; }
+  int GetToneMapperPower() { if (m_ToneMapper != nullptr) return (int)m_ToneMapper->get_power(0); return 0; }
   void SetToneMapperSharpness(int sharp) { 
     if (m_ToneMapper != nullptr) {
       bool flag = true;
       if (sharp == 0) flag = false;
       m_ToneMapper->set_unsharp_mask_enabled(flag);
-      m_ToneMapper->set_unsharp_mask_power(sharp);
+      m_ToneMapper->set_unsharp_mask_power((float)sharp);
     }
   }
-  int GetToneMapperSharpness() { if (m_ToneMapper != nullptr) return m_ToneMapper->get_unsharp_mask_power(); return 0; }
+  int GetToneMapperSharpness() { if (m_ToneMapper != nullptr) return (int)m_ToneMapper->get_unsharp_mask_power(); return 0; }
 };

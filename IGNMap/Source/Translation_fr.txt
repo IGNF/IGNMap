@@ -138,3 +138,9 @@ countries: fr be mc ch lu
 "Export vector" = "Export vectoriel"
 "Export image" = "Export sous forme d'image"
 "Export LAS" = "Export LAS"
+"Properties" = "Propriétés"
+"Restore" = "Restaurer"
+"Fill" = "Fond"
+"Luminosity" = "Luminosité"
+"Sharpness" = "Netteté"
+

@@ -12,7 +12,6 @@
 #include "ObjectViewer.h"
 #include "AffineImage.h"
 
-
 //==============================================================================
 // ObjectViewerComponent : constructeur
 //==============================================================================
@@ -37,7 +36,7 @@ ObjectViewerComponent::ObjectViewerComponent()
 	m_sldResolution.setSliderStyle(juce::Slider::LinearHorizontal);
 	m_sldResolution.setRange(0., 100., 1.);
 	m_sldResolution.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
-	m_sldResolution.setTextValueSuffix(juce::translate(" : GSD"));
+	m_sldResolution.setTextValueSuffix(juce::String(" : ") + juce::translate("GSD"));
 	addAndMakeVisible(m_sldResolution);
 	m_sldResolution.addListener(this);
 
@@ -51,14 +50,14 @@ ObjectViewerComponent::ObjectViewerComponent()
 	m_sldToneMappingPower.setSliderStyle(juce::Slider::LinearHorizontal);
 	m_sldToneMappingPower.setRange(0., 100., 1.);
 	m_sldToneMappingPower.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
-	m_sldToneMappingPower.setTextValueSuffix(juce::translate(" : Luminosity"));
+	m_sldToneMappingPower.setTextValueSuffix(juce::String(" : ") + juce::translate("Luminosity"));
 	addAndMakeVisible(m_sldToneMappingPower);
 	m_sldToneMappingPower.addListener(this);
 
 	m_sldToneMappingSharpness.setSliderStyle(juce::Slider::LinearHorizontal);
 	m_sldToneMappingSharpness.setRange(0., 100., 1.);
 	m_sldToneMappingSharpness.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
-	m_sldToneMappingSharpness.setTextValueSuffix(juce::translate(" : Sharpness"));
+	m_sldToneMappingSharpness.setTextValueSuffix(juce::String(" : ") + juce::translate("Sharpness"));
 	addAndMakeVisible(m_sldToneMappingSharpness);
 	m_sldToneMappingSharpness.addListener(this);
 
@@ -109,7 +108,7 @@ void ObjectViewerComponent::resized()
 //==============================================================================
 // ObjectViewerComponent : Reponse aux actions
 //==============================================================================
-void ObjectViewerComponent::actionListenerCallback(const juce::String& message)
+void ObjectViewerComponent::actionListenerCallback(const juce::String& /*message*/)
 {
 	
 }
@@ -117,7 +116,7 @@ void ObjectViewerComponent::actionListenerCallback(const juce::String& message)
 //==============================================================================
 // ObjectViewerComponent :modification des sliders
 //==============================================================================
-void ObjectViewerComponent::sliderValueChanged(juce::Slider* slider)
+void ObjectViewerComponent::sliderValueChanged(juce::Slider* /*slider*/)
 {
 	if (m_Object == nullptr)
 		return;
@@ -164,21 +163,21 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 //==============================================================================
 bool ObjectViewerComponent::SetSelection(void* S)
 {
+	m_sldXCenter.setVisible(false);
+	m_sldYCenter.setVisible(false);
+	m_sldResolution.setVisible(false);
+	m_sldRotation.setVisible(false);
+	m_sldToneMappingPower.setVisible(false);
+	m_sldToneMappingSharpness.setVisible(false);
+	m_btnPen.setVisible(false);
+	m_btnFill.setVisible(false);
+	m_sldPenWidth.setVisible(false);
+	m_btnApply.setVisible(false);
+	m_btnRestore.setVisible(false);
+
 	m_Object = (XGeoObject*)S;
-	if (m_Object == nullptr) {
-		m_sldXCenter.setVisible(false);
-		m_sldYCenter.setVisible(false);
-		m_sldResolution.setVisible(false);
-		m_sldRotation.setVisible(false);
-		m_sldToneMappingPower.setVisible(false);
-		m_sldToneMappingSharpness.setVisible(false);
-		m_btnPen.setVisible(false);
-		m_btnFill.setVisible(false);
-		m_sldPenWidth.setVisible(false);
-		m_btnApply.setVisible(false);
-		m_btnRestore.setVisible(false);
+	if (m_Object == nullptr)
 		return true;
-	}
 
 	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
 	if (image != nullptr)
@@ -186,6 +185,7 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
 	if (V != nullptr)
 		return SetGeoVector(V);
+	return false;
 }
 
 //==============================================================================

@@ -116,6 +116,9 @@ bool RotationImage::ReadAttributes(std::vector<std::string>& V)
 {
   V.clear();
   V.push_back("GSD"); V.push_back(juce::String(m_dGsd).toStdString());
+  V.push_back("Rotation"); V.push_back(juce::String(m_dRot * 180. / XPI).toStdString());
+  V.push_back("Center X"); V.push_back(juce::String(m_C.X).toStdString());
+  V.push_back("Center Y"); V.push_back(juce::String(m_C.Y).toStdString());
   return true;
 }
 

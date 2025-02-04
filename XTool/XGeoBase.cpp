@@ -327,6 +327,17 @@ void XGeoBase::UnselectFeature(XGeoVector* V)
 }
 
 //-----------------------------------------------------------------------------
+// Ajoute un objet a la selection
+//-----------------------------------------------------------------------------
+void XGeoBase::SelectFeature(XGeoVector* V)
+{
+	if (V == nullptr) return;
+	std::vector<XGeoVector*>::iterator index = std::find(m_Selection.begin(), m_Selection.end(), V);
+	if (index == m_Selection.end())
+		m_Selection.push_back(V);
+}
+
+//-----------------------------------------------------------------------------
 // Garde dans la selection uniquement les geometrie avec centroide inclus dans le cadre
 //-----------------------------------------------------------------------------
 bool XGeoBase::KeepClosestCentroid(XFrame* F)
