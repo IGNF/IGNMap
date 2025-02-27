@@ -29,6 +29,8 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+	Test();
+
   m_MapView.reset(new MapView("View1"));
   addAndMakeVisible(m_MapView.get());
 	m_MapView.get()->SetGeoBase(&m_GeoBase);
@@ -1510,43 +1512,33 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	/*
-	RotationImage* image = nullptr;
-	for (uint32_t i = 0; i < m_GeoBase.NbSelection(); i++) {
-		XGeoVector* V = m_GeoBase.Selection(i);
-		if (V->TypeVector() == XGeoVector::Raster) {
-			image = dynamic_cast<RotationImage*>(V);
-			if (image == nullptr)
-				continue;
-			//image->AddRotation(1.5);
-			image->AddToneMapper();
-			image->SetDirty();
-			m_MapView.get()->RenderMap(false, true, false, false, false, true);
-		}
-	}
-	*/
-	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "ObjectViewer") {
-			m_ToolWindows[i]->setVisible(true);
-			m_ToolWindows[i]->toFront(true);
-			return;
-		}
-	}
-	ObjectViewer* viewer = new ObjectViewer("ObjectViewer", juce::Colours::grey, juce::DocumentWindow::allButtons, this);
-	viewer->setVisible(true);
-	m_ToolWindows.push_back(viewer);
+	juce::StringArray T = juce::JUCEApplication::getCommandLineParameterArray();
+	if (T.size() < 5)
+		return;
+	if (T[0] != "-ortho")
+		return;
+	double X0 = T[1].getDoubleValue();
+	double Y0 = T[2].getDoubleValue();
+	double gsd = T[3].getDoubleValue();
+	juce::String filename = T[4];
 
-	RotationImage* image = nullptr;
-	for (uint32_t i = 0; i < m_GeoBase.NbSelection(); i++) {
-		XGeoVector* V = m_GeoBase.Selection(i);
-		if (V->TypeVector() == XGeoVector::Raster) {
-			image = dynamic_cast<RotationImage*>(V);
-			if (image == nullptr)
-				continue;
-			viewer->SetSelection(image);
-			return;
-		}
-	}
+	XGeoPref pref;
+	pref.Projection(XGeoProjection::Lambert93);
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+	WmtsLayerWebMerc* wmts = new WmtsLayerWebMerc("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM", "jpeg", 256, 256, 20);
+	wmts->SetFrame(F);
+	XFrame exportFrame(X0, Y0 - 1000., X0 + 1000., Y0);
+	juce::Image image = wmts->GetAreaImage(exportFrame, gsd);
+
+	juce::File file(filename);
+	juce::FileOutputStream stream(file);
+	juce::PNGImageFormat png;
+	png.writeImageToStream(image, stream);
+	
+	juce::JUCEApplication::quit();
 }
 
 //==============================================================================

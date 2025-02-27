@@ -762,10 +762,11 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 		juce::translate("This tool allows to compute a DTM or a DSM for each LAS file"),
 		juce::MessageBoxIconType::QuestionIcon);
 
-	asyncAlertWindow->addTextEditor("GSD", "1.0", juce::translate("GSD:"));
+	asyncAlertWindow->addTextEditor("GSD", "1.0", juce::translate("GSD"));
 	juce::TextEditor* gsd_editor = asyncAlertWindow->getTextEditor("GSD");
 	gsd_editor->setInputRestrictions(5, "0123456789.");
-	asyncAlertWindow->addComboBox("Algo", { "Z minimum", "Z average", "Z maximum", "StdDev"}, juce::translate("Algorithm:"));
+	asyncAlertWindow->addComboBox("Algo", { juce::translate("Z minimum"), juce::translate("Z average"), 
+		juce::translate("Z maximum"), juce::translate("StdDev"), juce::translate("Height")}, juce::translate("Algorithm"));
 	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
 	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
 

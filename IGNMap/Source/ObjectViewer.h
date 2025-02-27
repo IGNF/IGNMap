@@ -28,7 +28,7 @@ public:
 	
 	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
-	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override { ; }
+	void comboBoxChanged(juce::ComboBox* /*comboBoxThatHasChanged*/) override { ; }
 	void sliderValueChanged(juce::Slider* slider) override;
 
 	bool SetSelection(void*);
@@ -74,7 +74,7 @@ public:
 		setResizeLimits(230, 400, 1000, 1000);
 	}
 
-	void SetTarget(const double& X, const double& Y, const double& Z) override { ; }
+	void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) override { ; }
 	void SetSelection(void* S) override { m_Object.SetSelection(S); }
 
 private:

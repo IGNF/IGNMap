@@ -3257,6 +3257,10 @@ static const unsigned char temp_binary_data_16[] =
 "\"Colour\" = \"Couleur\"\r\n"
 "\"Value\" = \"Valeur\"\r\n"
 "\"Number\" = \"Nombre\"\r\n"
+"\"GSD\" = \"R\xc3\xa9solution\"\r\n"
+"\"Polyline\" = \"Polyligne\"\r\n"
+"\"Text\" = \"Texte\"\r\n"
+"\"Polygon\" = \"Polygone\"\r\n"
 "\" is already opened\" = \" est d\xc3\xa9j\xc3\xa0 ouvert\"\r\n"
 "\" : this file cannot be opened\" = \" : ce fichier ne peut pas \xc3\xaatre ouvert\"\r\n"
 "\"Add WMTS / TMS server\" = \"Ajout d'une couche WMTS / TMS\"\r\n"
@@ -3380,6 +3384,14 @@ static const unsigned char temp_binary_data_16[] =
 "\"Fill\" = \"Fond\"\r\n"
 "\"Luminosity\" = \"Luminosit\xc3\xa9\"\r\n"
 "\"Sharpness\" = \"Nettet\xc3\xa9\"\r\n"
+"\"Z minimum\" = \"Z minimum\"\r\n"
+"\"Z average\" = \"Z moyen\"\r\n"
+"\"Z maximum\" = \"Z maximum\"\r\n"
+"\"StdDev\" = \"Ecart-type\"\r\n"
+"\"Height\" = \"Hauteur\"\r\n"
+"\"Algorithm\" = \"Algorithme\"\r\n"
+"\"This tool allows to compute a DTM or a DSM for each LAS file\" = \"Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS\"\r\n"
+"\"Compute DTM/DSM\" = \"Calcul de MNT / MNS\"\r\n"
 "\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_16;
@@ -3412,7 +3424,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 6069; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 6491; return Translation_fr_txt;
         default: break;
     }
 

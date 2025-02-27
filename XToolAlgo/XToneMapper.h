@@ -164,13 +164,13 @@ class ToneMappingInt:public ToneMappingBase{
       return current_func_lookup_table[(((int)x1)<<8)+x2];
     };
     inline unsigned int max3(unsigned int x1,unsigned int x2,unsigned int x3){
-      int max=x1;
+      unsigned int max=x1;
       if (x2>max) max=x2;
       if (x3>max) max=x3;
       return max;
     };
     inline unsigned int min3(unsigned int x1,unsigned int x2,unsigned int x3){
-      int min=x1;
+      unsigned int min=x1;
       if (x2<min) min=x2;
       if (x3<min) min=x3;
       return min;

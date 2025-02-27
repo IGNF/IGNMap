@@ -86,26 +86,30 @@ template<class T> inline const T& XAbs(const T& x) { return (x >=0)? x : -x;}
 class InlineStat {
 private:
 	int m_nCount;
-	double m_dOldM, m_dNewM, m_dOldS, m_dNewS;
+	double m_dOldM, m_dNewM, m_dOldS, m_dNewS, m_dMin, m_dMax;
 public:
-	InlineStat() : m_nCount(0) { m_dOldM = m_dNewM = m_dOldS = m_dNewS = 0.; }
+	InlineStat() : m_nCount(0) { m_dOldM = m_dNewM = m_dOldS = m_dNewS = m_dMin = m_dMax = 0.; }
 	void Clear() { m_nCount = 0;}
 	int NumValues() const { return m_nCount;}
 	double Mean() const { return (m_nCount > 0) ? m_dNewM : 0.0; }
 	double Variance() const { return ((m_nCount > 1) ? m_dNewS / (m_nCount - 1) : 0.0);}
 	double StandardDeviation() const { return sqrt(Variance()); }
+	double Min() const { return (m_nCount > 0) ? m_dMin : 0.0; }
+	double Max() const { return (m_nCount > 0) ? m_dMax : 0.0; }
 
 	void AddValue(double x) // See Knuth TAOCP vol 2, 3rd edition, page 232
 	{
 		m_nCount++;	
 		if (m_nCount == 1) {
-			m_dOldM = m_dNewM = x;
+			m_dOldM = m_dNewM = m_dMin = m_dMax = x;
 			m_dOldS = 0.0;
 		} else {
 			m_dNewM = m_dOldM + (x - m_dOldM) / m_nCount;
 			m_dNewS = m_dOldS + (x - m_dOldM) * (x - m_dNewM);
 			m_dOldM = m_dNewM;
 			m_dOldS = m_dNewS;
+			if (x < m_dMin) m_dMin = x;
+			if (x > m_dMax) m_dMax = x;
 		}
 	}
 };

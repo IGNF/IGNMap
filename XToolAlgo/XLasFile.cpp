@@ -226,7 +226,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 	}
 	::memset(count, 0, W * H * sizeof(uint16_t));
   InlineStat* Stat = nullptr;
-  if (algo == StdDev) {
+  if ((algo == StdDev)||(algo == Height)) {
     Stat = new InlineStat[W * H];
     if (Stat == nullptr) {
       delete[] area; delete[] count;
@@ -270,6 +270,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 				break;
       case StdDev: Stat[v * W + u].AddValue(Z);
         break;
+      case Height: Stat[v * W + u].AddValue(Z);
+        break;
 			}
 		count[v * W + u] += 1;
 	}
@@ -280,6 +282,8 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 				area[i] = area[i] / count[i];
       if (algo == StdDev)
         area[i] = (float)Stat[i].StandardDeviation();
+      if (algo == Height)
+        area[i] = (float)(Stat[i].Max() - Stat[i].Min());
 		}
 		else
 			area[i] = -9999;
