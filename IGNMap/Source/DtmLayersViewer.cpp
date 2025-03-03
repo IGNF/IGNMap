@@ -194,6 +194,17 @@ void DtmViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::
 }
 
 //==============================================================================
+// Clic dans l'entete
+//==============================================================================
+void DtmViewerModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
+{
+	if (newSortColumnId == Visibility)
+		sendActionMessage("InvertVisibility");
+	if (newSortColumnId == Selectable)
+		sendActionMessage("InvertSelectable");
+}
+
+//==============================================================================
 // Drag&Drop des lignes pour changer l'ordre des layers
 //==============================================================================
 juce::var DtmViewerModel::getDragSourceDescription(const juce::SparseSet<int>& selectedRows)
@@ -510,6 +521,8 @@ bool DtmLayersViewer::keyPressed(const juce::KeyPress& key)
 //==============================================================================
 void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 {
+	if (m_Base == nullptr)
+		return;
 	if (message == "NewWindow") {
 		m_TableDtm.updateContent();
 		m_TableDtm.repaint();
@@ -528,19 +541,34 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableRange.updateContent();
 		return;
 	}
+	if (message == "InvertVisibility") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsDTM()) C->Visible(!C->Visible());
+		}
+		m_TableDtm.repaint();
+		sendActionMessage("UpdateDtm");
+		return;
+	}
+	if (message == "InvertSelectable") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsDTM()) C->Selectable(!C->Selectable());
+		}
+		m_TableDtm.repaint();
+		return;
+	}
 
 	// Classes selectionnees
 	std::vector<XGeoClass*> T;
-	if (m_Base != nullptr) {
-		juce::SparseSet< int > S = m_TableDtm.getSelectedRows();
-		int count = -1;
-		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
-			XGeoClass* C = m_Base->Class(i);
-			if (C->IsDTM()) {
-				count++;
-				if (S.contains(count))
-					T.push_back(C);
-			}
+	juce::SparseSet< int > selectedRows = m_TableDtm.getSelectedRows();
+	int count = -1;
+	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+		XGeoClass* C = m_Base->Class(i);
+		if (C->IsDTM()) {
+			count++;
+			if (selectedRows.contains(count))
+				T.push_back(C);
 		}
 	}
 

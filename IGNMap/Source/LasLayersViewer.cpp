@@ -189,6 +189,17 @@ void LasViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juce::
 }
 
 //==============================================================================
+// Clic dans l'entete
+//==============================================================================
+void LasViewerModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
+{
+	if (newSortColumnId == Visibility)
+		sendActionMessage("InvertVisibility");
+	if (newSortColumnId == Selectable)
+		sendActionMessage("InvertSelectable");
+}
+
+//==============================================================================
 // Drag&Drop des lignes pour changer l'ordre des layers
 //==============================================================================
 juce::var LasViewerModel::getDragSourceDescription(const juce::SparseSet<int>& selectedRows)
@@ -313,6 +324,15 @@ void ClassifModel::changeListenerCallback(juce::ChangeBroadcaster* source)
 }
 
 //==============================================================================
+// ClassifModel : sortOrderChanged
+//==============================================================================
+void ClassifModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
+{
+	if (newSortColumnId == Visibility)
+		sendActionMessage("InvertClassificationVisibility");
+}
+
+//==============================================================================
 // LasLayersViewer : constructeur
 //==============================================================================
 LasLayersViewer::LasLayersViewer()
@@ -419,13 +439,11 @@ LasLayersViewer::LasLayersViewer()
 	m_TableClassif.setOutlineThickness(1);
 	m_TableClassif.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
-	juce::TableHeaderComponent::ColumnPropertyFlags noSort = juce::TableHeaderComponent::ColumnPropertyFlags::notSortable;
-	juce::TableHeaderComponent::ColumnPropertyFlags visible = juce::TableHeaderComponent::ColumnPropertyFlags::visible;
-	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Visibility, 25, 30, -1, visible);
-	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Selectable, 25, 30, -1, visible);
-	m_TableClassif.getHeader().addColumn(juce::translate("Value"), ClassifModel::Column::Number, 50, 30, -1, noSort);
-	m_TableClassif.getHeader().addColumn(juce::translate("Name"), ClassifModel::Column::Name, 200, 30, -1, noSort);
-	m_TableClassif.getHeader().addColumn(juce::translate("Colour"), ClassifModel::Column::Colour, 50, 30, -1, noSort);
+	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Visibility, 25, 30, -1, juce::TableHeaderComponent::sortable | juce::TableHeaderComponent::visible);
+	m_TableClassif.getHeader().addColumn(juce::translate(" "), ClassifModel::Column::Selectable, 25, 30, -1, juce::TableHeaderComponent::visible);
+	m_TableClassif.getHeader().addColumn(juce::translate("Value"), ClassifModel::Column::Number, 50, 30, -1, juce::TableHeaderComponent::notSortable);
+	m_TableClassif.getHeader().addColumn(juce::translate("Name"), ClassifModel::Column::Name, 200, 30, -1, juce::TableHeaderComponent::notSortable);
+	m_TableClassif.getHeader().addColumn(juce::translate("Colour"), ClassifModel::Column::Colour, 50, 30, -1, juce::TableHeaderComponent::notSortable);
 	m_TableClassif.setSize(352, 200);
 	m_TableClassif.setAutoSizeMenuOptionShown(false);
 	m_TableClassif.setModel(&m_ModelClassif);
@@ -529,6 +547,8 @@ void LasLayersViewer::resized()
 //==============================================================================
 void LasLayersViewer::actionListenerCallback(const juce::String& message)
 {
+	if (m_Base == nullptr)
+		return;
 	if (message == "NewWindow") {
 		m_TableLas.updateContent();
 		m_TableLas.repaint();
@@ -547,19 +567,42 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateLas");
 		return;
 	}
+	if (message == "InvertVisibility") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsLAS()) C->Visible(!C->Visible());
+		}
+		m_TableLas.repaint();
+		sendActionMessage("UpdateLas");
+		return;
+	}
+	if (message == "InvertSelectable") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsLAS()) C->Selectable(!C->Selectable());
+		}
+		m_TableLas.repaint();
+		return;
+	}
+	if (message == "InvertClassificationVisibility") {
+		for (int i = 0; i < 256; i++) {
+			LasShader::ClassificationVisibility(!LasShader::ClassificationVisibility((uint8_t)i), (uint8_t)i);
+		}
+		m_TableClassif.repaint();
+		sendActionMessage("UpdateLas");
+		return;
+	}
 
 	// Classes selectionnees
 	std::vector<XGeoClass*> T;
-	if (m_Base != nullptr) {
-		juce::SparseSet< int > S = m_TableLas.getSelectedRows();
-		int count = -1;
-		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
-			XGeoClass* C = m_Base->Class(i);
-			if (C->IsLAS()) {
-				count++;
-				if (S.contains(count))
-					T.push_back(C);
-			}
+	juce::SparseSet< int > selectedRows = m_TableLas.getSelectedRows();
+	int count = -1;
+	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+		XGeoClass* C = m_Base->Class(i);
+		if (C->IsLAS()) {
+			count++;
+			if (selectedRows.contains(count))
+				T.push_back(C);
 		}
 	}
 

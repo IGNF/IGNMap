@@ -238,6 +238,17 @@ void VectorViewerModel::cellDoubleClicked(int rowNumber, int columnId, const juc
 }
 
 //==============================================================================
+// Clic dans l'entete
+//==============================================================================
+void VectorViewerModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
+{
+	if (newSortColumnId == Visibility)
+		sendActionMessage("InvertVisibility");
+	if (newSortColumnId == Selectable)
+		sendActionMessage("InvertSelectable");
+}
+
+//==============================================================================
 // Drag&Drop des lignes pour changer l'ordre des layers
 //==============================================================================
 juce::var VectorViewerModel::getDragSourceDescription(const juce::SparseSet<int>& selectedRows)
@@ -363,6 +374,8 @@ void VectorLayersViewer::RenameAndViewLastClass(juce::String newName)
 //==============================================================================
 void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 {
+	if (m_Base == nullptr)
+		return;
 	if (message == "NewWindow") {
 		gClassViewerMgr.RemoveAll();
 		m_Table.updateContent();
@@ -377,19 +390,34 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateVector");
 		return;
 	}
+	if (message == "InvertVisibility") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsVector()) C->Visible(!C->Visible());
+		}
+		m_Table.repaint();
+		sendActionMessage("UpdateVector");
+		return;
+	}
+	if (message == "InvertSelectable") {
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+			XGeoClass* C = m_Base->Class(i);
+			if (C->IsVector()) C->Selectable(!C->Selectable());
+		}
+		m_Table.repaint();
+		return;
+	}
 
 	// Classes selectionnees
 	std::vector<XGeoClass*> T;
-	if (m_Base != nullptr) {
-		juce::SparseSet< int > S = m_Table.getSelectedRows();
-		int count = -1;
-		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
-			XGeoClass* C = m_Base->Class(i);
-			if (C->IsVector()) {
-				count++;
-				if (S.contains(count))
-					T.push_back(C);
-			}
+	juce::SparseSet< int > selectedRows = m_Table.getSelectedRows();
+	int count = -1;
+	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
+		XGeoClass* C = m_Base->Class(i);
+		if (C->IsVector()) {
+			count++;
+			if (selectedRows.contains(count))
+				T.push_back(C);
 		}
 	}
 

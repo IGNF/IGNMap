@@ -146,12 +146,22 @@ void ClassViewerModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const 
 //==============================================================================
 void ClassViewerModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 {
-	if ((newSortColumnId == Column::Visibility) || (newSortColumnId == Column::Selectable))
+	if (newSortColumnId == Column::Visibility) {
+		for (size_t i = 0; i < m_Proxy.size(); i++)
+			m_Proxy[i]->Visible(!m_Proxy[i]->Visible());
+		sendActionMessage("InvertVisibility");
 		return;
+	}
+	if (newSortColumnId == Column::Selectable) {
+		for (size_t i = 0; i < m_Proxy.size(); i++)
+			m_Proxy[i]->Selectable(!m_Proxy[i]->Selectable());
+		sendActionMessage("UpdateSort");
+		return;
+	}
 	std::multimap<std::string, XGeoVector*> map;
 	std::vector<std::string> Att;
 	XGeoVector* V;
-	if (m_Proxy.size())
+	if (m_Proxy.size() > 1000)
 		juce::MouseCursor::showWaitCursor();
 	for (size_t i = 0; i < m_Proxy.size(); i++) {
 		V = m_Proxy[i];
@@ -221,6 +231,11 @@ void ClassViewer::actionListenerCallback(const juce::String& message)
 {
 	if (message == "UpdateSort") {
 		m_Table.repaint();
+		return;
+	}
+	if (message == "InvertVisibility") {
+		m_Table.repaint();
+		sendActionMessage("UpdateClass");
 		return;
 	}
 

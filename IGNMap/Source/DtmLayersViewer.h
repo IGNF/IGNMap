@@ -29,6 +29,7 @@ public:
 	void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/) override;
 	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent&) override;
 	void cellDoubleClicked(int rowNumber, int columnId, const juce::MouseEvent& event) override;
+	void sortOrderChanged(int newSortColumnId, bool isForwards) override;
 	juce::var getDragSourceDescription(const juce::SparseSet<int>& selectedRows) override;
 
 	void SetBase(XGeoBase* base) { m_Base = base; }
