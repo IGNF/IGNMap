@@ -1040,8 +1040,8 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.1.1";
-	juce::String info = "04/02/2025";
+	juce::String version = "0.1.2";
+	juce::String info = "04/03/2025";
 	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
 		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER) + "\n";
