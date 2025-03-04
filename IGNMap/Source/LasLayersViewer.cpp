@@ -810,6 +810,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	gsd_editor->setInputRestrictions(5, "0123456789.");
 	asyncAlertWindow->addComboBox("Algo", { juce::translate("Z minimum"), juce::translate("Z average"), 
 		juce::translate("Z maximum"), juce::translate("StdDev"), juce::translate("Height")}, juce::translate("Algorithm"));
+	asyncAlertWindow->addComboBox("FillHole", { juce::translate("Yes"), juce::translate("No") }, juce::translate("Fill NOZ Hole"));
 	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
 	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
 
@@ -820,6 +821,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	if (foldername.isEmpty())
 		return;
 	auto algoIndexChosen = asyncAlertWindow->getComboBoxComponent("Algo")->getSelectedItemIndex();
+	auto fillHole = asyncAlertWindow->getComboBoxComponent("FillHole")->getSelectedItemIndex();
 	auto gsd_text = asyncAlertWindow->getTextEditorContents("GSD");
 	double gsd = gsd_text.getDoubleValue();
 
@@ -828,6 +830,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	public:
 		double GSD = 1.;
 		XLasFile::AlgoDtm algo = XLasFile::ZMinimum;
+		bool fill_hole = true;
 		bool classif_visibility[256];
 
 		MyTask() : ThreadClassProcessor(juce::translate("Compute DTM/DSM ..."), true) 
@@ -845,7 +848,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 			juce::File file(V->Filename());
 			juce::String file_out = m_strFolderOut + juce::File::getSeparatorString() + file.getFileNameWithoutExtension() + ".tif";
 			setStatusMessage(juce::translate("Processing ") + file.getFileNameWithoutExtension());
-			return las.ComputeDtm(file_out.toStdString(), GSD, algo, classif_visibility);
+			return las.ComputeDtm(file_out.toStdString(), GSD, algo, classif_visibility, fill_hole);
 		}
 	};
 
@@ -854,6 +857,8 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	M.m_T = T;
 	M.m_strFolderOut = foldername;
 	M.algo = (XLasFile::AlgoDtm)(algoIndexChosen + 1);
+	if (fillHole > 0)
+		M.fill_hole = false;
 	M.runThread();
 }
 

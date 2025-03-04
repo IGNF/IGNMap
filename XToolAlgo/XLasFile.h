@@ -91,7 +91,8 @@ public:
 	bool SetWorld(const XFrame& F, const double& zmin, const double& zmax, const double& gsd = 0.);
 	bool GetNextPoint(double* X, double* Y, double* Z);
 
-	bool ComputeDtm(std::string file_out, double gsd, AlgoDtm algo = ZMinimum, bool classif_visibility[256] = nullptr, XError* error = nullptr);
+	bool ComputeDtm(std::string file_out, double gsd, AlgoDtm algo = ZMinimum, bool classif_visibility[256] = nullptr, 
+									bool fill_hole = false, uint16_t epsg = 0, XError* error = nullptr);
 	bool StatLas(std::string file_out, std::ofstream* mif = nullptr, std::ofstream* mid = nullptr);
 
 protected:
@@ -110,6 +111,7 @@ protected:
 	static int m_LasNbOpenFile;		// Nombre de fichiers LAS ouverts
 
 	bool IsCopc();
+	bool FillHole(float* area, uint16_t* count, const uint32_t& W, const uint32_t& H);
 };
 
 

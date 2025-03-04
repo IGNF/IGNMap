@@ -200,7 +200,7 @@ bool XLasFile::GetNextPoint(double* X, double* Y, double* Z)
 //-----------------------------------------------------------------------------
 // Calcul d'un MNT/MNS a parti d'un fichier LAS
 //-----------------------------------------------------------------------------
-bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool classif_visibility[256], XError* error)
+bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool classif_visibility[256], bool fill_hole, uint16_t epsg, XError* error)
 {
 	if (!ReOpen())	// Le fichier LAS n'a pas ete ouvert
 		return false;
@@ -237,7 +237,7 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 	double X = 0., Y = 0., Z = 0.;
 	int u = 0, v = 0;
 	laszip_seek_point(m_Reader, 0);
-	for (uint64_t i = 0; i < NbLasPoints(); i++) {
+	for (uint64_t i = 0; i < NbLasPoints(); i++) {  // Debut de l'analyse des points LAS
 		laszip_read_point(m_Reader);
 		if (classif_visibility != nullptr)
 			if (!classif_visibility[m_Point->classification])
@@ -274,10 +274,12 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
         break;
 			}
 		count[v * W + u] += 1;
-	}
+	} // Fin de l'analyse des points LAS
 
+  uint32_t countZ = 0;
 	for (uint32_t i = 0; i < W * H; i++) {
 		if (count[i] > 0) {
+      countZ++;
 			if (algo == ZAverage)
 				area[i] = area[i] / count[i];
       if (algo == StdDev)
@@ -285,12 +287,16 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
       if (algo == Height)
         area[i] = (float)(Stat[i].Max() - Stat[i].Min());
 		}
-		else
-			area[i] = -9999;
+    else
+      area[i] = -9999;
 	}
 
+  if ((fill_hole)&&(countZ < W*H)) {  // Bouchage des trous en NOZ
+    FillHole(area, count, W, H);
+  }
+
 	XTiffWriter writer;
-	writer.SetGeoTiff(F.Xmin, F.Ymax, gsd);
+	writer.SetGeoTiff(F.Xmin, F.Ymax, gsd, epsg);
 	writer.Write(file_out.c_str(), W, H, 1, 32, (uint8_t*)area, 3);
 
 	delete[] area;
@@ -299,6 +305,69 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
   CloseIfNeeded();
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Remplissage des trous d'un MNT
+//-----------------------------------------------------------------------------
+bool XLasFile::FillHole(float* area, uint16_t* count, const uint32_t& W, const uint32_t& H)
+{
+  uint32_t win = W / 2, hin = H / 2;
+  if (win < 1) win = 1;
+  if (hin < 1) hin = 1;
+
+  float* new_area = new float[win * hin];
+  uint16_t* new_count = new uint16_t[win * hin];
+  for (uint32_t i = 0; i < hin; i++) {
+    for (uint32_t j = 0; j < win; j++) {
+      new_area[i * win + j] = 0;
+      new_count[i * win + j] = 0;
+      if (count[2 * i * W + 2 * j] > 0) {
+        new_area[i * win + j] += area[2 * i * W + 2 * j];
+        new_count[i * win + j]++;
+      }
+      if (count[2 * i * W + 2 * j + 1] > 0) {
+        new_area[i * win + j] += area[2 * i * W + 2 * j + 1];
+        new_count[i * win + j]++;
+      }
+      if (count[(2 * i + 1) * W + 2 * j] > 0) {
+        new_area[i * win + j] += area[(2 * i + 1) * W + 2 * j];
+        new_count[i * win + j]++;
+      }
+      if (count[(2 * i + 1) * W + 2 * j + 1] > 0) {
+        new_area[i * win + j] += area[(2 * i + 1) * W + 2 * j + 1];
+        new_count[i * win + j]++;
+      }
+    }
+  }
+  uint32_t nbNoZ = 0;
+  for (uint32_t i = 0; i < win * hin; i++) {
+    if (new_count[i] > 0)
+      new_area[i] /= new_count[i];
+    else
+      nbNoZ++;
+  }
+  if (nbNoZ > 0)
+    FillHole(new_area, new_count, win, hin);
+  for (uint32_t i = 0; i < hin; i++) {
+    for (uint32_t j = 0; j < win; j++) {
+      if (count[2 * i * W + 2 * j] == 0)
+        area[2 * i * W + 2 * j] = new_area[i * win + j];
+       
+      if (count[2 * i * W + 2 * j + 1] == 0) 
+        area[2 * i * W + 2 * j + 1] = new_area[i * win + j];
+        
+      if (count[(2 * i + 1) * W + 2 * j] == 0)
+        area[(2 * i + 1) * W + 2 * j] = new_area[i * win + j];
+        
+      if (count[(2 * i + 1) * W + 2 * j + 1] == 0) 
+        area[(2 * i + 1) * W + 2 * j + 1] = new_area[i * win + j];
+    }
+  }
+  
+  delete[] new_count;
+  delete[] new_area;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
