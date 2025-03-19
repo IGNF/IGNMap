@@ -11,6 +11,8 @@ IGNMap est fourni sur Windows, MacOS ou Linux sous la forme d’un fichier uniqu
 IGNMap peut s’exécuter depuis une clef USB.  
 Sous Linux, il faut éventuellement rendre le fichier exécutable (`chmod a+x`).
 
+Une chaîne vidéo YouTube propose quelques tutoriels : [www.youtube.com/@IGNF_IGNMap](https://www.youtube.com/@IGNF_IGNMap)
+
 ## Interface générale
 <div align="center">
 <img alt="Interface" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/Interface.png">
