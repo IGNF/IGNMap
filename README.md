@@ -14,6 +14,8 @@ Quelques exemples de visualisation :
 <img alt="IGNMap" src="https://raw.githubusercontent.com/IGNF/IGNMap/master/Documentation/Images/IGNMap03.png">
 </div><br>
 
+Une chaîne vidéo YouTube propose quelques tutoriels : [https://www.youtube.com/@IGNF_IGNMap](https://www.youtube.com/@IGNF_IGNMap
+
 ## Historique
 
 IGNMap était à la base un outil interne de l’institut géographique national (IGN). La version 1 était développé avec la bibliothèque MFC de Microsoft pour la création de l’interface homme-machine.  
