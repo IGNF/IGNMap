@@ -230,15 +230,19 @@ bool MapThread::Draw(juce::Graphics& g, int x0, int y0, bool overlay)
 {
 	if (!m_bRasterDone)
 		return false;
-
+	// Dessin du fond blanc
 	g.setOpacity(1.f);
 	g.fillAll(juce::Colours::white);
-	g.drawImageAt(m_Raster, x0, y0);
 
-	g.setOpacity((float)DtmShader::m_dOpacity * 0.01f);
-	g.drawImageAt(m_Dtm, x0, y0);
-	g.setOpacity((float)LasShader::Opacity() * 0.01f);
-	g.drawImageAt(m_Las, x0, y0);
+	g.drawImageAt(m_Raster, x0, y0); // Dessin du raster
+	if (DtmShader::m_dOpacity > 0.) {	// Le MNT est affiche sur le raster
+		g.setOpacity((float)DtmShader::m_dOpacity * 0.01f);
+		g.drawImageAt(m_Dtm, x0, y0);
+	}
+	if (LasShader::Opacity() > 0.) {	// Dessin des LAS
+		g.setOpacity((float)LasShader::Opacity() * 0.01f);
+		g.drawImageAt(m_Las, x0, y0);
+	}
 	g.drawImageAt(m_Vector, x0, y0);
 	if (overlay)
 		g.drawImageAt(m_Overlay, x0, y0);

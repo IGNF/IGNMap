@@ -73,7 +73,7 @@ public:
 	XLasFile();
 	~XLasFile() { Close(); }
 
-	typedef enum { ZMinimum = 1, ZAverage = 2, ZMaximum = 3, StdDev = 4, Height = 5 } AlgoDtm;
+	typedef enum { ZMinimum = 1, ZAverage = 2, ZMaximum = 3, StdDev = 4, Height = 5, Density = 6 } AlgoDtm;
 
 	bool Open(std::string filename);
 	bool ReOpen();

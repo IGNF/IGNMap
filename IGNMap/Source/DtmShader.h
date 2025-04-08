@@ -28,7 +28,7 @@ public:
   DtmShader(double gsd = 25.);
   bool ConvertImage(juce::Image* rawImage, juce::Image* rgbImage);
 
-  enum class ShaderMode { Altitude = 0, Shading, Light_Shading, Free_Shading, Slope, Colour, Shading_Colour, Contour};
+  enum class ShaderMode { Altitude = 0, Shading, Light_Shading, Free_Shading, Slope, Colour, Shading_Colour, Contour, Opacity};
 
   static std::vector<double> m_Z;     // Plages d'altitude
   static std::vector<juce::Colour> m_Colour;  // Plages de couleur

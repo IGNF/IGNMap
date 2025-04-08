@@ -61,7 +61,7 @@ public:
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
     menuSynchronize, menuGoogle, menuBing,
-    menuToolSentinel,
+    menuToolSentinel, menuToolZoom,
     menuHelp, menuAbout
   };
 
@@ -162,6 +162,7 @@ private:
 
   void Test();
   void ToolSentinel();
+  void ToolZoom();
   void ShowProperties(uint32_t index);
 
   void Synchronize();

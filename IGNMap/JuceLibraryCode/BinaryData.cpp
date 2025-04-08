@@ -3291,6 +3291,7 @@ static const unsigned char temp_binary_data_16[] =
 "\"Standard shading\"=\"Estompage classique\"\r\n"
 "\"Light shading\"=\"Estompage l\xc3\xa9ger\"\r\n"
 "\"Free shading\"=\"Estompage libre\"\r\n"
+"\"Shadows\"=\"Ombrage\"\r\n"
 "\"Slope\"=\"Pente\"\r\n"
 "\"Colours\"=\"Aplats de couleurs\"\r\n"
 "\"Colours + Shading\"=\"Aplats + Estompage\"\r\n"
@@ -3391,6 +3392,7 @@ static const unsigned char temp_binary_data_16[] =
 "\"Z maximum\" = \"Z maximum\"\r\n"
 "\"StdDev\" = \"Ecart-type\"\r\n"
 "\"Height\" = \"Hauteur\"\r\n"
+"\"Density\" = \"Densit\xc3\xa9\"\r\n"
 "\"Algorithm\" = \"Algorithme\"\r\n"
 "\"This tool allows to compute a DTM or a DSM for each LAS file\" = \"Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS\"\r\n"
 "\"Compute DTM/DSM\" = \"Calcul de MNT / MNS\"\r\n"
@@ -3427,7 +3429,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 6578; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 6623; return Translation_fr_txt;
         default: break;
     }
 

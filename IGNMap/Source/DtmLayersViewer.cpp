@@ -426,6 +426,7 @@ DtmLayersViewer::DtmLayersViewer()
 	m_Mode.addItem(juce::translate("Colours"), 6);
 	m_Mode.addItem(juce::translate("Colours + Shading"), 7);
 	m_Mode.addItem(juce::translate("Contour lines"), 8);
+	m_Mode.addItem(juce::translate("Shadows"), 9);
 	
 	m_Mode.setSelectedId(static_cast<int>(DtmShader::m_Mode) + 1, juce::NotificationType::dontSendNotification);
 	m_Mode.addListener(this);
@@ -478,6 +479,7 @@ void DtmLayersViewer::Translate()
 	m_Mode.changeItemText(6, juce::translate("Colours"));
 	m_Mode.changeItemText(7, juce::translate("Colours + Shading"));
 	m_Mode.changeItemText(8, juce::translate("Contour lines"));
+	m_Mode.changeItemText(9, juce::translate("Shadows"));
 
 	m_Opacity.setTextValueSuffix(juce::translate("% opacity"));
 }
@@ -615,7 +617,7 @@ void DtmLayersViewer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 		m_Zenith.setVisible(false);
 		if (DtmShader::m_Mode == DtmShader::ShaderMode::Contour)
 			m_IsoStep.setVisible(true);
-		if (DtmShader::m_Mode == DtmShader::ShaderMode::Free_Shading) {
+		if ((DtmShader::m_Mode == DtmShader::ShaderMode::Free_Shading)||(DtmShader::m_Mode == DtmShader::ShaderMode::Opacity)){
 			m_Azimuth.setVisible(true);
 			m_Zenith.setVisible(true);
 		}

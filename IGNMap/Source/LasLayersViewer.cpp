@@ -809,7 +809,7 @@ void LasLayersViewer::ComputeDtm(std::vector<XGeoClass*> T)
 	juce::TextEditor* gsd_editor = asyncAlertWindow->getTextEditor("GSD");
 	gsd_editor->setInputRestrictions(5, "0123456789.");
 	asyncAlertWindow->addComboBox("Algo", { juce::translate("Z minimum"), juce::translate("Z average"), 
-		juce::translate("Z maximum"), juce::translate("StdDev"), juce::translate("Height")}, juce::translate("Algorithm"));
+		juce::translate("Z maximum"), juce::translate("StdDev"), juce::translate("Height"), juce::translate("Density") }, juce::translate("Algorithm"));
 	asyncAlertWindow->addComboBox("FillHole", { juce::translate("Yes"), juce::translate("No") }, juce::translate("Fill NOZ Hole"));
 	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
 	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));

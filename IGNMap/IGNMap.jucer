@@ -508,6 +508,8 @@
       <FILE id="emxELT" name="WmtsTmsViewer.cpp" compile="1" resource="0"
             file="Source/WmtsTmsViewer.cpp"/>
       <FILE id="dG5dic" name="WmtsTmsViewer.h" compile="0" resource="0" file="Source/WmtsTmsViewer.h"/>
+      <FILE id="ZeanHP" name="ZoomViewer.cpp" compile="1" resource="0" file="Source/ZoomViewer.cpp"/>
+      <FILE id="lk6JQ4" name="ZoomViewer.h" compile="0" resource="0" file="Source/ZoomViewer.h"/>
     </GROUP>
     <GROUP id="{2D33714D-DC90-50C2-4B12-9E71B8D130C6}" name="Sqlite">
       <FILE id="PeYnjI" name="sqlite3.c" compile="1" resource="0" file="../Sqlite/sqlite3.c"/>
@@ -756,11 +758,14 @@
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;"
             userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000">
+            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000"
+            externalLibraries="onnxruntime.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-1.20.1\include"
+                       libraryPath="$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-1.20.1\lib&#10;"
                        useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-static_lib-1.20.1\include"
+                       useRuntimeLibDLL="0" libraryPath="$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-static_lib-1.20.1\lib"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

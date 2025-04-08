@@ -38,6 +38,8 @@ public:
 
 	void closeButtonPressed() override { setVisible(false); }
 	virtual void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) = 0;
+	virtual bool NeedTargetImage() { return false; };
+	virtual void SetTargetImage(const juce::Image& /*image*/) { ; }
 	virtual void SetSelection(void*) = 0;
 
 private:

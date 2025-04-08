@@ -219,6 +219,7 @@ bool DtmShader::EstompLine(float* lineR, float* lineS, float* lineT, uint32_t W,
     case ShaderMode::Shading: // Estompage
     case ShaderMode::Light_Shading: // Estompage leger
     case ShaderMode::Free_Shading: // Estompage Libre
+    case ShaderMode::Opacity: // Opacite
       if (num == 0) {
         if (i < (W - 1))
           coef = CoefEstompage(lineT[i], val, lineT[i + 1], angleH, angleV);
@@ -311,8 +312,10 @@ bool DtmShader::EstompLine(float* lineR, float* lineS, float* lineT, uint32_t W,
 
     pix_col = juce::Colour(juce::Colour::fromRGBA((juce::uint8)round(r* coef), (juce::uint8)round(g* coef), 
                                                   (juce::uint8)round(b* coef), (juce::uint8)round(a))).getARGB();
+    if (m_Mode == ShaderMode::Opacity)
+      pix_col = juce::Colour(juce::Colour::fromRGBA((juce::uint8)0, (juce::uint8)0, (juce::uint8)0, (juce::uint8)round((1.-coef)*255.))).getARGB();
+
     ::memcpy(&rgba[4 * i], &pix_col, 4 * sizeof(uint8_t));
-    
     ptr++;
   }
 

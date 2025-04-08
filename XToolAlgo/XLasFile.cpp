@@ -272,27 +272,34 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
         break;
       case Height: Stat[v * W + u].AddValue(Z);
         break;
+      default:;
 			}
 		count[v * W + u] += 1;
 	} // Fin de l'analyse des points LAS
 
-  uint32_t countZ = 0;
-	for (uint32_t i = 0; i < W * H; i++) {
-		if (count[i] > 0) {
-      countZ++;
-			if (algo == ZAverage)
-				area[i] = area[i] / count[i];
-      if (algo == StdDev)
-        area[i] = (float)Stat[i].StandardDeviation();
-      if (algo == Height)
-        area[i] = (float)(Stat[i].Max() - Stat[i].Min());
-		}
-    else
-      area[i] = -9999;
-	}
+  if (algo != Density) {
+    uint32_t countZ = 0;
+    for (uint32_t i = 0; i < W * H; i++) {
+      if (count[i] > 0) {
+        countZ++;
+        if (algo == ZAverage)
+          area[i] = area[i] / count[i];
+        if (algo == StdDev)
+          area[i] = (float)Stat[i].StandardDeviation();
+        if (algo == Height)
+          area[i] = (float)(Stat[i].Max() - Stat[i].Min());
+      }
+      else
+        area[i] = -9999;
+    }
 
-  if ((fill_hole)&&(countZ < W*H)) {  // Bouchage des trous en NOZ
-    FillHole(area, count, W, H);
+    if ((fill_hole) && (countZ < W * H)) {  // Bouchage des trous en NOZ
+      FillHole(area, count, W, H);
+    }
+  }
+  else {
+    for (uint32_t i = 0; i < W * H; i++)
+      area[i] = (float)count[i];
   }
 
 	XTiffWriter writer;

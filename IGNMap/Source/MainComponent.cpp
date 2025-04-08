@@ -20,6 +20,7 @@
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
 #include "ObjectViewer.h"
+#include "ZoomViewer.h"
 #include "AffineImage.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
@@ -240,6 +241,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	{ 
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
 		menu.addItem(1000, "Test");
 	}
 	else if (menuIndex == 3)
@@ -311,7 +313,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
-		CommandIDs::menuToolSentinel,
+		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -500,6 +502,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolSentinel:
 		result.setInfo(juce::translate("Sentinel"), juce::translate("Sentinel"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolZoom:
+		result.setInfo(juce::translate("Zoom"), juce::translate("Zoom"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -676,6 +681,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuToolSentinel: 
 		ToolSentinel();
+		break;
+	case CommandIDs::menuToolZoom:
+		ToolZoom();
 		break;
 	default:
 		return false;
@@ -857,8 +865,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			m_OGL3DViewer.get()->SetTarget(target);
 		if (m_MapView.get() != nullptr)
 			m_MapView.get()->SetTarget(target, false);
-		for (size_t i = 0; i < m_ToolWindows.size(); i++)
+		for (size_t i = 0; i < m_ToolWindows.size(); i++) {
 			m_ToolWindows[i]->SetTarget(target.X, target.Y, target.Z);
+			if (m_ToolWindows[i]->NeedTargetImage())
+				if (m_MapView.get() != nullptr)
+					m_ToolWindows[i]->SetTargetImage(m_MapView.get()->GetTargetImage());
+		}
 	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {
@@ -1676,7 +1688,7 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 		juce::String filename = filenames[i];
 		juce::File file(filename);
 		juce::String ext = file.getFileExtension();
-		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog"))
+		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog") || ext.equalsIgnoreCase(".webp"))
 			ImportImageFile(filename);
 		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
 			ImportLasFile(filename);
@@ -1721,6 +1733,23 @@ void MainComponent::ToolSentinel()
 		}
 	}
 	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	viewer->setVisible(true);
+	m_ToolWindows.push_back(viewer);
+}
+
+//==============================================================================
+// Outil Zoom
+//==============================================================================
+void MainComponent::ToolZoom()
+{
+	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
+		if (m_ToolWindows[i]->getName() == "Zoom") {
+			m_ToolWindows[i]->setVisible(true);
+			m_ToolWindows[i]->toFront(true);
+			return;
+		}
+	}
+	ZoomViewer* viewer = new ZoomViewer("Zoom", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	viewer->setVisible(true);
 	m_ToolWindows.push_back(viewer);
 }

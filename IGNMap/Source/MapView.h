@@ -56,6 +56,7 @@ public:
   XFrame GetViewFrame() const { return m_MapThread.Frame();}
   double GetGsd() const { return m_dScale; }
   juce::Image GetSelImage() const { return m_SelImage; }
+  juce::Image GetTargetImage() const { return m_TargetImage; }
   std::vector<XAnnotation>* GetAnnot() { return &m_Annot; }
 
   void paint(juce::Graphics&) override;
@@ -91,6 +92,7 @@ private:
   juce::Point<float>  m_DragPt;
   juce::Image   m_Image;    // Image de la vue
   juce::Image   m_SelImage; // Partie de l'image de la vue selectionnee
+  juce::Image   m_TargetImage;
   MapThread     m_MapThread;
   XGeoBase*     m_GeoBase;
   XAnnotation   m_Annotation; // Annotation en cours d'edition

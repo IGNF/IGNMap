@@ -202,8 +202,14 @@ void MapView::mouseMove(const juce::MouseEvent& event)
 	m_dY = event.y;
 	m_dZ = m_MapThread.GetZ(event.x, event.y);
 	Pixel2Ground(m_dX, m_dY);
-	if (event.mods.isAltDown())
+	if (event.mods.isAltDown()) {
+		auto b = getLocalBounds();
+		int x0 = XMin(XMax(0, event.x - 32), b.getWidth() - 64);
+		int y0 = XMin(XMax(0, event.y - 32), b.getHeight() - 64);
+		juce::Rectangle<int> R(x0, y0, 64, 64);
+		m_TargetImage = m_MapThread.GetRaster(R);
 		SetTarget(XPt3D(m_dX, m_dY, m_dZ));
+	}
 }
 
 void MapView::mouseDrag(const juce::MouseEvent& event)
