@@ -37,7 +37,7 @@ IGNMap utilise un certain nombre de bibliothèques :
 * [LibJPEG](https://www.ijg.org/) : pour la lecture des images JPEG
 * [LibWebP](https://chromium.googlesource.com/webm/libwebp) : pour la lecture des images WebP
 * [SQLite](https://www.sqlite.org/index.html) : pour la lecture du format GeoPackage
-* [TinyEXIF] (https://github.com/cdcseacave/TinyEXIF) : pour la lecture des champs EXIF dans les images JPEG
+* [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) : pour la lecture des champs EXIF dans les images JPEG
 * [ZLib](https://www.zlib.net/) : pour la décompression ZLib
 * [LASzip](https://github.com/LASzip/LASzip) : pour lecture des nuages de points au format LAS/LAZ
 
@@ -94,5 +94,6 @@ De plus, on trouvera :
 
 ## Contacts du projets
 
-IGNMap a un site : [ignmap.ign.fr](htpps://ignmap.ign.fr)
+IGNMap a un site : [ignmap.ign.fr](https://ignmap.ign.fr)
+
 On peut contacter le projet via [la page Contact](https://ignmap.ign.fr/contact.html)
