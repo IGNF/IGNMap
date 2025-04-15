@@ -240,17 +240,13 @@ bool XTiffTileImage::Decompress()
 		XLzwCodec codec;
     codec.SetDataIO(m_gBuffer, m_Tile, m_nTileHeight*m_nTileWidth*m_nPixSize);
 		codec.Decompress();
-    //Predictor();
-    XPredictor predictor;
-    predictor.Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
+		XPredictor::Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
 		return true;
 	}
 	if (m_nCompression == XTiffReader::DEFLATE) {
 		XZlibCodec codec;
     bool flag = codec.Decompress(m_gBuffer, m_TileCounts[m_nLastTile], m_Tile, m_nTileWidth * m_nTileHeight * m_nPixSize);
-    //Predictor();
-    XPredictor predictor;
-    predictor.Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
+		XPredictor::Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
     return flag;
 	}
 	if ((m_nCompression == XTiffReader::JPEG)||(m_nCompression == XTiffReader::JPEGv2)) {

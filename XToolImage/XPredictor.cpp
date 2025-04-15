@@ -10,7 +10,7 @@
 #include "XPredictor.h"
 #include <cstring>
 
-bool XPredictor::Decode(uint8_t* Pix, uint32_t W, uint32_t H, uint32_t pixSize, uint32_t nbBits, unsigned int num_algo)
+bool XPredictor::Decode(uint8_t* Pix, uint32_t W, uint32_t H, uint32_t pixSize, uint32_t nbBits, uint32_t num_algo)
 {
   if (num_algo == 1) return true;
   if (num_algo == 2) { // PREDICTOR_HORIZONTAL

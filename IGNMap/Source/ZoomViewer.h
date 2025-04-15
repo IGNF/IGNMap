@@ -51,6 +51,8 @@ private:
 	juce::ImageComponent m_ImageComponent;
 
 	bool RunModel(const juce::Image& image);
+	bool RunModel32(const juce::Image& image);
+	bool RunModel16(const juce::Image& image);
 
 	struct IOInfo {
 		std::string Type;

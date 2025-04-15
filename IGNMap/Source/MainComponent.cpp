@@ -26,11 +26,12 @@
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
 #include "../../XToolVector/XShapefileConverter.h"
+#include "../../XToolImage/XJpegImage.h"
 
 //==============================================================================
 MainComponent::MainComponent()
 {
-	Test();
+	//Test();
 
   m_MapView.reset(new MapView("View1"));
   addAndMakeVisible(m_MapView.get());
@@ -1524,6 +1525,16 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	juce::String filename;
+	if (filename.isEmpty())
+		filename = AppUtil::OpenFile("RasterPath");
+	if (filename.isEmpty())
+		return;
+	XJpegImage image;
+	image.Open(AppUtil::GetStringFilename(filename));
+
+
+	/*
 	juce::StringArray T = juce::JUCEApplication::getCommandLineParameterArray();
 	if (T.size() < 5)
 		return;
@@ -1551,6 +1562,7 @@ void MainComponent::Test()
 	png.writeImageToStream(image, stream);
 	
 	juce::JUCEApplication::quit();
+	*/
 }
 
 //==============================================================================

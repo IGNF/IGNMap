@@ -11,11 +11,10 @@
 #include "XZlibCodec.h"
 #include "../zlib-1.3.1/zlib.h"
 
-
 bool XZlibCodec::Decompress(uint8_t* lzw, uint32_t size_in, uint8_t* out, uint32_t size_out)
 {
 	int ret, flush = 0;
-	z_stream strm;
+  z_stream strm;
 
   strm.zalloc = Z_NULL;
   strm.zfree = Z_NULL;

@@ -21,6 +21,7 @@ extern "C" {
 
 class XJpegCodec {
 protected:
+	/*
 	typedef struct {
 		struct jpeg_source_mgr pub;   // public fields
 		JOCTET* buffer;              // start of buffer
@@ -49,6 +50,7 @@ protected:
 	}
 
 	static void jpg_memTermSource(j_decompress_ptr cinfo) { ; }
+	*/
 
 public:
 	XJpegCodec() { ; }

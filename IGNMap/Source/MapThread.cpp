@@ -746,6 +746,7 @@ bool MapThread::DrawInternetRaster(GeoInternetImage* image)
 
 	if (m_bFirstRaster) { // Nettoyage pour la premiere couche raster a afficher
 		m_Raster.clear(m_Raster.getBounds(), juce::Colour(0xFFFFFFFF));
+		m_ClipRaster = juce::Rectangle<int>();
 		m_bFirstRaster = false;
 	}
 	juce::Graphics graphic(m_Raster);
