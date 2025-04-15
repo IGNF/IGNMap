@@ -37,6 +37,7 @@ IGNMap utilise un certain nombre de bibliothèques :
 * [LibJPEG](https://www.ijg.org/) : pour la lecture des images JPEG
 * [LibWebP](https://chromium.googlesource.com/webm/libwebp) : pour la lecture des images WebP
 * [SQLite](https://www.sqlite.org/index.html) : pour la lecture du format GeoPackage
+* [TinyEXIF] (https://github.com/cdcseacave/TinyEXIF) : pour la lecture des champs EXIF dans les images JPEG
 * [ZLib](https://www.zlib.net/) : pour la décompression ZLib
 * [LASzip](https://github.com/LASzip/LASzip) : pour lecture des nuages de points au format LAS/LAZ
 
@@ -71,6 +72,7 @@ un même répertoire :
 * `libwebp-1.3.2/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
 * `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
 * `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
+* `TinyEXIF/` : dossier contenant la bibliothèque [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) ;
 * `XTool/` : bibliothèque de base pour la gestion de données géographiques ;
 * `XToolAlgo/` : bibliothèque pour les algorithmes géomatiques ;
 * `XToolGeod/` : bibliothèque pour les calculs géodésiques ;
@@ -92,4 +94,5 @@ De plus, on trouvera :
 
 ## Contacts du projets
 
-Ici on met la listes des personnes qui travaillent sur ce projet et le maintiennent à jour.
+IGNMap a un site : [ignmap.ign.fr](htpps://ignmap.ign.fr)
+On peut contacter le projet via [la page Contact](https://ignmap.ign.fr/contact.html)
