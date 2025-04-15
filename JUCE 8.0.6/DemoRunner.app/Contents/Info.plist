@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>24B91</string>
+	<key>CFBundleDisplayName</key>
+	<string>DemoRunner</string>
+	<key>CFBundleExecutable</key>
+	<string>DemoRunner</string>
+	<key>CFBundleIconFile</key>
+	<string>Icon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.rmsl.jucedemorunner</string>
+	<key>CFBundleName</key>
+	<string>DemoRunner</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>8.0.6</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>8.0.6</string>
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformBuild</key>
+	<string>24B75</string>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
+	<key>DTPlatformVersion</key>
+	<string>15.1</string>
+	<key>DTSDKBuild</key>
+	<string>24B75</string>
+	<key>DTSDKName</key>
+	<string>macosx15.1</string>
+	<key>DTXcode</key>
+	<string>1610</string>
+	<key>DTXcodeBuild</key>
+	<string>16B40</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.13</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app requires access to Bluetooth to function correctly.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera to function correctly.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright (c) - Raw Material Software Limited</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires audio input. If you do not have an audio interface connected it will use the built-in microphone.</string>
+</dict>
+</plist>

@@ -70,6 +70,10 @@ bool ZoomViewer::LoadModel()
 //-----------------------------------------------------------------------------
 void ZoomViewer::mouseDown(const juce::MouseEvent& event)
 {
+	if (event.y <= getTitleBarHeight()) {
+		juce::DocumentWindow::mouseDown(event);
+		return;
+	}
   bool flag_ia = true;
   if (m_Session == nullptr)
     flag_ia = false;
