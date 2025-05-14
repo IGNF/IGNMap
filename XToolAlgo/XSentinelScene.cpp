@@ -236,7 +236,7 @@ bool XSentinelScene::GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 		return false;
 	// Acces sur un seul canal
 	if ((m_ViewMode >= AOT) && (m_ViewMode <= WVP))
-		return imaA->GetArea(x, y, w, h, area);
+		return BuildMonoImage(x, y, w, h, area, 1, imaA);
 	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
 		return BuildIndexImage(x, y, w, h, area, 1, imaA, imaB);
 	return BuildRGBImage(x, y, w, h, area, 1, imaA, imaB, imaC);
@@ -252,10 +252,29 @@ bool XSentinelScene::GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h,
 		return false;
 	// Acces sur un seul canal
 	if ((m_ViewMode >= AOT) && (m_ViewMode <= WVP))
-		return imaA->GetZoomArea(x, y, w, h, area, factor);
+		return BuildMonoImage(x, y, w, h, area, factor, imaA);
 	if ((m_ViewMode == NDVI) || (m_ViewMode == NDWI))
 		return BuildIndexImage(x, y, w, h, area, factor, imaA, imaB);
 	return BuildRGBImage(x, y, w, h, area, factor, imaA, imaB, imaC);
+}
+
+//-----------------------------------------------------------------------------
+// Construction d'une image a partir d'une bande unique
+//-----------------------------------------------------------------------------
+bool XSentinelScene::BuildMonoImage(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor, XFileImage* image)
+{
+	if (image == nullptr)
+		return false;
+	uint32_t wout = w / factor, hout = h / factor;
+	XBaseImage::MinValue = m_Offset;
+	XBaseImage::MaxValue = 0xFFFF;
+	bool flag;
+	if (factor == 1)
+		flag = image->GetArea(x, y, w, h, area);
+	else
+		flag = image->GetZoomArea(x, y, w, h, area, factor);
+	XBaseImage::MinValue = XBaseImage::MaxValue = 0;
+	return flag;
 }
 
 //-----------------------------------------------------------------------------

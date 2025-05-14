@@ -81,6 +81,7 @@ protected:
 												std::string& id, std::string& channel, std::string& resol);
 	int IndexChannel(std::string channel);
 
+	bool BuildMonoImage(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor, XFileImage* image);
 	bool BuildRGBImage(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor,
 										XFileImage* imageR, XFileImage* imageG, XFileImage* imageB);
 	bool BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor,
