@@ -104,8 +104,6 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
     return;
   }
 
-  m_btnExport.setButtonText(juce::translate("Cancel"));
-
   double xmin = m_edtXmin.getText().getDoubleValue();
   double xmax = m_edtXmax.getText().getDoubleValue();
   double ymin = m_edtYmin.getText().getDoubleValue();
@@ -116,7 +114,13 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
   m_dX0 = xmin;
   m_dY0 = ymax;
   m_dGSD = gsd;
+  if ((m_nW <= 0) || (m_nH <= 0) || (m_dGSD < 0.1))
+    return;
   m_dProgress = 0.;
+
+  m_btnExport.setButtonText(juce::translate("Cancel"));
+  sendActionMessage("SetSelectionFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
+    juce::String(ymin) + ":" + juce::String(ymax));
 
   // Creation du fichier TIFF
   m_strFilename = AppUtil::SaveFile("ExportImageFile", juce::translate("File to save"), "*.tif");

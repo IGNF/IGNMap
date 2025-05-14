@@ -23,6 +23,8 @@ TmsLayer::TmsLayer()
 	m_nW = m_nH = 256;
 	m_dX0 = m_dY0 = 0.;
 	m_ProjCode = XGeoProjection::Unknown;
+	// Normalement dans les specifications https://wiki.osgeo.org/wiki/Tile_Map_Service_Specification on a m_bFlip = false
+	m_bFlip = true; 
 }
 
 //-----------------------------------------------------------------------------
@@ -155,10 +157,17 @@ bool TmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
 	int firstX = (int)floor(xmin);
 	double xmax = (F.Xmax - m_dX0) / (gsd * m_nW);
 	int lastX = (int)ceil(xmax);
-	double ymin = (m_dY0 - F.Ymax) / (gsd * m_nH);
+	
+	double ymin = (F.Ymin - m_dY0) / (gsd * m_nH);
 	int firstY = (int)floor(ymin);
-	double ymax = (m_dY0 - F.Ymin) / (gsd * m_nH);
+	double ymax = (F.Ymax - m_dY0) / (gsd * m_nH);
 	int lastY = (int)ceil(ymax);
+	if (m_bFlip) {
+		ymin = (-m_dY0 - F.Ymax) / (gsd * m_nH);
+		firstY = (int)floor(ymin);
+		ymax = (-m_dY0 - F.Ymin) / (gsd * m_nH);
+		lastY = (int)ceil(ymax);
+	}
 
 	int nb_tilex = lastX - firstX;
 	int nb_tiley = lastY - firstY;
@@ -181,7 +190,10 @@ bool TmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
 				badFile.deleteFile();
 				continue;
 			}
-			g.drawImageAt(image, j * m_nW, i * m_nH);
+			if (m_bFlip)
+				g.drawImageAt(image, j * m_nW, i * m_nH);
+			else
+				g.drawImageAt(image, j * m_nW, (nb_tiley - (i + 1)) * m_nH);
 		}
 	}
 
@@ -237,10 +249,10 @@ juce::Image& TmsLayer::GetAreaImage(const XFrame& F, double gsd)
 	geod.Convert(F.Xmax, F.Ymin, x3, y3);
 
 	XFrame FwebMerc;
-	FwebMerc.Xmin = XMin(x0, x1);
-	FwebMerc.Xmax = XMax(x2, x3);
-	FwebMerc.Ymin = XMin(y0, y3);
-	FwebMerc.Ymax = XMax(y1, y2);
+	FwebMerc.Xmin = XMin(x0, x1) - 5. * gsd;  // On ajoute un buffer pour eviter les pixels blancs
+	FwebMerc.Xmax = XMax(x2, x3) + 5. * gsd;  // en bord d'image reechantillonnee
+	FwebMerc.Ymin = XMin(y0, y3) - 5. * gsd;
+	FwebMerc.Ymax = XMax(y1, y2) + 5. * gsd;
 
 	LoadFrame(FwebMerc, index);
 	m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));

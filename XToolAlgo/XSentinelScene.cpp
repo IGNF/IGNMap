@@ -23,6 +23,7 @@ XSentinelScene::XSentinelScene()
 	m_ViewMode = RGB;
 	m_CutNDVI = 0.6f;
 	m_CutNDWI = 0.f;
+	m_Offset = 1000;	// Valeur standard indiquee dans le fichier MTD_MSIL2A.xml
 }
 
 //-----------------------------------------------------------------------------
@@ -269,6 +270,8 @@ bool XSentinelScene::BuildRGBImage(uint32_t x, uint32_t y, uint32_t w, uint32_t 
 	uint8_t* buf = imageR->AllocArea(wout, hout);
 	if (buf == nullptr)
 		return false;
+	XBaseImage::MinValue = m_Offset;
+	XBaseImage::MaxValue = 0xFFFF;
 	if (factor == 1)
 		imageR->GetArea(x, y, w, h, buf);
 	else
@@ -294,6 +297,7 @@ bool XSentinelScene::BuildRGBImage(uint32_t x, uint32_t y, uint32_t w, uint32_t 
 		*ptr = buf[i]; ptr += 3;
 	}
 	delete[] buf;
+	XBaseImage::MinValue = XBaseImage::MaxValue = 0;
 	return true;
 }
 
@@ -332,10 +336,10 @@ bool XSentinelScene::BuildIndexImage(uint32_t x, uint32_t y, uint32_t w, uint32_
 	uint8_t* ptr = area;
 	for (uint32_t i = 0; i < hout; i++) {
 		for (uint32_t j = 0; j < wout; j++) {
-			if (fabs(*ptrA + *ptrB) < 1e-6)
+			if (fabs(*ptrA + *ptrB - 2 * m_Offset) < 1e-6)
 				index = -1.f;
 			else
-				index = (*ptrA - *ptrB) / (*ptrA + *ptrB);
+				index = (*ptrA - *ptrB) / (*ptrA + *ptrB - 2 * m_Offset);
 			ptrA++;
 			ptrB++;
 			if (index > cut_value) {
@@ -375,7 +379,7 @@ bool XSentinelScene::BuildRawPixelRGB(uint32_t x, uint32_t y, uint32_t win, doub
 	}
 	double* ptr = pix;
 	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
-		*ptr = buf[i]; ptr += 3;
+		*ptr = buf[i] - m_Offset; ptr += 3;
 	}
 
 	if (!imageG->GetRawPixel(x, y, win, buf, nb_sample)) {
@@ -384,7 +388,7 @@ bool XSentinelScene::BuildRawPixelRGB(uint32_t x, uint32_t y, uint32_t win, doub
 	}
 	ptr = pix + 1;
 	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
-		*ptr = buf[i]; ptr += 3;
+		*ptr = buf[i] - m_Offset; ptr += 3;
 	}
 
 	if (!imageB->GetRawPixel(x, y, win, buf, nb_sample)) {
@@ -393,7 +397,7 @@ bool XSentinelScene::BuildRawPixelRGB(uint32_t x, uint32_t y, uint32_t win, doub
 	}
 	ptr = pix + 2;
 	for (uint32_t i = 0; i < (2 * win + 1) * (2 * win + 1); i++) {
-		*ptr = buf[i]; ptr += 3;
+		*ptr = buf[i] - m_Offset; ptr += 3;
 	}
 
 	*nb_sample = 3;
@@ -423,10 +427,10 @@ bool XSentinelScene::BuildRawPixelIndex(uint32_t x, uint32_t y, uint32_t win, do
 		return false;
 	}
 	for (uint32_t i = 0; i < wout * wout; i++) {
-		if (fabs((pixA[i] + pixB[i]) < 1e-6))
+		if (fabs((pixA[i] + pixB[i] - 2 * m_Offset) < 1e-6))
 			pix[i] = -1.;
 		else
-			pix[i] = (pixA[i] - pixB[i]) / (pixA[i] + pixB[i]);
+			pix[i] = (pixA[i] - pixB[i]) / (pixA[i] + pixB[i] - 2 * m_Offset);
 	}
 
 	delete[] pixA;
@@ -560,7 +564,7 @@ double XSentinelScene::GetIndex(double X, double Y, ViewMode indexMode)
 	uint32_t nb_sample;
 	imaA->GetRawPixel(U0, V0, 1, pixA, &nb_sample);
 	imaB->GetRawPixel(U0, V0, 1, pixB, &nb_sample);
-	if ((pixA[4] + pixB[4]) < 1e-6)
+	if ((pixA[4] + pixB[4] - 2 * m_Offset) < 1e-6)
 		return -1.;
-	return ((pixA[4] - pixB[4]) / (pixA[4] + pixB[4]));
+	return ((pixA[4] - pixB[4]) / (pixA[4] + pixB[4] - 2 * m_Offset));
 }

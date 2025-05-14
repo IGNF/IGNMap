@@ -74,6 +74,7 @@ protected:
 	ViewMode m_ViewMode;
 	float m_CutNDVI;
 	float m_CutNDWI;
+	uint16_t m_Offset;	// Les images Sentinel ont en general un offset de 1000 : la valeur minimale est 1000
 
 	XFileImage* GetActiveImage();
 	bool AnalyzeFilename(std::string filename, std::string& proj, std::string& name, std::string& date, 

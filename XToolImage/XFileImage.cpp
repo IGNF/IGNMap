@@ -220,7 +220,7 @@ bool XFileImage::AnalyzeCog()
 {
   if (!m_File.Open(m_strFilename.c_str(), std::ios::in | std::ios::binary))
     return false;
-  XCogImage* image = new XCogImage;
+  XCogImage* image = new (std::nothrow) XCogImage;
   if (image == nullptr) {
     m_File.Close();
     return false;

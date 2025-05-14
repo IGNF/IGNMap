@@ -60,7 +60,7 @@ public:
   bool RotateArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t nbbyte, uint32_t rot) const;
 
   // Allocation d'une ligne de pixels
-  uint8_t* AllocArea(uint32_t w, uint32_t h) { return new uint8_t[w * h * NbByte()]; }
+  uint8_t* AllocArea(uint32_t w, uint32_t h) { return new (std::nothrow) uint8_t[w * h * NbByte()]; }
 
   // Fixe la relation canaux <-> RGB
   void SetRGBChannel(uint8_t r, uint8_t g, uint8_t b) { m_RGBChannel[0] = r; m_RGBChannel[1] = g; m_RGBChannel[2] = b; }

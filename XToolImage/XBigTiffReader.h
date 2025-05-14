@@ -43,7 +43,7 @@ protected:
 	std::vector<BigTiffIFD>	m_IFD;					// Liste des IFD
 
 public:
-	XBigTiffReader() : XBaseTiffReader() {;}
+	XBigTiffReader() : XBaseTiffReader() { m_nIFDOffset = 0;}
 	virtual ~XBigTiffReader() { Clear(); }
 
 	virtual bool Read(std::istream* in);

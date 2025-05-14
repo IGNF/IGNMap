@@ -161,6 +161,7 @@ std::string XBaseTiffReader::CompressionString(uint16_t compression)
   case JPEGv2: return "JPEGv2";
   case PACKBITS: return "PACKBITS";
   case DEFLATE: return "DEFLATE";
+  case DEFLATEv2: return "DEFLATEv2";
   case WEBP: return "WEBP";
   }
   return "Inconnue";

@@ -30,7 +30,7 @@ public:
 									 LONG8 = 16, SLONG8 = 17, IFD8 = 18 };
 
 	enum eCompression { UNCOMPRESSED1 = 1, CCITT1D = 2, CCITTGROUP3 = 3, CCITTGROUP4 = 4, LZW = 5, JPEG = 6, JPEGv2 = 7,
-											DEFLATE = 8, UNCOMPRESSED2	= 32771, PACKBITS = 32773, WEBP = 50001};
+											DEFLATE = 8, UNCOMPRESSED2	= 32771, PACKBITS = 32773, DEFLATEv2 = 32946, WEBP = 50001};
 
 	enum ePhotInt { WHITEISZERO = 0, BLACKISZERO = 1, RGBPHOT = 2, RGBPALETTE = 3, TRANSPARENCYMASK = 4,
 									CMYKPHOT = 5, YCBCR = 6, CIELAB = 8 };
@@ -40,9 +40,9 @@ protected:
 	void Clear();
 	static uint32_t TypeSize(eDataType type);
 
-	XEndian									m_Endian;
-	bool										m_bByteOrder;		// Byte order du fichier
-	uint32_t									m_nActiveIFD;		// IFD actif
+	XEndian		m_Endian;
+	bool			m_bByteOrder;		// Byte order du fichier
+	uint32_t	m_nActiveIFD;		// IFD actif
 
 	uint32_t	m_nWidth;
 	uint32_t	m_nHeight;
@@ -67,7 +67,7 @@ protected:
 	uint64_t* m_TileCounts;
 	uint16_t* m_ColorMap;
   uint16_t  m_nColorMapSize;
-	uint8_t*		m_JpegTables;
+	uint8_t*	m_JpegTables;
 	uint32_t	m_nJpegTablesSize;
 	uint16_t	m_YCbCrSub[2];
 	uint32_t	m_ReferenceBlack[12];
@@ -119,6 +119,7 @@ public:
 
 	bool IsTransparencyMask() { if ((m_nNewSubFileType & (uint32_t)4) != 0) return true; return false; }
 	bool IsSubResolution() { if ((m_nNewSubFileType & (uint32_t)1) != 0) return true; return false; }
+	bool NeedSwap() { if (m_Endian.ByteOrder() != m_bByteOrder) return true; return false; }
 
 	void PrintInfo(std::ostream* out);
 

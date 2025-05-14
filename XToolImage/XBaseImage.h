@@ -81,6 +81,10 @@ public:
   static bool Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h);
   static bool Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h);
 
+	// Swap pour l'endianess
+	static void Swap16bits(uint8_t* buffer, uint32_t nb_value);
+	static void Swap32bits(uint8_t* buffer, uint32_t nb_value);
+
 	// Methodes statiques de manipulation de pixels
 	static bool CMYK2RGB(uint8_t* buffer, uint32_t w, uint32_t h);
 	static bool CMYK2RGBA(uint8_t* buffer, uint32_t w, uint32_t h); 

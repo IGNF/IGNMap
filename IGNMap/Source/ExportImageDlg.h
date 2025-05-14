@@ -16,7 +16,7 @@
 
 class XGeoBase;
 
-class ExportImageDlg : public juce::Component, public juce::Button::Listener, private juce::Timer {
+class ExportImageDlg : public juce::Component, public juce::Button::Listener, public juce::ActionBroadcaster, private juce::Timer {
 public:
 	ExportImageDlg(XGeoBase* base, double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0., double gsd = 1.);
 	virtual ~ExportImageDlg();

@@ -46,13 +46,14 @@ protected:
 	uint16_t		m_nPredictor;
 	uint64_t*		m_StripOffsets;
 	uint64_t*		m_StripCounts;
-	uint8_t*			m_JpegTables;
+	uint8_t*		m_JpegTables;
 	uint32_t		m_nJpegTablesSize;
+	bool				m_bNeedSwap;	// Indique qu'il faut swapper les donnees (endianess des donnees)
 
-	uint8_t*			m_Buffer;			// Buffer de lecture
-	uint8_t*			m_Strip;			// Derniere strip chargee
+	uint8_t*		m_Buffer;			// Buffer de lecture
+	uint8_t*		m_Strip;			// Derniere strip chargee
 	uint32_t		m_nLastStrip;	// Numero de la derniere strip chargee
-  uint8_t*     m_PlaneStrip; // Strip pour les images par plans de couleurs
+  uint8_t*    m_PlaneStrip; // Strip pour les images par plans de couleurs
 };
 
 #endif //XTIFFSTRIPIMAGE_H

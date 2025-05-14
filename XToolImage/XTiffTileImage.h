@@ -48,18 +48,19 @@ protected:
 	uint16_t		m_nPredictor;
 	uint64_t*		m_TileOffsets;
 	uint64_t*		m_TileCounts;
-	uint8_t*			m_JpegTables;
+	uint8_t*		m_JpegTables;
 	uint32_t		m_nJpegTablesSize;
+	bool				m_bNeedSwap;	// Indique qu'il faut swapper les donnees (endianess des donnees)
 
-	uint8_t*			m_Tile;		// Derniere tile chargee
+	uint8_t*		m_Tile;		// Derniere tile chargee
 	uint32_t		m_nLastTile;	// Numero de la derniere tile chargee
 
   // Gestion de la memoire partagee
-  static uint8_t*     m_gBuffer;   // Buffer global de lecture
+  static uint8_t*    m_gBuffer;   // Buffer global de lecture
   static uint32_t    m_gBufSize;  // Taille du buffer
-  static uint8_t*     m_gTile;     // Tile globale
+  static uint8_t*    m_gTile;     // Tile globale
   static uint32_t    m_gTileSize; // Taille de la tile globale
-  static uint8_t*     m_gPlaneTile;// Tile globale pour les images par plans de couleurs
+  static uint8_t*    m_gPlaneTile;// Tile globale pour les images par plans de couleurs
   static XTiffTileImage* m_gLastImage;  // Derniere image utilisee
 };
 

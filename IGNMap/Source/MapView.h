@@ -58,6 +58,7 @@ public:
   juce::Image GetSelImage() const { return m_SelImage; }
   juce::Image GetTargetImage() const { return m_TargetImage; }
   std::vector<XAnnotation>* GetAnnot() { return &m_Annot; }
+  void SetSelectionFrame(const XFrame& F) { m_SelectionFrame = F; }
 
   void paint(juce::Graphics&) override;
   void exitSignalSent() override { repaint(); }

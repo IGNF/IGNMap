@@ -59,6 +59,7 @@ void XTiffStripImage::Clear()
 	m_dX0 = m_dY0 = m_dGSD = 0.;
 	m_nLastStrip = 0xFFFFFFFF;
 	m_nJpegTablesSize = 0;
+	m_bNeedSwap = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -103,6 +104,7 @@ bool XTiffStripImage::SetTiffReader(XBaseTiffReader* reader)
 	m_nPlanarConfig = reader->PlanarConfig();
 	m_nCompression = reader->Compression();
 	m_nPredictor = reader->Predictor();
+	m_bNeedSwap = reader->NeedSwap();
 
 	m_dX0 = reader->X0();
 	m_dY0 = reader->Y0();
@@ -122,22 +124,22 @@ bool XTiffStripImage::AllocBuffer()
 	for (uint32_t i = 0; i < m_nNbStrip; i++)
 		if (m_StripCounts[i] > maxsize)
 			maxsize = m_StripCounts[i];
-	m_Buffer = new uint8_t[maxsize];
-	if (m_Buffer == NULL)
+	m_Buffer = new (std::nothrow) uint8_t[maxsize];
+	if (m_Buffer == nullptr)
 		return false;
-	m_Strip = new uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
-	if (m_Strip == NULL) {
+	m_Strip = new (std::nothrow) uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
+	if (m_Strip == nullptr) {
 		delete[] m_Buffer;
-		m_Buffer = NULL;
+		m_Buffer = nullptr;
 		return false;
 	}
   if (m_nPlanarConfig == 2) {
-    m_PlaneStrip = new uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
-    if (m_PlaneStrip == NULL) {
+    m_PlaneStrip = new (std::nothrow) uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
+    if (m_PlaneStrip == nullptr) {
       delete[] m_Buffer;
-      m_Buffer = NULL;
+      m_Buffer = nullptr;
       delete[] m_Strip;
-      m_Strip = NULL;
+      m_Strip = nullptr;
       return false;
     }
   }
@@ -221,7 +223,7 @@ bool XTiffStripImage::Decompress()
 		XPredictor::Decode(m_Strip, m_nW, m_nRowsPerStrip, m_nPixSize, m_nNbBits, m_nPredictor);
 		return true;
 	}
-	if (m_nCompression == XTiffReader::DEFLATE) {
+	if ((m_nCompression == XTiffReader::DEFLATE)||(m_nCompression == XTiffReader::DEFLATEv2)) {
 		XZlibCodec codec;
 		bool flag = codec.Decompress(m_Buffer, m_StripCounts[m_nLastStrip], m_Strip, m_nW * m_nRowsPerStrip * m_nPixSize);
 		XPredictor::Decode(m_Strip, m_nW, m_nRowsPerStrip, m_nPixSize, m_nNbBits, m_nPredictor);
@@ -253,8 +255,8 @@ bool XTiffStripImage::PostProcess()
 		int byteW = m_nW / 8L;
 		if ((m_nW % 8L) != 0)
 			byteW++;
-		uint8_t* tmpStrip = new uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
-		if (tmpStrip == NULL)
+		uint8_t* tmpStrip = new (std::nothrow) uint8_t[m_nRowsPerStrip * m_nW * m_nPixSize];
+		if (tmpStrip == nullptr)
 			return false;
 		bool negatif = false;
 		if ((m_nPhotInt == XTiffReader::WHITEISZERO))
@@ -292,6 +294,11 @@ bool XTiffStripImage::PostProcess()
 	// Cas des images CMYK
 	if ((m_nPhotInt == XTiffReader::CMYKPHOT) && (m_nNbSample == 4))
 		return XBaseImage::CMYK2RGBA(m_Strip, m_nW, m_nRowsPerStrip);
+
+	if ((m_nNbBits == 16)&&(m_bNeedSwap))
+		XBaseImage::Swap16bits(m_Strip, m_nW * m_nRowsPerStrip * m_nNbSample);
+	if ((m_nNbBits == 32) && (m_bNeedSwap))
+		XBaseImage::Swap32bits(m_Strip, m_nW * m_nRowsPerStrip * m_nNbSample);
 
 	return true;
 }

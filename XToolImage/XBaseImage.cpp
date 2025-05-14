@@ -389,21 +389,20 @@ bool XBaseImage::MultiSample2RGB(uint8_t* buffer, uint32_t w, uint32_t h, uint16
 //-----------------------------------------------------------------------------
 bool XBaseImage::Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 {
-	// Recherche du min / max
-  uint16_t val_min = (uint16_t)MinValue, val_max = (uint16_t)MaxValue;
+  // Recherche du min / max
+  uint16_t val_min = 0xFFFF, val_max = 0;
   double val_moy = 0.;
-  if ((val_min == 0) && (val_max == 0)) {
-		val_min = 0xFFFF;
-		val_max = 0;
-		uint16_t* ptr = (uint16_t*)buffer;
-		for (uint32_t i = 0; i < w * h; i++) {
-			val_min = XMin(*ptr, val_min);
-			val_max = XMax(*ptr, val_max);
-      val_moy += (*ptr);
-			ptr++;
-		}
-    val_moy /= (w * h);
-	}
+  uint16_t* ptr = (uint16_t*)buffer;
+  for (uint32_t i = 0; i < w * h; i++) {
+    val_min = XMin(*ptr, val_min);
+    val_max = XMax(*ptr, val_max);
+    val_moy += (*ptr);
+    ptr++;
+  }
+  val_moy /= (w * h);
+  if (MinValue > 0) val_min = MinValue;
+  if (MaxValue < 0xFFFF) val_max = MaxValue;
+
 
   if (Boost_Hi > 0.)  // Application du boost
     val_max = (uint16_t)XMin(val_max - (val_max - val_moy) * Boost_Hi, 65535.);
@@ -436,20 +435,19 @@ bool XBaseImage::Uint16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 bool XBaseImage::Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
 {
   // Recherche du min / max
-  signed short val_min = (signed short)MinValue, val_max = (signed short)MaxValue;
+  signed short val_min = 32767, val_max = -32767;
   double val_moy = 0.;
-  if ((val_min == 0) && (val_max == 0)) {
-    val_min = 32767;
-    val_max = -32767;
-    signed short* ptr = (signed short*)buffer;
-    for (uint32_t i = 0; i < w * h; i++) {
-      val_min = XMin(*ptr, val_min);
-      val_max = XMax(*ptr, val_max);
-      val_moy += (*ptr);
-      ptr++;
-    }
-    val_moy /= (w * h);
+  signed short* ptr = (signed short*)buffer;
+  for (uint32_t i = 0; i < w * h; i++) {
+    val_min = XMin(*ptr, val_min);
+    val_max = XMax(*ptr, val_max);
+    val_moy += (*ptr);
+    ptr++;
   }
+  val_moy /= (w * h);
+  if (MinValue > -32767) val_min = MinValue;
+  if (MaxValue < 32767) val_max = MaxValue;
+
   if (Boost_Hi > 0.)  // Application du boost
     val_max = (uint16_t)XMin(val_max - (val_max - val_moy) * Boost_Hi, 32767.);
   if (Boost_Lo > 0.)
@@ -472,6 +470,35 @@ bool XBaseImage::Int16To8bits(uint8_t* buffer, uint32_t w, uint32_t h)
     ptr_val++;
   }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+// Swap pour l'endianess en 16 bits
+//-----------------------------------------------------------------------------
+void XBaseImage::Swap16bits(uint8_t* buffer, uint32_t nb_value)
+{
+  uint8_t temp;
+  for (uint32_t i = 0; i < nb_value; i++) {
+    temp = buffer[2 * i];
+    buffer[2 * i] = buffer[2 * i + 1];
+    buffer[2 * i + 1] = temp;
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Swap pour l'endianess en 32 bits
+//-----------------------------------------------------------------------------
+void XBaseImage::Swap32bits(uint8_t* buffer, uint32_t nb_value)
+{
+  uint8_t temp;
+  for (uint32_t i = 0; i < nb_value; i++) {
+    temp = buffer[4 * i];
+    buffer[4 * i] = buffer[4 * i + 3];
+    buffer[4 * i + 3] = temp;
+    temp = buffer[4 * i + 1];
+    buffer[4 * i + 1] = buffer[4 * i + 2];
+    buffer[4 * i + 2] = temp;
+  }
 }
 
 //-----------------------------------------------------------------------------

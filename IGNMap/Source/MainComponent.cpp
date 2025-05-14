@@ -834,6 +834,16 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		F.Ymax = T[4].getDoubleValue();
 		m_MapView.get()->ZoomFrame(F, 10.);
 	}
+	if (T[0] == "SetSelectionFrame") {
+		if (T.size() < 5)
+			return;
+		XFrame F;
+		F.Xmin = T[1].getDoubleValue();
+		F.Xmax = T[2].getDoubleValue();
+		F.Ymin = T[3].getDoubleValue();
+		F.Ymax = T[4].getDoubleValue();
+		m_MapView.get()->SetSelectionFrame(F);
+	}
 	if (T[0] == "CenterFrame") {
 		if (T.size() < 3)
 			return;
@@ -1397,12 +1407,10 @@ bool MainComponent::ExportImage()
 	XFrame F = m_MapView.get()->GetSelectionFrame();
 	double gsd = m_MapView.get()->GetGsd();
 	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), XRint(gsd));
+	dlg->addActionListener(this);
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);
-
-	juce::Rectangle<int> area(0, 0, 410, 300);
-
-	options.content->setSize(area.getWidth(), area.getHeight());
+	options.content->setSize(410, 300);
 	options.dialogTitle = juce::translate("Export Image");
 	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
 	options.escapeKeyTriggersCloseButton = true;
@@ -1423,10 +1431,7 @@ bool MainComponent::ExportLas()
 	ExportLasDlg* dlg = new ExportLasDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax));
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);
-
-	juce::Rectangle<int> area(0, 0, 410, 300);
-
-	options.content->setSize(area.getWidth(), area.getHeight());
+	options.content->setSize(410, 300);
 	options.dialogTitle = juce::translate("Export LAS");
 	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
 	options.escapeKeyTriggersCloseButton = true;

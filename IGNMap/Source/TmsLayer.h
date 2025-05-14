@@ -39,6 +39,7 @@ protected:
 	XFrame				m_F;		// Cadre dans la projection native TMS
 	juce::String	m_strFormat;
 	double				m_dX0, m_dY0;	// Origine du dallage
+	bool					m_bFlip;			// Indique si les numeros de dalles sont dans le sens inverse du Y
 	std::vector<TileSet>	m_TileSet;
 	XGeoProjection::XProjCode m_ProjCode;
 

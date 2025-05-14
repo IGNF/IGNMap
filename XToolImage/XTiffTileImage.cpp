@@ -107,6 +107,7 @@ bool XTiffTileImage::SetTiffReader(XBaseTiffReader* reader)
   m_nPlanarConfig = reader->PlanarConfig();
 	m_nCompression = reader->Compression();
 	m_nPredictor = reader->Predictor();
+	m_bNeedSwap = reader->NeedSwap();
 
 	m_dX0 = reader->X0();
 	m_dY0 = reader->Y0();
@@ -128,27 +129,27 @@ bool XTiffTileImage::AllocBuffer()
 			maxsize = m_TileCounts[i];
 
   if (maxsize > m_gBufSize) {
-    if (m_gBuffer != NULL) delete[] m_gBuffer;
-    m_gBuffer = new uint8_t[maxsize];
-    if (m_gBuffer == NULL)
+    if (m_gBuffer != nullptr) delete[] m_gBuffer;
+    m_gBuffer = new (std::nothrow) uint8_t[maxsize];
+    if (m_gBuffer == nullptr)
       return false;
     m_gBufSize = maxsize;
   }
   uint32_t tileSize = m_nTileWidth * m_nTileHeight * m_nPixSize;
   if (tileSize > m_gTileSize) {
-    if (m_gTile != NULL) {
+    if (m_gTile != nullptr) {
       delete[] m_gTile;
-      m_gLastImage = NULL;
+      m_gLastImage = nullptr;
     }
-    m_gTile = new uint8_t[tileSize];
-    if (m_gTile == NULL)
+    m_gTile = new (std::nothrow) uint8_t[tileSize];
+    if (m_gTile == nullptr)
       return false;
     m_gTileSize = tileSize;
     if (m_nPlanarConfig == 2) {
-      if (m_gPlaneTile != NULL)
+      if (m_gPlaneTile != nullptr)
         delete[] m_gPlaneTile;
-      m_gPlaneTile = new uint8_t[tileSize];
-      if (m_gPlaneTile == NULL)
+      m_gPlaneTile = new (std::nothrow) uint8_t[tileSize];
+      if (m_gPlaneTile == nullptr)
         return false;
     }
   }
@@ -243,7 +244,7 @@ bool XTiffTileImage::Decompress()
 		XPredictor::Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
 		return true;
 	}
-	if (m_nCompression == XTiffReader::DEFLATE) {
+	if ((m_nCompression == XTiffReader::DEFLATE)|| (m_nCompression == XTiffReader::DEFLATEv2)) {
 		XZlibCodec codec;
     bool flag = codec.Decompress(m_gBuffer, m_TileCounts[m_nLastTile], m_Tile, m_nTileWidth * m_nTileHeight * m_nPixSize);
 		XPredictor::Decode(m_Tile, m_nTileWidth, m_nTileHeight, m_nPixSize, m_nNbBits, m_nPredictor);
@@ -275,8 +276,8 @@ bool XTiffTileImage::PostProcess()
 		int byteW = m_nTileWidth / 8L;
 		if ((m_nTileWidth % 8L) != 0)
 			byteW++;
-		uint8_t* tmpTile = new uint8_t[m_nTileWidth * m_nTileHeight * m_nPixSize];
-		if (tmpTile == NULL)
+		uint8_t* tmpTile = new (std::nothrow) uint8_t[m_nTileWidth * m_nTileHeight * m_nPixSize];
+		if (tmpTile == nullptr)
 			return false;
 		bool negatif = false;
 		if ((m_nPhotInt == XTiffReader::WHITEISZERO))
@@ -314,6 +315,11 @@ bool XTiffTileImage::PostProcess()
 	// Cas des images CMYK
 	if ((m_nPhotInt == XTiffReader::CMYKPHOT) && (m_nNbSample == 4))
 		return XBaseImage::CMYK2RGBA(m_Tile, m_nTileWidth, m_nTileHeight);
+
+	if ((m_nNbBits == 16) && (m_bNeedSwap))
+		XBaseImage::Swap16bits(m_Tile, m_nTileHeight * m_nTileWidth * m_nNbSample);
+	if ((m_nNbBits == 32) && (m_bNeedSwap))
+		XBaseImage::Swap32bits(m_Tile, m_nTileHeight * m_nTileWidth * m_nNbSample);
 
 	return true;
 }
