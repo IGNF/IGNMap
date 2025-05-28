@@ -67,6 +67,10 @@ public:
   void GetRGBChannel(uint8_t& r, uint8_t& g, uint8_t& b) { r = m_RGBChannel[0]; g = m_RGBChannel[1]; b = m_RGBChannel[2]; }
   void SetPalette(uint8_t* palette);
 
+  // Mise a jour de la palette
+  bool UpdateColorMap(uint8_t index, uint8_t r, uint8_t g, uint8_t b) { return m_Image->UpdateColorMap(index, r, g, b); }
+  bool GetColorMapRGB(uint8_t index, uint8_t& r, uint8_t& g, uint8_t& b);
+
   // Fonction de reechantillonnage
   bool Resample(std::string file_out, XTransfo* transfo, XInterpol* inter, XWait* wait = nullptr);
 

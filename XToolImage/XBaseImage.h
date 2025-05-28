@@ -49,6 +49,7 @@ public:
   // Palette de couleurs
   uint16_t ColorMapSize() { return m_nColorMapSize;}
   uint16_t* ColorMap() { return m_ColorMap;}
+	bool UpdateColorMap(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
   bool ApplyColorMap(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h);
 
   // Indication des canaux utiles
@@ -98,6 +99,7 @@ public:
 	static void SwitchRGB2BGR(uint8_t* buf, uint32_t nb_pix);
 	static void SwitchARGB2BGR(uint8_t* buf, uint32_t nb_pix);
 	static void Gray2RGB(uint8_t* buf, uint32_t nb_pix);
+	static void Gray2RGBPalette(uint8_t* in, uint8_t* out, uint32_t nb_pix, uint8_t* palette);
 	static void RGB2RGBA(uint8_t* buf, uint32_t nb_pix, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
 	static void RGB2BGRA(uint8_t* buf, uint32_t nb_pix, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t alpha = 255);
 	static void Gray2RGBA(uint8_t* buf, uint32_t nb_pix, uint8_t gray = 0, uint8_t alpha = 255);

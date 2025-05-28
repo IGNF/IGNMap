@@ -70,11 +70,12 @@ void XTiffTileImage::Clear()
 std::string XTiffTileImage::Metadata()
 {
   std::ostringstream out;
+	std::string sep = " ; ";
   out << XBaseImage::Metadata();
-  out << "Nb Tiles:" << m_nNbTile << ";TileW:" << m_nTileWidth << ";TileH:" << m_nTileHeight
-    << ";Compression:" << XTiffReader::CompressionString(m_nCompression) << ";Predictor:" << m_nPredictor
-    << ";PhotInt:" << XTiffReader::PhotIntString(m_nPhotInt) << ";PlanarConfiguration:" << m_nPlanarConfig
-    << ";SampleFormat:" << m_nSampleFormat << ";";
+  out << "NbTiles:" << m_nNbTile << sep  << "TileW:" << m_nTileWidth << sep << "TileH:" << m_nTileHeight
+    << sep << "Compression:" << XTiffReader::CompressionString(m_nCompression) << sep << "Predictor:" << m_nPredictor
+    << sep << "PhotInt:" << XTiffReader::PhotIntString(m_nPhotInt) << sep << "PlanarConfiguration:" << m_nPlanarConfig
+    << sep << "SampleFormat:" << m_nSampleFormat << sep;
   return out.str();
 }
 

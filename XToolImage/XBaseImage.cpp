@@ -65,9 +65,16 @@ std::string XBaseImage::Metadata()
 	std::ostringstream out;
   out.setf(std::ios::fixed);
   out.precision(2);
-	out << "Largeur:" << m_nW << ";Hauteur:" << m_nH << ";Nb Bits:" << m_nNbBits
-		<< ";Nb Sample:" << m_nNbSample << ";Xmin:" << m_dX0 << ";Ymax:" << m_dY0
-    << ";GSD:" << m_dGSD <<";";
+  std::string sep = " ; ";
+  out << "W:" << m_nW << sep << "H:" << m_nH << sep << "Bits:" << m_nNbBits << sep << "Sample:" << m_nNbSample;
+  switch (m_nSampleFormat) {
+  case 1: out << sep << "SampleFormat:unsigned"; break;
+  case 2: out << sep << "SampleFormat:signed"; break;
+  case 3: out << sep << "SampleFormat:float"; break;
+  default : out << sep << "SampleFormat:undefined";
+  }
+  out << sep << "Xmin:" << m_dX0 << sep << "Ymax:" << m_dY0
+    << sep << "GSD:" << m_dGSD << sep;
 	return out.str();
 }
 
@@ -245,11 +252,32 @@ bool XBaseImage::GetStat(XFile* file, double *minVal, double *maxVal, double *me
 }
 
 //-----------------------------------------------------------------------------
+// Mise a jour de la palette de couleurs
+//-----------------------------------------------------------------------------
+bool XBaseImage::UpdateColorMap(uint8_t index, uint8_t r, uint8_t g, uint8_t b)
+{
+  if (m_ColorMap == nullptr) { // L'image n'a pas de palette, on en cree une 
+    m_nColorMapSize = 3 * 256;
+    m_ColorMap = new (std::nothrow) uint16_t[m_nColorMapSize];
+    if (m_ColorMap == nullptr) {
+      m_nColorMapSize = 0;
+      return false;
+    }
+    for (uint16_t i = 0; i < 256; i++)
+      m_ColorMap[i] = m_ColorMap[i + 256] = m_ColorMap[i + 512] = i * 256;
+  }
+  m_ColorMap[index] = (uint16_t)r * 256;
+  m_ColorMap[index + 256] = (uint16_t)g * 256;
+  m_ColorMap[index + 512] = (uint16_t)b * 256;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Application d'une palette de couleurs
 //-----------------------------------------------------------------------------
 bool XBaseImage::ApplyColorMap(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h)
 {
-  if ((m_ColorMap == NULL)||(m_nColorMapSize < 3*256))
+  if ((m_ColorMap == nullptr)||(m_nColorMapSize < 3*256))
     return false;
   uint8_t *ptr_in = in, *ptr_out = out;
   for (uint32_t i = 0; i < h; i++) {
@@ -710,6 +738,20 @@ void XBaseImage::Gray2RGBA(uint8_t* buf, uint32_t nb_pix, uint8_t gray, uint8_t 
       ptr_rgba[3] = 255;
     ptr--;
     ptr_rgba -= 4;
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Conversion niveau de gris -> RGB avec une palette
+//-----------------------------------------------------------------------------
+void XBaseImage::Gray2RGBPalette(uint8_t* in, uint8_t* out, uint32_t nb_pix, uint8_t* palette)
+{
+  uint8_t *ptr_in = in, *ptr_out = out;
+  for (uint32_t i = 0; i < nb_pix; i++) {
+    *ptr_out = palette[*ptr_in * 3]; ptr_out++;
+    *ptr_out = palette[*ptr_in * 3 + 1]; ptr_out++;
+    *ptr_out = palette[*ptr_in * 3 + 2]; ptr_out++;
+    ptr_in++;
   }
 }
 

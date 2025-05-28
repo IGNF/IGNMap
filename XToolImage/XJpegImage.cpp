@@ -196,6 +196,8 @@ bool XJpegImage::ReadExifData()
 		m_strExifData += "CameraModel : " + imageEXIF.Make + " - " + imageEXIF.Model + " ; ";
 	if (!imageEXIF.DateTime.empty())
 		m_strExifData += "DateTime : " + imageEXIF.DateTime + ";";
+	if (imageEXIF.FocalLength > 0.)
+		m_strExifData += "FocalLength(mm) : " + std::to_string(imageEXIF.FocalLength) + ";";
 
 	if (imageEXIF.GeoLocation.hasLatLon()) {
 		double lat = imageEXIF.GeoLocation.Latitude;

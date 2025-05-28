@@ -68,11 +68,12 @@ void XTiffStripImage::Clear()
 std::string XTiffStripImage::Metadata()
 {
   std::ostringstream out;
+	std::string sep = " ; ";
   out << XBaseImage::Metadata();
-  out << "Nb Strip:" << m_nNbStrip << ";RowsPerStrip:" << m_nRowsPerStrip 
-      << ";Compression:" << XTiffReader::CompressionString(m_nCompression) << ";Predictor:" << m_nPredictor
-      << ";PhotInt:" << XTiffReader::PhotIntString(m_nPhotInt) << ";PlanarConfiguration:" << m_nPlanarConfig
-      << ";SampleFormat:" << m_nSampleFormat << ";";
+  out << "NbStrip:" << m_nNbStrip << sep << "RowsPerStrip:" << m_nRowsPerStrip 
+      << sep << "Compression:" << XTiffReader::CompressionString(m_nCompression) << sep << "Predictor:" << m_nPredictor
+      << sep << "PhotInt:" << XTiffReader::PhotIntString(m_nPhotInt) << sep << "PlanarConfiguration:" << m_nPlanarConfig
+      << sep << "SampleFormat:" << m_nSampleFormat << sep;
   return out.str();
 }
 

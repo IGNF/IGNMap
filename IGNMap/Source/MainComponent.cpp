@@ -1705,7 +1705,7 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 		juce::String filename = filenames[i];
 		juce::File file(filename);
 		juce::String ext = file.getFileExtension();
-		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog") || ext.equalsIgnoreCase(".webp"))
+		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog") || ext.equalsIgnoreCase(".webp") || ext.equalsIgnoreCase(".jpg"))
 			ImportImageFile(filename);
 		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
 			ImportLasFile(filename);

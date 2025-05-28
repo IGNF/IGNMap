@@ -68,7 +68,10 @@ void SelTreeItem::paintItem(juce::Graphics& g, int width, int height)
   g.drawText(text, 4, 0, m_Margin, height, juce::Justification::centredLeft, true);
   text = m_AttValue;
   g.setColour(juce::Colours::lightyellow);
-  g.drawText(text, 4 + m_Margin, 0, width - m_Margin - 4, height, juce::Justification::centredLeft, true);
+  //if (getItemWidth() < 200)
+    g.drawText(text, 4 + m_Margin, 0, width - m_Margin - 4, height, juce::Justification::centredLeft, true);
+  //else
+  //  g.drawMultiLineText(text, 4 + m_Margin, 15, 200);
 }
 
 //==============================================================================
@@ -147,8 +150,8 @@ int SelTreeItem::getItemWidth() const
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr))
     return TreeViewItem::getItemWidth();
-  //return juce::Font(juce::FontOptions(15.0f)).getStringWidth(m_AttName + m_AttValue) + m_Margin;
-  return juce::GlyphArrangement::getStringWidthInt(juce::Font(juce::FontOptions(15.0f)), m_AttName + m_AttValue) + m_Margin;
+  //return juce::GlyphArrangement::getStringWidthInt(juce::Font(juce::FontOptions(15.0f)), m_AttName + m_AttValue) + m_Margin;
+  return TreeViewItem::getItemWidth();
 }
 
 //==============================================================================
@@ -158,7 +161,10 @@ juce::String SelTreeItem::getTooltip()
 {
   if ((m_Feature != nullptr) && (m_Base != nullptr))
     return juce::translate("Double-click for viewing");
-  return juce::translate("Double-click for copying");
+  juce::String text = m_AttValue;
+  text = text.replace("\\", "\\\\");
+  return text;
+  //return juce::translate("Double-click for copying");
 }
 
 //==============================================================================

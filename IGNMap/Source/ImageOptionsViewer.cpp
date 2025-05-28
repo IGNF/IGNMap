@@ -46,6 +46,7 @@ ImageOptionsViewer::ImageOptionsViewer()
   m_btnPalette.setButtonText(juce::translate("Palette"));
   addAndMakeVisible(m_txtPalette);
   m_txtPalette.setMultiLine(true);
+  m_txtPalette.setReturnKeyStartsNewLine(true);
 
   m_tblPixels.setModel(&m_PixModel);
   m_tblPixels.setTooltip(juce::translate("Double-click for copying"));
@@ -129,7 +130,7 @@ void ImageOptionsViewer::SetImage(XFileImage* image)
   m_txtImageName.setText(image->Filename());
   m_txtMetadata.setText(image->GetMetadata());
 
-  uint8_t r, g, b;
+  uint8_t r = 0, g = 0, b = 0;
   image->GetRGBChannel(r, g, b);
   m_cbxRChannel.clear(juce::NotificationType::dontSendNotification);
   m_cbxGChannel.clear(juce::NotificationType::dontSendNotification);
@@ -146,6 +147,16 @@ void ImageOptionsViewer::SetImage(XFileImage* image)
 
   m_sldLine.setRange(0, m_Image->XFileImage::Height() - 1, 1.);
   m_sldColumn.setRange(0, m_Image->XFileImage::Width() - 1, 1.);
+
+  // Gestion de la palette
+  if (m_Image->NbSample() == 1) {
+    juce::String paltxt;
+    for (int i = 0; i < 256; i++) {
+      if (m_Image->GetColorMapRGB((uint8_t)i, r, g, b))
+        paltxt += (juce::String(i) + ";" + juce::String((int)r) + "," + juce::String((int)g) + "," + juce::String((int)b) + "\n");
+    }
+    m_txtPalette.setText(paltxt, false);
+  }
 }
 
 //==============================================================================
@@ -211,9 +222,15 @@ void ImageOptionsViewer::buttonClicked(juce::Button* button)
     m_cbxBChannel.setEnabled(!state);
     if (m_Image == nullptr)
       return;
-    if (state) {
-      juce::String val = m_txtPalette.getText();
-      juce::StringArray array = juce::StringArray::fromLines(val);
+    if (!state) { // Remise a 0
+      m_Image->SetPalette(nullptr);
+      sendActionMessage("UpdateRaster");
+      return;
+    }
+
+    juce::String val = m_txtPalette.getText();
+    juce::StringArray array = juce::StringArray::fromLines(val);
+    if (m_Image->NbSample() > 1) {  // Cas des images a plusieurs canaux
       uint8_t* palette = new uint8_t[m_Image->NbSample() * 3];
       memset(palette, 0, m_Image->NbSample() * 3);
       for (int i = 0; i < array.size(); i++) {
@@ -229,9 +246,20 @@ void ImageOptionsViewer::buttonClicked(juce::Button* button)
       }
       m_Image->SetPalette(palette);
     }
-    else {
-      m_Image->SetPalette(nullptr);
+    else {  // Image mono-canal : on cree une palette classique
+      for (int i = 0; i < array.size(); i++) {
+        juce::String line = array[i];
+        juce::StringArray row = juce::StringArray::fromTokens(line, ",;", "");
+        if (row.size() != 4) continue;
+        int index = row[0].getIntValue();
+        uint8_t r = (uint8_t)row[1].getIntValue();
+        uint8_t g = (uint8_t)row[2].getIntValue();
+        uint8_t b = (uint8_t)row[3].getIntValue();
+        if ((index >= 0)&&(index < 256))
+          m_Image->UpdateColorMap((uint8_t)index, r, g, b);
+      }
     }
+    
     sendActionMessage("UpdateRaster");
   }
 }

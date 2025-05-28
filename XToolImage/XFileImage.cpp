@@ -62,11 +62,25 @@ void XFileImage::SetPalette(uint8_t* palette)
 }
 
 //-----------------------------------------------------------------------------
+// Renvoie une valeur RGB de la ColorMap si elle existe
+//-----------------------------------------------------------------------------
+bool XFileImage::GetColorMapRGB(uint8_t index, uint8_t& r, uint8_t& g, uint8_t& b)
+{
+  if ((m_Image->ColorMapSize() < 3 * 256)||(m_Image->ColorMap() == nullptr))
+    return false;
+  uint16_t* map = m_Image->ColorMap();
+  r = (uint8_t)(map[index] / 256);
+  g = (uint8_t)(map[index + 256] / 256);
+  b = (uint8_t)(map[index + 512] / 256);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Nombre d'octets utilises pour l'affiche de l'image
 //-----------------------------------------------------------------------------
 int XFileImage::NbByte()
 {
-  if (m_Image->ColorMapSize() > 0)
+  if ((m_Image->ColorMapSize() > 0)||(m_Palette != nullptr))
     return 3;
   if ((m_Image->NbSample() == 1) && (m_Image->NbBits() == 32))
     return 3;
@@ -279,7 +293,7 @@ bool XFileImage::GetArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t
   else
     m_Image->SetChannelHints(nullptr);
 
-  if (m_Image->ColorMapSize() == 0) {
+  if ((m_Image->ColorMapSize() == 0)) {
     if ((m_Image->NbBits() <= 8) && (m_Image->NbSample() == 1)) {  // Niveaux de gris
       return m_Image->GetArea(&m_File, x, y, w, h, area);
     }
@@ -316,7 +330,7 @@ bool XFileImage::GetZoomArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
   else
     m_Image->SetChannelHints(nullptr);
 
-  if (m_Image->ColorMapSize() == 0) {
+  if ((m_Image->ColorMapSize() == 0)) {
     if ((m_Image->NbBits() <= 8) && (m_Image->NbSample() == 1)) { // Niveaux de gris
       return m_Image->GetZoomArea(&m_File, x, y, w, h, area, factor);
     }
