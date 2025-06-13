@@ -49,6 +49,7 @@ private:
   double        m_dX0, m_dY0, m_dGsd; // Transformation terrain -> pixel
   bool          m_bRaster, m_bVector, m_bOverlay, m_bDtm, m_bLas; // Couches a dessiner
   bool          m_bRasterDone, m_bFirstRaster;
+  bool          m_bRasterCompleted, m_bLasCompleted, m_bVectorCompleted; // Indique que les affichages ont ete complets
   juce::Path    m_Path;
   bool          m_bFill;        // Indique que le path doit etre rempli
   int           m_nNbPathPt;    // Nombre de points alloués dans le path
@@ -62,7 +63,7 @@ private:
   void SetDimension(const int& w, const int& h);
   void PrepareImages(bool totalUpdate, int dX = 0, int dY = 0);
 
-  void DrawVectorClass(XGeoClass* C);
+  bool DrawVectorClass(XGeoClass* C);
   bool DrawGeometry(XGeoVector* V);
   bool DrawText(juce::Graphics* g, XGeoVector* V);
   bool DrawCentroide(XGeoVector* G);

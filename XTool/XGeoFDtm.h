@@ -111,8 +111,8 @@ public:
 	bool ImportDis(std::string file_asc, std::string file_bin);
 	bool ImportXyz(std::string file_asc, std::string file_bin);
   bool ImportHdr(std::string file_hdr, std::string file_bin);
-  virtual bool ImportTif(std::string file_tif, std::string file_bin) { return false;}
-  virtual bool ImportTiff16(std::string file_tif, std::string file_bin) { return false;}
+  virtual bool ImportTif(std::string /*file_tif*/, std::string /*file_bin*/) { return false; }
+  virtual bool ImportTiff16(std::string /*file_tif*/, std::string /*file_bin*/) { return false; }
 
 	bool WriteAscHeader(std::ostream* out);
 

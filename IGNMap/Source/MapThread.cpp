@@ -31,6 +31,7 @@ MapThread::MapThread(const juce::String& threadName, size_t threadStackSize) : j
 	m_dX0 = m_dY0 = 0.;
 	m_dGsd = 1.0;
 	m_bRaster = m_bVector = m_bOverlay = m_bDtm = m_bLas = m_bRasterDone = m_bFirstRaster = false;
+	m_bRasterCompleted = m_bVectorCompleted = m_bLasCompleted = false;
 }
 
 //==============================================================================
@@ -96,6 +97,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 			g.drawImageAt(m_Raster, dX, dY);
 			m_Raster = tmpImage;
 			m_ClipRaster = juce::Rectangle<int>(dX, dY, m_Raster.getWidth(), m_Raster.getHeight());
+			if (!m_bRasterCompleted) m_ClipRaster = juce::Rectangle<int>();
 		}
 	}
 	if (m_bDtm) {
@@ -113,6 +115,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 			g.drawImageAt(m_Las, dX, dY);
 			m_Las = tmpImage;
 			m_ClipLas = juce::Rectangle<int>(dX, dY, m_Las.getWidth(), m_Las.getHeight());
+			if (!m_bLasCompleted) m_ClipLas = juce::Rectangle<int>();
 		}
 	}
 	if (m_bOverlay)
@@ -128,6 +131,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 			g.drawImageAt(m_Vector, dX, dY);
 			m_Vector = tmpImage;
 			m_ClipVector = juce::Rectangle<int>(dX, dY, m_Vector.getWidth(), m_Vector.getHeight());
+			if (!m_bVectorCompleted) m_ClipVector = juce::Rectangle<int>();
 		}
 	}
 }
@@ -163,7 +167,7 @@ void MapThread::run()
 		return;
 	// Affichage des couches raster
 	if (m_bRaster) {
-		m_bRasterDone = false;
+		m_bRasterDone = m_bRasterCompleted = false;
 		m_bFirstRaster = true;
 		for (uint32_t i = 0; i < m_GeoBase->NbClass(); i++) {
 			XGeoClass* C = m_GeoBase->Class(i);
@@ -172,7 +176,7 @@ void MapThread::run()
 			if (!C->IsRaster())
 				continue;
 			if (C->Visible())
-				DrawRasterClass(C);
+				m_bRasterCompleted |= DrawRasterClass(C);
 		}
 	}
 	// Affichage des couches MNT
@@ -196,6 +200,7 @@ void MapThread::run()
 	m_bRasterDone = true;
 	// Affichage des LAS
 	if (m_bLas) {
+		m_bLasCompleted = false;
 		for (uint32_t i = 0; i < m_GeoBase->NbClass(); i++) {
 			XGeoClass* C = m_GeoBase->Class(i);
 			if (C == nullptr)
@@ -203,12 +208,13 @@ void MapThread::run()
 			if (!C->IsLAS())
 				continue;
 			if (C->Visible())
-				DrawLasClass(C);
+				m_bLasCompleted != DrawLasClass(C);
 		}
 	}
 	// Affichage des couches vectorielles
 	if (m_bVector) {
 		//m_Vector.clear(m_Vector.getBounds());
+		m_bVectorCompleted = false;
 		for (uint32_t i = 0; i < m_GeoBase->NbClass(); i++) {
 			XGeoClass* C = m_GeoBase->Class(i);
 			if (C == nullptr)
@@ -217,7 +223,7 @@ void MapThread::run()
 				continue;
 			if (!C->Visible())
 				continue;
-			DrawVectorClass(C);
+			m_bVectorCompleted |= DrawVectorClass(C);
 		}
 	}
 	// Affichage de la selection
@@ -252,25 +258,25 @@ bool MapThread::Draw(juce::Graphics& g, int x0, int y0, bool overlay)
 //==============================================================================
 // Dessin des classes vectorielles
 //==============================================================================
-void MapThread::DrawVectorClass(XGeoClass* C)
+bool MapThread::DrawVectorClass(XGeoClass* C)
 {
 	if (!m_Frame.Intersect(C->Frame()))
-		return;
+		return true;
 	int index = 0;
 	do {
 		const juce::MessageManagerLock mml(Thread::getCurrentThread());
 		if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
-			return;
+			return false;
 		juce::Graphics g(m_Vector);
 		g.excludeClipRegion(m_ClipVector);
 
 		for (int i = 0; i < 1000; i++) {
 			if (threadShouldExit())
-				return ;
+				return false;
 			XGeoVector* V = C->Vector(index);
 			index++;
 			if (V == nullptr)
-				return;
+				return false;
 			if (!V->Visible())
 				continue;
 			XFrame F = V->Frame();
@@ -309,6 +315,7 @@ void MapThread::DrawVectorClass(XGeoClass* C)
 			m_nNumObjects++;
 		}
 	} while (!threadShouldExit());
+	return true;
 }
 
 //==============================================================================
@@ -762,7 +769,7 @@ bool MapThread::DrawInternetRaster(GeoInternetImage* image)
 bool MapThread::DrawDtmClass(XGeoClass* C)
 {
 	if (!m_Frame.Intersect(C->Frame()))
-		return false;
+		return true;
 	const juce::MessageManagerLock mml(Thread::getCurrentThread());
 	if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
 		return false;
@@ -846,7 +853,7 @@ float MapThread::GetZ(int u, int v)
 bool MapThread::DrawLasClass(XGeoClass* C)
 {
 	if (!m_Frame.Intersect(C->Frame()))
-		return false;
+		return true;
 	const juce::MessageManagerLock mml(Thread::getCurrentThread());
 	if (!mml.lockWasGained())  // if something is trying to kill this job, the lock
 		return false;
@@ -911,7 +918,7 @@ bool MapThread::DrawLas(GeoLAS* las)
 	uint32_t* data_ptr = (uint32_t*)&data;
 	uint8_t* ptr = nullptr;
 	uint8_t classification;
-	bool classif_newtype = las->IsNewClassification();
+	bool classif_newtype = las->IsNewClassification(), end_flag = true;
 
 	while(las->GetNextPoint(&X, &Y, &Z)) {
 		if (classif_newtype)
@@ -967,11 +974,13 @@ bool MapThread::DrawLas(GeoLAS* las)
 		memcpy(ptr, &data, sizeof(uint32_t));
 		//bitmap.setPixelColour(X, Y, col);
 		//g.drawRect((float)X-1.f, (float)Y-1.f, 2.f, 2.f);
-		if (threadShouldExit())
+		if (threadShouldExit()) {
+			end_flag = false;
 			break;
+		}
 	}
 	m_nNumObjects++;
 	las->CloseIfNeeded(1);
 
-	return true;
+	return end_flag;
 }

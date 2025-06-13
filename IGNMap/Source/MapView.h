@@ -103,7 +103,7 @@ private:
   XFrame        m_3DFrame;         // Rectangle de vue 3D
   uint64_t      m_nFrameCounter;
 
-  void timerCallback() override { repaint(); }
+  void timerCallback() override { repaint(); if (juce::KeyPress::isKeyCurrentlyDown(juce::KeyPress::escapeKey)) m_MapThread.signalThreadShouldExit(); }
 
   void EndMouseAction();
   void AddAnnotationPoint(juce::Point<float>&);

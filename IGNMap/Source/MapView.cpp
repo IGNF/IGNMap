@@ -106,7 +106,7 @@ void MapView::DrawDecoration(juce::Graphics& g, float deltaX, float deltaY)
 
 	R = juce::Rectangle<int>(0, 0, b.getWidth(), 15);
 	if (m_MapThread.isThreadRunning())
-		g.setColour(juce::Colours::lightpink);
+		g.setColour(juce::Colours::indianred);
 	else
 		g.setColour(juce::Colours::darkgrey);
 	g.setOpacity(0.5);
@@ -116,6 +116,8 @@ void MapView::DrawDecoration(juce::Graphics& g, float deltaX, float deltaY)
 	g.setOpacity(1.);
 	g.drawText(juce::String(F.Xmax - deltaX * m_dScale, 2) + " ; " + juce::String(F.Ymax + deltaY * m_dScale, 2), R, juce::Justification::centredRight);
 	g.drawText(juce::String(m_MapThread.NumObjects()), R, juce::Justification::centred);
+	if (m_MapThread.isThreadRunning())
+		g.drawText(juce::String("ESC for stopping"), R, juce::Justification::centredLeft);
 }
 
 //==============================================================================
