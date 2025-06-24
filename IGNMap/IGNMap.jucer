@@ -492,6 +492,8 @@
             file="Source/SentinelViewer.cpp"/>
       <FILE id="z2IfmW" name="SentinelViewer.h" compile="0" resource="0"
             file="Source/SentinelViewer.h"/>
+      <FILE id="NX1BFn" name="StacViewer.cpp" compile="1" resource="0" file="Source/StacViewer.cpp"/>
+      <FILE id="cbgSbm" name="StacViewer.h" compile="0" resource="0" file="Source/StacViewer.h"/>
       <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
             file="Source/ThreadClassProcessor.h"/>
       <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>

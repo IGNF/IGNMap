@@ -551,15 +551,11 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 //-----------------------------------------------------------------------------
 // Import d'un fichier Shapefile
 //-----------------------------------------------------------------------------
-bool GeoTools::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map)
+XGeoClass* GeoTools::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
 		return false;
-	XGeoClass* C = XShapefile::ImportShapefile(base, AppUtil::GetStringFilename(fileName).c_str(), map);
-	if (C == NULL)
-		return false;
-
-	return true;
+	return XShapefile::ImportShapefile(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------
@@ -579,14 +575,11 @@ bool GeoTools::ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* 
 //-----------------------------------------------------------------------------
 // Import d'un fichier MIF/MID
 //-----------------------------------------------------------------------------
-bool GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
+XGeoClass* GeoTools::ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
-		return false;
-	XGeoClass* C = XMifMid::ImportMifMid(base, AppUtil::GetStringFilename(fileName).c_str(), map);
-	if (C == NULL)
-		return false;
-	return true;
+		return nullptr;
+	return XMifMid::ImportMifMid(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------
@@ -606,27 +599,21 @@ bool GeoTools::ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map)
 //-----------------------------------------------------------------------------
 // Import d'un fichier GEOJSON
 //-----------------------------------------------------------------------------
-bool GeoTools::ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map)
+XGeoClass* GeoTools::ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
-		return false;
-	XGeoClass* C = XGeoJson::ImportGeoJson(base, AppUtil::GetStringFilename(fileName).c_str(), map);
-	if (C == NULL)
-		return false;
-	return true;
+		return nullptr;
+	return XGeoJson::ImportGeoJson(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------
 // Import d'un fichier Tableau d'Assemblage IGN
 //-----------------------------------------------------------------------------
-bool GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
+XGeoClass* GeoTools::ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
-		return false;
-	XGeoClass* C = XTAChantier::ImportTA(base, AppUtil::GetStringFilename(fileName).c_str(), map);
-	if (C == NULL)
-		return false;
-	return true;
+		return nullptr;
+	return XTAChantier::ImportTA(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------

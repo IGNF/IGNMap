@@ -272,6 +272,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/PrefDlg_9f17261d.o \
   $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
   $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o \
+  $(JUCE_OBJDIR)/StacViewer_e5b1993e.o \
   $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o \
   $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
   $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
@@ -1385,6 +1386,11 @@ $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o: ../../Source/SelTreeViewer.cpp
 $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o: ../../Source/SentinelViewer.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling SentinelViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/StacViewer_e5b1993e.o: ../../Source/StacViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling StacViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o: ../../Source/TmsLayer.cpp

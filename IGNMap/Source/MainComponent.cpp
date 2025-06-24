@@ -21,6 +21,7 @@
 #include "SentinelViewer.h"
 #include "ObjectViewer.h"
 #include "ZoomViewer.h"
+#include "StacViewer.h"
 #include "AffineImage.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
@@ -243,6 +244,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStac);
 		menu.addItem(1000, "Test");
 	}
 	else if (menuIndex == 3)
@@ -314,7 +316,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
-		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom,
+		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolStac,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -506,6 +508,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolZoom:
 		result.setInfo(juce::translate("Zoom"), juce::translate("Zoom"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolStac:
+		result.setInfo(juce::translate("Stac"), juce::translate("Stac"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -685,6 +690,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuToolZoom:
 		ToolZoom();
+		break;
+	case CommandIDs::menuToolStac:
+		ToolStac();
 		break;
 	default:
 		return false;
@@ -1767,6 +1775,23 @@ void MainComponent::ToolZoom()
 		}
 	}
 	ZoomViewer* viewer = new ZoomViewer("Zoom", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	viewer->setVisible(true);
+	m_ToolWindows.push_back(viewer);
+}
+
+//==============================================================================
+// Outil Stac
+//==============================================================================
+void MainComponent::ToolStac()
+{
+	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
+		if (m_ToolWindows[i]->getName() == "Stac") {
+			m_ToolWindows[i]->setVisible(true);
+			m_ToolWindows[i]->toFront(true);
+			return;
+		}
+	}
+	StacViewer* viewer = new StacViewer("Stac", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	viewer->setVisible(true);
 	m_ToolWindows.push_back(viewer);
 }

@@ -142,14 +142,14 @@ namespace GeoTools {
 // Fonctions d'import des donnees vectorielles en fonction des formats
 //==============================================================================
 namespace GeoTools {
+  XGeoClass* ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  XGeoClass* ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  XGeoClass* ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  XGeoClass* ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  XGeoClass* ImportDataFolder(juce::String folderName, XGeoBase* base, XGeoVector::eTypeVector type);
   bool ImportVectorFolder(juce::String folderName, XGeoBase* base, int& nb_total, int& nb_imported);
-  bool ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
-  bool ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   bool ImportDxf(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
-  bool ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
-  bool ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
-	XGeoClass* ImportDataFolder(juce::String folderName, XGeoBase* base, XGeoVector::eTypeVector type);
 }
 
 //==============================================================================
