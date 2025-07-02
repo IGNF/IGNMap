@@ -14,6 +14,7 @@
 #include "OsmLayer.h"
 #include "WmtsLayer.h"
 #include "TmsLayer.h"
+#include "MvtLayer.h"
 #include "WmtsTmsViewer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
@@ -1538,6 +1539,24 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	XGeoPref pref;
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+	MvtLayer* mvt = new MvtLayer("panoramax.ign.fr/api/map", "mvt", 256, 256, 15);
+	mvt->SetFrame(F);
+	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", "panoramax.ign.fr/api/map")) {
+		delete mvt;
+		return;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	return;
+
+	/*
 	juce::String filename;
 	if (filename.isEmpty())
 		filename = AppUtil::OpenFile("RasterPath");
@@ -1545,7 +1564,7 @@ void MainComponent::Test()
 		return;
 	XJpegImage image;
 	image.Open(AppUtil::GetStringFilename(filename));
-
+	*/
 
 	/*
 	juce::StringArray T = juce::JUCEApplication::getCommandLineParameterArray();

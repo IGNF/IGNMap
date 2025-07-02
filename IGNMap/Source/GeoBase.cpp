@@ -554,7 +554,7 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 XGeoClass* GeoTools::ImportShapefile(juce::String fileName, XGeoBase* base, XGeoMap* map)
 {
 	if (fileName.isEmpty())
-		return false;
+		return nullptr;
 	return XShapefile::ImportShapefile(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 

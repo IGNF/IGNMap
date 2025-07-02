@@ -56,7 +56,7 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
     return;
   juce::String idString = id.toString();
 
-  server = m_StacServer + "pictures/" + id + "/hd.jpg";
+  server = m_StacServer + "pictures/" + idString + "/hd.jpg";
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
 

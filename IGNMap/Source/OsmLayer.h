@@ -63,7 +63,9 @@ public:
   virtual ~OsmLayer() { ; }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V);
-  inline virtual double Resolution() const { return 6378137. * 2 * XPI / pow(2, (m_nMaxZoom + 8)); } // resolution max a l'Equateur
+  inline double Swath(uint32_t zoom_level) const { return 6378137. * 2 * XPI / pow(2, zoom_level); } // Largeur d'une dalle a l'Equateur
+  inline double Resol(uint32_t zoom_level) const { return Swath(zoom_level) / m_nTileW; }
+  inline virtual double Resolution() const { return Swath(m_nMaxZoom) / m_nTileW; } // Resolution max a l'Equateur
 
   bool LoadFrame(const XFrame& F, int zoomlevel);
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);

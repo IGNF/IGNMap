@@ -91,7 +91,7 @@ bool OsmLayer::LoadFrame(const XFrame& F, int zoomlevel)
     }
   }
 
-  double osm_resol = 6378137. * 2 * XPI / pow(2, (zoomlevel + 8));
+  double osm_resol = Resol(zoomlevel);;
   int xcrop = XRint((xmin - firstX) * m_nTileW);
   int ycrop = XRint((ymin - firstY) * m_nTileH);
   int wcrop = XRint(F.Width() / osm_resol);
@@ -148,7 +148,7 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
   pref.Convert(pref.Projection(), XGeoProjection::RGF93, F.Center().X, F.Center().Y, longitude, latitude);
 
   for (int zoom = 0; zoom <= (int)m_nMaxZoom; zoom++) {
-    S = 6378137. * cos(latitude) * 2 * XPI / pow(2, (zoom + 8));  // GSD a l'Equateur x cos(latitude)
+    S = Resol(zoom) * cos(latitude);  // GSD a l'Equateur x cos(latitude)
     if (S < gsd + gsd * 0.5) {
       osm_zoom = zoom;
       break;

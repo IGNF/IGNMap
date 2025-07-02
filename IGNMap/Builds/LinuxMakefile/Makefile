@@ -266,6 +266,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o \
   $(JUCE_OBJDIR)/MapThread_564c0ce7.o \
   $(JUCE_OBJDIR)/MapView_229c9e02.o \
+  $(JUCE_OBJDIR)/MvtLayer_36152faf.o \
   $(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o \
   $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
   $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o \
@@ -1356,6 +1357,11 @@ $(JUCE_OBJDIR)/MapThread_564c0ce7.o: ../../Source/MapThread.cpp
 $(JUCE_OBJDIR)/MapView_229c9e02.o: ../../Source/MapView.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MapView.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MvtLayer_36152faf.o: ../../Source/MvtLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MvtLayer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o: ../../Source/ObjectViewer.cpp
