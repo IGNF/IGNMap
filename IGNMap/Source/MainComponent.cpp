@@ -1544,9 +1544,14 @@ void MainComponent::Test()
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
 
-	MvtLayer* mvt = new MvtLayer("panoramax.ign.fr/api/map", "mvt", 256, 256, 15);
+	//std::string url = "panoramax.ign.fr/api/map";
+	//std::string ext = "mvt";
+	std::string url = "data.geopf.fr/tms/1.0.0/PLAN.IGN";
+	std::string ext = "pbf";
+	MvtLayer* mvt = new MvtLayer(url, ext, 256, 256, 18);
 	mvt->SetFrame(F);
-	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", "panoramax.ign.fr/api/map")) {
+	mvt->LoadStyle("https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json");
+	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url)) {
 		delete mvt;
 		return;
 	}

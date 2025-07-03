@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
-//								MvtLayer.cpp
-//								============
+//								MvtLayer.h
+//								==========
 //
 // Gestion des flux de donnees Mapbox Vector Tile
 //
@@ -14,6 +14,7 @@
 #include <string>
 #include "GeoBase.h"
 #include "../../XTool/XFrame.h"
+#include "vtzero/vector_tile.hpp"
 
 class XTransfo;
 
@@ -26,6 +27,7 @@ protected:
   uint32_t m_nTileH;
   uint32_t m_nMaxZoom;  // Niveau de zoom maximum de la pyramide
   uint32_t m_nLastZoom; // Dernier niveau de zoom utilise
+  juce::var m_StyleLayers;
 
 protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
@@ -42,9 +44,9 @@ public:
   inline double Resol(uint32_t zoom_level) const { return Swath(zoom_level) / m_nTileW; }
   inline virtual double Resolution() const { return Swath(m_nMaxZoom) / m_nTileW; } // Resolution max a l'Equateur
 
-  bool LoadFrame(const XFrame& F, int zoomlevel);
   bool LoadFrameProj(const XFrame& F, int zoomlevel);
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
-  juce::Image LoadMvt(juce::String filename);
   bool LoadMvt(juce::String filename, double X0, double Y0, double GSD0);
+  bool LoadStyle(juce::String server);
+  bool FindStyle(juce::String layername, vtzero::feature* feature, juce::Colour* pen, juce::Colour* fill, float* line_width);
 };
