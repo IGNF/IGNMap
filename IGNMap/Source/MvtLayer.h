@@ -18,6 +18,36 @@
 
 class XTransfo;
 
+// Tile MVT
+class MvtTile {
+protected:
+  std::string m_strFilename;
+  char* m_Buffer;
+  size_t m_nLength;
+  bool m_bLoaded;
+  double m_dX0;
+  double m_dY0;
+  double m_dGsd;
+  vtzero::vector_tile* m_Tile;
+
+public:
+  MvtTile() {
+    m_Buffer = nullptr; m_bLoaded = false; m_dX0 = m_dY0 = m_dGsd = 0.; m_nLength = 0; m_Tile = nullptr;}
+  ~MvtTile() { Clear(); }
+  void Clear();
+
+  bool Load(juce::String filename, double X0, double Y0, double GSD0);
+
+  inline bool IsLoaded() const { return m_bLoaded; }
+  inline double X0() const { return m_dX0; }
+  inline double Y0() const { return m_dY0; }
+  inline double GSD() const { return m_dGsd; }
+  inline size_t Length() const { return m_nLength; }
+  inline const char* Buffer() const { return m_Buffer; }
+
+  vtzero::vector_tile* Tile() { return m_Tile; }
+};
+
 // Layer MVT
 class MvtLayer : public GeoInternetImage {
 protected:
@@ -28,6 +58,11 @@ protected:
   uint32_t m_nMaxZoom;  // Niveau de zoom maximum de la pyramide
   uint32_t m_nLastZoom; // Dernier niveau de zoom utilise
   juce::var m_StyleLayers;
+  juce::Colour m_PenColor;
+  juce::Colour m_FillColor;
+  juce::String m_TextAtt;
+  float m_LineWidth;
+  bool m_Repres;
 
 protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
@@ -48,5 +83,10 @@ public:
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
   bool LoadMvt(juce::String filename, double X0, double Y0, double GSD0);
   bool LoadStyle(juce::String server);
-  bool FindStyle(juce::String layername, vtzero::feature* feature, juce::Colour* pen, juce::Colour* fill, float* line_width);
+  bool FindStyle(juce::String layername, vtzero::feature* feature, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text);
+
+  bool DrawWithStyle(const XFrame& F, int zoomlevel);
+  bool LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, juce::var& style);
+  bool ReadStylePaint(juce::var& layer, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text) const;
+  bool ReadStylePaint(juce::var& layer);
 };

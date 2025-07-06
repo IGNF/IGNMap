@@ -1548,9 +1548,13 @@ void MainComponent::Test()
 	//std::string ext = "mvt";
 	std::string url = "data.geopf.fr/tms/1.0.0/PLAN.IGN";
 	std::string ext = "pbf";
+	std::string style = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json";
+	//std::string url = "data.geopf.fr/tms/1.0.0/PCI";
+	//std::string ext = "pbf";
+	//std::string style = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PCI/pci.json";
 	MvtLayer* mvt = new MvtLayer(url, ext, 256, 256, 18);
 	mvt->SetFrame(F);
-	mvt->LoadStyle("https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json");
+	mvt->LoadStyle(style);
 	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url)) {
 		delete mvt;
 		return;
