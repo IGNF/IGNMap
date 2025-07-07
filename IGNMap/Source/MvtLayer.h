@@ -18,7 +18,55 @@
 
 class XTransfo;
 
+//-----------------------------------------------------------------------------
+// Style d'un layer MVT
+//-----------------------------------------------------------------------------
+class MvtStyleLayer {
+public:
+  enum eLayerType { noType, fill, line, symbol };
+  enum eFilterType { noFilter, equal, in };
+
+  MvtStyleLayer() { Clear(); }
+
+  void Clear();
+  bool Read(const juce::var& layer);
+  bool TestZoomLevel(int zoomlevel) const;
+  eLayerType Type() { return m_Type; }
+
+  juce::String SourceLayer() { return m_SourceLayer; }
+  eFilterType FilterType() { return m_FilterType; }
+  juce::String FilterAtt() { return m_FilterAtt; }
+  bool TestAtt(juce::String val) { for (int i = 0; i < m_FilterVal.size(); i++) if (m_FilterVal[i] == val) return true; return false; }
+  juce::String TextField() const { return m_TextField; }
+
+  bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth);
+
+protected:
+  eLayerType     m_Type;
+  juce::String  m_SourceLayer;
+  int           m_MinZoom;
+  int           m_MaxZoom;
+  bool          m_Visibility;
+  std::vector<juce::Colour>  m_LineColor;
+  std::vector<int> m_LineStops;
+  std::vector<juce::Colour>  m_TextColor;
+  std::vector<int> m_TextStops;
+  std::vector<juce::Colour>  m_OutlineColor;
+  std::vector<int> m_OutlineStops;
+  std::vector<juce::FillType>  m_FillType;
+  std::vector<int> m_FillStops;
+  std::vector<float> m_Width;
+  std::vector<int> m_WidthStops;
+
+  eFilterType  m_FilterType;
+  juce::String m_FilterAtt;
+  std::vector<juce::String> m_FilterVal;
+  juce::String m_TextField;
+};
+
+//-----------------------------------------------------------------------------
 // Tile MVT
+//-----------------------------------------------------------------------------
 class MvtTile {
 protected:
   std::string m_strFilename;
@@ -48,7 +96,9 @@ public:
   vtzero::vector_tile* Tile() { return m_Tile; }
 };
 
+//-----------------------------------------------------------------------------
 // Layer MVT
+//-----------------------------------------------------------------------------
 class MvtLayer : public GeoInternetImage {
 protected:
   juce::String m_strServer;
@@ -58,11 +108,14 @@ protected:
   uint32_t m_nMaxZoom;  // Niveau de zoom maximum de la pyramide
   uint32_t m_nLastZoom; // Dernier niveau de zoom utilise
   juce::var m_StyleLayers;
-  juce::Colour m_PenColor;
+  juce::Colour m_LineColor;
+  juce::Colour m_FillOutlineColor;
   juce::Colour m_FillColor;
+  juce::Colour m_TextColor;
   juce::String m_TextAtt;
   float m_LineWidth;
-  bool m_Repres;
+  bool m_bPaintProperties;
+  std::vector< MvtStyleLayer> m_Layer;
 
 protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
@@ -79,14 +132,13 @@ public:
   inline double Resol(uint32_t zoom_level) const { return Swath(zoom_level) / m_nTileW; }
   inline virtual double Resolution() const { return Swath(m_nMaxZoom) / m_nTileW; } // Resolution max a l'Equateur
 
-  bool LoadFrameProj(const XFrame& F, int zoomlevel);
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
-  bool LoadMvt(juce::String filename, double X0, double Y0, double GSD0);
   bool LoadStyle(juce::String server);
-  bool FindStyle(juce::String layername, vtzero::feature* feature, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text);
-
+  
   bool DrawWithStyle(const XFrame& F, int zoomlevel);
-  bool LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, juce::var& style);
-  bool ReadStylePaint(juce::var& layer, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text) const;
-  bool ReadStylePaint(juce::var& layer);
+
+  bool LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, MvtStyleLayer* layer);
 };
+
+
+

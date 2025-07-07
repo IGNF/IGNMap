@@ -14,6 +14,9 @@
 #include "../../XToolGeod/XTransfoGeod.h"
 
 
+//-----------------------------------------------------------------------------
+// Reinitialisation d'une dalle
+//-----------------------------------------------------------------------------
 void MvtTile::Clear()
 { 
   if (m_Tile != nullptr)
@@ -80,7 +83,7 @@ MvtLayer::MvtLayer(std::string server, std::string format, uint32_t tileW, uint3
   m_nLastZoom = 0;
 
   m_LineWidth = 1.f;
-  m_Repres = false;
+  m_bPaintProperties = false;
 
   CreateCacheDir("MVT");
 }
@@ -133,7 +136,7 @@ juce::Image& MvtLayer::GetAreaImage(const XFrame& F, double gsd)
 
   for (int zoom = 0; zoom <= (int)m_nMaxZoom; zoom++) {
     S = Resol(zoom) * cos(latitude);  // GSD a l'Equateur x cos(latitude)
-    if (S < gsd + gsd * 0.1) {
+    if (S < gsd + gsd * 0.8) {
       osm_zoom = zoom;
       break;
     }
@@ -227,188 +230,6 @@ struct MvtLayer::geom_handler {
 };
 
 //-----------------------------------------------------------------------------
-// Lecture d'une Mapbox Vector Tile et ecriture directe dans l'image finale
-//-----------------------------------------------------------------------------
-bool MvtLayer::LoadMvt(juce::String filename, double X0, double Y0, double GSD0)
-{
-  if (!m_ProjImage.isValid())
-    return false;
-  std::ifstream in;
-  in.open(filename.toStdString(), std::ios::binary);
-  if (!in.is_open())
-    return false;
-
-  // get length of file:
-  in.seekg(0, in.end);
-  std::streampos length = in.tellg();
-  in.seekg(0, in.beg);
-  if (length < 1)
-    return false;
-
-  char* buffer = new(std::nothrow) char[length];
-  if (buffer == nullptr)
-    return false;
-  in.read(buffer, length);
-
-  if (!in) {  // Lecture incorrecte
-    delete[] buffer;
-    return false;
-  }
-  in.close();
-
-  XGeoPref pref;
-  juce::Graphics g(m_ProjImage);
-  g.excludeClipRegion(juce::Rectangle<int>(0, 0, m_ProjImage.getWidth(), m_ProjImage.getHeight()));
-  g.setOpacity(1.f);
-  juce::Colour pen, fill;
-  float line_width = 1.f;
-  juce::String text_field;
-  {
-    vtzero::vector_tile tile(buffer, length);
-    while (auto layer = tile.next_layer()) {
-      float factor = layer.extent() / m_nTileW;
-      while (auto feature = layer.next_feature()) {
-        /*
-        while (auto property = feature.next_property()) {
-          std::cout << property.key().to_string() << "\t:\t";
-          switch ((int)property.value().type()) {
-          case 1: std::cout << property.value().string_value().to_string() << std::endl; break;	// String
-          case 2: std::cout << property.value().float_value() << std::endl; break;	// Float
-          case 3: std::cout << property.value().double_value() << std::endl; break;	// Double
-          case 4: std::cout << property.value().int_value() << std::endl; break;	// Int
-          case 5: std::cout << property.value().uint_value() << std::endl; break;	// Uint
-          case 6: std::cout << property.value().sint_value() << std::endl; break;	// Sint
-          case 7: std::cout << property.value().bool_value() << std::endl; break;	// bool
-          default: std::cout << "Unknown type";
-          }
-        }
-        */
-
-        pen = juce::Colours::red;
-        fill = juce::Colours::transparentWhite;
-        line_width = 1.f;
-        if (!FindStyle(layer.name().to_string(), &feature, &pen, &fill, &line_width, &text_field))
-          continue;
-
-        vtzero::geometry geom = feature.geometry();
-        if (geom.type() == vtzero::GeomType::UNKNOWN)
-          continue;
-
-        geom_handler handler;
-        vtzero::decode_geometry(geom, handler);
-    
-        double Xima = 0., Yima = 0., Xter = 0., Yter = 0., d = 2.;
-
-        // Dessin des points et multi-points
-        if (geom.type() == vtzero::GeomType::POINT) {
-          for (int i = 0; i < handler.points.size() / 2; i++) {
-            Xima = X0 + (handler.points[2 * i] / factor) * GSD0;
-            Yima = Y0 - (handler.points[2 * i + 1] / factor) * GSD0;
-            pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-            if (!m_LastFrame.IsIn(XPt2D(Xter, Yter)))
-              continue;
-            Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-            Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-            g.setColour(pen);
-            if (text_field.isEmpty()) {
-              g.setFillType(juce::FillType(fill));
-              g.drawEllipse(Xter - d, Yter - d, 2 * d, 2 * d, 2.0f);
-            }
-            else {
-              g.drawSingleLineText(text_field, Xter, Yter);
-            }
-          }
-          continue;
-        }
-
-        juce::Path path;
-        path.preallocateSpace((handler.points.size() * 3) / 2);
-        int index = 0;
-
-        // Dessin des polylignes et des polygones
-        for (int parts = 0; parts < handler.parts.size(); parts++) {
-          Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
-          Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
-          pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-          Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-          Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-          path.startNewSubPath(Xter, Yter);
-          for (int i = 1; i < handler.parts[parts]; i++) {
-            index++;
-            Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
-            Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
-            pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-            Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-            Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-            path.lineTo(Xter, Yter);
-          }
-          if (geom.type() == vtzero::GeomType::POLYGON)
-            path.closeSubPath();
-          index++;
-        }
-
-        if (geom.type() == vtzero::GeomType::LINESTRING) {
-          //line_width = 2.f;
-          g.setColour(pen);
-          g.strokePath(path, juce::PathStrokeType(line_width, juce::PathStrokeType::beveled));
-          continue;
-        }
-
-        if (geom.type() == vtzero::GeomType::POLYGON) {
-          //line_width = 2.f;
-          g.setColour(pen);
-          g.setFillType(juce::FillType(fill));
-          g.strokePath(path, juce::PathStrokeType(line_width, juce::PathStrokeType::beveled));
-          g.fillPath(path);
-          continue;
-        }
-
-      } // Feature
-    } // Layer
-  }
-
-  delete[] buffer;
-
-  return true;
-}
-
-bool MvtLayer::LoadFrameProj(const XFrame& F, int zoomlevel)
-{
-  // Dalles a charger pour couvrir l'emprise
-  double a = 6378137;
-  double xmin = (1 + (F.Xmin / a) / XPI) * 0.5 * pow(2, zoomlevel);
-  int firstX = (int)floor(xmin);
-  double xmax = (1 + (F.Xmax / a) / XPI) * 0.5 * pow(2, zoomlevel);
-  int lastX = (int)ceil(xmax);
-  double ymin = (1 - (F.Ymax / a) / XPI) * 0.5 * pow(2, zoomlevel);
-  int firstY = (int)floor(ymin);
-  double ymax = (1 - (F.Ymin / a) / XPI) * 0.5 * pow(2, zoomlevel);
-  int lastY = (int)ceil(ymax);
-
-  int nb_tilex = lastX - firstX;
-  int nb_tiley = lastY - firstY;
-
-  for (int i = 0; i < nb_tiley; i++) {
-    for (int j = 0; j < nb_tilex; j++) {
-      int x = firstX + j;
-      int y = firstY + i;
-      double GSD0 = Resol(zoomlevel);
-      double X0 = x * Swath(zoomlevel) - XPI * a;
-      double Y0 = XPI * a - y * Swath(zoomlevel);
-      juce::String filename = LoadTile(x, y, zoomlevel);
-      bool flag = LoadMvt(filename, X0, Y0, GSD0);
-      if (!flag) {
-        juce::File badFile(filename); // Le fichier est peut etre corrompu
-        badFile.deleteFile();
-        continue;
-      }
-    }
-  }
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
 // Lecture d'un fichier de style JSON
 //-----------------------------------------------------------------------------
 bool MvtLayer::LoadStyle(juce::String server)
@@ -424,174 +245,21 @@ bool MvtLayer::LoadStyle(juce::String server)
   m_StyleLayers = parsedJSON["layers"];
   if (m_StyleLayers.size() < 1)
     return false;
+
+  m_Layer.clear();
+  for (int cmpt = 0; cmpt < m_StyleLayers.size(); cmpt++) {
+    juce::var layer = m_StyleLayers[cmpt];
+    MvtStyleLayer styleLayer;
+    if (styleLayer.Read(layer))
+      m_Layer.push_back(styleLayer);
+  }
+
   return true;
 }
 
 //-----------------------------------------------------------------------------
-// Recherche d'un style
+// Affichage dans l'ordre du fichier de style
 //-----------------------------------------------------------------------------
-bool MvtLayer::FindStyle(juce::String layername, vtzero::feature* feature, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text)
-{
-  bool found = false;
-  *text = "";
-  //if (layername != "bati_surf")
-  //  return false;
-  for (int i = 0; i < m_StyleLayers.size(); i++) {
-    found = false;
-    juce::var layer = m_StyleLayers[i];
-    if (!layer.hasProperty("source-layer"))
-      continue;
-    juce::String source_layer = layer["source-layer"].toString();
-    if (source_layer != layername)
-      continue;
-    // Niveaux de zoom
-    if (layer.hasProperty("minzoom"))
-      if (m_nLastZoom < (int)layer["minzoom"])
-        continue;
-    if (layer.hasProperty("maxzoom"))
-      if (m_nLastZoom > (int)layer["maxzoom"])
-        continue;
-
-    // Filtrage
-    if (layer.hasProperty("filter")) {
-      juce::var filter = layer["filter"];
-      if (!filter.isArray())
-        continue;
-      if (filter.size() < 3)
-        continue;
-      feature->reset_property();
-
-      if (filter[0].toString() == "==") {
-        bool filtering = false;
-        while (auto property = feature->next_property()) {
-          if (property.key().to_string() == filter[1].toString()) {
-            if ((int)property.value().type() == 1) {
-              if (property.value().string_value().to_string() == filter[2].toString())
-                filtering = true;
-            }
-            break;
-          }
-        } //end while
-        if (!filtering)
-          continue;
-      }
-
-      if (filter[0].toString() == "in") {
-        bool filtering = false;
-        while (auto property = feature->next_property()) {
-          if (property.key().to_string() == filter[1].toString()) {
-            if ((int)property.value().type() == 1) {
-              std::string val = property.value().string_value().to_string();
-              for (int k = 2; k < filter.size(); k++) {
-                if (val == filter[k].toString())
-                  filtering = true;
-              }
-            }
-            break;
-          }
-        } //end while
-        if (!filtering)
-          continue;
-      }
-      found = true; // Si on arrive ici, c'est que l'objet correspond
-    }
-
-    //if (!found)
-    //  continue;
-
-    // Lecture des informations PAINT
-    if (!layer.hasProperty("paint"))
-      continue;
-    juce::var paint = layer["paint"];
-    juce::String val;
-    if (paint.hasProperty("line-color")) {
-      if (paint["line-color"].hasProperty("stops")) {
-        juce::var stops = paint["line-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *pen = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else {
-        *pen = juce::Colour::fromString(paint["line-color"].toString());
-      }
-      *pen = pen->withAlpha(1.f);
-    }
-
-    if (paint.hasProperty("fill-outline-color")) {
-      *pen = juce::Colour::fromString(paint["fill-outline-color"].toString());
-      *pen = pen->withAlpha(1.f);
-    }
-
-    if (paint.hasProperty("line-width")) {
-      if (paint["line-width"].hasProperty("stops")) {
-        juce::var stops = paint["line-width"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *line_width = stops[s][1].toString().getFloatValue();
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else
-        *line_width = paint["line_width"].toString().getFloatValue();
-    }
-    if (paint.hasProperty("fill-color")) {
-      if (paint["fill-color"].hasProperty("stops")) {
-        juce::var stops = paint["fill-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *fill = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else {
-        *fill = juce::Colour::fromString(paint["fill-color"].toString());
-      }
-      *fill = fill->withAlpha(1.f);
-    }
-    if (paint.hasProperty("fill-opacity")) {
-      *fill = fill->withAlpha(paint["fill-opacity"].toString().getFloatValue());
-    }
-
-    // Lecture des informations LAYOUT
-    if (layer.hasProperty("layout")) {
-      juce::var layout = layer["layout"];
-      if (layout.hasProperty("text-field")) {
-        std::string field = layout["text-field"].toString().toStdString();
-        feature->reset_property();
-        while (auto property = feature->next_property()) {
-          std::string key = property.key().to_string();
-          key = "{" + key + "}";
-          if (key == field) {
-            if ((int)property.value().type() == 1) {
-              *text = property.value().string_value().to_string();
-            }
-            break;
-          }
-        }
-      }
-      if (paint.hasProperty("text-color")) {
-        *pen = juce::Colour::fromString(paint["text-color"].toString());
-        *pen = pen->withAlpha(1.f);
-      }
-
-    }
-
-
-
-    return true;
-  }
-  return false;
-}
-
-
 bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 {
   // Dalles a charger pour couvrir l'emprise
@@ -612,21 +280,16 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
   T.resize(nb_tiley * nb_tilex);
 
   // Lecture des styles dans l'ordre
-  for (int cmpt = 0; cmpt < m_StyleLayers.size(); cmpt++) {
-    juce::var layer = m_StyleLayers[cmpt];
+  for (int cmpt = 0; cmpt < m_Layer.size(); cmpt++) {
+    //if (cmpt != 119)  // Bati Quelconque
+    //  continue;
+    MvtStyleLayer layer = m_Layer[cmpt];
     // Niveaux de zoom
-    if (layer.hasProperty("minzoom"))
-      if (zoomlevel < (int)layer["minzoom"])
-        continue;
-    if (layer.hasProperty("maxzoom"))
-      if (zoomlevel > (int)layer["maxzoom"])
-        continue;
-
-    // Source
-    if (!layer.hasProperty("source-layer"))
+    if (!layer.TestZoomLevel(zoomlevel))
       continue;
-    m_Repres = false; // On reinitialise les stylos et pinceaux
-    
+
+    m_bPaintProperties = false; // On reinitialise les stylos et pinceaux
+
     // Lecture des tiles
     int index = 0;
     for (int i = 0; i < nb_tiley; i++) {
@@ -645,7 +308,7 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
             continue;
           }
         }
-        LoadMvt(&T[index], X0, Y0, GSD0, layer);
+        LoadMvt(&T[index], X0, Y0, GSD0, &layer);
         index++;
       }
     }
@@ -656,304 +319,460 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
   return true;
 }
 
-
-
-bool MvtLayer::LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, juce::var& style)
+//-----------------------------------------------------------------------------
+// Affichage d'une tile en fonction d'un style
+//-----------------------------------------------------------------------------
+bool MvtLayer::LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, MvtStyleLayer* style)
 {
-  //if (!m_ProjImage.isValid())
-  //  return false;
-
   XGeoPref pref;
   juce::Graphics g(m_ProjImage);
-  //g.excludeClipRegion(juce::Rectangle<int>(0, 0, m_ProjImage.getWidth(), m_ProjImage.getHeight()));
-  //g.setOpacity(1.f);
+  g.excludeClipRegion(juce::Rectangle<int>(0, 0, m_ProjImage.getWidth(), m_ProjImage.getHeight()));
+  g.setOpacity(1.f);
 
-  std::string source_layer = style["source-layer"].toString().toStdString();
+  //if (style->Type() != MvtStyleLayer::line)
+  //  return true;
+
+  // Emprise de la dalle dans l'image
+  /*
+  double x0, y0, x1, y1, x2, y2, x3, y3;
+  pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0, Y0, x0, y0);
+  pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + m_nTileW * GSD0, Y0, x1, y1);
+  pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + m_nTileW * GSD0, Y0 - m_nTileH * GSD0, x2, y2);
+  pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0, Y0 - m_nTileH * GSD0, x3, y3);
+  double xmin = XMin(x0, x3);
+  double xmax = XMax(x1, x2);
+  double ymin = XMin(y2, y3);
+  double ymax = XMax(y0, y1);
+  xmin = (xmin - m_LastFrame.Xmin) / m_LastGsd;
+  xmax = (xmax - m_LastFrame.Xmin) / m_LastGsd;
+  ymin = (m_LastFrame.Ymax - ymin) / m_LastGsd;
+  ymax = (m_LastFrame.Ymax - ymax) / m_LastGsd;
+  g.excludeClipRegion(juce::Rectangle<int>(xmin, ymax, xmax - xmin, ymax - ymin));
+  */
+
+
+  auto layer = T->Tile()->get_layer_by_name(style->SourceLayer().toStdString());
+  if (layer.empty())
+    return false;
+
+
+  float factor = layer.extent() / m_nTileW;
   
-  //vtzero::vector_tile tile(T.Buffer(), T.Length());
-  //vtzero::vector_tile* tile = T.Tile();
-  //tile->reset_layer();
-  //vtzero::vector_tile tile = *(T.Tile());
-  
-  while (auto layer = T->Tile()->next_layer()) {
-    if (source_layer != layer.name().to_string())
+  float line_width = 1.f;
+  juce::String text_field = style->TextField();
+  juce::Path path;
+
+  juce::Colour pen;
+  juce::FillType fillType;
+
+  style->SetStyle((int)m_nLastZoom, &pen, &fillType, &line_width);
+  g.setColour(pen);
+  if (style->Type() == MvtStyleLayer::fill)
+    g.setFillType(fillType);
+
+  while (auto feature = layer.next_feature()) {
+
+		bool filtering = false;
+		switch (style->FilterType()) {
+		case MvtStyleLayer::equal:
+		case MvtStyleLayer::in:
+			while (auto property = feature.next_property()) {
+				if (property.key().to_string() == style->FilterAtt()) {
+					if ((int)property.value().type() == 1)
+						filtering = style->TestAtt(property.value().string_value().to_string());
+					break;
+				}
+			}
+			break;
+		default: filtering = true;
+		}
+
+		if (!filtering)
+			continue;
+
+   // Lecture de la geometrie
+    vtzero::geometry geom = feature.geometry();
+    if (geom.type() == vtzero::GeomType::UNKNOWN)
       continue;
-    float factor = layer.extent() / m_nTileW;
-    bool paint_init = false;
-    juce::Colour pen, fill;
-    float line_width = 1.f;
-    juce::String text_field;
-    juce::Path path;
 
-    while (auto feature = layer.next_feature()) {
+    geom_handler handler;
+    vtzero::decode_geometry(geom, handler);
 
-      // Filtrage
-      if (style.hasProperty("filter")) {
-        juce::var filter = style["filter"];
-        if (filter.size() >= 3) {
-          feature.reset_property();
+    double Xima = 0., Yima = 0., Xter = 0., Yter = 0., d = 2.;
 
-          if (filter[0].toString() == "==") {
-            bool filtering = false;
-            while (auto property = feature.next_property()) {
-              if (property.key().to_string() == filter[1].toString()) {
-                if ((int)property.value().type() == 1) {
-                  if (property.value().string_value().to_string() == filter[2].toString())
-                    filtering = true;
-                }
-                break;
-              }
-            } //end while
-            if (!filtering)
-              continue;
-          }
-
-          if (filter[0].toString() == "in") {
-            bool filtering = false;
-            while (auto property = feature.next_property()) {
-              if (property.key().to_string() == filter[1].toString()) {
-                if ((int)property.value().type() == 1) {
-                  std::string val = property.value().string_value().to_string();
-                  for (int k = 2; k < filter.size(); k++) {
-                    if (val == filter[k].toString())
-                      filtering = true;
-                  }
-                }
-                break;
-              }
-            } //end while
-            if (!filtering)
-              continue;
-          }
-        }
-      }
-
-      // Lecture des couleurs
-      /*
-      if (!paint_init) {
-        if (ReadStylePaint(style, &pen, &fill, &line_width, &text_field))
-          paint_init = true;
-        else
+    // Dessin des points et multi-points
+    if ((geom.type() == vtzero::GeomType::POINT)&&(style->Type() == MvtStyleLayer::symbol)) {
+      for (int i = 0; i < handler.points.size() / 2; i++) {
+        Xima = X0 + (handler.points[2 * i] / factor) * GSD0;
+        Yima = Y0 - (handler.points[2 * i + 1] / factor) * GSD0;
+        pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
+        if (!m_LastFrame.IsIn(XPt2D(Xter, Yter)))
           continue;
-      }
-      */
-      if (!m_Repres) 
-        ReadStylePaint(style);
+        Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+        Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
 
-       g.setColour(m_PenColor);
-       g.setFillType(juce::FillType(m_FillColor));
-     
-
-      // Lecture de la geometrie
-      vtzero::geometry geom = feature.geometry();
-      if (geom.type() == vtzero::GeomType::UNKNOWN)
-        continue;
-
-      geom_handler handler;
-      vtzero::decode_geometry(geom, handler);
-
-      double Xima = 0., Yima = 0., Xter = 0., Yter = 0., d = 2.;
-
-      // Dessin des points et multi-points
-      if (geom.type() == vtzero::GeomType::POINT) {
-        for (int i = 0; i < handler.points.size() / 2; i++) {
-          Xima = X0 + (handler.points[2 * i] / factor) * GSD0;
-          Yima = Y0 - (handler.points[2 * i + 1] / factor) * GSD0;
-          pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-          if (!m_LastFrame.IsIn(XPt2D(Xter, Yter)))
-            continue;
-          Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-          Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-          //g.setColour(pen);
-          if (text_field.isEmpty()) {
-            g.setFillType(juce::FillType(fill));
-            g.drawEllipse(Xter - d, Yter - d, 2 * d, 2 * d, 2.0f);
-          }
-          else {
-            g.drawSingleLineText(text_field, Xter, Yter);
+        if (text_field.isEmpty()) {
+          g.drawEllipse(Xter - d, Yter - d, 2 * d, 2 * d, 2.0f);
+        }
+        else {
+          while (auto property = feature.next_property()) {
+            if (property.key().to_string() == text_field) {
+              if ((int)property.value().type() == 1)
+                g.drawSingleLineText(property.value().string_value().to_string(), Xter, Yter);
+              break;
+            }
           }
         }
-        continue;
       }
+      continue;
+    }
 
-      path.preallocateSpace((handler.points.size() * 3) / 2);
-      int index = 0;
+    path.preallocateSpace((handler.points.size() * 3) / 2);
+    int index = 0;
 
-      // Dessin des polylignes et des polygones
-      for (int parts = 0; parts < handler.parts.size(); parts++) {
+    // Dessin des polylignes et des polygones
+    for (int parts = 0; parts < handler.parts.size(); parts++) {
+      Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
+      Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
+      pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
+      Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+      Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+      path.startNewSubPath(Xter, Yter);
+      for (int i = 1; i < handler.parts[parts]; i++) {
+        index++;
         Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
         Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
         pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
         Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
         Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-        path.startNewSubPath(Xter, Yter);
-        for (int i = 1; i < handler.parts[parts]; i++) {
-          index++;
-          Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
-          Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
-          pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-          Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-          Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
-          path.lineTo(Xter, Yter);
-        }
-        if (geom.type() == vtzero::GeomType::POLYGON)
-          path.closeSubPath();
-        index++;
+        path.lineTo(Xter, Yter);
       }
+      if (geom.type() == vtzero::GeomType::POLYGON)
+        path.closeSubPath();
+      index++;
+    }
 
-      if (geom.type() == vtzero::GeomType::LINESTRING) {
-        //g.setColour(pen);
-        g.strokePath(path, juce::PathStrokeType(m_LineWidth, juce::PathStrokeType::beveled));
-        continue;
-      }
+    //if (geom.type() == vtzero::GeomType::LINESTRING) {
+    if (style->Type() == MvtStyleLayer::line) {
+      g.strokePath(path, juce::PathStrokeType(line_width, juce::PathStrokeType::beveled));
+      continue;
+    }
 
-      if (geom.type() == vtzero::GeomType::POLYGON) {
-        //g.setColour(pen);
-        //g.setFillType(juce::FillType(fill));
-        g.strokePath(path, juce::PathStrokeType(m_LineWidth, juce::PathStrokeType::beveled));
-        g.fillPath(path);
-        continue;
-      }
+    if ((geom.type() == vtzero::GeomType::POLYGON)&& (style->Type() == MvtStyleLayer::fill)) {
+      g.setColour(pen);
+      g.strokePath(path, juce::PathStrokeType(line_width, juce::PathStrokeType::beveled));
+      g.setFillType(fillType);
+      g.fillPath(path);
+      continue;
+    }
 
-    } // feature
-    return true;
-  } // layer
-  T->Tile()->reset_layer();
+  } // feature
 
-  return false;
+  return true;
+
 }
 
+//-----------------------------------------------------------------------------
+// Nettoyage d'un style
+//-----------------------------------------------------------------------------
+	void MvtStyleLayer::Clear()
+	{
+		m_Type = noType;
+		m_SourceLayer = "";
+		m_MinZoom = m_MaxZoom = -1;
+		m_Visibility = false;
+		m_LineColor.clear();
+		m_LineStops.clear();
+		m_TextColor.clear();
+		m_TextStops.clear();
+		m_OutlineColor.clear();
+		m_OutlineStops.clear();
+		m_FillType.clear();
+		m_FillStops.clear();
+		m_FilterType = noFilter;
+		m_FilterAtt = "";
+		m_FilterVal.clear();
+		m_TextField = "";
+    m_Width.clear();
+    m_WidthStops.clear();
+	}
 
-  bool MvtLayer::ReadStylePaint(juce::var& layer, juce::Colour* pen, juce::Colour* fill, float* line_width, juce::String* text) const
+//-----------------------------------------------------------------------------
+// Test la validite d'un niveau de zoom pour ce style
+//-----------------------------------------------------------------------------
+  bool MvtStyleLayer::TestZoomLevel(int zoomlevel) const
   {
-    // Lecture des informations PAINT
-    if (!layer.hasProperty("paint"))
-      return false;
-    juce::var paint = layer["paint"];
-    juce::String val;
-    if (paint.hasProperty("line-color")) {
-      if (paint["line-color"].hasProperty("stops")) {
-        juce::var stops = paint["line-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *pen = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else {
-        *pen = juce::Colour::fromString(paint["line-color"].toString());
-      }
-      *pen = pen->withAlpha(1.f);
-    }
-
-    if (paint.hasProperty("fill-outline-color")) {
-      *pen = juce::Colour::fromString(paint["fill-outline-color"].toString());
-      *pen = pen->withAlpha(1.f);
-    }
-
-    if (paint.hasProperty("line-width")) {
-      if (paint["line-width"].hasProperty("stops")) {
-        juce::var stops = paint["line-width"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *line_width = stops[s][1].toString().getFloatValue();
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else
-        *line_width = paint["line_width"].toString().getFloatValue();
-    }
-    if (paint.hasProperty("fill-color")) {
-      if (paint["fill-color"].hasProperty("stops")) {
-        juce::var stops = paint["fill-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            *fill = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else {
-        *fill = juce::Colour::fromString(paint["fill-color"].toString());
-      }
-      *fill = fill->withAlpha(1.f);
-    }
-    if (paint.hasProperty("fill-opacity")) {
-      *fill = fill->withAlpha(paint["fill-opacity"].toString().getFloatValue());
-    }
-
+    if (m_MinZoom >= 0)
+      if (zoomlevel < m_MinZoom)
+        return false;
+    if (m_MaxZoom >= 0)
+      if (zoomlevel > m_MaxZoom)
+        return false;
     return true;
   }
 
-
-  bool MvtLayer::ReadStylePaint(juce::var& layer)
+//-----------------------------------------------------------------------------
+// Fixe le style pour le dessin
+//-----------------------------------------------------------------------------
+  bool MvtStyleLayer::SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fillType, float* lineWidth)
   {
-    // Lecture des informations PAINT
-    if (!layer.hasProperty("paint"))
+    if (m_Type == noType)
       return false;
-    juce::var paint = layer["paint"];
-    juce::String val;
-    if (paint.hasProperty("line-color")) {
-      if (paint["line-color"].hasProperty("stops")) {
-        juce::var stops = paint["line-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            m_PenColor = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
-        }
-      }
-      else {
-        m_PenColor = juce::Colour::fromString(paint["line-color"].toString());
-      }
-      m_PenColor = m_PenColor.withAlpha(1.f);
-    }
 
-    if (paint.hasProperty("fill-outline-color")) {
-      m_PenColor = juce::Colour::fromString(paint["fill-outline-color"].toString());
-      m_PenColor = m_PenColor.withAlpha(1.f);
-    }
-
-    if (paint.hasProperty("line-width")) {
-      if (paint["line-width"].hasProperty("stops")) {
-        juce::var stops = paint["line-width"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            m_LineWidth = stops[s][1].toString().getFloatValue();
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
+    if (m_Width.size() > 0) {
+      if (m_WidthStops.size() > 0) {
+        if (zoomlevel <= m_WidthStops[0])
+          *lineWidth = m_Width[0];
+        else
+          for (int i = 0; i < m_WidthStops.size(); i++) {
+            if (zoomlevel >= m_WidthStops[i])
+              *lineWidth = m_Width[i];
           }
-        }
       }
       else
-        m_LineWidth = paint["line_width"].toString().getFloatValue();
+        *lineWidth = m_Width[0];
     }
-    if (paint.hasProperty("fill-color")) {
-      if (paint["fill-color"].hasProperty("stops")) {
-        juce::var stops = paint["fill-color"]["stops"];
-        for (int s = 0; s < stops.size(); s++) {
-          if (stops[s].size() == 2) {
-            m_FillColor = juce::Colour::fromString(stops[s][1].toString());
-            if (m_nLastZoom <= (int)stops[s][0])
-              break;
-          }
+    else
+      *lineWidth = 1.f;
+
+    if (m_Type == line) {
+      if (m_LineColor.size() > 0) {
+        if (m_LineStops.size() > 0) {
+          if (zoomlevel <= m_LineStops[0])
+            *pen = m_LineColor[0];
+          else
+            for (int i = 0; i < m_LineStops.size(); i++) {
+              if (zoomlevel >= m_LineStops[i])
+                *pen = m_LineColor[i];
+            }
+        }
+        else
+          *pen = m_LineColor[0];
+      }
+      else
+        *pen = juce::Colour();
+
+      return true;
+    }
+
+    if (m_Type == fill) {
+      if (m_OutlineColor.size() > 0) {
+        if (m_OutlineStops.size() > 0) {
+          if (zoomlevel <= m_OutlineStops[0])
+            *pen = m_OutlineColor[0];
+          else
+            for (int i = 0; i < m_OutlineStops.size(); i++) {
+              if (zoomlevel >= m_OutlineStops[i])
+                *pen = m_OutlineColor[i];
+            }
+        }
+        *pen = m_OutlineColor[0];
+      }
+      else
+        *pen = juce::Colour();
+
+      if (m_FillType.size() > 0) {
+        if (m_FillStops.size() > 0) {
+          if (zoomlevel <= m_FillStops[0])
+            *fillType = m_FillType[0];
+          else
+            for (int i = 0; i < m_FillStops.size(); i++) {
+              if (zoomlevel >= m_FillStops[i])
+                *fillType = m_FillType[i];
+            }
+        }
+        else
+          *fillType = m_FillType[0];
+      }
+      else
+        *fillType = juce::FillType();
+
+      return true;
+    }
+
+    if (m_Type == symbol) {
+      if (m_TextColor.size() > 0) {
+        if (m_TextStops.size() > 0) {
+          if (zoomlevel <= m_TextStops[0])
+            *pen = m_TextColor[0];
+          else
+            for (int i = 0; i < m_TextStops.size(); i++) {
+              if (zoomlevel >= m_TextStops[i])
+                *pen = m_TextColor[i];
+            }
+        }
+        else
+          *pen = m_TextColor[0];
+      }
+      else
+        *pen = juce::Colour();
+
+      return true;
+    }
+
+    return false;
+  }
+
+
+//-----------------------------------------------------------------------------
+// Lecture d'un style
+//-----------------------------------------------------------------------------
+  bool MvtStyleLayer::Read(const juce::var& layer)
+  {
+    Clear();
+
+    // Niveaux de zoom Min et Max
+    if (layer.hasProperty("minzoom"))
+      m_MinZoom = (int)layer["minzoom"];
+    if (layer.hasProperty("maxzoom"))
+      m_MaxZoom = (int)layer["maxzoom"];
+
+    // Source
+    if (layer.hasProperty("source-layer"))
+      m_SourceLayer = layer["source-layer"].toString();
+
+    // Type
+    if (layer.hasProperty("type")) {
+      juce::String type = layer["type"].toString();
+      if (type == "fill") m_Type = fill;
+      if (type == "line") m_Type = line;
+      if (type == "symbol") m_Type = symbol;
+    }
+
+    // Lecture des informations LAYOUT
+    if (layer.hasProperty("layout")) {
+      juce::var layout = layer["layout"];
+      if (layout.hasProperty("text-field")) {
+        m_TextField = layout["text-field"].toString();
+        m_TextField = m_TextField.removeCharacters("{}");
+      }
+
+      if (layout.hasProperty("visibility")) {
+        if (layout["visibility"].toString() == "visible")
+          m_Visibility = true;
+      }
+    }
+
+    // Lectures des informations FILTER
+    if (layer.hasProperty("filter")) {
+      juce::var filter = layer["filter"];
+      if (filter.size() >= 3) {
+        // Egalite
+        if (filter[0].toString() == "==") {
+          m_FilterType = equal;
+          m_FilterAtt = filter[1].toString();
+          m_FilterVal.push_back(filter[2].toString());
+        }
+
+        // Appartenance a un ensemble
+        if (filter[0].toString() == "in") {
+          m_FilterType = in;
+          m_FilterAtt = filter[1].toString();
+          for (int k = 2; k < filter.size(); k++)
+            m_FilterVal.push_back(filter[k].toString());
         }
       }
-      else {
-        m_FillColor = juce::Colour::fromString(paint["fill-color"].toString());
+    }
+    else
+      m_FilterType = noFilter;
+
+    // Lecture des informations PAINT
+    juce::Colour color;
+    if (layer.hasProperty("paint")) {
+      juce::var paint = layer["paint"];
+
+      // Line Color
+      if (paint.hasProperty("line-color")) {
+        if (paint["line-color"].hasProperty("stops")) {
+          juce::var stops = paint["line-color"]["stops"];
+          for (int s = 0; s < stops.size(); s++) {
+            m_LineStops.push_back((int)stops[s][0]);
+            color = juce::Colour::fromString(stops[s][1].toString());
+            color = color.withAlpha(1.f);
+            m_LineColor.push_back(color);
+          }
+        }
+        else {
+          color = juce::Colour::fromString(paint["line-color"].toString());
+          color = color.withAlpha(1.f);
+          m_LineColor.push_back(color);
+        }
       }
-      m_FillColor = m_FillColor.withAlpha(1.f);
+
+      // Outline Color
+      if (paint.hasProperty("fill-outline-color")) {
+        if (paint["fill-outline-color"].hasProperty("stops")) {
+          juce::var stops = paint["fill-outline-color"]["stops"];
+          for (int s = 0; s < stops.size(); s++) {
+            m_OutlineStops.push_back((int)stops[s][0]);
+            color = juce::Colour::fromString(stops[s][1].toString());
+            color = color.withAlpha(1.f);
+            m_OutlineColor.push_back(color);
+          }
+        }
+        else {
+          color = juce::Colour::fromString(paint["fill-outline-color"].toString());
+          color = color.withAlpha(1.f);
+          m_OutlineColor.push_back(color);
+        }
+      }
+
+      // Text Color
+      if (paint.hasProperty("text-color")) {
+        if (paint["text-color"].hasProperty("stops")) {
+          juce::var stops = paint["text-color"]["stops"];
+          for (int s = 0; s < stops.size(); s++) {
+            m_TextStops.push_back((int)stops[s][0]);
+            color = juce::Colour::fromString(stops[s][1].toString());
+            color = color.withAlpha(1.f);
+            m_TextColor.push_back(color);
+          }
+        }
+        else {
+          color = juce::Colour::fromString(paint["text-color"].toString());
+          color = color.withAlpha(1.f);
+          m_TextColor.push_back(color);
+        }
+      }
+
+      // Fill Color
+      if (paint.hasProperty("fill-color")) {
+        if (paint["fill-color"].hasProperty("stops")) {
+          juce::var stops = paint["fill-color"]["stops"];
+          for (int s = 0; s < stops.size(); s++) {
+            m_FillStops.push_back((int)stops[s][0]);
+            color = juce::Colour::fromString(stops[s][1].toString());
+            color = color.withAlpha(1.f);
+            m_FillType.push_back(juce::FillType(color));
+          }
+        }
+        else {
+          color = juce::Colour::fromString(paint["fill-color"].toString());
+          color = color.withAlpha(1.f);
+          m_FillType.push_back(juce::FillType(color));
+        }
+      }
+
+      // Line Width
+      if (paint.hasProperty("line-width")) {
+        if (paint["line-width"].hasProperty("stops")) {
+          juce::var stops = paint["line-width"]["stops"];
+          for (int s = 0; s < stops.size(); s++) {
+            m_WidthStops.push_back((int)stops[s][0]);
+            m_Width.push_back(stops[s][1].toString().getFloatValue());
+          }
+        }
+        else
+          m_Width.push_back(paint["line_width"].toString().getFloatValue());
+      }
+
+      // Fill Opacity
+      if (paint.hasProperty("fill-opacity")) {
+        float opacity = paint["fill-opacity"].toString().getFloatValue();
+        for (int i = 0; i < m_FillType.size(); i++)
+          m_FillType[i].setOpacity(opacity);
+      }
     }
-    if (paint.hasProperty("fill-opacity")) {
-      m_FillColor = m_FillColor.withAlpha(paint["fill-opacity"].toString().getFloatValue());
-    }
-    m_Repres = true;
 
     return true;
   }
