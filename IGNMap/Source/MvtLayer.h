@@ -24,22 +24,28 @@ class XTransfo;
 class MvtStyleLayer {
 public:
   enum eLayerType { noType, fill, line, symbol };
-  enum eFilterType { noFilter, equal, in };
+  enum eFilterType { noFilter, equal, in, diff };
 
   MvtStyleLayer() { Clear(); }
 
   void Clear();
   bool Read(const juce::var& layer);
+  bool ReadFilterArray(const juce::var& filter);
+  bool ReadFilter(const juce::var& filter);
   bool TestZoomLevel(int zoomlevel) const;
   eLayerType Type() { return m_Type; }
 
   juce::String SourceLayer() { return m_SourceLayer; }
-  eFilterType FilterType() { return m_FilterType; }
-  juce::String FilterAtt() { return m_FilterAtt; }
-  bool TestAtt(juce::String val) { for (int i = 0; i < m_FilterVal.size(); i++) if (m_FilterVal[i] == val) return true; return false; }
+  int NbFilter() { return (int)m_Filter.size(); }
+  eFilterType FilterType(int i) { if (i < NbFilter()) return m_Filter[i].Type; return noFilter; }
+  juce::String FilterAtt(int i) { if (i < NbFilter()) return m_Filter[i].Att; return ""; }
+  bool TestAtt(int num, juce::String val);
   juce::String TextField() const { return m_TextField; }
+  int TextSize() const { return m_TextSize; }
 
   bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth);
+  int NbLineDash() const { return m_LineDash.size(); }
+  float* LineDash() { return m_LineDash.data(); }
 
 protected:
   eLayerType     m_Type;
@@ -57,11 +63,18 @@ protected:
   std::vector<int> m_FillStops;
   std::vector<float> m_Width;
   std::vector<int> m_WidthStops;
+  std::vector<float> m_LineDash;
 
-  eFilterType  m_FilterType;
-  juce::String m_FilterAtt;
-  std::vector<juce::String> m_FilterVal;
   juce::String m_TextField;
+  int m_TextSize;
+
+  typedef struct {
+    eFilterType  Type;
+    juce::String Att;
+    std::vector<juce::String> Val;
+  } Filter;
+  std::vector<Filter> m_Filter;
+  
 };
 
 //-----------------------------------------------------------------------------
@@ -73,25 +86,30 @@ protected:
   char* m_Buffer;
   size_t m_nLength;
   bool m_bLoaded;
+  bool m_bPrepared;
   double m_dX0;
   double m_dY0;
   double m_dGsd;
   vtzero::vector_tile* m_Tile;
+  juce::Rectangle<int> m_ClipR;
 
 public:
   MvtTile() {
-    m_Buffer = nullptr; m_bLoaded = false; m_dX0 = m_dY0 = m_dGsd = 0.; m_nLength = 0; m_Tile = nullptr;}
+    m_Buffer = nullptr; m_bLoaded = m_bPrepared = false; m_dX0 = m_dY0 = m_dGsd = 0.; m_nLength = 0; m_Tile = nullptr;}
   ~MvtTile() { Clear(); }
   void Clear();
 
   bool Load(juce::String filename, double X0, double Y0, double GSD0);
+  bool PrepareForDrawing(const XFrame& F, const double& gsd, const uint32_t& tileW, const uint32_t& tileH);
 
   inline bool IsLoaded() const { return m_bLoaded; }
+  inline bool IsPrepared() const { return m_bPrepared; }
   inline double X0() const { return m_dX0; }
   inline double Y0() const { return m_dY0; }
   inline double GSD() const { return m_dGsd; }
   inline size_t Length() const { return m_nLength; }
   inline const char* Buffer() const { return m_Buffer; }
+  juce::Rectangle<int> ClipR() const { return m_ClipR; }
 
   vtzero::vector_tile* Tile() { return m_Tile; }
 };
@@ -137,7 +155,7 @@ public:
   
   bool DrawWithStyle(const XFrame& F, int zoomlevel);
 
-  bool LoadMvt(MvtTile* T, double X0, double Y0, double GSD0, MvtStyleLayer* layer);
+  bool DrawMvt(MvtTile* T, MvtStyleLayer* layer);
 };
 
 
