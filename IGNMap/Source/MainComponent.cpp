@@ -585,29 +585,29 @@ bool MainComponent::perform(const InvocationInfo& info)
 		AddOSMServer();
 		break;
 	case CommandIDs::menuAddGeoportailOrthophoto:
-		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM", "jpeg", 256, 256, 20);
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
 		break;
 	case CommandIDs::menuAddGeoportailOrthophotoIRC:
-		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.IRC", "PM", "jpeg", 256, 256, 20);
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.IRC", "PM_6_19", "jpeg", 256, 256, 20);
 		break;
 	case CommandIDs::menuAddGeoportailOrthohisto:
-		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.1950-1965", "PM", "png", 256, 256, 18);
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.1950-1965", "PM_0_18", "png", 256, 256, 18);
 		break;
 	case CommandIDs::menuAddGeoportailSatellite:
-		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHO-SAT.SPOT.2023", "PM", "jpeg", 256, 256, 17);
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHO-SAT.SPOT.2024", "PM_0_17", "jpeg", 256, 256, 17);
 		//AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2024", "PM_0_19", "jpeg", 256, 256, 19);
 		break;
 	case CommandIDs::menuAddGeoportailCartes:
 		AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
 		break;
 	case CommandIDs::menuAddGeoportailPlanIGN:
-		AddWmtsServer("data.geopf.fr/wmts", "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2", "PM", "png", 256, 256, 19);
+		AddWmtsServer("data.geopf.fr/wmts", "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2", "PM_0_19", "png", 256, 256, 19);
 		break;
 	case CommandIDs::menuAddGeoportailParcelExpress:
-		AddWmtsServer("data.geopf.fr/wmts", "CADASTRALPARCELS.PARCELLAIRE_EXPRESS", "PM", "png", 256, 256, 19);
+		AddWmtsServer("data.geopf.fr/wmts", "CADASTRALPARCELS.PARCELLAIRE_EXPRESS", "PM_0_19", "png", 256, 256, 19);
 		break;
 	case CommandIDs::menuAddGeoportailSCAN50Histo:
-		AddWmtsServer("data.geopf.fr/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950", "PM", "jpeg", 256, 256, 15);
+		AddWmtsServer("data.geopf.fr/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950", "PM_3_15", "jpeg", 256, 256, 15);
 		break;
 	case CommandIDs::menuAddWmtsServer:
 		AddWmtsServer();
