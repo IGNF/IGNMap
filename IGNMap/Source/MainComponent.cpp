@@ -216,6 +216,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailSCAN50Histo);
 		ImportSubMenu.addSubMenu(juce::translate("Geoplateforme (France)"), GeoportailSubMenu);
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddOSM);
+		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddPlanIGN);
 
 		menu.addSubMenu(juce::translate("Import"), ImportSubMenu);
 
@@ -310,7 +311,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
 		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions, CommandIDs::menuShowAnnotations,
-		CommandIDs::menuShow3DViewer, CommandIDs::menuAddOSM, CommandIDs::menuAddGeoportailOrthophoto,
+		CommandIDs::menuShow3DViewer, CommandIDs::menuAddOSM, CommandIDs::menuAddPlanIGN, CommandIDs::menuAddGeoportailOrthophoto,
 		CommandIDs::menuAddGeoportailOrthohisto, CommandIDs::menuAddGeoportailSatellite, CommandIDs::menuAddGeoportailCartes,
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
 		CommandIDs::menuAddGeoportailSCAN50Histo,
@@ -385,6 +386,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAddOSM:
 		result.setInfo(juce::translate("Import OSM data"), juce::translate("Import OSM data"), "Menu", 0);
+		break;
+	case CommandIDs::menuAddPlanIGN:
+		result.setInfo(juce::translate("Import Plan IGN"), juce::translate("Import Plan IGN"), "Menu", 0);
 		break;
 	case CommandIDs::menuAddGeoportailOrthophoto:
 		result.setInfo(juce::translate("Orthophoto"), juce::translate("Orthophoto"), "Menu", 0);
@@ -583,6 +587,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuAddOSM:
 		AddOSMServer();
+		break;
+	case CommandIDs::menuAddPlanIGN:
+		AddMvtServer("data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
 		break;
 	case CommandIDs::menuAddGeoportailOrthophoto:
 		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
@@ -1362,6 +1369,30 @@ bool MainComponent::AddTmsServer()
 }
 
 //==============================================================================
+// Ajout d'un serveur Mapbox Vector Tile
+//==============================================================================
+bool MainComponent::AddMvtServer(std::string url, std::string ext, std::string style, uint32_t tileW, uint32_t tileH, uint32_t max_zoom)
+{
+	XGeoPref pref;
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+	MvtLayer* mvt = new MvtLayer(url, ext, tileW, tileH, max_zoom);
+	mvt->SetFrame(F);
+	mvt->LoadStyle(style);
+	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url)) {
+		delete mvt;
+		return false;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, true, false, false, false, true);
+	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	return true;
+}
+
+//==============================================================================
 // Export vectoriel
 //==============================================================================
 bool MainComponent::ExportVector()
@@ -1543,16 +1574,12 @@ void MainComponent::Test()
 	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
-
-	/*
+	
 	std::string url = "panoramax.ign.fr/api/map";
 	std::string ext = "mvt";
 	std::string style = "https://panoramax.ign.fr/api/map/style.json";
-	int zoom = 15; */
-	std::string url = "data.geopf.fr/tms/1.0.0/PLAN.IGN";
-	std::string ext = "pbf";
-	std::string style = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json";
-	int zoom = 18;
+	int zoom = 15;
+	
 	//std::string url = "data.geopf.fr/tms/1.0.0/PCI";
 	//std::string ext = "pbf";
 	//std::string style = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PCI/pci.json";

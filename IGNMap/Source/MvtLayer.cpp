@@ -174,7 +174,7 @@ juce::Image& MvtLayer::GetAreaImage(const XFrame& F, double gsd)
 		}
 	}
 	m_nLastZoom = osm_zoom;
-	m_ProjImage = juce::Image(juce::Image::ARGB, (int)wout, (int)hout, true);
+	m_ProjImage = juce::Image(juce::Image::ARGB, (int)wout, (int)hout, true, juce::SoftwareImageType());
 
 	// Calcul de l'emprise en WebMercator
 	XWebMercator geod;
@@ -386,6 +386,10 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 	juce::FillType fillType;
 
 	style->SetStyle((int)m_nLastZoom, &pen, &fillType, &line_width);
+	if ((style->Type() == MvtStyleLayer::line)&&(line_width <= 0.f))
+		return false;
+	if ((style->Type() == MvtStyleLayer::circle) && (line_width <= 0.f))
+		return false;
 	g.setColour(pen);
 	if (style->Type() == MvtStyleLayer::fill)
 		g.setFillType(fillType);
@@ -441,7 +445,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0., d = 2.;
 
 		// Dessin des points et multi-points
-		if ((geom.type() == vtzero::GeomType::POINT) && (style->Type() == MvtStyleLayer::symbol)) {
+		if ((geom.type() == vtzero::GeomType::POINT) && ((style->Type() == MvtStyleLayer::symbol)||(style->Type() == MvtStyleLayer::circle))) {
 			for (int i = 0; i < handler.points.size() / 2; i++) {
 				Xima = X0 + (handler.points[2 * i] / factor) * GSD0;
 				Yima = Y0 - (handler.points[2 * i + 1] / factor) * GSD0;
@@ -688,6 +692,7 @@ bool MvtStyleLayer::Read(const juce::var& layer)
 		if (type == "fill") m_Type = fill;
 		if (type == "line") m_Type = line;
 		if (type == "symbol") m_Type = symbol;
+		if (type == "circle") m_Type = circle;
 	}
 
 	// Lecture des informations LAYOUT
@@ -735,6 +740,24 @@ bool MvtStyleLayer::Read(const juce::var& layer)
 			}
 			else {
 				color = juce::Colour::fromString(paint["line-color"].toString());
+				color = color.withAlpha(1.f);
+				m_LineColor.push_back(color);
+			}
+		}
+
+		// Circle Color
+		if ((m_Type == circle) && (paint.hasProperty("circle-color"))) {
+			if (paint["circle-color"].hasProperty("stops")) {
+				juce::var stops = paint["circle-color"]["stops"];
+				for (int s = 0; s < stops.size(); s++) {
+					m_LineStops.push_back((int)stops[s][0]);
+					color = juce::Colour::fromString(stops[s][1].toString());
+					color = color.withAlpha(1.f);
+					m_LineColor.push_back(color);
+				}
+			}
+			else {
+				color = juce::Colour::fromString(paint["circle-color"].toString());
 				color = color.withAlpha(1.f);
 				m_LineColor.push_back(color);
 			}
@@ -796,15 +819,32 @@ bool MvtStyleLayer::Read(const juce::var& layer)
 
 		// Line Width
 		if (paint.hasProperty("line-width")) {
-			if (paint["line-width"].hasProperty("stops")) {
-				juce::var stops = paint["line-width"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_WidthStops.push_back((int)stops[s][0]);
-					m_Width.push_back(stops[s][1].toString().getFloatValue());
+			if (!ReadExpression(paint["line-width"], m_Width, m_WidthStops)) {
+				if (paint["line-width"].hasProperty("stops")) {
+					juce::var stops = paint["line-width"]["stops"];
+					for (int s = 0; s < stops.size(); s++) {
+						m_WidthStops.push_back((int)stops[s][0]);
+						m_Width.push_back(stops[s][1].toString().getFloatValue());
+					}
 				}
+				else
+					m_Width.push_back(paint["line-width"].toString().getFloatValue());
 			}
-			else
-				m_Width.push_back(paint["line-width"].toString().getFloatValue());
+		}
+
+		// Circle Stroke Width
+		if ((m_Type == circle) && (paint.hasProperty("circle-stroke-width"))) {
+			if (!ReadExpression(paint["circle-stroke-width"], m_Width, m_WidthStops)) {
+				if (paint["circle-stroke-width"].hasProperty("stops")) {
+					juce::var stops = paint["circle-stroke-width"]["stops"];
+					for (int s = 0; s < stops.size(); s++) {
+						m_WidthStops.push_back((int)stops[s][0]);
+						m_Width.push_back(stops[s][1].toString().getFloatValue());
+					}
+				}
+				else
+					m_Width.push_back(paint["circle-stroke-width"].toString().getFloatValue());
+			}
 		}
 
 		// Fill Opacity
@@ -907,4 +947,38 @@ bool MvtStyleLayer::TestAtt(int num, juce::String val)
 		return true;
 	}
 	return false; 
+}
+
+//-----------------------------------------------------------------------------
+// Lecture des expressions
+//-----------------------------------------------------------------------------
+bool MvtStyleLayer::ReadExpression(const juce::var& expr, std::vector<float>& T, std::vector<int>& stops)
+{
+	if (expr.size() < 7)
+		return false;
+	if ((expr.size() - 3) % 2 != 0)
+		return false;
+	if (!expr[0].isString())
+		return false;
+	if (expr[0].toString() != "interpolate")
+		return false;
+	if (!expr[1].isArray())
+		return false;
+	if (!expr[1][0].isString())
+		return false;
+	if (expr[1][0].toString() != "linear")
+		return false;
+	if (!expr[2].isArray())
+		return false;
+	if (!expr[2][0].isString())
+		return false;
+	if (expr[2][0].toString() != "zoom")
+		return false;
+	stops.clear();
+	T.clear();
+	for (int i = 0; i < (expr.size() - 3) / 2; i++) {
+		stops.push_back((int)expr[3 + 2 * i]);
+		T.push_back((float)expr[3 + 2 * i + 1]);
+	}
+	return true;
 }

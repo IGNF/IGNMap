@@ -23,7 +23,7 @@ class XTransfo;
 //-----------------------------------------------------------------------------
 class MvtStyleLayer {
 public:
-  enum eLayerType { noType, fill, line, symbol };
+  enum eLayerType { noType, fill, line, symbol, circle };
   enum eFilterType { noFilter, equal, in, diff };
 
   MvtStyleLayer() { Clear(); }
@@ -74,6 +74,8 @@ protected:
     std::vector<juce::String> Val;
   } Filter;
   std::vector<Filter> m_Filter;
+
+  static bool ReadExpression(const juce::var& expr, std::vector<float>& T, std::vector<int>& stops);
   
 };
 

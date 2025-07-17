@@ -33,6 +33,8 @@ public:
 		m_Class = nullptr;
 		m_Cache = GeoTools::CreateCacheDir("STAC");
 		addActionListener(listener);
+		setWantsKeyboardFocus(true);
+		m_nTx = 0;
 	}
 
 	virtual ~StacViewer() { m_Cache.deleteRecursively(); }
@@ -41,13 +43,19 @@ public:
 	void SetSelection(void*) override { ; }
 
 	void mouseDown(const juce::MouseEvent& event) override;
+	void mouseDrag(const juce::MouseEvent& event) override;
+	bool keyPressed(const juce::KeyPress& key) override;
 
 private:
+	juce::Image m_Image;
 	juce::ImageComponent m_ImageComponent;
 	juce::String m_StacServer;
 	XGeoBase* m_Base;
 	XGeoClass* m_Class;
 	juce::File m_Cache;
+	int m_nTx;
+
+	void SetImage();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StacViewer)
 };

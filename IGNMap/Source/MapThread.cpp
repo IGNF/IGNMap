@@ -52,14 +52,14 @@ bool MapThread::AllocPoints(int numPt)
 void MapThread::SetDimension(const int& w, const int& h)
 {
 	if ((w != m_Vector.getWidth()) || (h != m_Vector.getHeight())) {
-		m_Vector = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
-		m_Raster = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
+		m_Vector = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
+		m_Raster = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
 		m_Raster.clear(m_Raster.getBounds(), juce::Colour(0xFFFFFFFF));
-		m_Overlay = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
-		m_Dtm = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
+		m_Overlay = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
+		m_Dtm = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
 		//m_Dtm.clear(m_Dtm.getBounds(), juce::Colour(0xFFFFFFFF));
-		m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
-		m_Las = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true);
+		m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
+		m_Las = juce::Image(juce::Image::PixelFormat::ARGB, w, h, true, juce::SoftwareImageType());
 		m_bRasterDone = false;
 		m_ClipLas = m_ClipRaster = m_ClipVector = juce::Rectangle<int>();
 	}
@@ -91,7 +91,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 		}
 		else {
 			//m_Raster.moveImageSection(dX, dY, 0, 0, m_Raster.getWidth() - dX, m_Raster.getHeight() - dY);
-			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Raster.getWidth(), m_Raster.getHeight(), true);
+			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Raster.getWidth(), m_Raster.getHeight(), true, juce::SoftwareImageType());
 			//m_Raster.clear(m_Raster.getBounds(), juce::Colour(0xFFFFFFFF));
 			juce::Graphics g(tmpImage);
 			g.drawImageAt(m_Raster, dX, dY);
@@ -110,7 +110,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 		if (totalUpdate)
 			m_Las.clear(m_Las.getBounds());
 		else {
-			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Las.getWidth(), m_Las.getHeight(), true);
+			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Las.getWidth(), m_Las.getHeight(), true, juce::SoftwareImageType());
 			juce::Graphics g(tmpImage);
 			g.drawImageAt(m_Las, dX, dY);
 			m_Las = tmpImage;
@@ -126,7 +126,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 		if (totalUpdate)
 			m_Vector.clear(m_Vector.getBounds());
 		else {
-			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Vector.getWidth(), m_Vector.getHeight(), true);
+			juce::Image tmpImage = juce::Image(juce::Image::PixelFormat::ARGB, m_Vector.getWidth(), m_Vector.getHeight(), true, juce::SoftwareImageType());
 			juce::Graphics g(tmpImage);
 			g.drawImageAt(m_Vector, dX, dY);
 			m_Vector = tmpImage;

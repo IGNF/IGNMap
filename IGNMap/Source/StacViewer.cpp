@@ -16,7 +16,7 @@
 
 
 //-----------------------------------------------------------------------------
-// 
+// Clic souris
 //-----------------------------------------------------------------------------
 void StacViewer::mouseDown(const juce::MouseEvent& event)
 {
@@ -25,6 +25,37 @@ void StacViewer::mouseDown(const juce::MouseEvent& event)
     return;
   }
 
+}
+
+//-----------------------------------------------------------------------------
+// Drag souris
+//-----------------------------------------------------------------------------
+void StacViewer::mouseDrag(const juce::MouseEvent& event)
+{
+  int x = event.getDistanceFromDragStartX();
+  m_nTx -= x * 10;
+  SetImage();
+}
+
+//==============================================================================
+// Gestion du clavier
+//==============================================================================
+bool StacViewer::keyPressed(const juce::KeyPress& key)
+{
+  int down = 1;
+  if (key.isCurrentlyDown())
+    down = 5;
+  if (key.getKeyCode() == juce::KeyPress::leftKey) {
+    m_nTx -= 20 * down;
+    SetImage();
+    return true;
+  }
+  if (key.getKeyCode() == juce::KeyPress::rightKey) {
+    m_nTx += 20 * down;
+    SetImage();
+    return true;
+  }
+  return false;	// On transmet l'evenement sans le traiter
 }
 
 //-----------------------------------------------------------------------------
@@ -60,8 +91,8 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
 
-  juce::Image image = format.decodeImage(web_image);
-  m_ImageComponent.setImage(image);
+  m_Image = format.decodeImage(web_image);
+  SetImage();
 
   // Creation d'un GEOJSON
   //juce::File geojson = m_Cache.getNonexistentChildFile("stac", ".json");
@@ -75,5 +106,38 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   m_Class = GeoTools::ImportGeoJson(geojson.getFullPathName(), m_Base);
   GeoTools::ColorizeClasses(m_Base);
   sendActionMessage("UpdateVector");
+}
+
+
+//-----------------------------------------------------------------------------
+// Fixe l'image dans le composant
+//-----------------------------------------------------------------------------
+void StacViewer::SetImage()
+{
+  int Wima = m_Image.getWidth(), Hima = m_Image.getHeight();
+  int Wcomp = m_ImageComponent.getWidth() / 2, Hcomp = m_ImageComponent.getHeight();
+  
+  int W = Wcomp * Hima / Hcomp;
+  int X0 = ((Wima - W) / 2 + m_nTx) % Wima;
+  if (X0 < 0)
+    X0 = Wima + X0;
+  int Wcrop = Wima - X0;
+  if (Wcrop > W) Wcrop = W;
+
+  juce::Image crop(juce::Image::PixelFormat::ARGB, W, Hima, true, juce::SoftwareImageType());
+  juce::Graphics g(crop);
+  {
+    g.drawImage(m_Image, 0, 0, Wcrop, Hima, X0, 0, Wcrop, Hima);
+    if (Wcrop < W)
+      g.drawImage(m_Image, Wcrop, 0, (W - Wcrop), Hima, 0, 0, (W - Wcrop), Hima);
+  }
+  juce::AffineTransform transform = juce::AffineTransform::fromTargetPoints(0, 0, 0, 0, W / 2, Hima / 2,  W, Hima / 2, W, 0, W * 2, 0);
+  juce::Image final(juce::Image::PixelFormat::ARGB, W * 2, Hima, true, juce::SoftwareImageType());
+  juce::Graphics gfinal(final);
+  {
+    gfinal.drawImageTransformed(crop, transform);
+  }
+  
+  m_ImageComponent.setImage(final);
 }
 

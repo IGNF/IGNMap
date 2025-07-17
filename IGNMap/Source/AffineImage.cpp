@@ -71,7 +71,7 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
   if (factor < 1) factor = 1;
   uint32_t wtmp = win / factor, htmp = hin / factor;
   if (m_Image.IsValid()) {  // Cas des images geographiques (TIFF, COG, JP2, ...)
-    m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wtmp, htmp, true);
+    m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wtmp, htmp, true, juce::SoftwareImageType());
     { // Necessaire pour fixer le scope du BitmapData
       juce::Image::BitmapData bitmap(m_SourceImage, juce::Image::BitmapData::readWrite);
 

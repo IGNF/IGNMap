@@ -79,7 +79,7 @@ void MapView::resized()
 	auto b = getLocalBounds();
 	if (b.isEmpty())
 		return;
-	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, b.getWidth(), b.getHeight(), true);
+	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, b.getWidth(), b.getHeight(), true, juce::SoftwareImageType());
 	RenderMap();
 }
 
@@ -236,7 +236,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 		if (m_bZoom) {
 			m_dScale /= ((b.getWidth() / m_DragPt.x + b.getHeight() / m_DragPt.y) * 0.5);
 			if (m_dScale < 0.05) m_dScale = 0.05;
-			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
+			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true, juce::SoftwareImageType());
 			CenterView((X0 + X1) * 0.5, (Y0 + Y1) * 0.5);
 		}
 		if (m_bSelect) {
@@ -261,7 +261,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 	if (m_bZoom) {	// Clic pour zoomer
 			if (event.mods.isRightButtonDown()) m_dScale *= (2.0);
 			if (event.mods.isLeftButtonDown()) m_dScale *= (0.5);
-			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
+			m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true, juce::SoftwareImageType());
 			CenterView(x, y);
 			EndMouseAction();
 			return;
@@ -287,7 +287,7 @@ void MapView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWhe
 		m_dScale *= sqrt(2.0);
 	else
 		m_dScale *= (1. / sqrt(2.0));
-	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true);
+	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, m_Image.getWidth(), m_Image.getHeight(), true, juce::SoftwareImageType());
 	CenterView(X, Y);
 }
 

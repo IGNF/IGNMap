@@ -865,7 +865,7 @@ void OGLWidget::DrawDtm()
   juce::Colour colour;
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
  
-  m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
+  m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true, juce::SoftwareImageType());
   { // Necessaire pour que bitmap soit detruit avant l'appel a ConvertImage
     juce::Image::BitmapData bitmap(m_RawDtm, juce::Image::BitmapData::writeOnly);
     double minGsd = XMin(deltaX, deltaY);

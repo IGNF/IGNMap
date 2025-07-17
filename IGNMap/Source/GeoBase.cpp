@@ -150,7 +150,7 @@ bool GeoInternetImage::Resample(XTransfo* transfo)
 	double xi = 0., yi = 0.;
 	transfo->Dimension(Wsource, Hsource, &Wproj, &Hproj);
 
-	m_ProjImage = juce::Image(juce::Image::PixelFormat::ARGB, Wproj, Hproj, true);
+	m_ProjImage = juce::Image(juce::Image::PixelFormat::ARGB, Wproj, Hproj, true, juce::SoftwareImageType());
 
 	juce::Image::BitmapData sourceData(m_SourceImage, juce::Image::BitmapData::readOnly);
 	juce::Image::BitmapData projData(m_ProjImage, juce::Image::BitmapData::readWrite);

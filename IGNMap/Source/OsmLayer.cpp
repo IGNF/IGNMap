@@ -72,7 +72,7 @@ bool OsmLayer::LoadFrame(const XFrame& F, int zoomlevel)
 
   int nb_tilex = lastX - firstX;
   int nb_tiley = lastY - firstY;
-  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * m_nTileW, nb_tiley * m_nTileH, true);
+  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * m_nTileW, nb_tiley * m_nTileH, true, juce::SoftwareImageType());
   juce::Graphics g(m_SourceImage);
   g.setOpacity(1.0f);
 
