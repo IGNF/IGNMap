@@ -364,9 +364,13 @@ void VectorLayersViewer::RenameAndViewLastClass(juce::String newName)
 	if (V == nullptr)
 		return;
 	XFrame F = V->Frame();
-	F += 100.;	// Pour avoir une marge et pour agrandir la zone pour les petits objets et les ponctuels
-	sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
-		juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+	if (V->NbPt() < 2)
+		sendActionMessage("CenterFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Ymax, 2));
+	else {
+		F += 100.;	// Pour avoir une marge et pour agrandir la zone pour les petits objets et les ponctuels
+		sendActionMessage("ZoomFrame:" + juce::String(F.Xmin, 2) + ":" + juce::String(F.Xmax, 2) + ":" +
+			juce::String(F.Ymin, 2) + ":" + juce::String(F.Ymax, 2));
+	}
 }
 
 //==============================================================================

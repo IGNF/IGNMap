@@ -19,6 +19,14 @@
 class XTransfo;
 
 //-----------------------------------------------------------------------------
+// Sprite MVT
+//-----------------------------------------------------------------------------
+typedef struct { // Sprite MVT
+  juce::String  m_Name;
+  juce::Image m_Image;
+} MvtSprite;
+
+//-----------------------------------------------------------------------------
 // Style d'un layer MVT
 //-----------------------------------------------------------------------------
 class MvtStyleLayer {
@@ -29,7 +37,7 @@ public:
   MvtStyleLayer() { Clear(); }
 
   void Clear();
-  bool Read(const juce::var& layer);
+  bool Read(const juce::var& layer, std::vector<MvtSprite>* sprite);
   bool ReadFilterArray(const juce::var& filter);
   bool ReadFilter(const juce::var& filter);
   bool TestZoomLevel(int zoomlevel) const;
@@ -41,9 +49,10 @@ public:
   juce::String FilterAtt(int i) { if (i < NbFilter()) return m_Filter[i].Att; return ""; }
   bool TestAtt(int num, juce::String val);
   juce::String TextField() const { return m_TextField; }
-  int TextSize() const { return m_TextSize; }
+  juce::Image Icon() const { return m_Icon; }
 
-  bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth);
+  bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth, float* iconSize,
+                float* textSize, juce::Colour* halo);
   int NbLineDash() const { return m_LineDash.size(); }
   float* LineDash() { return m_LineDash.data(); }
 
@@ -57,16 +66,24 @@ protected:
   std::vector<int> m_LineStops;
   std::vector<juce::Colour>  m_TextColor;
   std::vector<int> m_TextStops;
+  std::vector<juce::Colour>  m_TextHaloColor;
+  std::vector<int> m_TextHaloStops;
   std::vector<juce::Colour>  m_OutlineColor;
   std::vector<int> m_OutlineStops;
   std::vector<juce::FillType>  m_FillType;
   std::vector<int> m_FillStops;
   std::vector<float> m_Width;
   std::vector<int> m_WidthStops;
+  std::vector<float> m_Opacity;
+  std::vector<int> m_OpacityStops;
   std::vector<float> m_LineDash;
 
   juce::String m_TextField;
-  int m_TextSize;
+  std::vector<float> m_TextSize;
+  std::vector<int> m_TextSizeStops;
+  juce::Image m_Icon;
+  std::vector<float> m_IconSize;
+  std::vector<int> m_IconSizeStops;
 
   typedef struct {
     eFilterType  Type;
@@ -76,6 +93,9 @@ protected:
   std::vector<Filter> m_Filter;
 
   static bool ReadExpression(const juce::var& expr, std::vector<float>& T, std::vector<int>& stops);
+  static juce::Colour ReadColour(const juce::String& str);
+
+  template<typename T> static T ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default);
   
 };
 
@@ -128,14 +148,10 @@ protected:
   uint32_t m_nMaxZoom;  // Niveau de zoom maximum de la pyramide
   uint32_t m_nLastZoom; // Dernier niveau de zoom utilise
   juce::var m_StyleLayers;
-  juce::Colour m_LineColor;
-  juce::Colour m_FillOutlineColor;
-  juce::Colour m_FillColor;
-  juce::Colour m_TextColor;
-  juce::String m_TextAtt;
-  float m_LineWidth;
-  bool m_bPaintProperties;
-  std::vector< MvtStyleLayer> m_Layer;
+  
+  std::vector<MvtStyleLayer> m_Layer;
+  std::vector<MvtSprite> m_Sprite;
+  juce::Image m_SpriteImage;
 
 protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
@@ -154,6 +170,7 @@ public:
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
   bool LoadStyle(juce::String server);
+  bool ReadSprite(juce::String server);
   
   bool DrawWithStyle(const XFrame& F, int zoomlevel);
 
