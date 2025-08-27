@@ -15,7 +15,10 @@
 #define ZOOMVIEWER_H
 
 #include "AppUtil.h"
+#ifdef  IGNMAP_ONNX
 #include <onnxruntime_cxx_api.h>
+#endif //  IGNMAP_ONNX
+
 
 class XGeoBase;
 
@@ -25,8 +28,6 @@ public:
 		juce::ActionListener* listener, XGeoBase* base)
 		: ToolWindow(name, backgroundColour, requiredButtons)
 	{
-		m_Session = nullptr;
-		m_Env = nullptr;
 		setResizable(true, true);
 		setAlwaysOnTop(false);
 		setContentOwned(&m_ImageComponent, true);
@@ -46,9 +47,11 @@ public:
 	void mouseDown(const juce::MouseEvent& event) override;
 
 private:
-	Ort::Env* m_Env;
-	Ort::Session* m_Session;
 	juce::ImageComponent m_ImageComponent;
+
+#ifdef  IGNMAP_ONNX
+	Ort::Env* m_Env = nullptr;
+	Ort::Session* m_Session = nullptr;
 
 	bool RunModel(const juce::Image& image);
 	bool RunModel32(const juce::Image& image);
@@ -58,6 +61,7 @@ private:
 		std::string Type;
 		std::vector<std::int64_t> Shape;
 	};
+#endif
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ZoomViewer)
 };

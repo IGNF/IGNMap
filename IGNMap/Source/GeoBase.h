@@ -61,16 +61,19 @@ protected :
   juce::Image m_SourceImage;  // Image en WebMercator
   juce::Image m_ProjImage;    // Image en projection
   juce::String m_strRequest;
+  int m_ZoomCorrection;       // Correction sur le niveau de zoom
 
   void CreateCacheDir(juce::String name);
   bool SaveSourceImage(juce::String filename = "");
   virtual bool Resample(XTransfo* transfo);
 
 public:
-  GeoInternetImage() { m_LastGsd = 0.; }
+  GeoInternetImage() { m_LastGsd = 0.; m_ZoomCorrection = 0; }
   virtual ~GeoInternetImage() { m_Cache.deleteRecursively(); }
   void SetFrame(const XFrame& F) { m_Frame = F; }
   void SetDirty() { m_LastGsd = -1.; }  // On force le reaffichage de l'image
+  void SetZoomCorrection(int cor) { m_ZoomCorrection = cor; }
+  int GetZoomCorrection() const { return m_ZoomCorrection; }
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double scale) = 0;
 };

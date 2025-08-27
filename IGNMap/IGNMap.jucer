@@ -3,7 +3,8 @@
 <JUCERPROJECT id="d7wtcy" name="IGNMap" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               companyWebsite="www.ign.fr" companyName="IGN" companyCopyright="Institut National de l'Information G&#233;ographique et Foresti&#232;re"
-              defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1">
+              defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1&#10;OPJ_STATIC=1&#10;LASZIPDLL_EXPORTS=1"
+              userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
       <FILE id="D0Gt1C" name="GSD.png" compile="0" resource="1" file="Images/GSD.png"
@@ -747,14 +748,14 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;JUCE_WEB_BROWSER=0"
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="JUCE_WEB_BROWSER=0"
                 userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-                smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="-lonnxruntime">
+                smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\ONNX\onnxruntime-linux-x64-static_lib-1.20.1-glibc2_17\include"
-                       userNotes="make CONFIG=Debug" libraryPath=".\..\..\..\ONNX\onnxruntime-linux-x64-static_lib-1.20.1-glibc2_17\lib"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\ONNX\onnxruntime-linux-x64-static_lib-1.20.1-glibc2_17\include"
-                       userNotes="make CONFIG=Release" libraryPath=".\..\..\..\ONNX\onnxruntime-linux-x64-static_lib-1.20.1-glibc2_17\lib&#10;/mnt/c/dev/ONNX/onnxruntime-linux-x64-static_lib-1.20.1-glibc2_17/lib"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include"
+                       userNotes="make CONFIG=Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include"
+                       userNotes="make CONFIG=Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
@@ -766,16 +767,13 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;"
-            userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000"
-            externalLibraries="onnxruntime.lib">
+    <VS2022 targetFolder="Builds/VisualStudio2022" userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
+            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-1.20.1\include&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
-                       libraryPath="$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-1.20.1\lib&#10;"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
                        useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-static_lib-1.20.1\include&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
-                       useRuntimeLibDLL="0" libraryPath="$(SolutionDir)\..\..\..\ONNX\onnxruntime-win-x64-static_lib-1.20.1\lib"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
+                       useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
@@ -787,13 +785,12 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="OPJ_STATIC&#10;LASZIPDLL_EXPORTS&#10;off64_t=off_t&#10;Z_HAVE_UNISTD_H"
-               smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="-lonnxruntime">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="off64_t=off_t&#10;Z_HAVE_UNISTD_H"
+               smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../libwebp-1.3.2&#10;../../../ONNX/onnxruntime-osx-universal2-static_lib-1.20.1/include&#10;../../../protozero/include&#10;../../../vtzero/include"
-                       libraryPath="../../../ONNX/onnxruntime-osx-universal2-static_lib-1.20.1/lib"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../libwebp-1.3.2&#10;../../../ONNX/onnxruntime-osx-universal2-static_lib-1.20.1/include&#10;../../../protozero/include&#10;../../../vtzero/include"
-                       osxArchitecture="64BitIntel" libraryPath="../../../ONNX/onnxruntime-osx-universal2-static_lib-1.20.1/lib"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include"
+                       osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

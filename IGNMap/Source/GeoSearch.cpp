@@ -63,6 +63,27 @@ bool GeoSearch::SearchOSM(juce::String text)
 }
 
 //-----------------------------------------------------------------------------
+// Service altimetrique de la GeoPlateforme (Longitude et latitude en degres decimaux)
+//-----------------------------------------------------------------------------
+double GeoSearch::GetAltitude(double longitude, double latitude)
+{
+  juce::String query = "https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest/elevation.json?";
+  query += "lon=";
+  query += juce::String(longitude, 6);
+  query += "&lat=";
+  query += juce::String(latitude, 6);
+  query += "&resource=ign_rge_alti_wld&measures=false&zonly=true";
+  if (!RunQuery(query))
+    return 0.;
+  juce::File file(m_strFilename);
+  juce::var result = juce::JSON::parse(file);
+  if (result.hasProperty("elevations")) {
+    return (double)result["elevations"][0];
+  }
+  return 0.;
+}
+
+//-----------------------------------------------------------------------------
 // Lancement d'un requete
 //-----------------------------------------------------------------------------
 bool GeoSearch::RunQuery(juce::String query)

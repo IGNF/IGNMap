@@ -865,20 +865,19 @@ bool XBaseImage::Correlation(uint8_t* pix1, uint32_t w1, uint32_t h1,
                              uint8_t* pix2, uint32_t w2, uint32_t h2,
                              double* u, double* v, double* pic)
 {
-  double *win1, *win2;	// Fenetres de correlation
-  double *correl;				// Valeurs de correlation
-  double mean1, dev1, mean2, dev2, cov, a, b;
-  uint32_t k = 0, n = 0, lin = 0, col = 0;
-  uint8_t *buf;
-
-  win1 = new double[w1 * h1];
-  win2 = new double[w1 * h1];
-  correl = new double[(h2 - h1 + 1)*(w2 - w1 + 1)];
-  buf = new uint8_t[w1 * h1];
-  if ((win1 == NULL)||(win2 == NULL)||(correl == NULL)||(buf == NULL)){
+  *pic = 0.;
+  double* win1 = new (std::nothrow) double[w1 * h1]; // Fenetres de correlation
+  double* win2 = new (std::nothrow) double[w1 * h1];
+  double* correl = new (std::nothrow) double[(h2 - h1 + 1)*(w2 - w1 + 1)]; // Valeurs de correlation
+  uint8_t* buf = new (std::nothrow) uint8_t[w1 * h1];
+  if ((win1 == nullptr)||(win2 == nullptr)||(correl == nullptr)||(buf == nullptr)){
     delete[] win1; delete[] win2; delete[] correl; delete[] buf;
     return false;
   }
+
+  double mean1, dev1, mean2, dev2, cov, a, b;
+  uint32_t k = 0, n = 0, lin = 0, col = 0;
+
   Normalize(pix1, win1, w1 * h1, &mean1, &dev1);
   if (dev1 == 0.0) {
     delete[] win1; delete[] win2; delete[] correl; delete[] buf;
@@ -907,11 +906,12 @@ bool XBaseImage::Correlation(uint8_t* pix1, uint32_t w1, uint32_t h1,
   delete[] win2;
   delete[] buf;
 
-  if ((k == 0)||(k == ((h2 - h1 + 1)*(w2 - w1 + 1)-1))) {
+  if ((k == 0)||(k == ((h2 - h1 + 1)*(w2 - w1 + 1)-1))) { // Bord d'image
+    *pic = 0;
     delete[] correl;
     return false;
   }
-
+  // Interpolation sub-pixellaire
   a = correl[k-1] - *pic;
   b = correl[k+1] - *pic;
   a = (a - b) / (2.0 * (a + b));

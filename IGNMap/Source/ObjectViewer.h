@@ -17,6 +17,7 @@
 class XGeoObject;
 class XGeoVector;
 class RotationImage;
+class GeoInternetImage;
 
 //==============================================================================
 // ObjectViewerComponent : composant principal
@@ -35,6 +36,8 @@ public:
 	bool SetRotationImage(RotationImage* image);
 	bool UpdateRotationImage(RotationImage* image);
 	bool SetGeoVector(XGeoVector* V);
+	bool SetInternetImage(GeoInternetImage* internet);
+	bool UpdateInternetImage(GeoInternetImage* internet);
 
 private:
 	XGeoObject* m_Object;
@@ -54,8 +57,10 @@ private:
 	juce::TextButton m_btnApply;
 	juce::TextButton m_btnRestore;
 
-	void resized() override;
+	// Interface pour les images internet
+	juce::Slider m_sldZoomCorrection;
 
+	void resized() override;
 };
 
 //==============================================================================

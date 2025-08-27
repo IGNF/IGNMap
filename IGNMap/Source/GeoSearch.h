@@ -23,6 +23,8 @@ public:
 	bool SearchIGN(juce::String text);
 	bool SearchOSM(juce::String text);
 
+	double GetAltitude(double longitude, double latitude);
+
 protected:
 	juce::String	m_strFilename;
 

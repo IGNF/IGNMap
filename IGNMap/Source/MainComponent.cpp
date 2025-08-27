@@ -1570,6 +1570,16 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	GeoSearch search;
+	XPt3D P = m_MapView.get()->GetTarget();
+	XGeoPref pref;
+	double lon, lat;
+	pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, P.X, P.Y, lon, lat);
+	double z = search.GetAltitude(lon, lat);
+	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,"Altitude", juce::String(z, 2), "OK");
+	return;
+
+	/*
 	XGeoPref pref;
 	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
@@ -1595,6 +1605,8 @@ void MainComponent::Test()
 	m_MapView.get()->RenderMap(false, true, false, false, false, true);
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
 	return;
+
+	*/
 
 	/*
 	juce::String filename;

@@ -95,7 +95,7 @@ protected:
   static bool ReadExpression(const juce::var& expr, std::vector<float>& T, std::vector<int>& stops);
   static juce::Colour ReadColour(const juce::String& str);
 
-  template<typename T> static T ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default);
+  template<typename T> static T ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value);
   
 };
 

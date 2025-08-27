@@ -208,7 +208,7 @@ void MapThread::run()
 			if (!C->IsLAS())
 				continue;
 			if (C->Visible())
-				m_bLasCompleted != DrawLasClass(C);
+				m_bLasCompleted |= DrawLasClass(C);
 		}
 	}
 	// Affichage des couches vectorielles
@@ -701,7 +701,7 @@ bool MapThread::DrawFileRaster(XFileImage* image, XGeoRepres* repres)
 		if (alpha != 255)
 			format = juce::Image::PixelFormat::ARGB;
 	}
-	juce::Image tmpImage(format, wtmp, htmp, true);
+	juce::Image tmpImage(format, wtmp, htmp, true, juce::SoftwareImageType());
 	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
 		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
 		format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
@@ -814,7 +814,7 @@ bool MapThread::DrawDtm(GeoDTM* dtm)
 		return false;
 	uint32_t nb_sample;
 	image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
-	juce::Image tmpImage(m_RawDtm.getFormat(), wout, hout, true);
+	juce::Image tmpImage(m_RawDtm.getFormat(), wout, hout, true, juce::SoftwareImageType());
 	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
 		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
 		XBaseImage::FastZoomBil(area, wtmp, htmp, (float*)bitmap.data, wout, hout);

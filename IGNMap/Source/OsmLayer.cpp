@@ -154,6 +154,9 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
       break;
     }
   }
+  osm_zoom += m_ZoomCorrection;
+  if (osm_zoom < 0) osm_zoom = 0;
+  if (osm_zoom > (int)m_nMaxZoom) osm_zoom = (int)m_nMaxZoom;
 
   // Si on est en WebMercator
   if (pref.Projection() == WebMercator) {

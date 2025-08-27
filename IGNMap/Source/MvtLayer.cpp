@@ -170,6 +170,9 @@ juce::Image& MvtLayer::GetAreaImage(const XFrame& F, double gsd)
 			break;
 		}
 	}
+	osm_zoom += m_ZoomCorrection;
+	if (osm_zoom < 0) osm_zoom = 0;
+	if (osm_zoom > (int)m_nMaxZoom) osm_zoom = (int)m_nMaxZoom;
 	m_nLastZoom = osm_zoom;
 	m_ProjImage = juce::Image(juce::Image::ARGB, (int)wout, (int)hout, true, juce::SoftwareImageType());
 
@@ -1091,9 +1094,9 @@ juce::Colour MvtStyleLayer::ReadColour(const juce::String& str)
 //-----------------------------------------------------------------------------
 // Lecture d'une valeur en fonction des stops
 //-----------------------------------------------------------------------------
-template<typename T> T MvtStyleLayer::ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default)
+template<typename T> T MvtStyleLayer::ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value)
 {
-	T value = default;
+	T value = default_value;
 	if (Val.size() > 0) {
 		if (Stops.size() > 0) {
 			if (zoomlevel <= Stops[0])

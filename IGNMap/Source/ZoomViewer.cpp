@@ -14,6 +14,7 @@
 //-----------------------------------------------------------------------------
 // Fonction utilitaire
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 template <typename T>
 Ort::Value vec_to_tensor(std::vector<T>& data, const std::vector<std::int64_t>& shape) {
   Ort::MemoryInfo mem_info =
@@ -21,23 +22,27 @@ Ort::Value vec_to_tensor(std::vector<T>& data, const std::vector<std::int64_t>& 
   auto tensor = Ort::Value::CreateTensor<T>(mem_info, data.data(), data.size(), shape.data(), shape.size());
   return tensor;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Nettoyage du modele
 //-----------------------------------------------------------------------------
 void ZoomViewer::Clear()
 {
+#ifdef  IGNMAP_ONNX
   if (m_Session != nullptr)
     delete m_Session;
   if (m_Env != nullptr)
     delete m_Env;
   m_Session = nullptr;
   m_Env = nullptr;
+#endif
 }
 
 //-----------------------------------------------------------------------------
 // Chargement d'un modele
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 bool ZoomViewer::LoadModel()
 {
   juce::String filename = AppUtil::OpenFile("Model", "Modele de super resolution", "*.onnx");
@@ -64,19 +69,18 @@ bool ZoomViewer::LoadModel()
 
   return true;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // 
 //-----------------------------------------------------------------------------
 void ZoomViewer::mouseDown(const juce::MouseEvent& event)
 {
+#ifdef  IGNMAP_ONNX
 	if (event.y <= getTitleBarHeight()) {
 		juce::DocumentWindow::mouseDown(event);
 		return;
 	}
-  bool flag_ia = true;
-  if (m_Session == nullptr)
-    flag_ia = false;
 
   std::function< void() > Interpolation = [=]() {	Clear(); };
   std::function< void() > ZoomIA = [=]() {	LoadModel(); };
@@ -85,11 +89,13 @@ void ZoomViewer::mouseDown(const juce::MouseEvent& event)
   menu.addItem(juce::translate("Interpolation"), Interpolation);
   menu.addItem(juce::translate("IA"), ZoomIA);
   menu.showMenuAsync(juce::PopupMenu::Options());
+#endif
 }
 
 //-----------------------------------------------------------------------------
 // Fixe l'image source
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 void ZoomViewer::SetTargetImage(const juce::Image& image)
 {
   if (m_Session == nullptr) {
@@ -99,10 +105,18 @@ void ZoomViewer::SetTargetImage(const juce::Image& image)
 	else
 		RunModel(image);
 }
+#else
+void ZoomViewer::SetTargetImage(const juce::Image& image)
+{
+  juce::Image resized_image = image.rescaled(image.getWidth() * 4, image.getHeight() * 4, juce::Graphics::highResamplingQuality);
+  m_ImageComponent.setImage(resized_image);
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Applique le modele IA
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 bool ZoomViewer::RunModel(const juce::Image& image)
 {
   if (m_Session == nullptr) // Pas de modele charge
@@ -115,10 +129,12 @@ bool ZoomViewer::RunModel(const juce::Image& image)
     return RunModel16(image);
   return false;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Applique le modele IA en float 32 bits
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 bool ZoomViewer::RunModel32(const juce::Image& image)
 {
   if (m_Session == nullptr) // Pas de modele charge
@@ -149,7 +165,7 @@ bool ZoomViewer::RunModel32(const juce::Image& image)
     outputInfo.Shape = m_Session->GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape();
     OutputT.push_back(outputInfo);
   }
-  if (OutputT.size() != 1)
+  if (OutputT.size() < 1)
     return false;
   //if (OutputT[0].Type != "upscaled_image")
   //  return false;
@@ -247,10 +263,12 @@ bool ZoomViewer::RunModel32(const juce::Image& image)
 
   return true;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Applique le modele IA en float 16 bits
 //-----------------------------------------------------------------------------
+#ifdef  IGNMAP_ONNX
 bool ZoomViewer::RunModel16(const juce::Image& image)
 {
   if (m_Session == nullptr) // Pas de modele charge
@@ -383,4 +401,4 @@ bool ZoomViewer::RunModel16(const juce::Image& image)
 
   return true;
 }
-
+#endif

@@ -11,6 +11,7 @@
 
 #include "ObjectViewer.h"
 #include "AffineImage.h"
+#include "GeoBase.h"
 
 //==============================================================================
 // ObjectViewerComponent : constructeur
@@ -81,6 +82,14 @@ ObjectViewerComponent::ObjectViewerComponent()
 	addAndMakeVisible(m_btnApply);
 	addAndMakeVisible(m_btnRestore);
 
+	// Interface pour les images Internet
+	m_sldZoomCorrection.setSliderStyle(juce::Slider::LinearHorizontal);
+	m_sldZoomCorrection.setRange(-3., 3., 1.);
+	m_sldZoomCorrection.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+	m_sldZoomCorrection.setTextValueSuffix(juce::String(" : ") + juce::translate("Zoom correction"));
+	addAndMakeVisible(m_sldZoomCorrection);
+	m_sldZoomCorrection.addListener(this);
+
 	setSize(230, 300);
 	SetSelection(nullptr);
 }
@@ -91,6 +100,7 @@ ObjectViewerComponent::ObjectViewerComponent()
 void ObjectViewerComponent::resized()
 {
 	auto b = getLocalBounds();
+	// Interface pour les RotationImage
 	m_sldXCenter.setBounds(10, 10, 100, 30);
 	m_sldYCenter.setBounds(120, 10, 100, 30);
 	m_sldResolution.setBounds(65, 50, 100, 30);
@@ -98,11 +108,15 @@ void ObjectViewerComponent::resized()
 	m_sldToneMappingPower.setBounds(10, 220, 100, 40);
 	m_sldToneMappingSharpness.setBounds(120, 220, 100, 40);
 
+	// Interface pour les objets vectoriels
 	m_btnPen.setBounds(10, 10, 100, 30);
 	m_btnFill.setBounds(120, 10, 100, 30);
 	m_sldPenWidth.setBounds(65, 50, 100, 30);
 	m_btnRestore.setBounds(10, 100, 100, 30);
 	m_btnApply.setBounds(120, 100, 100, 30);
+
+	// Interface pour les images Internet
+	m_sldZoomCorrection.setBounds(10, 10, 200, 40);
 }
 
 //==============================================================================
@@ -124,6 +138,13 @@ void ObjectViewerComponent::sliderValueChanged(juce::Slider* /*slider*/)
 	if (image != nullptr) {
 		UpdateRotationImage(image);
 		image->SetDirty();
+		sendActionMessage("UpdateRaster");
+	}
+
+	GeoInternetImage* internet = dynamic_cast<GeoInternetImage*>(m_Object);
+	if (internet != nullptr) {
+		UpdateInternetImage(internet);
+		internet->SetDirty();
 		sendActionMessage("UpdateRaster");
 	}
 
@@ -174,6 +195,7 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	m_sldPenWidth.setVisible(false);
 	m_btnApply.setVisible(false);
 	m_btnRestore.setVisible(false);
+	m_sldZoomCorrection.setVisible(false);
 
 	m_Object = (XGeoObject*)S;
 	if (m_Object == nullptr)
@@ -182,6 +204,9 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
 	if (image != nullptr)
 		return SetRotationImage(image);
+	GeoInternetImage* internet = dynamic_cast<GeoInternetImage*>(m_Object);
+	if (internet != nullptr)
+		return SetInternetImage(internet);
 	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
 	if (V != nullptr)
 		return SetGeoVector(V);
@@ -216,7 +241,7 @@ bool ObjectViewerComponent::SetRotationImage(RotationImage* image)
 }
 
 //==============================================================================
-// ObjectViewerComponent : mise a jour d'une RotationImage
+// UpdateRotationImage : mise a jour d'une RotationImage
 //==============================================================================
 bool ObjectViewerComponent::UpdateRotationImage(RotationImage* image)
 {
@@ -239,7 +264,7 @@ bool ObjectViewerComponent::UpdateRotationImage(RotationImage* image)
 }
 
 //==============================================================================
-// ObjectViewerComponent : choix d'une selection XGeoVector
+// SetGeoVector : choix d'une selection XGeoVector
 //==============================================================================
 bool ObjectViewerComponent::SetGeoVector(XGeoVector* V)
 {
@@ -254,5 +279,25 @@ bool ObjectViewerComponent::SetGeoVector(XGeoVector* V)
 	m_btnPen.setColour(juce::TextButton::buttonColourId, juce::Colour(R->Color()));
 	m_btnFill.setColour(juce::TextButton::buttonColourId, juce::Colour(R->FillColor()));
 	m_sldPenWidth.setValue(R->Size(), juce::NotificationType::dontSendNotification);
+	return true;
+}
+
+//==============================================================================
+// SetInternetImage : choix d'une selection GeoInternetImage
+//==============================================================================
+bool ObjectViewerComponent::SetInternetImage(GeoInternetImage* internet)
+{
+	m_sldZoomCorrection.setVisible(true);
+	m_sldZoomCorrection.setValue(internet->GetZoomCorrection());
+	return true;
+}
+
+//==============================================================================
+// UpdateInternetImage : mise a jour d'une GeoInternetImage
+//==============================================================================
+bool ObjectViewerComponent::UpdateInternetImage(GeoInternetImage* internet)
+{
+	double X = m_sldZoomCorrection.getValue();
+	internet->SetZoomCorrection((int)X);
 	return true;
 }
