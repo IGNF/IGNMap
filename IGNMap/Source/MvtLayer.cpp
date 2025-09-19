@@ -138,7 +138,7 @@ juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
 	int count = 0;
 	while (task.get()->isFinished() == false)
 	{
-		juce::Thread::sleep(50);
+		juce::Thread::sleep(10);
 		count++;
 		if (count > 100) break;
 	}

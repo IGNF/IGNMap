@@ -39,7 +39,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_PROJUCER_VERSION=0x80008" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 -I./../../../protozero/include -I./../../../vtzero/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000a" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 -I./../../../protozero/include -I./../../../vtzero/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_PROJUCER_VERSION=0x80008" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 -I./../../../protozero/include -I./../../../vtzero/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000a" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I./../../../libwebp-1.3.2 -I./../../../protozero/include -I./../../../vtzero/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -274,6 +274,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
   $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o \
   $(JUCE_OBJDIR)/StacViewer_e5b1993e.o \
+  $(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o \
   $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o \
   $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
   $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
@@ -296,6 +297,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XGeoRepres_314321ff.o \
   $(JUCE_OBJDIR)/XGeoVector_36c8745f.o \
   $(JUCE_OBJDIR)/XInterpol_65a0c3b0.o \
+  $(JUCE_OBJDIR)/XMat3D_eaaf80bc.o \
   $(JUCE_OBJDIR)/XParserXML_f683e5e3.o \
   $(JUCE_OBJDIR)/XPath_defe72e4.o \
   $(JUCE_OBJDIR)/XPolygone2D_17ca3d3c.o \
@@ -304,7 +306,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XXml_ba111f82.o \
   $(JUCE_OBJDIR)/XInternetMap_ca70d833.o \
   $(JUCE_OBJDIR)/XLasFile_52021412.o \
+  $(JUCE_OBJDIR)/XOrthoModel_aa1c1383.o \
   $(JUCE_OBJDIR)/XSentinelScene_b6bda160.o \
+  $(JUCE_OBJDIR)/XStereoModel_40b428e9.o \
   $(JUCE_OBJDIR)/XTime_636b2fbf.o \
   $(JUCE_OBJDIR)/XToneMapper_61a81e85.o \
   $(JUCE_OBJDIR)/XWmts_7b5ed8c7.o \
@@ -327,6 +331,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XJpegCodec_26236640.o \
   $(JUCE_OBJDIR)/XJpegImage_34ced505.o \
   $(JUCE_OBJDIR)/XLzwCodec_a21dc385.o \
+  $(JUCE_OBJDIR)/XMemRaster_88ea7764.o \
   $(JUCE_OBJDIR)/XOpenJp2Image_9a97e091.o \
   $(JUCE_OBJDIR)/XPackBitsCodec_476eb49.o \
   $(JUCE_OBJDIR)/XPredictor_739e6f2e.o \
@@ -1399,6 +1404,11 @@ $(JUCE_OBJDIR)/StacViewer_e5b1993e.o: ../../Source/StacViewer.cpp
 	@echo "Compiling StacViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o: ../../Source/StereoViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling StereoViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o: ../../Source/TmsLayer.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling TmsLayer.cpp"
@@ -1509,6 +1519,11 @@ $(JUCE_OBJDIR)/XInterpol_65a0c3b0.o: ../../../XTool/XInterpol.cpp
 	@echo "Compiling XInterpol.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/XMat3D_eaaf80bc.o: ../../../XTool/XMat3D.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XMat3D.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/XParserXML_f683e5e3.o: ../../../XTool/XParserXML.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XParserXML.cpp"
@@ -1549,9 +1564,19 @@ $(JUCE_OBJDIR)/XLasFile_52021412.o: ../../../XToolAlgo/XLasFile.cpp
 	@echo "Compiling XLasFile.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/XOrthoModel_aa1c1383.o: ../../../XToolAlgo/XOrthoModel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XOrthoModel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/XSentinelScene_b6bda160.o: ../../../XToolAlgo/XSentinelScene.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XSentinelScene.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XStereoModel_40b428e9.o: ../../../XToolAlgo/XStereoModel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XStereoModel.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XTime_636b2fbf.o: ../../../XToolAlgo/XTime.cpp
@@ -1662,6 +1687,11 @@ $(JUCE_OBJDIR)/XJpegImage_34ced505.o: ../../../XToolImage/XJpegImage.cpp
 $(JUCE_OBJDIR)/XLzwCodec_a21dc385.o: ../../../XToolImage/XLzwCodec.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XLzwCodec.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XMemRaster_88ea7764.o: ../../../XToolImage/XMemRaster.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XMemRaster.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XOpenJp2Image_9a97e091.o: ../../../XToolImage/XOpenJp2Image.cpp

@@ -497,6 +497,9 @@
             file="Source/SentinelViewer.h"/>
       <FILE id="NX1BFn" name="StacViewer.cpp" compile="1" resource="0" file="Source/StacViewer.cpp"/>
       <FILE id="cbgSbm" name="StacViewer.h" compile="0" resource="0" file="Source/StacViewer.h"/>
+      <FILE id="YT52fn" name="StereoViewer.cpp" compile="1" resource="0"
+            file="Source/StereoViewer.cpp"/>
+      <FILE id="uqj1qT" name="StereoViewer.h" compile="0" resource="0" file="Source/StereoViewer.h"/>
       <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
             file="Source/ThreadClassProcessor.h"/>
       <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>
@@ -557,6 +560,8 @@
       <FILE id="GNUmpr" name="XGeoVector.h" compile="0" resource="0" file="../XTool/XGeoVector.h"/>
       <FILE id="t2D8ir" name="XInterpol.cpp" compile="1" resource="0" file="../XTool/XInterpol.cpp"/>
       <FILE id="qSiPAI" name="XInterpol.h" compile="0" resource="0" file="../XTool/XInterpol.h"/>
+      <FILE id="oxdmh5" name="XMat3D.cpp" compile="1" resource="0" file="../XTool/XMat3D.cpp"/>
+      <FILE id="FZbvtX" name="XMat3D.h" compile="0" resource="0" file="../XTool/XMat3D.h"/>
       <FILE id="upsWS4" name="XParserXML.cpp" compile="1" resource="0" file="../XTool/XParserXML.cpp"/>
       <FILE id="YY0N94" name="XParserXML.h" compile="0" resource="0" file="../XTool/XParserXML.h"/>
       <FILE id="tNLvUu" name="XPath.cpp" compile="1" resource="0" file="../XTool/XPath.cpp"/>
@@ -580,10 +585,15 @@
       <FILE id="wfXTdH" name="XInternetMap.h" compile="0" resource="0" file="../XToolAlgo/XInternetMap.h"/>
       <FILE id="v2dLJ0" name="XLasFile.cpp" compile="1" resource="0" file="../XToolAlgo/XLasFile.cpp"/>
       <FILE id="aLJf7D" name="XLasFile.h" compile="0" resource="0" file="../XToolAlgo/XLasFile.h"/>
+      <FILE id="QuS1l7" name="XOrthoModel.cpp" compile="1" resource="0" file="../XToolAlgo/XOrthoModel.cpp"/>
+      <FILE id="Ov2MDA" name="XOrthoModel.h" compile="0" resource="0" file="../XToolAlgo/XOrthoModel.h"/>
       <FILE id="Y5d2Yf" name="XSentinelScene.cpp" compile="1" resource="0"
             file="../XToolAlgo/XSentinelScene.cpp"/>
       <FILE id="Eiy29q" name="XSentinelScene.h" compile="0" resource="0"
             file="../XToolAlgo/XSentinelScene.h"/>
+      <FILE id="V8CXLc" name="XStereoModel.cpp" compile="1" resource="0"
+            file="../XToolAlgo/XStereoModel.cpp"/>
+      <FILE id="jAjGmy" name="XStereoModel.h" compile="0" resource="0" file="../XToolAlgo/XStereoModel.h"/>
       <FILE id="QpqOKx" name="XTime.cpp" compile="1" resource="0" file="../XToolAlgo/XTime.cpp"/>
       <FILE id="PRYRGz" name="XTime.h" compile="0" resource="0" file="../XToolAlgo/XTime.h"/>
       <FILE id="rmvQEQ" name="XToneMapper.cpp" compile="1" resource="0" file="../XToolAlgo/XToneMapper.cpp"/>
@@ -644,6 +654,8 @@
       <FILE id="QuELwl" name="XJpegImage.h" compile="0" resource="0" file="../XToolImage/XJpegImage.h"/>
       <FILE id="wlAqNv" name="XLzwCodec.cpp" compile="1" resource="0" file="../XToolImage/XLzwCodec.cpp"/>
       <FILE id="dtw0Vz" name="XLzwCodec.h" compile="0" resource="0" file="../XToolImage/XLzwCodec.h"/>
+      <FILE id="Grj4X4" name="XMemRaster.cpp" compile="1" resource="0" file="../XToolImage/XMemRaster.cpp"/>
+      <FILE id="eZ3XI3" name="XMemRaster.h" compile="0" resource="0" file="../XToolImage/XMemRaster.h"/>
       <FILE id="U3wzXy" name="XOpenJp2Image.cpp" compile="1" resource="0"
             file="../XToolImage/XOpenJp2Image.cpp"/>
       <FILE id="l16pJJ" name="XOpenJp2Image.h" compile="0" resource="0" file="../XToolImage/XOpenJp2Image.h"/>

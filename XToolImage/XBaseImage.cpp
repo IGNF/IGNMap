@@ -557,10 +557,16 @@ bool XBaseImage::ExtractArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t h
 bool XBaseImage::CopyArea(uint8_t* patch, uint8_t* image, uint32_t wpatch, uint32_t hpatch, uint32_t wimage, uint32_t himage,
                           uint32_t x0, uint32_t y0)
 {
-  if (x0 + wpatch > wimage) return false;
-  if (y0 + hpatch > himage) return false;
-  for (uint32_t i = 0; i < hpatch; i++)
-    ::memcpy(&image[(y0 + i) * wimage + x0], &patch[i * wpatch], wpatch);
+  if ((x0 >= wimage) || (y0 >= himage))
+    return false;
+  uint32_t w_copy = wpatch;
+  if (x0 + wpatch > wimage)
+    w_copy = wimage - x0;
+  uint32_t h_copy = hpatch;
+  if (y0 + hpatch > himage)
+    h_copy = himage - y0;
+  for (uint32_t i = 0; i < h_copy; i++)
+    ::memcpy(&image[(y0 + i) * wimage + x0], &patch[i * wpatch], w_copy);
   return true;
 }
 

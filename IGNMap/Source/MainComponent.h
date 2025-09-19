@@ -61,7 +61,7 @@ public:
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
     menuSynchronize, menuGoogle, menuBing,
-    menuToolSentinel, menuToolZoom, menuToolStac,
+    menuToolSentinel, menuToolZoom, menuToolStac, menuToolStereo,
     menuHelp, menuAbout
   };
 
@@ -162,9 +162,7 @@ private:
   void ShowHideObjects(bool hide, bool select = false, bool strict = false);
 
   void Test();
-  void ToolSentinel();
-  void ToolZoom();
-  void ToolStac();
+  ToolWindow* OpenTool(juce::String toolName);
   void ShowProperties(uint32_t index);
 
   void Synchronize();

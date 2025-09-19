@@ -23,6 +23,7 @@
 #include "ObjectViewer.h"
 #include "ZoomViewer.h"
 #include "StacViewer.h"
+#include "StereoViewer.h"
 #include "AffineImage.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
@@ -247,6 +248,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStac);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
 		menu.addItem(1000, "Test");
 	}
 	else if (menuIndex == 3)
@@ -318,7 +320,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
-		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolStac,
+		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolStac, CommandIDs::menuToolStereo,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -516,6 +518,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolStac:
 		result.setInfo(juce::translate("Stac"), juce::translate("Stac"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolStereo:
+		result.setInfo(juce::translate("Stereoscopic View"), juce::translate("Stereoscopic View"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -694,13 +699,16 @@ bool MainComponent::perform(const InvocationInfo& info)
 		AboutIGNMap();
 		break;
 	case CommandIDs::menuToolSentinel: 
-		ToolSentinel();
+		OpenTool("Sentinel");
 		break;
 	case CommandIDs::menuToolZoom:
-		ToolZoom();
+		OpenTool("Zoom");
 		break;
 	case CommandIDs::menuToolStac:
-		ToolStac();
+		OpenTool("Stac");
+		break;
+	case CommandIDs::menuToolStereo:
+		OpenTool("Stereo");
 		break;
 	default:
 		return false;
@@ -1080,10 +1088,10 @@ bool MainComponent::ShowHideSidePanel()
 void MainComponent::AboutIGNMap()
 {
 	juce::String version = "0.1.2";
-	juce::String info = "04/03/2025";
-	juce::String message = "IGNMap 3 Version : " + version + "\n" + info + "\n";
+	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
+	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
-		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER) + "\n";
+		+ juce::String(JUCE_MINOR_VERSION) + "." + juce::String(JUCE_BUILDNUMBER) + "\n"; 
 	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, juce::translate("About IGNMap"), message, "OK");
 }
 
@@ -1570,6 +1578,123 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	XFrame F = m_MapView.get()->GetViewFrame();
+	juce::Image image = m_MapView.get()->GetImage();
+	double gsd = m_MapView.get()->GetGsd();
+	double X0 = F.Xmin, Y0 = F.Ymax;
+	uint32_t w = image.getWidth(), h = image.getHeight();
+	float* grid = new (std::nothrow) float[w * h];
+	if (grid == nullptr)
+		return;
+	for (uint32_t i = 0; i < w * h; i++)
+		grid[i] = -1000.f;
+	if (!GeoTools::ComputeZGrid(&m_GeoBase, grid, w, h, &F)) {
+		delete[] grid;
+		return;
+	}
+
+	juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readWrite);
+
+	float Z0 = std::numeric_limits<float>::max(), zMax = std::numeric_limits<float>::min();
+	for (uint32_t i = 0; i < w * h; i++) {
+		if (grid[i] < -999.)
+			continue;
+		Z0 = XMin(Z0, grid[i]);
+		zMax = XMax(zMax, grid[i]);
+	}
+	//juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Z : ", juce::String(Z0, 2) + " : " + juce::String(zMax, 2), "OK");
+
+	double SL_X = F.Xmin, SL_Y = F.Center().Y, SL_Z = zMax + 1 * F.Width();
+	double SR_X = F.Xmax, SR_Y = F.Center().Y, SR_Z = zMax + 1 * F.Width();
+	uint8_t* ima_buf = new (std::nothrow) uint8_t[w * h * 3];
+	if (ima_buf == nullptr) {
+		delete[] grid;
+		return;
+	}
+	memset(ima_buf, 0, w * h * 3);
+
+	double k, xM, yM, zM, zMB, xT, yT;
+	int u, v, pos;
+	uint32_t factor = 4, zFactor = 1;
+	juce::Colour color;
+	for (int i = 0; i < h * factor; i++) {
+		for (int j = factor * w - 1; j >= 0; j--) {
+			zM = grid[(i / factor) * w + j / factor] * zFactor;
+			/*
+			if ((j / factor - 1) >= 0) {
+				zMB = grid[i * w + j / factor - 1];
+				zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
+			}*/
+			xM = X0 + (j * gsd) / factor;
+			yM = Y0 - (i * gsd) / factor;
+			k = (Z0 - SL_Z) / (zM - SL_Z);
+			xT = SL_X + (xM - SL_X) * k;
+			yT = SL_Y + (yM - SL_Y) * k;
+			u = XRint((xT - X0) / gsd);
+			v = XRint((Y0 - yT) / gsd);
+			if ((u >= 0) && (u < w) && (v >= 0) && (v < h)) {
+				pos = v * w * 3 + u * 3;
+				color = bitmap.getPixelColour(j / factor, i / factor);
+				ima_buf[pos] = color.getRed();
+				ima_buf[pos+1] = color.getGreen();
+				ima_buf[pos + 2] = color.getBlue();
+			}
+		}
+	}
+	XTiffWriter tiffL;
+	tiffL.SetGeoTiff(X0, Y0, gsd);
+	tiffL.Write("C:\\TEMP\\Ima_L.tif", w, h, 3, 8, ima_buf);
+
+	memset(ima_buf, 0, w * h * 3);
+	for (uint32_t i = 0; i < h * factor; i++) {
+		for (uint32_t j = 0; j < factor * w; j++) {
+			zM = grid[(i / factor) * w + j / factor] * zFactor;
+			/*
+			if ((j / factor + 1) < w) {
+				zMB = grid[i * w + j / factor + 1];
+				zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
+			}*/
+			xM = X0 + (j * gsd) / factor;
+			yM = Y0 - (i * gsd) / factor;
+			k = (Z0 - SR_Z) / (zM - SR_Z);
+			xT = SR_X + (xM - SR_X) * k;
+			yT = SR_Y + (yM - SR_Y) * k;
+			u = XRint((xT - X0) / gsd);
+			v = XRint((Y0 - yT) / gsd);
+			if ((u >= 0) && (u < w) && (v >= 0) && (v < h)) {
+				pos = v * w * 3 + u * 3;
+				color = bitmap.getPixelColour(j / factor, i / factor);
+				ima_buf[pos] = color.getRed();
+				ima_buf[pos + 1] = color.getGreen();
+				ima_buf[pos + 2] = color.getBlue();
+			}
+		}
+	}
+	XTiffWriter tiffR;
+	tiffR.SetGeoTiff(X0, Y0, gsd);
+	tiffR.Write("C:\\TEMP\\Ima_R.tif", w, h, 3, 8, ima_buf);
+
+	delete[] ima_buf;
+	delete[] grid;
+
+	StereoViewer* viewer = dynamic_cast<StereoViewer*>(OpenTool("Stereo"));
+	if (viewer != nullptr) {
+		viewer->OpenImage("C:\\TEMP\\Ima_L.tif", true, 0);
+		viewer->OpenImage("C:\\TEMP\\Ima_R.tif", false, 0);
+		viewer->SetPseudoOrientation(XPt3D(SL_X, SL_Y, SL_Z), XPt3D(SR_X, SR_Y, SR_Z), XPt3D(X0, Y0, Z0), gsd);
+	}
+
+	/*
+	std::ofstream ori;
+	ori.open("C:\\TEMP\\ignmap.ori", std::ios::out);
+	ori.setf(std::ios::fixed); ori.precision(2);
+	ori << X0 << " " << Y0 << " " << Z0 << " " << gsd << std::endl;
+	ori << "Ima_L.tif " << SL_X << " " << SL_Y << " " << SL_Z << std::endl;
+	ori << "Ima_R.tif " << SR_X << " " << SR_Y << " " << SR_Z << std::endl;
+	*/
+	return;
+
+	/* Recherche d'un Z sur la Geoplateforme
 	GeoSearch search;
 	XPt3D P = m_MapView.get()->GetTarget();
 	XGeoPref pref;
@@ -1578,6 +1703,7 @@ void MainComponent::Test()
 	double z = search.GetAltitude(lon, lat);
 	juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon,"Altitude", juce::String(z, 2), "OK");
 	return;
+	*/
 
 	/*
 	XGeoPref pref;
@@ -1817,52 +1943,32 @@ void MainComponent::Search(juce::String query)
 }
 
 //==============================================================================
-// Outil Sentinel
+// Ouverture d'une fenetre outil
 //==============================================================================
-void MainComponent::ToolSentinel()
+ToolWindow* MainComponent::OpenTool(juce::String toolName)
 {
 	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "Sentinel") {
+		if (m_ToolWindows[i]->getName() == toolName) {
 			m_ToolWindows[i]->setVisible(true);
 			m_ToolWindows[i]->toFront(true);
-			return;
+			return m_ToolWindows[i];
 		}
 	}
-	SentinelViewer* viewer = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
-	viewer->setVisible(true);
-	m_ToolWindows.push_back(viewer);
-}
+	ToolWindow* tool = nullptr;
+	if (toolName == "Sentinel")
+		tool = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Zoom")
+		tool = new ZoomViewer("Zoom", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Stac")
+		tool = new StacViewer("Stac", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Stereo")
+		tool = new StereoViewer("Stereo", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 
-//==============================================================================
-// Outil Zoom
-//==============================================================================
-void MainComponent::ToolZoom()
-{
-	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "Zoom") {
-			m_ToolWindows[i]->setVisible(true);
-			m_ToolWindows[i]->toFront(true);
-			return;
-		}
+	if (tool != nullptr) {
+		tool->setVisible(true);
+		m_ToolWindows.push_back(tool);
+		return tool;
 	}
-	ZoomViewer* viewer = new ZoomViewer("Zoom", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
-	viewer->setVisible(true);
-	m_ToolWindows.push_back(viewer);
-}
 
-//==============================================================================
-// Outil Stac
-//==============================================================================
-void MainComponent::ToolStac()
-{
-	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "Stac") {
-			m_ToolWindows[i]->setVisible(true);
-			m_ToolWindows[i]->toFront(true);
-			return;
-		}
-	}
-	StacViewer* viewer = new StacViewer("Stac", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
-	viewer->setVisible(true);
-	m_ToolWindows.push_back(viewer);
+	return nullptr;
 }

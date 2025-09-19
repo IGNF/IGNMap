@@ -843,6 +843,8 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 			int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
 			if (!image.PrepareRasterDraw(F, F->Width() / w, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
 				continue;
+			if (R0 < 0) R0 = 0;
+			if (S0 < 0) S0 = 0;
 
 			int factor = win / wout;
 			if (factor < 1)
@@ -851,10 +853,14 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 			if ((wtmp == 0) || (htmp == 0))
 				continue;
 
-			float* area = new float[wtmp * htmp];
-			float* data = new float[wout * hout];
-			if ((area == nullptr)||(data == nullptr))
+			float* area = new (std::nothrow) float[wtmp * htmp];
+			if (area == nullptr) continue;
+			float* data = new (std::nothrow) float[wout * hout];
+			if (data == nullptr) {
+				delete[] area;
 				continue;
+			}
+
 			uint32_t nb_sample;
 			image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
 			XBaseImage::FastZoomBil(area, wtmp, htmp, data, wout, hout);
@@ -863,7 +869,7 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 			delete[] data;
 		}
 	}
-	return false;
+	return true;
 }
 
 //-----------------------------------------------------------------------------

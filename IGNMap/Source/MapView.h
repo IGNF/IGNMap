@@ -55,6 +55,7 @@ public:
   XFrame GetSelectionFrame() const { return m_SelectionFrame; }
   XFrame GetViewFrame() const { return m_MapThread.Frame();}
   double GetGsd() const { return m_dScale; }
+  juce::Image GetImage() { SaveImage();  return m_Image; }
   juce::Image GetSelImage() const { return m_SelImage; }
   juce::Image GetTargetImage() const { return m_TargetImage; }
   std::vector<XAnnotation>* GetAnnot() { return &m_Annot; }
