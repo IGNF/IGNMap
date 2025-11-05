@@ -55,23 +55,35 @@ public:
 //==============================================================================
 class GeoInternetImage : public GeoImage {
 protected :
-  juce::File m_Cache;
-  XFrame m_LastFrame;
-  double m_LastGsd;
+  juce::File m_Cache;         // Repertoire cache
+  XFrame m_LastFrame;         // Dernier cadre charge
+  double m_LastGsd;           // Derniere resolution chargee
   juce::Image m_SourceImage;  // Image en WebMercator
   juce::Image m_ProjImage;    // Image en projection
-  juce::String m_strRequest;
+  juce::String m_strRequest;  // Derniere requete HTTP
   int m_ZoomCorrection;       // Correction sur le niveau de zoom
+
+  struct CachedTile {
+    int X = -1, Y = -1, ZoomLevel = -1;
+    juce::Image Image;
+  };
+  std::vector<CachedTile> m_CachedTiles;
 
   void CreateCacheDir(juce::String name);
   bool SaveSourceImage(juce::String filename = "");
   virtual bool Resample(XTransfo* transfo);
+  void AddCachedTile(int x, int y, int zoomLevel, juce::Image image) 
+  {
+    if (m_CachedTiles.size() > 100) m_CachedTiles.clear();
+    CachedTile tile; tile.X = x; tile.Y = y; tile.ZoomLevel = zoomLevel; tile.Image = image; m_CachedTiles.push_back(tile);
+  }
+  juce::Image FindCachedTile(int x, int y, int zoomLevel);
 
 public:
   GeoInternetImage() { m_LastGsd = 0.; m_ZoomCorrection = 0; }
   virtual ~GeoInternetImage() { m_Cache.deleteRecursively(); }
   void SetFrame(const XFrame& F) { m_Frame = F; }
-  void SetDirty() { m_LastGsd = -1.; }  // On force le reaffichage de l'image
+  void SetDirty() { m_LastGsd = -1.; m_CachedTiles.clear(); }  // On force le reaffichage de l'image
   void SetZoomCorrection(int cor) { m_ZoomCorrection = cor; }
   int GetZoomCorrection() const { return m_ZoomCorrection; }
 

@@ -29,7 +29,7 @@ public:
 	
 	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
-	void comboBoxChanged(juce::ComboBox* /*comboBoxThatHasChanged*/) override { ; }
+	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	void sliderValueChanged(juce::Slider* slider) override;
 
 	bool SetSelection(void*);
@@ -59,6 +59,7 @@ private:
 
 	// Interface pour les images internet
 	juce::Slider m_sldZoomCorrection;
+	juce::ComboBox m_cbxStyle;
 
 	void resized() override;
 };

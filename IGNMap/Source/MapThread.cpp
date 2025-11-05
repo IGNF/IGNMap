@@ -571,31 +571,38 @@ void MapThread::DrawSelection()
 		m_Path.clear();
 		XGeoVector* V = m_GeoBase->Selection(i);
 		XFrame F = V->Frame();
+		if ((V->TypeVector() == XGeoVector::DTM) || (V->TypeVector() == XGeoVector::Raster) || (V->TypeVector() == XGeoVector::LAS)) {
+			if (m_Frame.IsIn(F))	// La vue est complement incluse dans le raster
+				continue;
+		}
+
 		int W = (int)round(F.Width() / m_dGsd);
 		int H = (int)round(F.Height() / m_dGsd);
+		int X0 = (int)floor((F.Xmin - m_dX0) / m_dGsd);
+		int Y0 = (int)floor((m_dY0 - F.Ymax) / m_dGsd);
 
 		if (V->TypeVector() == XGeoVector::DTM) {
 			g.setColour(juce::Colours::darkolivegreen);
-			g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H, 4);
+			g.drawRect(X0, Y0, W, H, 4);
 			continue;
 		}
 		if (V->TypeVector() == XGeoVector::Raster) {
 			g.setColour(juce::Colours::cornflowerblue);
-			g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H, 4);
+			g.drawRect(X0, Y0, W, H, 4);
 			continue;
 		}
 		if (V->TypeVector() == XGeoVector::LAS) {
 			g.setColour(juce::Colours::mediumvioletred);
-			g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd), (int)floor((m_dY0 - F.Ymax) / m_dGsd), W, H, 4);
+			g.drawRect(X0, Y0, W, H, 4);
 			continue;
 		}
 
 		if (m_Frame.Intersect(F)) {
 			if ((W < 25) && (H < 25)) {
 				g.setColour(juce::Colours::black);
-				g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd) - 3, (int)floor((m_dY0 - F.Ymax) / m_dGsd) - 3, W + 6, H + 6);
+				g.drawRect(X0 - 3, Y0 - 3, W + 6, H + 6);
 				g.setColour(juce::Colours::white);
-				g.drawRect((int)floor((F.Xmin - m_dX0) / m_dGsd) - 2, (int)floor((m_dY0 - F.Ymax) / m_dGsd) - 2, W + 4, H + 4);
+				g.drawRect(X0 - 2, Y0 - 2, W + 4, H + 4);
 			}
 			else {
 				DrawGeometry(V);

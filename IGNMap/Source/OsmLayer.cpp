@@ -80,12 +80,16 @@ bool OsmLayer::LoadFrame(const XFrame& F, int zoomlevel)
     for (int j = 0; j < nb_tilex; j++) {
       int x = firstX + j;
       int y = firstY + i;
-      juce::String filename = LoadTile(x, y, zoomlevel);
-      juce::Image image = juce::ImageFileFormat::loadFrom(juce::File(filename));
-      if (!image.isValid()) {
-        juce::File badFile(filename); // Le fichier est peut etre corrompu
-        badFile.deleteFile();
-        continue;
+      juce::Image image = FindCachedTile(x, y, zoomlevel);
+      if (image.isNull()) {
+        juce::String filename = LoadTile(x, y, zoomlevel);
+        image = juce::ImageFileFormat::loadFrom(juce::File(filename));
+        if (!image.isValid()) {
+          juce::File badFile(filename); // Le fichier est peut etre corrompu
+          badFile.deleteFile();
+          continue;
+        }
+        AddCachedTile(x, y, zoomlevel, image);
       }
       g.drawImageAt(image, j * m_nTileW, i * m_nTileH);
     }
@@ -122,7 +126,7 @@ juce::String OsmLayer::LoadTile(int x, int y, int zoomlevel)
   int count = 0;
   while (task.get()->isFinished() == false)
   {
-    juce::Thread::sleep(10);
+    juce::Thread::sleep(5);
     count++;
     if (count > 100) break;
   }

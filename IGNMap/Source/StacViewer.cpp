@@ -33,7 +33,7 @@ void StacViewer::mouseDown(const juce::MouseEvent& event)
 void StacViewer::mouseDrag(const juce::MouseEvent& event)
 {
   int x = event.getDistanceFromDragStartX();
-  m_nTx -= x * 10;
+  m_nTx -= x;
   SetImage();
 }
 
@@ -68,7 +68,7 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, X - radius, Y - radius, lon, lat, Z);
   juce::String server = m_StacServer + "search?bbox=" + juce::String(lon) + "," + juce::String(lat) + ",";
   pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, X + radius, Y + radius, lon, lat, Z);
-  server += juce::String(lon) + "," + juce::String(lat) + "&limit=20";
+  server += juce::String(lon) + "," + juce::String(lat) + "&limit=1";
 
   juce::URL url(server);
   juce::WebInputStream web(url, false);
@@ -114,7 +114,13 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
 //-----------------------------------------------------------------------------
 void StacViewer::SetImage()
 {
-  int Wima = m_Image.getWidth(), Hima = m_Image.getHeight();
+  if (m_Image.isNull())
+    return;
+  int scaleFactor = m_Image.getWidth() / (m_ImageComponent.getWidth() * 2);
+  if (scaleFactor < 1) scaleFactor = 1;
+  juce::Image image = m_Image.rescaled(m_Image.getWidth() / scaleFactor, m_Image.getHeight() / scaleFactor);
+
+  int Wima = image.getWidth(), Hima = image.getHeight();
   int Wcomp = m_ImageComponent.getWidth() / 2, Hcomp = m_ImageComponent.getHeight();
   
   int W = Wcomp * Hima / Hcomp;
@@ -127,9 +133,9 @@ void StacViewer::SetImage()
   juce::Image crop(juce::Image::PixelFormat::ARGB, W, Hima, true, juce::SoftwareImageType());
   juce::Graphics g(crop);
   {
-    g.drawImage(m_Image, 0, 0, Wcrop, Hima, X0, 0, Wcrop, Hima);
+    g.drawImage(image, 0, 0, Wcrop, Hima, X0, 0, Wcrop, Hima);
     if (Wcrop < W)
-      g.drawImage(m_Image, Wcrop, 0, (W - Wcrop), Hima, 0, 0, (W - Wcrop), Hima);
+      g.drawImage(image, Wcrop, 0, (W - Wcrop), Hima, 0, 0, (W - Wcrop), Hima);
   }
   juce::AffineTransform transform = juce::AffineTransform::fromTargetPoints(0, 0, 0, 0, W / 2, Hima / 2,  W, Hima / 2, W, 0, W * 2, 0);
   juce::Image final(juce::Image::PixelFormat::ARGB, W * 2, Hima, true, juce::SoftwareImageType());

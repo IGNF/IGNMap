@@ -139,7 +139,7 @@ juce::String TmsLayer::LoadTile(int x, int y, int zoomlevel)
 	int count = 0;
 	while (task.get()->isFinished() == false)
 	{
-		juce::Thread::sleep(50);
+		juce::Thread::sleep(5);
 		count++;
 		if (count > 100) break;
 	}
@@ -183,12 +183,16 @@ bool TmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
 			int x = firstX + j;
 			if ((x < (int)m_TileSet[zoomlevel].m_nMinCol) || (x > (int)m_TileSet[zoomlevel].m_nMaxCol))
 				continue;
-			juce::String filename = LoadTile(x, y, zoomlevel);
-			juce::Image image = juce::ImageFileFormat::loadFrom(juce::File(filename));
-			if (!image.isValid()) {
-				juce::File badFile(filename); // Le fichier est peut-etre corrompu
-				badFile.deleteFile();
-				continue;
+			juce::Image image = FindCachedTile(x, y, zoomlevel);
+			if (image.isNull()) {
+				juce::String filename = LoadTile(x, y, zoomlevel);
+				image = juce::ImageFileFormat::loadFrom(juce::File(filename));
+				if (!image.isValid()) {
+					juce::File badFile(filename); // Le fichier est peut-etre corrompu
+					badFile.deleteFile();
+					continue;
+				}
+				AddCachedTile(x, y, zoomlevel, image);
 			}
 			if (m_bFlip)
 				g.drawImageAt(image, j * m_nW, i * m_nH);

@@ -12,6 +12,7 @@
 #include "ObjectViewer.h"
 #include "AffineImage.h"
 #include "GeoBase.h"
+#include "MvtLayer.h"
 
 //==============================================================================
 // ObjectViewerComponent : constructeur
@@ -90,6 +91,9 @@ ObjectViewerComponent::ObjectViewerComponent()
 	addAndMakeVisible(m_sldZoomCorrection);
 	m_sldZoomCorrection.addListener(this);
 
+	addAndMakeVisible(m_cbxStyle);
+	m_cbxStyle.addListener(this);
+
 	setSize(230, 300);
 	SetSelection(nullptr);
 }
@@ -117,6 +121,7 @@ void ObjectViewerComponent::resized()
 
 	// Interface pour les images Internet
 	m_sldZoomCorrection.setBounds(10, 10, 200, 40);
+	m_cbxStyle.setBounds(10, 100, 200, 40);
 }
 
 //==============================================================================
@@ -178,6 +183,21 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 	}
 }
 
+//==============================================================================
+// Reponses aux combo box
+//==============================================================================
+void ObjectViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+{
+	if (m_Object == nullptr)
+		return;
+	MvtLayer* V = dynamic_cast<MvtLayer*>(m_Object);
+	if ((V != nullptr)&&(comboBoxThatHasChanged == &m_cbxStyle)){
+		V->LoadStyle(m_cbxStyle.getText());
+		V->SetDirty();
+		sendActionMessage("UpdateRaster");
+		return;
+	}
+}
 
 //==============================================================================
 // ObjectViewerComponent : fixe la selection
@@ -196,6 +216,7 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	m_btnApply.setVisible(false);
 	m_btnRestore.setVisible(false);
 	m_sldZoomCorrection.setVisible(false);
+	m_cbxStyle.setVisible(false);
 
 	m_Object = (XGeoObject*)S;
 	if (m_Object == nullptr)
@@ -289,6 +310,15 @@ bool ObjectViewerComponent::SetInternetImage(GeoInternetImage* internet)
 {
 	m_sldZoomCorrection.setVisible(true);
 	m_sldZoomCorrection.setValue(internet->GetZoomCorrection());
+	MvtLayer* mvt = dynamic_cast<MvtLayer*>(internet);
+	if (mvt != nullptr) {
+		m_cbxStyle.clear(juce::NotificationType::dontSendNotification);
+		m_cbxStyle.setVisible(true);
+		juce::StringArray A;
+		mvt->GetStyleFiles(A);
+		m_cbxStyle.addItemList(A, 1);
+	}
+
 	return true;
 }
 

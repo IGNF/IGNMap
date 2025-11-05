@@ -12,6 +12,7 @@
 #include <algorithm>
 #include "XBaseImage.h"
 #include "../XTool/XInterpol.h"
+#include "../XTool/XTransfo.h"
 
 //-----------------------------------------------------------------------------
 // Valeurs min, max et boost pour la conversion en 8 bits
@@ -958,5 +959,54 @@ bool XBaseImage::FastZoomBil(float* in, uint32_t win, uint32_t hin, float* out, 
     }
 
   }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Fonction de réechantillonnage
+//-----------------------------------------------------------------------------
+bool XBaseImage::Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset,
+                          XTransfo* transfo, XInterpol* interpol)
+{
+  int wout, hout;
+  transfo->Dimension((int)w, (int)h, &wout, &hout);
+
+  int win = interpol->Win(), win_size = (interpol->Win() * 2);
+  double* value = new double[win_size * win_size];
+  int result;
+  uint8_t* pix = new uint8_t[win_size * win_size * nbSample];
+  double xi = 0., yi = 0.;
+  int u = 0, v = 0;
+  for (int i = 0; i < hout; i++) {
+    uint8_t* line_out = &out[i * wout * nbSample];
+    for (int j = 0; j < wout; j++) {
+      uint8_t* pix_out = line_out + j * nbSample;
+      transfo->Direct(j, i, &xi, &yi);
+      u = (int)xi;
+      v = (int)yi;
+      if (u >= w - win) continue;
+      if (v >= h - win) continue;
+      if (u < win) continue;
+      if (v < win) continue;
+      for (int k = 0; k < win_size; k++)
+        ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample);
+
+      for (int k = 0; k < nbSample; k++) {
+        uint8_t* ptr = (uint8_t*)pix + k;
+        for (int p = 0; p < win_size * win_size; p++) {
+          value[p] = *ptr;
+          ptr += nbSample;
+        }
+        result = (int)interpol->BiCompute(value, xi - u, yi - v);
+        if (result < 0) result = 0;
+        if (result > 255) result = 255;
+        *pix_out = (uint8_t)result;
+        pix_out++;
+      }
+    }
+  }
+  delete[] value;
+  delete[] pix;
+
   return true;
 }

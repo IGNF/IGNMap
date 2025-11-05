@@ -33,6 +33,7 @@ public:
 		setContentOwned(&m_ImageComponent, true);
 		m_ImageComponent.setInterceptsMouseClicks(false, false);
 		setResizeLimits(400, 450, 10000, 10000);
+		m_nZoom = 4;
 	}
 
 	virtual ~ZoomViewer() { Clear(); }
@@ -48,6 +49,7 @@ public:
 
 private:
 	juce::ImageComponent m_ImageComponent;
+	int m_nZoom;
 
 #ifdef  IGNMAP_ONNX
 	Ort::Env* m_Env = nullptr;

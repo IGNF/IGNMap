@@ -10,6 +10,27 @@
 //-----------------------------------------------------------------------------
 
 #include "ZoomViewer.h"
+#include "../XToolImage/XBaseImage.h"
+#include "../XTool/XTransfo.h"
+#include "../XTool/XInterpol.h"
+#include "../../XToolAlgo/XToneMapper.h"
+
+
+class XTransfoZoom : public XTransfo {
+protected:
+  double	m_dZoom;
+  double	m_dFactor;
+
+public:
+  XTransfoZoom(double zoom) { m_dZoom = zoom; m_dFactor = 1. / zoom; }
+
+  virtual void Direct(double x, double y, double* u, double* v) {
+    *u = x * m_dFactor;
+    *v = y * m_dFactor;
+  }
+  virtual void Dimension(int w, int h, int* wout, int* hout) { *wout = (int)(w * m_dZoom); *hout = (int)(h * m_dZoom); }
+};
+
 
 //-----------------------------------------------------------------------------
 // Fonction utilitaire
@@ -76,20 +97,31 @@ bool ZoomViewer::LoadModel()
 //-----------------------------------------------------------------------------
 void ZoomViewer::mouseDown(const juce::MouseEvent& event)
 {
-#ifdef  IGNMAP_ONNX
 	if (event.y <= getTitleBarHeight()) {
 		juce::DocumentWindow::mouseDown(event);
 		return;
 	}
 
-  std::function< void() > Interpolation = [=]() {	Clear(); };
-  std::function< void() > ZoomIA = [=]() {	LoadModel(); };
-
   juce::PopupMenu menu;
+  bool tick = false;
+#ifdef  IGNMAP_ONNX
+  std::function< void() > Interpolation = [=]() {	Clear(); };
   menu.addItem(juce::translate("Interpolation"), Interpolation);
+  std::function< void() > ZoomIA = [=]() {	LoadModel(); };
   menu.addItem(juce::translate("IA"), ZoomIA);
-  menu.showMenuAsync(juce::PopupMenu::Options());
 #endif
+  std::function< void() > Zoom2X = [=]() {	m_nZoom = 2; };
+  if (m_nZoom == 2) tick = true; else tick = false;
+  menu.addItem(juce::translate("Zoom x 2"), true, tick, Zoom2X);
+  std::function< void() > Zoom4X = [=]() {	m_nZoom = 4; };
+  if (m_nZoom == 4) tick = true; else tick = false;
+  menu.addItem(juce::translate("Zoom x 4"), true, tick, Zoom4X);
+  if (m_nZoom == 6) tick = true; else tick = false;
+  std::function< void() > Zoom6X = [=]() {	m_nZoom = 6; };
+  menu.addItem(juce::translate("Zoom x 6"), true, tick, Zoom6X);
+
+  menu.showMenuAsync(juce::PopupMenu::Options());
+
 }
 
 //-----------------------------------------------------------------------------
@@ -108,8 +140,52 @@ void ZoomViewer::SetTargetImage(const juce::Image& image)
 #else
 void ZoomViewer::SetTargetImage(const juce::Image& image)
 {
+  /*
   juce::Image resized_image = image.rescaled(image.getWidth() * 4, image.getHeight() * 4, juce::Graphics::highResamplingQuality);
   m_ImageComponent.setImage(resized_image);
+  */
+  //juce::Image resized_image = image.rescaled(image.getWidth() * 4, image.getHeight() * 4, juce::Graphics::highResamplingQuality);
+
+  juce::Image imageRGB = image.convertedToFormat(juce::Image::RGB);
+
+  juce::Image resized_image(imageRGB.getFormat(), imageRGB.getWidth() * m_nZoom, imageRGB.getHeight() * m_nZoom, true);
+
+  juce::Image::BitmapData bitmap(imageRGB, juce::Image::BitmapData::readOnly);
+  juce::Image::BitmapData resized(resized_image, juce::Image::BitmapData::readWrite);
+  {
+    int w = bitmap.width, h = bitmap.height, nbSample = bitmap.pixelStride;
+    int offset = bitmap.lineStride - (w * nbSample);
+    XTransfoZoom transfo(m_nZoom);
+    XInterCubCatmull interpol;
+    //uint8_t* out = new uint8_t[w * h * nbSample];
+    uint8_t* out = resized.data;
+    XBaseImage::Resample(bitmap.data, out, w, h, nbSample, offset, &transfo, &interpol);
+
+    
+    XToneMapper::ToneMappingInt mapper;
+    mapper.set_enabled(0, true);
+    mapper.set_power(0, (float)5);
+    mapper.set_unsharp_mask_enabled(true);
+    mapper.set_unsharp_mask_power((float)20);
+    mapper.process_8bit_rgb_image(out, w * m_nZoom, h * m_nZoom);
+   
+
+    //delete[] out;
+  }
+  /*
+  juce::ImageConvolutionKernel kernel(3);
+  kernel.setKernelValue(0, 0, 0.f);
+  kernel.setKernelValue(0, 1, -1.f);
+  kernel.setKernelValue(0, 2, 0.f);
+  kernel.setKernelValue(1, 0, -1.f);
+  kernel.setKernelValue(1, 1, 5.f);
+  kernel.setKernelValue(1, 2, -1.f);
+  kernel.setKernelValue(2, 0, 0.f);
+  kernel.setKernelValue(2, 1, -1.f);
+  kernel.setKernelValue(2, 2, 0.f);
+  kernel.applyToImage(resized_image, resized_image, juce::Rectangle<int>(resized_image.getWidth(), resized_image.getHeight()));
+  */
+  m_ImageComponent.setImage(resized_image, juce::RectanglePlacement(juce::RectanglePlacement::doNotResize));
 }
 #endif
 

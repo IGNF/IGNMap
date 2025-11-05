@@ -40,7 +40,8 @@ public:
   bool Read(const juce::var& layer, std::vector<MvtSprite>* sprite);
   bool ReadFilterArray(const juce::var& filter);
   bool ReadFilter(const juce::var& filter);
-  bool TestZoomLevel(int zoomlevel) const;
+  int MinZoomLevel() const { return m_MinZoom; }
+  int MaxZoomLevel() const { return m_MaxZoom; }
   eLayerType Type() { return m_Type; }
 
   juce::String SourceLayer() { return m_SourceLayer; }
@@ -51,8 +52,8 @@ public:
   juce::String TextField() const { return m_TextField; }
   juce::Image Icon() const { return m_Icon; }
 
-  bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth, float* iconSize,
-                float* textSize, juce::Colour* halo);
+  bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth, float* iconSize, float* radius,
+                float* textSize, juce::Colour* halo, float* opacity);
   int NbLineDash() const { return m_LineDash.size(); }
   float* LineDash() { return m_LineDash.data(); }
 
@@ -84,6 +85,8 @@ protected:
   juce::Image m_Icon;
   std::vector<float> m_IconSize;
   std::vector<int> m_IconSizeStops;
+  std::vector<float> m_CircleRadius;
+  std::vector<int> m_CircleRadiusStops;
 
   typedef struct {
     eFilterType  Type;
@@ -92,11 +95,15 @@ protected:
   } Filter;
   std::vector<Filter> m_Filter;
 
+  bool ReadColorValue(const juce::var& paint, std::vector<juce::Colour>& Value, std::vector<int>& Stops, const char* field);
+  bool ReadFillValue(const juce::var& paint, std::vector<juce::FillType>& Value, std::vector<int>& Stops, const char* field);
+  bool ReadFloatValue(const juce::var& paint, std::vector<float>& Value, std::vector<int>& Stops, const char* field);
+
   static bool ReadExpression(const juce::var& expr, std::vector<float>& T, std::vector<int>& stops);
   static juce::Colour ReadColour(const juce::String& str);
 
   template<typename T> static T ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value);
-  
+  template<typename T> static T ReadStopValInterpol(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value);
 };
 
 //-----------------------------------------------------------------------------
@@ -141,12 +148,16 @@ public:
 //-----------------------------------------------------------------------------
 class MvtLayer : public GeoInternetImage {
 protected:
+  juce::String m_strTitle;
   juce::String m_strServer;
   juce::String m_strFormat;
+  XFrame m_F;		// Cadre dans la projection native TMS
   uint32_t m_nTileW;
   uint32_t m_nTileH;
+  uint32_t m_nMinZoom;  // Niveau de zoom minimum de la pyramide
   uint32_t m_nMaxZoom;  // Niveau de zoom maximum de la pyramide
   uint32_t m_nLastZoom; // Dernier niveau de zoom utilise
+  std::vector<juce::String> m_StyleFiles;
   juce::var m_StyleLayers;
   
   std::vector<MvtStyleLayer> m_Layer;
@@ -157,9 +168,12 @@ protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
 
 public:
+  MvtLayer() { m_nTileW = m_nTileH = 256; m_nMinZoom = m_nMaxZoom = m_nLastZoom = 0; }
   MvtLayer(std::string server, std::string format = "mvt", uint32_t tileW = 256,
     uint32_t tileH = 256, uint32_t max_zoom = 19);
   virtual ~MvtLayer() { ; }
+
+  bool ReadServer(juce::String serverUrl);
 
   struct geom_handler;
 
@@ -169,12 +183,12 @@ public:
   inline virtual double Resolution() const { return Swath(m_nMaxZoom) / m_nTileW; } // Resolution max a l'Equateur
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
+  bool DrawWithStyle(const XFrame& F, int zoomlevel);
+  bool DrawMvt(MvtTile* T, MvtStyleLayer* layer);
+
   bool LoadStyle(juce::String server);
   bool ReadSprite(juce::String server);
-  
-  bool DrawWithStyle(const XFrame& F, int zoomlevel);
-
-  bool DrawMvt(MvtTile* T, MvtStyleLayer* layer);
+  void GetStyleFiles(juce::StringArray& A) { for (int i = 0; i < m_StyleFiles.size(); i++) A.add(m_StyleFiles[i]); }
 };
 
 

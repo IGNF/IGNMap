@@ -118,6 +118,84 @@ MvtLayer::MvtLayer(std::string server, std::string format, uint32_t tileW, uint3
 }
 
 //-----------------------------------------------------------------------------
+// Lecture d'une URL contenant la description de la couche
+//-----------------------------------------------------------------------------
+bool MvtLayer::ReadServer(juce::String serverUrl)
+{
+	juce::URL url(serverUrl);
+
+	std::unique_ptr<juce::XmlElement> root = url.readEntireXmlStream();
+	if (root.get()->getTagName() != "TileMap")
+		return false;
+
+	// Lecture des attributs
+	juce::XmlElement* element = root.get()->getChildByName("Title");
+	if (element != nullptr)
+		m_strTitle = element->getAllSubText();
+	else return false;
+
+	// Lecture des metadata -> fichier de style
+	m_StyleFiles.clear();
+	for (int i = 0; i < root->getNumChildElements(); i++) {
+		juce::XmlElement* meta = root->getChildElement(i);
+		if (meta->getTagName() != "Metadata")
+			continue;
+		juce::String href = meta->getStringAttribute("href");
+		if (href.isNotEmpty())
+			m_StyleFiles.push_back(href);
+	}
+	if (m_StyleFiles.size() < 1) return false;
+	if (!LoadStyle(m_StyleFiles[0])) return false;
+	
+	element = root.get()->getChildByName("BoundingBox");
+	if (element != nullptr) {
+		m_F.Xmin = element->getDoubleAttribute("minx");
+		m_F.Xmax = element->getDoubleAttribute("maxx");
+		m_F.Ymin = element->getDoubleAttribute("miny");
+		m_F.Ymax = element->getDoubleAttribute("maxy");
+	}
+	else return false;
+	
+	element = root.get()->getChildByName("TileFormat");
+	if (element != nullptr) {
+		m_strFormat = element->getStringAttribute("extension");
+		m_nTileW = (uint16_t)element->getIntAttribute("width");
+		m_nTileH = (uint16_t)element->getIntAttribute("height");
+	}
+	else return false;
+
+	// Lecture des TileSets
+	element = root.get()->getChildByName("TileSets");
+	if (element == nullptr) return false;
+	int min_zoom = 100, max_zoom = -1;
+	for (int i = 0; i < element->getNumChildElements(); i++) {
+		juce::XmlElement* tileSet = element->getChildElement(i);
+		if (tileSet->getTagName() != "TileSet")
+			continue;
+		double resol =  tileSet->getDoubleAttribute("units-per-pixel");
+		if (resol <= 0.) continue;
+		int zoom = XRint(log(40075016.686 / resol) / log(2.)) - 8;
+		if (zoom > max_zoom) max_zoom = zoom;
+		if (zoom < min_zoom) min_zoom = zoom;
+	}
+	if (max_zoom < 0) return false;
+	m_nMaxZoom = (uint32_t)max_zoom;
+	m_nMinZoom = (uint32_t)min_zoom;
+
+	// Definition de l'emprise
+	XGeoPref pref;
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+	SetFrame(F);
+
+	CreateCacheDir(m_strTitle);
+	m_strServer = serverUrl;
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Chargement d'une dalle
 //-----------------------------------------------------------------------------
 juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
@@ -129,7 +207,7 @@ juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
 		return filename;
 
 	// Telechargement du fichier
-	m_strRequest = "https://" + m_strServer + "/" + juce::String(zoomlevel) + "/" + juce::String(x) + "/" + juce::String(y) + "." + m_strFormat;
+	m_strRequest = m_strServer + "/" + juce::String(zoomlevel) + "/" + juce::String(x) + "/" + juce::String(y) + "." + m_strFormat;
 	juce::URL url(m_strRequest);
 	juce::URL::DownloadTaskOptions options;
 	std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
@@ -198,7 +276,7 @@ juce::Image& MvtLayer::GetAreaImage(const XFrame& F, double gsd)
 }
 
 //-----------------------------------------------------------------------------
-// Attributs de l'objet OsmLayer
+// Attributs de l'objet MvtLayer
 //-----------------------------------------------------------------------------
 bool MvtLayer::ReadAttributes(std::vector<std::string>& V)
 {
@@ -365,9 +443,15 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 		//	continue;
 		//if (cmpt != 379) // Toponyme
 		//  continue;
+		//if (cmpt != 410) // "toponyme localite n0 typoA5etA6 commune"
+		//	continue;
+		//if (cmpt != 411)
+		//	continue;
 		MvtStyleLayer layer = m_Layer[cmpt];
 		// Niveaux de zoom
-		if (!layer.TestZoomLevel(zoomlevel))
+		if (zoomlevel < layer.MinZoomLevel())
+			continue;
+		if (zoomlevel >= layer.MaxZoomLevel())
 			continue;
 
 		// Lecture des tiles
@@ -419,21 +503,28 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		return false;
 
 	float factor = layer.extent() / m_nTileW, gsd_factor = (float)(m_LastGsd / T->GSD());
+	gsd_factor = 1.;
 
-	float line_width = 1.f, iconSize = 1.f, textSize = 10.f;
+	float line_width = 1.f, iconSize = 1.f, radius = 1.f, textSize = 10.f, opacity = 1.f;
 	juce::String text_field = style->TextField();
 	juce::Path path;
 
 	juce::Colour pen, halo;
 	juce::FillType fillType;
 
-	style->SetStyle((int)m_nLastZoom, &pen, &fillType, &line_width, &iconSize, &textSize, &halo);
+	// Zoom level du style a appliquer
+	int styleZoomLevel = (int)m_nLastZoom;
+	styleZoomLevel =	XRint(log(40075016.686 / m_LastGsd) / log(2.)) - 8;
+
+	style->SetStyle(styleZoomLevel, &pen, &fillType, &line_width, &iconSize, &radius, &textSize, &halo, &opacity);
+	if (opacity <= 0.f)
+		return false;
 	if ((style->Type() == MvtStyleLayer::line) && (line_width <= 0.f))
 		return false;
-	if ((style->Type() == MvtStyleLayer::circle) && (line_width <= 0.f))
+	if ((style->Type() == MvtStyleLayer::circle) && (radius <= 0.5f))
 		return false;
 	g.setColour(pen);
-	if (style->Type() == MvtStyleLayer::fill)
+	if ((style->Type() == MvtStyleLayer::fill) || (style->Type() == MvtStyleLayer::circle))
 		g.setFillType(fillType);
 	g.setFont(textSize);
 
@@ -461,16 +552,19 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 			case MvtStyleLayer::equal:
 			case MvtStyleLayer::in:
 			case MvtStyleLayer::diff:
+				feature.reset_property();
 				while (auto property = feature.next_property()) {
 					if (property.key().to_string() == style->FilterAtt(i)) {
 						if ((int)property.value().type() == 1)
-							filtering &= style->TestAtt(i, property.value().string_value().to_string());
+							filtering = style->TestAtt(i, property.value().string_value().to_string());
 						break;
 					}
 				}
 				break;
 			default:;
 			}
+			if (!filtering)
+				break;
 		}
 
 		if (!filtering)
@@ -497,6 +591,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 				Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
 				Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
 
+				// Symbol
 				if (style->Type() == MvtStyleLayer::symbol) {
 					if (!style->Icon().isNull()) {
 						g.setOpacity(1.f);
@@ -511,7 +606,16 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 					}
 				}
 
+				// Circle
+				if (style->Type() == MvtStyleLayer::circle) {
+					g.fillEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius);
+					if (line_width > 0.5f)
+						g.drawEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius, line_width);
+				}
+
+				// Text
 				if (!text_field.isEmpty()) {
+					feature.reset_property();
 					while (auto property = feature.next_property()) {
 						if (property.key().to_string() == text_field) {
 							if ((int)property.value().type() == 1) {
@@ -609,7 +713,8 @@ void MvtStyleLayer::Clear()
 {
 	m_Type = noType;
 	m_SourceLayer = "";
-	m_MinZoom = m_MaxZoom = -1;
+	m_MinZoom = 0;	// Valeurs par defaut https://docs.mapbox.com/style-spec/reference/layers/
+	m_MaxZoom = 24;	// At zoom levels equal to or greater than the maxzoom, the layer will be hidden
 	m_Visibility = false;
 	m_LineColor.clear();
 	m_LineStops.clear();
@@ -636,30 +741,16 @@ void MvtStyleLayer::Clear()
 }
 
 //-----------------------------------------------------------------------------
-// Test la validite d'un niveau de zoom pour ce style
-//-----------------------------------------------------------------------------
-bool MvtStyleLayer::TestZoomLevel(int zoomlevel) const
-{
-	if (m_MinZoom >= 0)
-		if (zoomlevel < m_MinZoom)
-			return false;
-	if (m_MaxZoom >= 0)
-		if (zoomlevel > m_MaxZoom)
-			return false;
-	return true;
-}
-
-//-----------------------------------------------------------------------------
 // Fixe le style pour le dessin
 //-----------------------------------------------------------------------------
 bool MvtStyleLayer::SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fillType, float* lineWidth, float* iconSize, 
-														 float* textSize, juce::Colour* halo)
+														 float* radius,float* textSize, juce::Colour* halo, float* opacity)
 {
 	if (m_Type == noType)
 		return false;
 
-	//*lineWidth = ReadStopValue(zoomlevel, m_Width, m_WidthStops, 1.f);
-	*lineWidth = ReadStopVal<float>(zoomlevel, m_Width, m_WidthStops, 1.f);
+	*lineWidth = ReadStopValInterpol<float>(zoomlevel, m_Width, m_WidthStops, 1.f);
+	*opacity = ReadStopValInterpol<float>(zoomlevel, m_Opacity, m_OpacityStops, 1.f);
 
 	if (m_Type == line) {
 		*pen = ReadStopVal<juce::Colour>(zoomlevel, m_LineColor, m_LineStops, juce::Colour());
@@ -670,19 +761,26 @@ bool MvtStyleLayer::SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* f
 		*pen = ReadStopVal<juce::Colour>(zoomlevel, m_OutlineColor, m_OutlineStops, juce::Colour());
 		*fillType = ReadStopVal<juce::FillType>(zoomlevel, m_FillType, m_FillStops, juce::FillType());
 
-		float opacity = ReadStopVal<float>(zoomlevel, m_Opacity, m_OpacityStops, 1.f);
+		float opacity = ReadStopValInterpol<float>(zoomlevel, m_Opacity, m_OpacityStops, 1.f);
 		fillType->setOpacity(opacity);
 
 		return true;
 	}
 
 	if (m_Type == symbol) {
-		*iconSize = ReadStopVal<float>(zoomlevel, m_IconSize, m_IconSizeStops, 1.f);
-		*textSize = ReadStopVal<float>(zoomlevel, m_TextSize, m_TextSizeStops, 10.f);
+		*iconSize = ReadStopValInterpol<float>(zoomlevel, m_IconSize, m_IconSizeStops, 1.f);
+		*textSize = ReadStopValInterpol<float>(zoomlevel, m_TextSize, m_TextSizeStops, 10.f);
 
 		*pen = ReadStopVal<juce::Colour>(zoomlevel, m_TextColor, m_TextStops, juce::Colours::transparentWhite);
 		*halo = ReadStopVal<juce::Colour>(zoomlevel, m_TextHaloColor, m_TextHaloStops, juce::Colours::transparentWhite);
 
+		return true;
+	}
+
+	if (m_Type == circle) {
+		*pen = ReadStopVal<juce::Colour>(zoomlevel, m_LineColor, m_LineStops, juce::Colour());
+		*radius = ReadStopValInterpol<float>(zoomlevel, m_CircleRadius, m_CircleRadiusStops, 10.f);
+		*fillType = ReadStopVal<juce::FillType>(zoomlevel, m_FillType, m_FillStops, juce::FillType());
 		return true;
 	}
 
@@ -723,19 +821,9 @@ bool MvtStyleLayer::Read(const juce::var& layer, std::vector<MvtSprite>* sprite)
 			m_TextField = layout["text-field"].toString();
 			m_TextField = m_TextField.removeCharacters("{}");
 		}
-		if (layout.hasProperty("text-size")) {
-			if (!ReadExpression(layout["text-size"], m_TextSize, m_TextSizeStops)) {
-				if (layout["text-size"].hasProperty("stops")) {
-					juce::var stops = layout["text-size"]["stops"];
-					for (int s = 0; s < stops.size(); s++) {
-						m_TextSizeStops.push_back((int)stops[s][0]);
-						m_TextSize.push_back(stops[s][1].toString().getFloatValue());
-					}
-				}
-				else
-					m_TextSize.push_back(layout["text-size"].toString().getFloatValue());
-			}
-		}
+
+		ReadFloatValue(layout, m_TextSize, m_TextSizeStops, "text-size");
+		
 		if (layout.hasProperty("visibility")) {
 			if (layout["visibility"].toString() == "visible")
 				m_Visibility = true;
@@ -749,19 +837,8 @@ bool MvtStyleLayer::Read(const juce::var& layer, std::vector<MvtSprite>* sprite)
 				}
 			}
 		}
-		if (layout.hasProperty("icon-size")) {
-			if (!ReadExpression(layout["icon-size"], m_IconSize, m_IconSizeStops)) {
-				if (layout["icon-size"].hasProperty("stops")) {
-					juce::var stops = layout["icon-size"]["stops"];
-					for (int s = 0; s < stops.size(); s++) {
-						m_IconSizeStops.push_back((int)stops[s][0]);
-						m_IconSize.push_back(stops[s][1].toString().getFloatValue());
-					}
-				}
-				else
-					m_IconSize.push_back(layout["icon-size"].toString().getFloatValue());
-			}
-		}
+
+		ReadFloatValue(layout, m_IconSize, m_IconSizeStops, "icon-size");
 	}
 
 	// Lectures des informations FILTER
@@ -777,106 +854,17 @@ bool MvtStyleLayer::Read(const juce::var& layer, std::vector<MvtSprite>* sprite)
 		juce::var paint = layer["paint"];
 
 		// Line Color
-		if (paint.hasProperty("line-color")) {
-			if (paint["line-color"].hasProperty("stops")) {
-				juce::var stops = paint["line-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_LineStops.push_back((int)stops[s][0]);
-					color = juce::Colour::fromString(stops[s][1].toString());
-					color = color.withAlpha(1.f);
-					m_LineColor.push_back(color);
-				}
-			}
-			else {
-				color = juce::Colour::fromString(paint["line-color"].toString());
-				color = color.withAlpha(1.f);
-				m_LineColor.push_back(color);
-			}
-		}
-
-		// Circle Color
-		if ((m_Type == circle) && (paint.hasProperty("circle-color"))) {
-			if (paint["circle-color"].hasProperty("stops")) {
-				juce::var stops = paint["circle-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_LineStops.push_back((int)stops[s][0]);
-					color = juce::Colour::fromString(stops[s][1].toString());
-					color = color.withAlpha(1.f);
-					m_LineColor.push_back(color);
-				}
-			}
-			else {
-				color = juce::Colour::fromString(paint["circle-color"].toString());
-				color = color.withAlpha(1.f);
-				m_LineColor.push_back(color);
-			}
-		}
-
-		// Outline Color
-		if (paint.hasProperty("fill-outline-color")) {
-			if (paint["fill-outline-color"].hasProperty("stops")) {
-				juce::var stops = paint["fill-outline-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_OutlineStops.push_back((int)stops[s][0]);
-					color = juce::Colour::fromString(stops[s][1].toString());
-					color = color.withAlpha(1.f);
-					m_OutlineColor.push_back(color);
-				}
-			}
-			else {
-				color = juce::Colour::fromString(paint["fill-outline-color"].toString());
-				color = color.withAlpha(1.f);
-				m_OutlineColor.push_back(color);
-			}
-		}
-
-		// Text Color
-		if (paint.hasProperty("text-color")) {
-			if (paint["text-color"].hasProperty("stops")) {
-				juce::var stops = paint["text-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_TextStops.push_back((int)stops[s][0]);
-					color = ReadColour(stops[s][1]);
-					m_TextColor.push_back(color);
-				}
-			}
-			else {
-				color = ReadColour(paint["text-color"]);
-				m_TextColor.push_back(color);
-			}
-		}
-
-		// Text Halo Color
-		if (paint.hasProperty("text-halo-color")) {
-			if (paint["text-halo-color"].hasProperty("stops")) {
-				juce::var stops = paint["text-halo-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_TextHaloStops.push_back((int)stops[s][0]);
-					color = ReadColour(stops[s][1]);
-					m_TextHaloColor.push_back(color);
-				}
-			}
-			else {
-				color = ReadColour(paint["text-halo-color"]);
-				m_TextHaloColor.push_back(color);
-			}
-		}
+		ReadColorValue(paint, m_LineColor, m_LineStops, "line-color");
+		if (m_Type == circle)
+			ReadColorValue(paint, m_LineColor, m_LineStops, "circle-stroke-color");
+		ReadColorValue(paint, m_OutlineColor, m_OutlineStops, "fill-outline-color");
+		ReadColorValue(paint, m_TextColor, m_TextStops, "text-color");
+		ReadColorValue(paint, m_TextHaloColor, m_TextHaloStops, "text-halo-color");
 
 		// Fill Color
-		if (paint.hasProperty("fill-color")) {
-			if (paint["fill-color"].hasProperty("stops")) {
-				juce::var stops = paint["fill-color"]["stops"];
-				for (int s = 0; s < stops.size(); s++) {
-					m_FillStops.push_back((int)stops[s][0]);
-					color = ReadColour(stops[s][1].toString());
-					m_FillType.push_back(juce::FillType(color));
-				}
-			}
-			else {
-				color = ReadColour(paint["fill-color"].toString());
-				m_FillType.push_back(juce::FillType(color));
-			}
-		}
+		ReadFillValue(paint, m_FillType, m_FillStops, "fill-color");
+		if (m_Type == circle)
+			ReadFillValue(paint, m_FillType, m_FillStops, "circle-color");
 
 		// Fill Pattern
 		if (paint.hasProperty("fill-pattern")) {
@@ -890,49 +878,15 @@ bool MvtStyleLayer::Read(const juce::var& layer, std::vector<MvtSprite>* sprite)
 		}
 
 		// Line Width
-		if (paint.hasProperty("line-width")) {
-			if (!ReadExpression(paint["line-width"], m_Width, m_WidthStops)) {
-				if (paint["line-width"].hasProperty("stops")) {
-					juce::var stops = paint["line-width"]["stops"];
-					for (int s = 0; s < stops.size(); s++) {
-						m_WidthStops.push_back((int)stops[s][0]);
-						m_Width.push_back(stops[s][1].toString().getFloatValue());
-					}
-				}
-				else
-					m_Width.push_back(paint["line-width"].toString().getFloatValue());
-			}
+		ReadFloatValue(paint, m_Width, m_WidthStops, "line-width");
+		if (m_Type == circle) {
+			ReadFloatValue(paint, m_Width, m_WidthStops, "circle-stroke-width");
+			ReadFloatValue(paint, m_CircleRadius, m_CircleRadiusStops, "circle-radius");
 		}
-
-		// Circle Stroke Width
-		if ((m_Type == circle) && (paint.hasProperty("circle-stroke-width"))) {
-			if (!ReadExpression(paint["circle-stroke-width"], m_Width, m_WidthStops)) {
-				if (paint["circle-stroke-width"].hasProperty("stops")) {
-					juce::var stops = paint["circle-stroke-width"]["stops"];
-					for (int s = 0; s < stops.size(); s++) {
-						m_WidthStops.push_back((int)stops[s][0]);
-						m_Width.push_back(stops[s][1].toString().getFloatValue());
-					}
-				}
-				else
-					m_Width.push_back(paint["circle-stroke-width"].toString().getFloatValue());
-			}
-		}
-
 		// Fill Opacity
-		if (paint.hasProperty("fill-opacity")) {
-			if (!ReadExpression(paint["fill-opacity"], m_Opacity, m_OpacityStops)) {
-				if (paint["fill-opacity"].hasProperty("stops")) {
-					juce::var stops = paint["fill-opacity"]["stops"];
-					for (int s = 0; s < stops.size(); s++) {
-						m_OpacityStops.push_back((int)stops[s][0]);
-						m_Opacity.push_back(stops[s][1].toString().getFloatValue());
-					}
-				}
-				else
-					m_Opacity.push_back(paint["fill-opacity"].toString().getFloatValue());
-			}
-		}
+		ReadFloatValue(paint, m_Opacity, m_OpacityStops, "fill-opacity");
+		if (m_Type == circle)
+			ReadFloatValue(paint, m_Opacity, m_OpacityStops, "circle-opacity");
 
 		// Line Dash
 		if (paint.hasProperty("line-dasharray")) {
@@ -1067,6 +1021,74 @@ bool MvtStyleLayer::ReadExpression(const juce::var& expr, std::vector<float>& T,
 //-----------------------------------------------------------------------------
 // Lecture des couleurs
 //-----------------------------------------------------------------------------
+bool MvtStyleLayer::ReadColorValue(const juce::var& paint, std::vector<juce::Colour>& Value, std::vector<int>& Stops, const char* field)
+{
+	if (!paint.hasProperty(field))
+		return false;
+	juce::Colour color;
+	if (paint[field].hasProperty("stops")) {
+		juce::var stops = paint[field]["stops"];
+		for (int s = 0; s < stops.size(); s++) {
+			Stops.push_back((int)stops[s][0]);
+			color = ReadColour(stops[s][1].toString());
+			Value.push_back(color);
+		}
+	}
+	else {
+		color = ReadColour(paint[field].toString());
+		Value.push_back(color);
+	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture des remplissages
+//-----------------------------------------------------------------------------
+bool MvtStyleLayer::ReadFillValue(const juce::var& paint, std::vector<juce::FillType>& Value, std::vector<int>& Stops, const char* field)
+{
+	if (!paint.hasProperty(field))
+		return false;
+	juce::Colour color;
+	if (paint[field].hasProperty("stops")) {
+		juce::var stops = paint[field]["stops"];
+		for (int s = 0; s < stops.size(); s++) {
+			Stops.push_back((int)stops[s][0]);
+			color = ReadColour(stops[s][1].toString());
+			Value.push_back(juce::FillType(color));
+		}
+	}
+	else {
+		color = ReadColour(paint[field].toString());
+		Value.push_back(juce::FillType(color));
+	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture des valeurs Float
+//-----------------------------------------------------------------------------
+bool MvtStyleLayer::ReadFloatValue(const juce::var& paint, std::vector<float>& Value, std::vector<int>& Stops, const char* field)
+{
+	if (!paint.hasProperty(field))
+		return false;
+
+	if (!ReadExpression(paint[field], Value, Stops)) {
+		if (paint[field].hasProperty("stops")) {
+			juce::var stops = paint[field]["stops"];
+			for (int s = 0; s < stops.size(); s++) {
+				Stops.push_back((int)stops[s][0]);
+				Value.push_back(stops[s][1].toString().getFloatValue());
+			}
+		}
+		else
+			Value.push_back(paint[field].toString().getFloatValue());
+		}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture d'une couleur
+//-----------------------------------------------------------------------------
 juce::Colour MvtStyleLayer::ReadColour(const juce::String& str)
 {
 	juce::Colour color;
@@ -1096,19 +1118,46 @@ juce::Colour MvtStyleLayer::ReadColour(const juce::String& str)
 //-----------------------------------------------------------------------------
 template<typename T> T MvtStyleLayer::ReadStopVal(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value)
 {
-	T value = default_value;
-	if (Val.size() > 0) {
-		if (Stops.size() > 0) {
-			if (zoomlevel <= Stops[0])
-				value = Val[0];
-			else
-				for (int i = 0; i < Stops.size(); i++) {
-					if (zoomlevel >= Stops[i])
-						value = Val[i];
-				}
+	if (Val.size() < 1)
+		return default_value;
+	if (Stops.size() < 1)
+		return Val[0];
+	if (Stops.size() != Val.size())	// Cela ne devrait pas arriver ...
+		return default_value;
+	if (zoomlevel <= Stops[0])
+		return Val[0];
+	if (zoomlevel >= Stops[Stops.size() - 1])
+		return Val[Val.size() - 1];
+	T value = Val[0];
+	for (int i = 0; i < Stops.size(); i++) {
+		if (zoomlevel >= Stops[i])
+				value = Val[i];
 		}
-		else
-			value = Val[0];
-	}
 	return value;
+}
+
+//-----------------------------------------------------------------------------
+// Lecture d'une valeur en fonction des stops avec interpolation
+//-----------------------------------------------------------------------------
+template<typename T> T MvtStyleLayer::ReadStopValInterpol(int zoomlevel, const std::vector<T>& Val, const std::vector<int>& Stops, T default_value)
+{
+	if (Val.size() < 1)
+		return default_value;
+	if (Stops.size() < 1)
+		return Val[0];
+	if (Stops.size() != Val.size())	// Cela ne devrait pas arriver ...
+		return default_value;
+	if (zoomlevel <= Stops[0])
+		return Val[0];
+	if (zoomlevel >= Stops[Stops.size() - 1])
+		return Val[Val.size() - 1];
+	int index = 0;
+	for (int i = 0; i < Stops.size(); i++) {
+		if (zoomlevel == Stops[i])
+			return Val[i];
+		if (zoomlevel > Stops[i])
+			index = i;
+	}
+	
+	return Val[index] + (Val[index + 1] - Val[index]) * (zoomlevel - Stops[index]) / (Stops[index + 1] - Stops[index]);
 }

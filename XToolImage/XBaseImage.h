@@ -13,6 +13,9 @@
 #include "../XTool/XBase.h"
 #include "../XTool/XFile.h"
 
+class XTransfo;
+class XInterpol;
+
 class XBaseImage {
 protected:
 	uint32_t		m_nW;
@@ -110,6 +113,7 @@ public:
   static bool Correlation(uint8_t* pix1, uint32_t w1, uint32_t h1, uint8_t* pix2, uint32_t w2, uint32_t h2,
                           double* u, double* v, double* pic);
 	static bool FastZoomBil(float* in, uint32_t win, uint32_t hin, float* out, uint32_t wout, uint32_t hout);
+	static bool Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset, XTransfo* transfo, XInterpol* interpol);
 };
 
 #endif //XBASEIMAGE_H

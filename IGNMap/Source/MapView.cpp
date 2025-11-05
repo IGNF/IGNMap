@@ -143,7 +143,7 @@ void MapView::RenderMap(bool overlay, bool raster, bool dtm, bool vector, bool l
 	m_MapThread.SetUpdate(overlay, raster, dtm, vector, las);
 	m_MapThread.SetWorld(m_dX0, m_dY0, m_dScale, b.getWidth(), b.getHeight(), updateMode);
 
-	m_MapThread.startThread();
+	m_MapThread.startThread(juce::Thread::Priority::high);
 }
 
 //==============================================================================
@@ -281,6 +281,7 @@ void MapView::mouseUp(const juce::MouseEvent& event)
 
 void MapView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
 {
+	StopThread();
 	double X = event.getPosition().x, Y = event.getPosition().y;
 	Pixel2Ground(X, Y);
 	if (wheel.deltaY < 0.)
@@ -319,6 +320,12 @@ bool MapView::keyPressed(const juce::KeyPress& key)
 	}
 	if (key.getKeyCode() == juce::KeyPress::F2Key) {
 		AppUtil::SaveComponent(this);
+		return true;
+	}
+	if (key.getKeyCode() == juce::KeyPress::escapeKey) {
+		StopThread();
+		//m_MapThread.signalThreadShouldExit();
+		//m_MapThread.notify();
 		return true;
 	}
 	return false;	// On transmet l'evenement sans le traiter

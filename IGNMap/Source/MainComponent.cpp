@@ -594,7 +594,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		AddOSMServer();
 		break;
 	case CommandIDs::menuAddPlanIGN:
-		AddMvtServer("data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
+		AddMvtServer("https://data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
 		break;
 	case CommandIDs::menuAddGeoportailOrthophoto:
 		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
@@ -1578,6 +1578,91 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	/* Creation d'un differentiel MNS*/
+	/*
+	XFrame F = m_MapView.get()->GetViewFrame();
+	int Xmin = XRint(F.Xmin);
+	int Xmax = XRint(F.Xmax);
+	int Ymin = XRint(F.Ymin);
+	int Ymax = XRint(F.Ymax);
+	int step = 5;
+	int nbX = (Xmax - Xmin) / step;
+	int nbY = (Ymax - Ymin) / step;
+	double* ZminA = new double[nbX * nbY];
+	double* ZmaxA = new double[nbX * nbY];
+	double* ZminB = new double[nbX * nbY];
+	double* ZmaxB = new double[nbX * nbY];
+	for (int i = 0; i < nbX * nbY; i++)
+		ZminA[i] = ZmaxA[i] = ZminB[i] = ZmaxB[i] = -9999.;
+
+	bool first_pass = true;
+	double zmin, zmax, zmean;
+	XFrame cell;
+	for (uint32_t i = 0; i < m_GeoBase.NbClass(); i++) {
+		XGeoClass* C = m_GeoBase.Class(i);
+		if (C == nullptr)
+			continue;
+		if (!C->IsDTM())
+			continue;
+		if (!C->Visible())
+			continue;
+		for (uint32_t j = 0; j < C->NbVector(); j++) {
+			GeoDTM* dtm = (GeoDTM*)C->Vector(j);
+			if (!dtm->Visible())
+				continue;
+			if (!F.Intersect(dtm->Frame()))
+				continue;
+			for (int line = 0; line < nbY; line++) {
+				for (int col = 0; col < nbX; col++) {
+					cell.Xmin = Xmin + col * step;
+					cell.Xmax = Xmin + (col + 1) * step;
+					cell.Ymax = Ymax - line * step;
+					cell.Ymin = Ymax - (line + 1) * step;
+					dtm->ZFrame(cell, &zmax, &zmin, &zmean);
+					if (first_pass) {
+						ZminA[line * nbX + col] = zmin;
+						ZmaxA[line * nbX + col] = zmax;
+					}
+					else {
+						ZminB[line * nbX + col] = zmin;
+						ZmaxB[line * nbX + col] = zmax;
+					}
+				}
+			}
+		}
+		first_pass = false;
+	}
+
+	XTiffWriter tiff;
+	tiff.SetGeoTiff(Xmin, Ymax, step);
+	float* buf = new float[nbX * nbY];
+	for (int i = 0; i < nbX * nbY; i++)
+		buf[i] = 0.f;
+	
+	for (int line = 0; line < nbY; line++) {
+		for (int col = 0; col < nbX; col++) {
+			if ((ZminA[line * nbX + col] < -999.) || (ZminB[line * nbX + col] < -999.))
+				continue;
+
+			if (ZmaxA[line * nbX + col] < ZminB[line * nbX + col]) {
+				buf[line * nbX + col] = ZminB[line * nbX + col] - ZmaxA[line * nbX + col];
+			}
+			if (ZmaxB[line * nbX + col] < ZminA[line * nbX + col]) {
+				buf[line * nbX + col] = ZminA[line * nbX + col] - ZmaxB[line * nbX + col];
+			}
+		}
+	}
+
+	tiff.Write("c:\\Temp\\test_DCHAN.tif", nbX, nbY, 1, 32, (uint8_t*)buf);
+
+	delete[] buf;
+	delete[] ZminA;
+	delete[] ZminB;
+	delete[] ZmaxA;
+	delete[] ZmaxB;
+	*/
+
+	/* Creation d'anaglyphe
 	XFrame F = m_MapView.get()->GetViewFrame();
 	juce::Image image = m_MapView.get()->GetImage();
 	double gsd = m_MapView.get()->GetGsd();
@@ -1620,11 +1705,11 @@ void MainComponent::Test()
 	for (int i = 0; i < h * factor; i++) {
 		for (int j = factor * w - 1; j >= 0; j--) {
 			zM = grid[(i / factor) * w + j / factor] * zFactor;
-			/*
-			if ((j / factor - 1) >= 0) {
-				zMB = grid[i * w + j / factor - 1];
-				zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
-			}*/
+			
+			//if ((j / factor - 1) >= 0) {
+			//	zMB = grid[i * w + j / factor - 1];
+			//	zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
+			//}
 			xM = X0 + (j * gsd) / factor;
 			yM = Y0 - (i * gsd) / factor;
 			k = (Z0 - SL_Z) / (zM - SL_Z);
@@ -1649,11 +1734,10 @@ void MainComponent::Test()
 	for (uint32_t i = 0; i < h * factor; i++) {
 		for (uint32_t j = 0; j < factor * w; j++) {
 			zM = grid[(i / factor) * w + j / factor] * zFactor;
-			/*
-			if ((j / factor + 1) < w) {
-				zMB = grid[i * w + j / factor + 1];
-				zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
-			}*/
+			//if ((j / factor + 1) < w) {
+			//	zMB = grid[i * w + j / factor + 1];
+			//	zM = (zM * (factor - j % factor) + zMB * (j % factor)) / factor;
+			//}
 			xM = X0 + (j * gsd) / factor;
 			yM = Y0 - (i * gsd) / factor;
 			k = (Z0 - SR_Z) / (zM - SR_Z);
@@ -1684,6 +1768,8 @@ void MainComponent::Test()
 		viewer->SetPseudoOrientation(XPt3D(SL_X, SL_Y, SL_Z), XPt3D(SR_X, SR_Y, SR_Z), XPt3D(X0, Y0, Z0), gsd);
 	}
 
+	*/ // Fin creation d'anaglyphe
+
 	/*
 	std::ofstream ori;
 	ori.open("C:\\TEMP\\ignmap.ori", std::ios::out);
@@ -1691,8 +1777,9 @@ void MainComponent::Test()
 	ori << X0 << " " << Y0 << " " << Z0 << " " << gsd << std::endl;
 	ori << "Ima_L.tif " << SL_X << " " << SL_Y << " " << SL_Z << std::endl;
 	ori << "Ima_R.tif " << SR_X << " " << SR_Y << " " << SR_Z << std::endl;
-	*/
+
 	return;
+	*/
 
 	/* Recherche d'un Z sur la Geoplateforme
 	GeoSearch search;
@@ -1705,13 +1792,13 @@ void MainComponent::Test()
 	return;
 	*/
 
-	/*
+	/* Connexion Panoramax */
 	XGeoPref pref;
 	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
 	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
 	
-	std::string url = "panoramax.ign.fr/api/map";
+	std::string url = "https://panoramax.ign.fr/api/map";
 	std::string ext = "mvt";
 	std::string style = "https://panoramax.ign.fr/api/map/style.json";
 	int zoom = 15;
@@ -1732,7 +1819,6 @@ void MainComponent::Test()
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
 	return;
 
-	*/
 
 	/*
 	juce::String filename;

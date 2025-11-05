@@ -12,6 +12,7 @@
 #include "WmtsTmsViewer.h"
 #include "WmtsLayer.h"
 #include "TmsLayer.h"
+#include "MvtLayer.h"
 #include "GeoBase.h"
 #include "../../XTool/XGeoBase.h"
 
@@ -485,14 +486,27 @@ void TmsViewerComponent::actionListenerCallback(const juce::String& message)
 		int index = T[1].getIntValue();
 		if (index >= m_Model.m_Proxy.size())
 			return;
-		TmsLayer* layer = new TmsLayer();
-		if (layer->ReadServer(m_Model.m_Proxy[index].Href)) {
-			if (GeoTools::RegisterObject(m_Base, layer, "TMS", "TMS", m_Model.m_Proxy[index].Id.toStdString())) {
-				sendActionMessage("AddWmtsLayer");
-				m_Table.repaint();
-				return;
+		if ((m_Model.m_Proxy[index].Format == "pbf")|| (m_Model.m_Proxy[index].Format == "mvt")) {
+			MvtLayer* mvt = new MvtLayer();
+			if (mvt->ReadServer(m_Model.m_Proxy[index].Href)) {
+				if (GeoTools::RegisterObject(m_Base, mvt, "MVT", "MVT", m_Model.m_Proxy[index].Id.toStdString())) {
+					sendActionMessage("AddWmtsLayer");
+					m_Table.repaint();
+					return;
+				}
 			}
+			delete mvt;
 		}
-		delete layer;
+		else {
+			TmsLayer* layer = new TmsLayer();
+			if (layer->ReadServer(m_Model.m_Proxy[index].Href)) {
+				if (GeoTools::RegisterObject(m_Base, layer, "TMS", "TMS", m_Model.m_Proxy[index].Id.toStdString())) {
+					sendActionMessage("AddWmtsLayer");
+					m_Table.repaint();
+					return;
+				}
+			}
+			delete layer;
+		}
 	}
 }

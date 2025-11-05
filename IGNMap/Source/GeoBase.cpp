@@ -119,11 +119,24 @@ bool GeoFileImage::AnalyzeImage(std::string path)
 }
 
 //-----------------------------------------------------------------------------
-// Creation du repertoire cache temporaire pour stocker les imagettes
+// Creation du repertoire cache pour le stockage des imagettes
 //-----------------------------------------------------------------------------
 void GeoInternetImage::CreateCacheDir(juce::String name)
 { 
 	m_Cache = GeoTools::CreateCacheDir(name);
+}
+
+//-----------------------------------------------------------------------------
+// Recherche si l'image existe dans le cache image
+//-----------------------------------------------------------------------------
+juce::Image GeoInternetImage::FindCachedTile(int x, int y, int zoomLevel)
+{
+	for (int i = 0; i < m_CachedTiles.size(); i++) {
+		CachedTile T = m_CachedTiles[i];
+		if ((T.X == x) && (T.Y == y) && (T.ZoomLevel == zoomLevel))
+			return T.Image;
+	}
+	return juce::Image();
 }
 
 //-----------------------------------------------------------------------------
