@@ -100,6 +100,7 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
     gClassViewerMgr.RemoveViewer(m_Class);
     m_Base->ClearSelection();
     m_Base->RemoveClass(m_Class->Layer()->Name().c_str(), m_Class->Name().c_str());
+    sendActionMessage("UpdateSelectFeatures");
   }
   juce::File geojson = m_Cache.getChildFile("Stac.json");
   geojson.replaceWithText(content);

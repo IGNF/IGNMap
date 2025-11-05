@@ -13,7 +13,6 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 
-
 //-----------------------------------------------------------------------------
 // Reinitialisation d'une dalle
 //-----------------------------------------------------------------------------
@@ -76,25 +75,27 @@ bool MvtTile::PrepareForDrawing(const XFrame& F, const double& gsd, const uint32
 {
 	XGeoPref pref;
 	// Emprise de la dalle dans l'image
-	double x0, y0, x1, y1, x2, y2, x3, y3;
-	pref.Convert(XGeoProjection::WebMercator, pref.Projection(), m_dX0, m_dY0, x0, y0);
-	pref.Convert(XGeoProjection::WebMercator, pref.Projection(), m_dX0 + tileW * m_dGsd, m_dY0, x1, y1);
-	pref.Convert(XGeoProjection::WebMercator, pref.Projection(), m_dX0 + tileW * m_dGsd, m_dY0 - tileH * m_dGsd, x2, y2);
-	pref.Convert(XGeoProjection::WebMercator, pref.Projection(), m_dX0, m_dY0 - tileH * m_dGsd, x3, y3);
-	x0 = (x0 - F.Xmin) / gsd;
-	y0 = (F.Ymax - y0) / gsd;
-	x1 = (x1 - F.Xmin) / gsd;
-	y1 = (F.Ymax - y1) / gsd;
-	x2 = (x2 - F.Xmin) / gsd;
-	y2 = (F.Ymax - y2) / gsd;
-	x3 = (x3 - F.Xmin) / gsd;
-	y3 = (F.Ymax - y3) / gsd;
-	int xmin = (int)XMin(x0, x3);
-	int xmax = (int)XMax(x1, x2);
-	int ymin = (int)XMin(y0, y1);
-	int ymax = (int)XMax(y2, y3);
-	m_ClipR = juce::Rectangle<int>(xmin, ymin, xmax - xmin, ymax - ymin);
+	XPt2D T[4], P[4];
+	T[0] = XPt2D(0., 0.);
+	T[1] = XPt2D(tileW, 0.);
+	T[2] = XPt2D(tileW, tileH);
+	T[3] = XPt2D(0., tileH);
 
+	for (int i = 0; i < 4; i++) {
+		pref.Convert(XGeoProjection::WebMercator, pref.Projection(), m_dX0 + T[i].X * m_dGsd, m_dY0 - T[i].Y * m_dGsd, P[i].X, P[i].Y);
+		P[i].X = (P[i].X - F.Xmin) / gsd;
+		P[i].Y = (F.Ymax - P[i].Y) / gsd;
+	}
+
+	// Transformation affine (approximation de la reprojection)
+	m_Affinity = XAffinity2D(4, P, T);
+
+	// Region de clipping
+	int xmin = (int)XMin(P[0].X, P[3].X);
+	int xmax = (int)XMax(P[1].X, P[2].X);
+	int ymin = (int)XMin(P[0].Y, P[1].Y);
+	int ymax = (int)XMax(P[2].Y, P[3].Y);
+	m_ClipR = juce::Rectangle<int>(xmin, ymin, xmax - xmin, ymax - ymin);
 	juce::Rectangle<int> R(0, 0, (int)ceil(F.Width() / gsd), (int)ceil(F.Height() / gsd));
 	m_bPrepared = R.intersects(m_ClipR);
 
@@ -112,7 +113,9 @@ MvtLayer::MvtLayer(std::string server, std::string format, uint32_t tileW, uint3
 	m_nTileW = tileW;
 	m_nTileH = tileH;
 	m_nMaxZoom = max_zoom;
+	m_nMinZoom = 0;
 	m_nLastZoom = 0;
+	m_bTrueProjection = false;
 
 	CreateCacheDir("MVT");
 }
@@ -493,7 +496,6 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		return false;
 	XGeoPref pref;
 	juce::Graphics g(m_ProjImage);
-	g.setOpacity(1.f);
 
 	if (style->Type() == MvtStyleLayer::fill)
 		g.reduceClipRegion(T->ClipR());
@@ -502,7 +504,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 	if (layer.empty())
 		return false;
 
-	float factor = layer.extent() / m_nTileW, gsd_factor = (float)(m_LastGsd / T->GSD());
+	float factor = (float)layer.extent() / (float)m_nTileW, gsd_factor = (float)(m_LastGsd / T->GSD());
 	gsd_factor = 1.;
 
 	float line_width = 1.f, iconSize = 1.f, radius = 1.f, textSize = 10.f, opacity = 1.f;
@@ -513,8 +515,9 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 	juce::FillType fillType;
 
 	// Zoom level du style a appliquer
-	int styleZoomLevel = (int)m_nLastZoom;
-	styleZoomLevel =	XRint(log(40075016.686 / m_LastGsd) / log(2.)) - 8;
+	int styleZoomLevel =	XRint(log(40075016.686 / m_LastGsd) / log(2.)) - 8;
+	if (styleZoomLevel < m_nMaxZoom)
+		styleZoomLevel = (int)m_nLastZoom;
 
 	style->SetStyle(styleZoomLevel, &pen, &fillType, &line_width, &iconSize, &radius, &textSize, &halo, &opacity);
 	if (opacity <= 0.f)
@@ -524,6 +527,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 	if ((style->Type() == MvtStyleLayer::circle) && (radius <= 0.5f))
 		return false;
 	g.setColour(pen);
+	g.setOpacity(opacity);
 	if ((style->Type() == MvtStyleLayer::fill) || (style->Type() == MvtStyleLayer::circle))
 		g.setFillType(fillType);
 	g.setFont(textSize);
@@ -579,17 +583,21 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		vtzero::decode_geometry(geom, handler);
 
 		double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0., d = 2.;
+		XPt2D PtV;
 
 		// Dessin des points et multi-points
 		if ((geom.type() == vtzero::GeomType::POINT) && ((style->Type() == MvtStyleLayer::symbol) || (style->Type() == MvtStyleLayer::circle))) {
 			for (int i = 0; i < handler.points.size() / 2; i++) {
-				Xima = X0 + (handler.points[2 * i] / factor) * GSD0;
-				Yima = Y0 - (handler.points[2 * i + 1] / factor) * GSD0;
-				pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-				if (!m_LastFrame.IsIn(XPt2D(Xter, Yter)))
-					continue;
-				Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-				Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+				Xima = (handler.points[2 * i] / factor);
+				Yima = (handler.points[2 * i + 1] / factor);
+				if (m_bTrueProjection) {
+					pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+					Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+					Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+				}
+				else {
+					T->Tile2Ground(Xima, Yima, Xter, Yter);
+				}
 
 				// Symbol
 				if (style->Type() == MvtStyleLayer::symbol) {
@@ -665,11 +673,17 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 			Ylast = Yter;
 			for (int i = 1; i < handler.parts[parts]; i++) {
 				index++;
-				Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
-				Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
-				pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-				Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-				Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+				Xima = (handler.points[2 * index] / factor);
+				Yima = (handler.points[2 * index + 1] / factor);
+				if (m_bTrueProjection) {
+					pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+					Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+					Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+				}
+				else {
+					T->Tile2Ground(Xima, Yima, Xter, Yter);
+				}
+				
 				if ((fabs(Xter - Xlast) >= 1.) || (fabs(Yter - Ylast) >= 1.)) {
 					path.lineTo(Xter, Yter);
 					Xlast = Xter;
@@ -761,8 +775,8 @@ bool MvtStyleLayer::SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* f
 		*pen = ReadStopVal<juce::Colour>(zoomlevel, m_OutlineColor, m_OutlineStops, juce::Colour());
 		*fillType = ReadStopVal<juce::FillType>(zoomlevel, m_FillType, m_FillStops, juce::FillType());
 
-		float opacity = ReadStopValInterpol<float>(zoomlevel, m_Opacity, m_OpacityStops, 1.f);
-		fillType->setOpacity(opacity);
+		float fill_opacity = ReadStopValInterpol<float>(zoomlevel, m_Opacity, m_OpacityStops, 1.f);
+		fillType->setOpacity(fill_opacity);
 
 		return true;
 	}

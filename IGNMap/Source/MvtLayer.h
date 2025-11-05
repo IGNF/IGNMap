@@ -14,6 +14,7 @@
 #include <string>
 #include "GeoBase.h"
 #include "../../XTool/XFrame.h"
+#include "../../XToolAlgo/XAffinity2D.h"
 #include "vtzero/vector_tile.hpp"
 
 class XTransfo;
@@ -121,6 +122,7 @@ protected:
   double m_dGsd;
   vtzero::vector_tile* m_Tile;
   juce::Rectangle<int> m_ClipR;
+  XAffinity2D m_Affinity;
 
 public:
   MvtTile() {
@@ -139,6 +141,7 @@ public:
   inline size_t Length() const { return m_nLength; }
   inline const char* Buffer() const { return m_Buffer; }
   juce::Rectangle<int> ClipR() const { return m_ClipR; }
+  void Tile2Ground(const double& x, const double& y, double& u, double& v) { m_Affinity.Direct(XPt2D(x, y), u, v); }
 
   vtzero::vector_tile* Tile() { return m_Tile; }
 };
@@ -152,6 +155,7 @@ protected:
   juce::String m_strServer;
   juce::String m_strFormat;
   XFrame m_F;		// Cadre dans la projection native TMS
+  bool m_bTrueProjection; // Indique que l'on fait une vraie reprojection geodesique
   uint32_t m_nTileW;
   uint32_t m_nTileH;
   uint32_t m_nMinZoom;  // Niveau de zoom minimum de la pyramide
@@ -168,7 +172,7 @@ protected:
   juce::String LoadTile(int x, int y, int zoomlevel);
 
 public:
-  MvtLayer() { m_nTileW = m_nTileH = 256; m_nMinZoom = m_nMaxZoom = m_nLastZoom = 0; }
+  MvtLayer() { m_nTileW = m_nTileH = 256; m_nMinZoom = m_nMaxZoom = m_nLastZoom = 0; m_bTrueProjection = false; }
   MvtLayer(std::string server, std::string format = "mvt", uint32_t tileW = 256,
     uint32_t tileH = 256, uint32_t max_zoom = 19);
   virtual ~MvtLayer() { ; }

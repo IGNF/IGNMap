@@ -579,6 +579,8 @@
       <FILE id="vYKpqz" name="XXml.h" compile="0" resource="0" file="../XTool/XXml.h"/>
     </GROUP>
     <GROUP id="{922568F6-A5F8-F969-4DAF-930F4E8FE4E7}" name="XToolAlgo">
+      <FILE id="XxcawA" name="XAffinity2D.cpp" compile="1" resource="0" file="../XToolAlgo/XAffinity2D.cpp"/>
+      <FILE id="hYD9JS" name="XAffinity2D.h" compile="0" resource="0" file="../XToolAlgo/XAffinity2D.h"/>
       <FILE id="nQypig" name="XColor.h" compile="0" resource="0" file="../XToolAlgo/XColor.h"/>
       <FILE id="k0Tuq4" name="XInternetMap.cpp" compile="1" resource="0"
             file="../XToolAlgo/XInternetMap.cpp"/>
