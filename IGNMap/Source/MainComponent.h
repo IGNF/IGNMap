@@ -53,7 +53,6 @@ public:
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile,
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,
     menuExportVector, menuExportImage, menuExportLas,
-    menuZoomTotal, menuScale1k, menuScale10k, menuScale25k, menuScale100k, menuScale250k,
     menuShowSidePanel, menuShow3DViewer,
     menuShowVectorLayers, menuShowImageLayers, menuShowDtmLayers, menuShowLasLayers, menuShowSelection, menuShowImageOptions,
     menuShowAnnotations, menuAddOSM, menuAddPlanIGN, menuAddWmtsServer, menuAddTmsServer,
@@ -61,7 +60,7 @@ public:
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
     menuSynchronize, menuGoogle, menuBing,
-    menuToolSentinel, menuToolZoom, menuToolStac, menuToolStereo,
+    menuToolSentinel, menuToolZoom, menuToolPanoramax, menuToolStereo,
     menuHelp, menuAbout
   };
 
@@ -99,6 +98,8 @@ public:
 
   // Recherche
   void Search(juce::String query);
+  // Layers par defaut
+  void SetDefaultLayers(juce::String layers);
 
 private:
   juce::ApplicationCommandManager m_CommandManager;
@@ -164,6 +165,7 @@ private:
   void Test();
   ToolWindow* OpenTool(juce::String toolName);
   void ShowProperties(uint32_t index);
+  void OpenPanoramax();
 
   void Synchronize();
   void connectionMade() override;

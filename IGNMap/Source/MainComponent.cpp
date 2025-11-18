@@ -247,7 +247,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStac);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolPanoramax);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
 		menu.addItem(1000, "Test");
 	}
@@ -264,15 +264,6 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowAnnotations);
 		PanelSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuShowSelection);
 		menu.addSubMenu(juce::translate("Panels"), PanelSubMenu);
-		menu.addSeparator();
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuZoomTotal);
-		juce::PopupMenu ScaleSubMenu;
-		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale1k);
-		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale10k);
-		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale25k);
-		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale100k);
-		ScaleSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuScale250k);
-		menu.addSubMenu(juce::translate("Scale"), ScaleSubMenu);
 		menu.addSeparator();
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuGoogle);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuBing);
@@ -309,7 +300,6 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
 		CommandIDs::menuExportVector, CommandIDs::menuExportImage, CommandIDs::menuExportLas,
-		CommandIDs::menuZoomTotal,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
 		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions, CommandIDs::menuShowAnnotations,
@@ -318,9 +308,8 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
 		CommandIDs::menuAddGeoportailSCAN50Histo,
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
-		CommandIDs::menuScale1k, CommandIDs::menuScale10k, CommandIDs::menuScale25k, CommandIDs::menuScale100k, CommandIDs::menuScale250k,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
-		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolStac, CommandIDs::menuToolStereo,
+		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolPanoramax, CommandIDs::menuToolStereo,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -431,24 +420,6 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuExportLas:
 		result.setInfo(juce::translate("Export LAS"), juce::translate("Export LAS"), "Menu", 0);
 		break;
-	case CommandIDs::menuZoomTotal:
-		result.setInfo(juce::translate("Zoom total"), juce::translate("Zoom total"), "Menu", 0);
-		break;
-	case CommandIDs::menuScale1k:
-		result.setInfo(juce::translate("1 : 1000"), juce::translate("1 : 1000"), "Menu", 0);
-		break;
-	case CommandIDs::menuScale10k:
-		result.setInfo(juce::translate("1 : 10 000"), juce::translate("1 : 10 000"), "Menu", 0);
-		break;
-	case CommandIDs::menuScale25k:
-		result.setInfo(juce::translate("1 : 25 000"), juce::translate("1 : 25 000"), "Menu", 0);
-		break;
-	case CommandIDs::menuScale100k:
-		result.setInfo(juce::translate("1 : 100 000"), juce::translate("1 : 100 000"), "Menu", 0);
-		break;
-	case CommandIDs::menuScale250k:
-		result.setInfo(juce::translate("1 : 250 000"), juce::translate("1 : 250 000"), "Menu", 0);
-		break;
 	case CommandIDs::menuShowSidePanel:
 		result.setInfo(juce::translate("View Side Panel"), juce::translate("View Side Panel"), "Menu", 0);
 		if (m_Panel.get() != nullptr)
@@ -515,8 +486,8 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolZoom:
 		result.setInfo(juce::translate("Zoom"), juce::translate("Zoom"), "Menu", 0);
 		break;
-	case CommandIDs::menuToolStac:
-		result.setInfo(juce::translate("Stac"), juce::translate("Stac"), "Menu", 0);
+	case CommandIDs::menuToolPanoramax:
+		result.setInfo(juce::translate("Panoramax"), juce::translate("Panoramax"), "Menu", 0);
 		break;
 	case CommandIDs::menuToolStereo:
 		result.setInfo(juce::translate("Stereoscopic View"), juce::translate("Stereoscopic View"), "Menu", 0);
@@ -636,24 +607,6 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuExportLas:
 		ExportLas();
 		break;
-	case CommandIDs::menuZoomTotal:
-		m_MapView.get()->ZoomWorld();
-		break;
-	case CommandIDs::menuScale1k:
-		m_MapView.get()->ZoomScale(1000);
-		break;
-	case CommandIDs::menuScale10k:
-		m_MapView.get()->ZoomScale(10000);
-		break;
-	case CommandIDs::menuScale25k:
-		m_MapView.get()->ZoomScale(25000);
-		break;
-	case CommandIDs::menuScale100k:
-		m_MapView.get()->ZoomScale(100000);
-		break;
-	case CommandIDs::menuScale250k:
-		m_MapView.get()->ZoomScale(250000);
-		break;
 	case CommandIDs::menuShowSidePanel:
 		return ShowHideSidePanel();
 	case CommandIDs::menuShow3DViewer:
@@ -704,8 +657,8 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuToolZoom:
 		OpenTool("Zoom");
 		break;
-	case CommandIDs::menuToolStac:
-		OpenTool("Stac");
+	case CommandIDs::menuToolPanoramax:
+		OpenPanoramax();
 		break;
 	case CommandIDs::menuToolStereo:
 		OpenTool("Stereo");
@@ -950,7 +903,7 @@ void MainComponent::buttonClicked(juce::Button* button)
 	juce::ToolbarButton* tlb = dynamic_cast<juce::ToolbarButton*>(button);
 	if (tlb == nullptr)
 		return;
-		switch (tlb->getItemId()) {
+	switch (tlb->getItemId()) {
 		case MainComponentToolbarFactory::Move: m_MapView.get()->SetMouseMode(MapView::Move); break;
 		case MainComponentToolbarFactory::Select: m_MapView.get()->SetMouseMode(MapView::Select); break;
 		case MainComponentToolbarFactory::Zoom: m_MapView.get()->SetMouseMode(MapView::Zoom); break;
@@ -961,7 +914,20 @@ void MainComponent::buttonClicked(juce::Button* button)
 		case MainComponentToolbarFactory::Text: m_MapView.get()->SetMouseMode(MapView::Text); break;
 		case MainComponentToolbarFactory::Gsd: m_MapView.get()->ZoomGsd(tlb->getButtonText().getDoubleValue()); break;
 		case MainComponentToolbarFactory::Search: Search(tlb->getButtonText()); tlb->setButtonText(""); break;
+		case MainComponentToolbarFactory::Layer: SetDefaultLayers(tlb->getButtonText()); tlb->setButtonText(""); break;
+		case MainComponentToolbarFactory::Scale:
+		{
+			juce::String scale = tlb->getButtonText();
+			tlb->setButtonText("");
+			if (scale.isNotEmpty()) {
+				if (scale == "Total")
+					m_MapView.get()->ZoomWorld();
+				else
+					m_MapView.get()->ZoomScale(scale.getDoubleValue());
+			}
+			break;
 		}
+	}
 }
 
 //==============================================================================
@@ -2029,6 +1995,42 @@ void MainComponent::Search(juce::String query)
 }
 
 //==============================================================================
+// Fixe les couches par defaut
+//==============================================================================
+void MainComponent::SetDefaultLayers(juce::String layers)
+{
+	if (layers.isEmpty())
+		return;
+	m_MapView.get()->setMouseCursor(juce::MouseCursor(juce::MouseCursor::WaitCursor));
+	m_GeoBase.ClearSelection();
+	actionListenerCallback("UpdateSelectFeatures");
+	if (layers == "Empty") {
+		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		m_GeoBase.RemoveClass("WMTS", "ORTHOIMAGERY.ORTHOPHOTOS");
+		m_ImageViewer.get()->SetBase(&m_GeoBase);
+		actionListenerCallback("UpdateRaster");
+	}
+	if (layers == "Ortho") {
+		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
+	}
+	if (layers == "Carto") {
+		m_GeoBase.RemoveClass("WMTS", "ORTHOIMAGERY.ORTHOPHOTOS");
+		AddMvtServer("https://data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", 
+			"https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
+	}
+	if (layers == "Ortho+Carto") {
+		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
+		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		AddMvtServer("https://data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf",
+			"https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/toponymes.json", 256, 256, 18);
+	}
+	
+	m_MapView.get()->setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+}
+
+
+//==============================================================================
 // Ouverture d'une fenetre outil
 //==============================================================================
 ToolWindow* MainComponent::OpenTool(juce::String toolName)
@@ -2045,8 +2047,8 @@ ToolWindow* MainComponent::OpenTool(juce::String toolName)
 		tool = new SentinelViewer("Sentinel", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	if (toolName == "Zoom")
 		tool = new ZoomViewer("Zoom", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
-	if (toolName == "Stac")
-		tool = new StacViewer("Stac", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Panoramax")
+		tool = new StacViewer("Panoramax", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	if (toolName == "Stereo")
 		tool = new StereoViewer("Stereo", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 
@@ -2057,4 +2059,37 @@ ToolWindow* MainComponent::OpenTool(juce::String toolName)
 	}
 
 	return nullptr;
+}
+
+//==============================================================================
+// Ouverture de l'outil Panoramax
+//==============================================================================
+void MainComponent::OpenPanoramax()
+{
+	/* Connexion Panoramax */
+	std::string url = "https://panoramax.ign.fr/api/map";
+	if (m_GeoBase.Class("Panoramax", url.c_str()) == nullptr) {
+		XGeoPref pref;
+		XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+		pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+		pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+		std::string ext = "mvt";
+		std::string style = "https://panoramax.ign.fr/api/map/style.json";
+		int zoom = 15;
+
+		MvtLayer* mvt = new MvtLayer(url, ext, 256, 256, zoom);
+		mvt->SetFrame(F);
+		mvt->LoadStyle(style);
+		if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "Panoramax", "Panoramax", url)) {
+			delete mvt;
+			return;
+		}
+
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+		m_MapView.get()->RenderMap(false, true, false, false, false, true);
+		m_ImageViewer.get()->SetBase(&m_GeoBase);
+	}
+	
+	OpenTool("Panoramax");
 }

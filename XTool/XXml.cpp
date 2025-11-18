@@ -44,7 +44,7 @@ std::string XXml::XmlToOem(std::string s)
 {
 	std::string result = "", numstr;
 	int num;
-	for (uint32_t i = 0; i < s.length(); i++) {
+	for (size_t i = 0; i < s.length(); i++) {
 		if ((s[i] != '&')||(i >= s.length() - 3))
 			result += s[i];
 		else {
@@ -56,8 +56,8 @@ std::string XXml::XmlToOem(std::string s)
 				continue;
 			numstr = numstr.substr(0, pos);
 			
-			sscanf(numstr.c_str(), "%d", &num);
-			result += (char)num;
+			if (sscanf(numstr.c_str(), "%d", &num) > 0)
+				result += (char)num;
 			i += (pos + 2);
 		}
 	}

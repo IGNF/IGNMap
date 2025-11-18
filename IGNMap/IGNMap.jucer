@@ -7,17 +7,22 @@
               userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
+      <FILE id="ILbuJM" name="Carto.png" compile="0" resource="1" file="Images/Carto.png"/>
       <FILE id="D0Gt1C" name="GSD.png" compile="0" resource="1" file="Images/GSD.png"
             xcodeResource="0"/>
       <FILE id="bOamUH" name="IGNMapv3.png" compile="0" resource="1" file="Images/IGNMapv3.png"/>
+      <FILE id="FUyr7r" name="Layer.png" compile="0" resource="1" file="Images/Layer.png"/>
       <FILE id="BcYc12" name="Move.png" compile="0" resource="1" file="Images/Move.png"/>
       <FILE id="qhgxQ6" name="NoSelectable.png" compile="0" resource="1"
             file="Images/NoSelectable.png"/>
       <FILE id="nUxKfx" name="NoView.png" compile="0" resource="1" file="Images/NoView.png"/>
       <FILE id="uDq1oD" name="Options.png" compile="0" resource="1" file="Images/Options.png"/>
+      <FILE id="BlqJPJ" name="Ortho.png" compile="0" resource="1" file="Images/Ortho.png"/>
+      <FILE id="An36M6" name="OrthoCarto.png" compile="0" resource="1" file="Images/OrthoCarto.png"/>
       <FILE id="RILn7C" name="Polygone.png" compile="0" resource="1" file="Images/Polygone.png"/>
       <FILE id="d2ujBd" name="Polyline.png" compile="0" resource="1" file="Images/Polyline.png"/>
       <FILE id="Dct1tZ" name="Rectangle.png" compile="0" resource="1" file="Images/Rectangle.png"/>
+      <FILE id="tURk1Y" name="Scale.png" compile="0" resource="1" file="Images/Scale.png"/>
       <FILE id="qTB2vq" name="Search.png" compile="0" resource="1" file="Images/Search.png"/>
       <FILE id="C3qDH8" name="Select.png" compile="0" resource="1" file="Images/Select.png"/>
       <FILE id="o6hJ93" name="Select3D.png" compile="0" resource="1" file="Images/Select3D.png"/>

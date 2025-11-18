@@ -115,7 +115,7 @@ MvtLayer::MvtLayer(std::string server, std::string format, uint32_t tileW, uint3
 	m_nMaxZoom = max_zoom;
 	m_nMinZoom = 0;
 	m_nLastZoom = 0;
-	m_bTrueProjection = false;
+	m_bTrueProjection = true;
 
 	CreateCacheDir("MVT");
 }

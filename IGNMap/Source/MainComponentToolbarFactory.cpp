@@ -23,11 +23,13 @@ void MainComponentToolbarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
   ids.add(Zoom);
   ids.add(Select3D);
   ids.add(Gsd);
+  ids.add(Scale);
+  ids.add(Search);
+  ids.add(Layer);
   ids.add(Polyline);
   ids.add(Polygone);
   ids.add(Rectangle);
   ids.add(Text);
-  ids.add(Search);
 
   // If you're going to use separators, then they must also be added explicitly
   // to the list.
@@ -54,7 +56,9 @@ void MainComponentToolbarFactory::getDefaultItemSet(juce::Array<int>& ids)
   ids.add(spacerId);
   ids.add(separatorBarId);
   ids.add(Gsd);
+  ids.add(Scale);
   ids.add(Search);
+  ids.add(Layer);
 }
 
 juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
@@ -63,16 +67,20 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     return nullptr;
   switch (itemId) {
   case Move:
-    m_btnMove = CreateButton(Move, juce::translate("Move"), juce::translate("Move ; Shift : select ; Ctrl : zoom ; Alt : target"), 1, true, BinaryData::Move_png, BinaryData::Move_pngSize);
+    m_btnMove = CreateButton(Move, juce::translate("Move"), juce::translate("Move ; Shift : select ; Ctrl : zoom ; Alt : target"), 1, true,
+                                  BinaryData::Move_png, BinaryData::Move_pngSize, juce::Colours::lightgrey, juce::Colours::yellow);
     return m_btnMove;
   case Select:
-    m_btnSelect = CreateButton(Select, juce::translate("Select"), juce::translate("Select one or several objects"), 1, false, BinaryData::Select_png, BinaryData::Select_pngSize);
+    m_btnSelect = CreateButton(Select, juce::translate("Select"), juce::translate("Select one or several objects"), 1, false, 
+                                  BinaryData::Select_png, BinaryData::Select_pngSize, juce::Colours::lightgrey, juce::Colours::yellow);
     return m_btnSelect;
   case Zoom:
-    m_btnZoom = CreateButton(Zoom, juce::translate("Zoom"), juce::translate("Zoom"), 1, false, BinaryData::Zoom_png, BinaryData::Zoom_pngSize);
+    m_btnZoom = CreateButton(Zoom, juce::translate("Zoom"), juce::translate("Zoom"), 1, false, BinaryData::Zoom_png,
+                                  BinaryData::Zoom_pngSize, juce::Colours::lightgrey, juce::Colours::yellow);
     return m_btnZoom;
   case Select3D:
-    m_btnSelect3D = CreateButton(Select3D, juce::translate("Select3D"), juce::translate("Select 3D view"), 1, false, BinaryData::Select3D_png, BinaryData::Select3D_pngSize);
+    m_btnSelect3D = CreateButton(Select3D, juce::translate("Select3D"), juce::translate("Select 3D view"), 1, false, BinaryData::Select3D_png,
+                                  BinaryData::Select3D_pngSize, juce::Colours::lightgrey, juce::Colours::yellow);
     return m_btnSelect3D;
  
   // Slider de GSD
@@ -81,10 +89,23 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto image = juce::ImageCache::getFromMemory(BinaryData::GSD_png, BinaryData::GSD_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
     drawable_off->setImage(image);
+    drawable_off->setOverlayColour(juce::Colours::lightgreen);
     m_btnGsd = new SliderToolbarButton(Gsd, juce::translate("0."), std::move(drawable_off), nullptr);
     m_btnGsd->setTooltip(juce::translate("GSD of the view"));
     m_btnGsd->addListener(m_Listener);
     return m_btnGsd;
+  }
+
+  case Scale: // Echelle de la vue
+  {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Scale_png, BinaryData::Scale_pngSize);
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(image);
+    drawable_off->setOverlayColour(juce::Colours::lightgreen);
+    m_btnScale = new ScaleButton(Scale, "", std::move(drawable_off), nullptr);
+    m_btnScale->setTooltip(juce::translate("Scale"));
+    m_btnScale->addListener(m_Listener);
+    return m_btnScale;
   }
 
   // Recherche textuelle
@@ -93,24 +114,41 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
     auto image = juce::ImageCache::getFromMemory(BinaryData::Search_png, BinaryData::Search_pngSize);
     auto drawable_off = std::make_unique<juce::DrawableImage>();
     drawable_off->setImage(image);
+    drawable_off->setOverlayColour(juce::Colours::lightgreen);
     m_btnSearch = new TextToolbarButton(Search, juce::translate("0."), std::move(drawable_off), nullptr);
     m_btnSearch->setTooltip(juce::translate("Search"));
     m_btnSearch->addListener(m_Listener);
     return m_btnSearch;
   }
 
+  case Layer:
+  {
+    auto image = juce::ImageCache::getFromMemory(BinaryData::Layer_png, BinaryData::Layer_pngSize);
+    auto drawable_off = std::make_unique<juce::DrawableImage>();
+    drawable_off->setImage(image);
+    drawable_off->setOverlayColour(juce::Colours::lightgreen);
+    m_btnLayer = new LayerButton(Layer, juce::translate("0."), std::move(drawable_off), nullptr);
+    m_btnLayer->setTooltip(juce::translate("Layer"));
+    m_btnLayer->addListener(m_Listener);
+    return m_btnLayer;
+  }
+
   // Outils de dessin
   case Polyline:
-    m_btnPolyline = CreateButton(Polyline, juce::translate("Polyline"), juce::translate("Polyline"), 1, false, BinaryData::Polyline_png, BinaryData::Polyline_pngSize);
+    m_btnPolyline = CreateButton(Polyline, juce::translate("Polyline"), juce::translate("Polyline"), 1, false, BinaryData::Polyline_png,
+                              BinaryData::Polyline_pngSize, juce::Colours::lightblue, juce::Colours::yellow);
     return m_btnPolyline;
   case Polygone:
-    m_btnPolygon = CreateButton(Polygone, juce::translate("Polygone"), juce::translate("Polygone"), 1, false, BinaryData::Polygone_png, BinaryData::Polygone_pngSize);
+    m_btnPolygon = CreateButton(Polygone, juce::translate("Polygone"), juce::translate("Polygone"), 1, false, BinaryData::Polygone_png,
+                              BinaryData::Polygone_pngSize, juce::Colours::lightblue, juce::Colours::yellow);
     return m_btnPolygon;
   case Rectangle:
-    m_btnRectangle = CreateButton(Rectangle, juce::translate("Rectangle"), juce::translate("Rectangle"), 1, false, BinaryData::Rectangle_png, BinaryData::Rectangle_pngSize);
+    m_btnRectangle = CreateButton(Rectangle, juce::translate("Rectangle"), juce::translate("Rectangle"), 1, false, BinaryData::Rectangle_png,
+                              BinaryData::Rectangle_pngSize, juce::Colours::lightblue, juce::Colours::yellow);
     return m_btnRectangle;
   case Text:
-    m_btnText = CreateButton(Text, juce::translate("Text"), juce::translate("Text"), 1, false, BinaryData::Text_png, BinaryData::Text_pngSize);
+    m_btnText = CreateButton(Text, juce::translate("Text"), juce::translate("Text"), 1, false, BinaryData::Text_png,
+                              BinaryData::Text_pngSize, juce::Colours::lightblue, juce::Colours::yellow);
     return m_btnText;
 
   default: return nullptr;
@@ -123,16 +161,18 @@ juce::ToolbarItemComponent* MainComponentToolbarFactory::createItem(int itemId)
 // Creation d'un bouton de la barre d'outils
 //==============================================================================
 juce::ToolbarButton* MainComponentToolbarFactory::CreateButton(int id, juce::String label, juce::String tooltip, int groupId,
-                                                              bool toggle, const void* imageData, int dataSize)
+                                                              bool toggle, const void* imageData, int dataSize,
+                                                              juce::Colour offColor, juce::Colour onColor) const
 {
   auto image = juce::ImageCache::getFromMemory(imageData, dataSize);
   auto drawable_off = std::make_unique<juce::DrawableImage>();
-  //drawable_off->setImage(getImageFromAssets("Move.png"));
   drawable_off->setImage(image);
+  drawable_off->setOverlayColour(offColor);
+
   auto drawable_on = std::make_unique<juce::DrawableImage>();
-  //drawable_on->setImage(getImageFromAssets("Move.png"));
   drawable_on->setImage(image);
-  drawable_on->setOverlayColour(juce::Colours::yellow);
+  drawable_on->setOverlayColour(onColor);
+
   juce::ToolbarButton* button = new juce::ToolbarButton(id, label, std::move(drawable_off), std::move(drawable_on));
   button->setClickingTogglesState(true);
   if (toggle)
@@ -158,4 +198,6 @@ void MainComponentToolbarFactory::Translate()
   m_btnText->setTooltip(juce::translate("Text"));
   m_btnGsd->setTooltip(juce::translate("GSD of the view"));
   m_btnSearch->setTooltip(juce::translate("Search"));
+  m_btnLayer->setTooltip(juce::translate("Layer"));
+  m_btnScale->setTooltip(juce::translate("Scale of the view"));
 }

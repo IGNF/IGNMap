@@ -28,6 +28,23 @@ void StacViewer::mouseDown(const juce::MouseEvent& event)
 }
 
 //-----------------------------------------------------------------------------
+// Double-clic souris
+//-----------------------------------------------------------------------------
+void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
+{
+  if (!m_bThumb)
+    return;
+  juce::MouseCursor::showWaitCursor();
+  juce::String server = m_StacServer + "pictures/" + m_Id + "/sd.jpg";
+  juce::WebInputStream web_image(juce::URL(server), false);
+  juce::JPEGImageFormat format;
+  m_Image = format.decodeImage(web_image);
+  m_bThumb = false;
+  SetImage();
+  juce::MouseCursor::hideWaitCursor();
+}
+
+//-----------------------------------------------------------------------------
 // Drag souris
 //-----------------------------------------------------------------------------
 void StacViewer::mouseDrag(const juce::MouseEvent& event)
@@ -63,8 +80,17 @@ bool StacViewer::keyPressed(const juce::KeyPress& key)
 //-----------------------------------------------------------------------------
 void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
 {
+  static juce::Time time;
+  juce::Time now = juce::Time::getCurrentTime();
+  if ((now.toMilliseconds() - time.toMilliseconds()) < (juce::int64)500)
+    return;
+  time = now;
+  if (dist(m_Pos, XPt2D(X, Y)) < 10.)
+    return;
+  m_Pos = XPt2D(X, Y);
+
   XGeoPref pref;
-  double lon = 0., lat = 0., radius = 1000.;
+  double lon = 0., lat = 0., radius = 500.;
   pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, X - radius, Y - radius, lon, lat, Z);
   juce::String server = m_StacServer + "search?bbox=" + juce::String(lon) + "," + juce::String(lat) + ",";
   pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, X + radius, Y + radius, lon, lat, Z);
@@ -85,30 +111,35 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   juce::var id = first["id"];
   if (!id.isString())
     return;
-  juce::String idString = id.toString();
+  juce::String idStr = id.toString();
+  if (idStr == m_Id)
+    return;
+  m_Id = idStr;
+  
+  m_Stac.m_Tree.setRootItem(nullptr);
+  m_Stac.m_RootItem.reset();
+  if (first.hasProperty("properties")) {
+    juce::var prop = first["properties"];
+    m_Stac.m_RootItem.reset(new JsonTreeItem("properties", prop));
+    m_Stac.m_Tree.setRootItem(m_Stac.m_RootItem.get());
 
-  server = m_StacServer + "pictures/" + idString + "/hd.jpg";
+    if (prop.hasProperty("view:azimuth"))
+      m_Azimuth = (double)prop["view:azimuth"];
+
+    if (prop.hasProperty("exif")) {
+      juce::var exif = prop["exif"];
+      if (exif.hasProperty("Xmp.GPano.ProjectionType"))
+        m_Projection = exif["Xmp.GPano.ProjectionType"].toString();
+    }
+  }
+
+  server = m_StacServer + "pictures/" + m_Id + "/thumb.jpg";
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
-
   m_Image = format.decodeImage(web_image);
-  SetImage();
-
-  // Creation d'un GEOJSON
-  //juce::File geojson = m_Cache.getNonexistentChildFile("stac", ".json");
-  if (m_Class != nullptr) {
-    gClassViewerMgr.RemoveViewer(m_Class);
-    m_Base->ClearSelection();
-    m_Base->RemoveClass(m_Class->Layer()->Name().c_str(), m_Class->Name().c_str());
-    sendActionMessage("UpdateSelectFeatures");
-  }
-  juce::File geojson = m_Cache.getChildFile("Stac.json");
-  geojson.replaceWithText(content);
-  m_Class = GeoTools::ImportGeoJson(geojson.getFullPathName(), m_Base);
-  GeoTools::ColorizeClasses(m_Base);
-  sendActionMessage("UpdateVector");
+  m_Stac.m_ImageComponent.setImage(m_Image);
+  m_bThumb = true;
 }
-
 
 //-----------------------------------------------------------------------------
 // Fixe l'image dans le composant
@@ -117,12 +148,19 @@ void StacViewer::SetImage()
 {
   if (m_Image.isNull())
     return;
-  int scaleFactor = m_Image.getWidth() / (m_ImageComponent.getWidth() * 2);
+  if (m_bThumb)
+    return;
+  if (m_Projection != "equirectangular") {
+    m_Stac.m_ImageComponent.setImage(m_Image);
+    return;
+  }
+
+  int scaleFactor = m_Image.getWidth() / (m_Stac.m_ImageComponent.getWidth() * 2);
   if (scaleFactor < 1) scaleFactor = 1;
   juce::Image image = m_Image.rescaled(m_Image.getWidth() / scaleFactor, m_Image.getHeight() / scaleFactor);
 
   int Wima = image.getWidth(), Hima = image.getHeight();
-  int Wcomp = m_ImageComponent.getWidth() / 2, Hcomp = m_ImageComponent.getHeight();
+  int Wcomp = m_Stac.m_ImageComponent.getWidth() / 2, Hcomp = m_Stac.m_ImageComponent.getHeight();
   
   int W = Wcomp * Hima / Hcomp;
   int X0 = ((Wima - W) / 2 + m_nTx) % Wima;
@@ -145,6 +183,6 @@ void StacViewer::SetImage()
     gfinal.drawImageTransformed(crop, transform);
   }
   
-  m_ImageComponent.setImage(final);
+  m_Stac.m_ImageComponent.setImage(final);
 }
 

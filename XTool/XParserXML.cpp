@@ -166,7 +166,7 @@ bool XNodeXML::Read(std::istream* in, bool root)
 	// Detection des CDATA <![CDATA[ ... ]]>
 	if (token.compare(0, 9, "<![CDATA[") == 0) {
     while( (in->good()) && (token.compare(token.length() - 3, 3, "]]>") != 0)) {
-			token += in->get();
+			token += (char)in->get();
 //			if (token.compare(token.length() - 3, 3, "]]>") == 0)
 //				break;
 		}
@@ -176,7 +176,7 @@ bool XNodeXML::Read(std::istream* in, bool root)
 	// Detection des commentaires <!-- -->
 	if (token.compare(0, 4, "<!--") == 0) {
 		while(token.compare(token.length() - 3, 3, "-->") != 0)
-			token += in->get();
+			token += (char)in->get();
 		token.erase();
 		return Read(in, root);	// Return sinon probleme pour les commentaires inclus
 	}
@@ -295,7 +295,7 @@ uint32_t XNodeXML::ReadArrayNode(std::string nodename, std::vector<std::string>*
 		return 0;
 	if (pos == std::string::npos) { // Fin d'un arbre
 		V->push_back(m_strValue);
-		return V->size();
+		return (uint32_t)V->size();
 	}
 
 	// Recherche dans les noeuds fils
@@ -303,7 +303,7 @@ uint32_t XNodeXML::ReadArrayNode(std::string nodename, std::vector<std::string>*
 	for (iter = m_Tree.begin(); iter != m_Tree.end(); iter++)
 		(*iter)->ReadArrayNode(subnode, V);
 
-	return V->size();
+	return (uint32_t)V->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -320,7 +320,7 @@ uint32_t XNodeXML::ReadAllNodes(std::string nodename, std::vector<XNodeXML*>* T)
 		return 0;
 	if (pos == std::string::npos) { // Fin d'un arbre
 		T->push_back(this);
-		return T->size();
+		return (uint32_t)T->size();
 	}
 
 	// Recherche dans les noeuds fils
@@ -328,7 +328,7 @@ uint32_t XNodeXML::ReadAllNodes(std::string nodename, std::vector<XNodeXML*>* T)
 	for (iter = m_Tree.begin(); iter != m_Tree.end(); iter++)
 		(*iter)->ReadAllNodes(subnode, T);
 
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -478,7 +478,7 @@ uint32_t XParserXML::ReadArrayNodeAsInt(std::string nodename, std::vector<int>* 
 		(void)sscanf(T[i].c_str(), "%d", &x);
 		V->push_back(x);
 	}
-	return V->size();
+	return (uint32_t)V->size();
 }
 
 uint32_t XParserXML::ReadArrayNodeAsUInt32(std::string nodename, std::vector<uint32_t>* V)
@@ -490,7 +490,7 @@ uint32_t XParserXML::ReadArrayNodeAsUInt32(std::string nodename, std::vector<uin
 		(void)sscanf(T[i].c_str(), "%u", &x);
 		V->push_back(x);
 	}
-	return V->size();
+	return (uint32_t)V->size();
 }
 
 uint32_t XParserXML::ReadArrayNodeAsDouble(std::string nodename, std::vector<double>* V)
@@ -502,7 +502,7 @@ uint32_t XParserXML::ReadArrayNodeAsDouble(std::string nodename, std::vector<dou
 		(void)sscanf(T[i].c_str(), "%lf", &x);
 		V->push_back(x);
 	}
-	return V->size();
+	return (uint32_t)V->size();
 }
 
 //-----------------------------------------------------------------------------
@@ -536,7 +536,7 @@ uint32_t XParserXML::FindAllSubParsers(std::string nodename, std::vector<XParser
 		T->push_back(P);
 	}
 
-	return T->size();
+	return (uint32_t)T->size();
 }
 
 //-----------------------------------------------------------------------------

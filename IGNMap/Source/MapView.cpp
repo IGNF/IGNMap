@@ -204,6 +204,7 @@ void MapView::mouseMove(const juce::MouseEvent& event)
 	m_dY = event.y;
 	m_dZ = m_MapThread.GetZ(event.x, event.y);
 	Pixel2Ground(m_dX, m_dY);
+
 	if (event.mods.isAltDown()) {
 		auto b = getLocalBounds();
 		int x0 = XMin(XMax(0, event.x - 32), b.getWidth() - 64);

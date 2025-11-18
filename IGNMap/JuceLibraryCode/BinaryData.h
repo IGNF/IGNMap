@@ -8,11 +8,17 @@
 
 namespace BinaryData
 {
+    extern const char*   Carto_png;
+    const int            Carto_pngSize = 16681;
+
     extern const char*   GSD_png;
     const int            GSD_pngSize = 667;
 
     extern const char*   IGNMapv3_png;
     const int            IGNMapv3_pngSize = 195348;
+
+    extern const char*   Layer_png;
+    const int            Layer_pngSize = 5289;
 
     extern const char*   Move_png;
     const int            Move_pngSize = 5869;
@@ -26,6 +32,12 @@ namespace BinaryData
     extern const char*   Options_png;
     const int            Options_pngSize = 5176;
 
+    extern const char*   Ortho_png;
+    const int            Ortho_pngSize = 29419;
+
+    extern const char*   OrthoCarto_png;
+    const int            OrthoCarto_pngSize = 27533;
+
     extern const char*   Polygone_png;
     const int            Polygone_pngSize = 609;
 
@@ -34,6 +46,9 @@ namespace BinaryData
 
     extern const char*   Rectangle_png;
     const int            Rectangle_pngSize = 619;
+
+    extern const char*   Scale_png;
+    const int            Scale_pngSize = 5155;
 
     extern const char*   Search_png;
     const int            Search_pngSize = 961;
@@ -60,7 +75,7 @@ namespace BinaryData
     const int            Translation_fr_txtSize = 6623;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 17;
+    const int namedResourceListSize = 22;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
