@@ -55,7 +55,7 @@ public:
 
   bool SetStyle(int zoomlevel, juce::Colour* pen, juce::FillType* fill, float* lineWidth, float* iconSize, float* radius,
                 float* textSize, juce::Colour* halo, float* opacity);
-  int NbLineDash() const { return m_LineDash.size(); }
+  int NbLineDash() const { return (int)m_LineDash.size(); }
   float* LineDash() { return m_LineDash.data(); }
 
 protected:
@@ -188,7 +188,9 @@ public:
 
   virtual juce::Image& GetAreaImage(const XFrame& F, double gsd);
   bool DrawWithStyle(const XFrame& F, int zoomlevel);
+  bool Draw(const XFrame& F, int zoomlevel);
   bool DrawMvt(MvtTile* T, MvtStyleLayer* layer);
+  bool DrawMvt(MvtTile* T);
 
   bool LoadStyle(juce::String server);
   bool ReadSprite(juce::String server);

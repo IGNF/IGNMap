@@ -66,7 +66,7 @@ public:
 		m_Cache = GeoTools::CreateCacheDir("STAC");
 		addActionListener(listener);
 		setWantsKeyboardFocus(true);
-		m_nTx = 0;
+		m_nTx = m_nTy = 0;
 		m_bThumb = true;
 		m_Azimuth = 0.;
 	}
@@ -92,7 +92,7 @@ private:
 	juce::String m_Projection;
 	double m_Azimuth;
 	XGeoBase* m_Base;
-	int m_nTx;
+	int m_nTx, m_nTy;
 	XPt2D m_Pos;
 
 	void SetImage();

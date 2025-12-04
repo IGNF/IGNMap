@@ -19,7 +19,8 @@
 //==============================================================================
 ObjectViewerComponent::ObjectViewerComponent()
 { 
-	m_Object = nullptr; 
+	m_Object = nullptr;
+	m_Repres = nullptr;
 
 	// Interface pour les RotationImage
 	m_sldXCenter.setSliderStyle(juce::Slider::LinearHorizontal);
@@ -76,6 +77,17 @@ ObjectViewerComponent::ObjectViewerComponent()
 	addAndMakeVisible(m_sldPenWidth);
 	m_sldPenWidth.addListener(this);
 
+	m_sldFontSize.setRange(6., 72., 1.);
+	m_sldFontSize.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+	addAndMakeVisible(m_sldFontSize);
+	m_sldFontSize.addListener(this);
+
+	juce::StringArray fonts = juce::Font::findAllTypefaceNames();
+	m_cbxFont.addItem(" ", 1);
+	m_cbxFont.addItemList(fonts, 2);
+	addAndMakeVisible(m_cbxFont);
+	m_cbxFont.addListener(this);
+
 	m_btnApply.setButtonText(juce::translate("Apply"));
 	m_btnRestore.setButtonText(juce::translate("Restore"));
 	m_btnApply.addListener(this);
@@ -116,8 +128,10 @@ void ObjectViewerComponent::resized()
 	m_btnPen.setBounds(10, 10, 100, 30);
 	m_btnFill.setBounds(120, 10, 100, 30);
 	m_sldPenWidth.setBounds(65, 50, 100, 30);
-	m_btnRestore.setBounds(10, 100, 100, 30);
-	m_btnApply.setBounds(120, 100, 100, 30);
+	m_cbxFont.setBounds(10, 100, 200, 40);
+	m_sldFontSize.setBounds(65, 150, 100, 30);
+	m_btnRestore.setBounds(10, 200, 100, 30);
+	m_btnApply.setBounds(120, 200, 100, 30);
 
 	// Interface pour les images Internet
 	m_sldZoomCorrection.setBounds(10, 10, 200, 40);
@@ -166,7 +180,7 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 	if (V != nullptr) {
 		if (button == &m_btnRestore) {
 			V->Repres(nullptr);
-			SetGeoVector(V);
+			SetGeoRepres(V->Repres());
 		}
 		if (button == &m_btnApply) {
 			XGeoRepres* R = new XGeoRepres;
@@ -176,7 +190,28 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 			color = m_btnFill.findColour(juce::TextButton::buttonColourId);
 			R->FillColor(color.getARGB());
 			R->Size((uint8_t)m_sldPenWidth.getValue());
+			R->FontSize((uint8_t)m_sldFontSize.getValue());
+			R->Font(m_cbxFont.getText().toStdString().c_str());
 			V->Repres(R);
+		}
+		sendActionMessage("UpdateVector");
+		return;
+	}
+	XGeoClass* C = dynamic_cast<XGeoClass*>(m_Object);
+	if (C != nullptr) {
+		if (button == &m_btnRestore) {
+			*(C->Repres()) = *m_Repres;
+			SetGeoRepres(C->Repres());
+		}
+		if (button == &m_btnApply) {
+			XGeoRepres* R = C->Repres();
+			juce::Colour color = m_btnPen.findColour(juce::TextButton::buttonColourId);
+			R->Color(color.getARGB());
+			color = m_btnFill.findColour(juce::TextButton::buttonColourId);
+			R->FillColor(color.getARGB());
+			R->Size((uint8_t)m_sldPenWidth.getValue());
+			R->FontSize((uint8_t)m_sldFontSize.getValue());
+			R->Font(m_cbxFont.getText().toStdString().c_str());
 		}
 		sendActionMessage("UpdateVector");
 		return;
@@ -202,7 +237,7 @@ void ObjectViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChang
 //==============================================================================
 // ObjectViewerComponent : fixe la selection
 //==============================================================================
-bool ObjectViewerComponent::SetSelection(void* S)
+bool ObjectViewerComponent::SetSelection(XGeoObject* S)
 {
 	m_sldXCenter.setVisible(false);
 	m_sldYCenter.setVisible(false);
@@ -213,10 +248,15 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	m_btnPen.setVisible(false);
 	m_btnFill.setVisible(false);
 	m_sldPenWidth.setVisible(false);
+	m_cbxFont.setVisible(false);
+	m_sldFontSize.setVisible(false);
 	m_btnApply.setVisible(false);
 	m_btnRestore.setVisible(false);
 	m_sldZoomCorrection.setVisible(false);
 	m_cbxStyle.setVisible(false);
+	if (m_Repres != nullptr)
+		delete m_Repres;
+	m_Repres = nullptr;
 
 	m_Object = (XGeoObject*)S;
 	if (m_Object == nullptr)
@@ -228,9 +268,18 @@ bool ObjectViewerComponent::SetSelection(void* S)
 	GeoInternetImage* internet = dynamic_cast<GeoInternetImage*>(m_Object);
 	if (internet != nullptr)
 		return SetInternetImage(internet);
+	XGeoRepres* R = nullptr;
 	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
 	if (V != nullptr)
-		return SetGeoVector(V);
+		R = V->Repres();
+	XGeoClass* C = dynamic_cast<XGeoClass*>(m_Object);
+	if (C != nullptr)
+		R = C->Repres();
+	if (R != nullptr) {
+		m_Repres = new XGeoRepres;
+		*m_Repres = *R;
+		SetGeoRepres(R);
+	}
 	return false;
 }
 
@@ -287,19 +336,24 @@ bool ObjectViewerComponent::UpdateRotationImage(RotationImage* image)
 //==============================================================================
 // SetGeoVector : choix d'une selection XGeoVector
 //==============================================================================
-bool ObjectViewerComponent::SetGeoVector(XGeoVector* V)
+bool ObjectViewerComponent::SetGeoRepres(XGeoRepres* R)
 {
+	if (R == nullptr)
+		return false;
+
 	m_btnPen.setVisible(true);
 	m_btnFill.setVisible(true);
 	m_sldPenWidth.setVisible(true);
+	m_cbxFont.setVisible(true);
+	m_sldFontSize.setVisible(true);
 	m_btnApply.setVisible(true);
 	m_btnRestore.setVisible(true);
-	XGeoRepres* R = V->Repres();
-	if (R == nullptr)
-		return false;
+
 	m_btnPen.setColour(juce::TextButton::buttonColourId, juce::Colour(R->Color()));
 	m_btnFill.setColour(juce::TextButton::buttonColourId, juce::Colour(R->FillColor()));
 	m_sldPenWidth.setValue(R->Size(), juce::NotificationType::dontSendNotification);
+	m_cbxFont.setText(R->Font(), juce::NotificationType::dontSendNotification);
+	m_sldFontSize.setValue(R->FontSize(), juce::NotificationType::dontSendNotification);
 	return true;
 }
 

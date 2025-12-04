@@ -49,8 +49,8 @@ void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
 //-----------------------------------------------------------------------------
 void StacViewer::mouseDrag(const juce::MouseEvent& event)
 {
-  int x = event.getDistanceFromDragStartX();
-  m_nTx -= x;
+  m_nTx -= event.getDistanceFromDragStartX();
+  m_nTy -= event.getDistanceFromDragStartY();
   SetImage();
 }
 

@@ -348,8 +348,8 @@ void SentinelViewerComponent::actionListenerCallback(const juce::String& message
 		juce::int64 time = T[1].getLargeIntValue();
 		for (size_t i = 0; i < m_AnalyzePage.m_AnalyzeResult.size() - 1; i++) {
 			if ((time >= m_AnalyzePage.m_AnalyzeResult[i].Time.toMilliseconds()) && (time < m_AnalyzePage.m_AnalyzeResult[i + 1].Time.toMilliseconds())) {
-				m_AnalyzePage.m_tblExtract.scrollToEnsureColumnIsOnscreen(i + 2);
-				m_AnalyzePage.m_tblExtract.scrollToEnsureColumnIsOnscreen(i+1);
+				m_AnalyzePage.m_tblExtract.scrollToEnsureColumnIsOnscreen((int)i + 2);
+				m_AnalyzePage.m_tblExtract.scrollToEnsureColumnIsOnscreen((int)i + 1);
 				break;
 			}
 		}
@@ -837,7 +837,7 @@ void SentinelAnalyzeDraw::paint(juce::Graphics& g)
 		g.setColour(juce::Colours::lightpink);
 		juce::int64 T = m_ShowDate - (*m_Result)[0].Time.toMilliseconds();
 		float x = (float)(X0 + (T * W) / deltaT);
-		g.drawLine(x, Y0, x, Y0 + H, 3.f);
+		g.drawLine(x, (float)Y0, x, (float)(Y0 + H), 3.f);
 	}
 
 	float lastX = 0.f, lastY = 0.f;

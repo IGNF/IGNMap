@@ -423,6 +423,13 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 	Att.push_back("Zmin"); Att.push_back(std::to_string(Zmin()));
 	Att.push_back("Zmax"); Att.push_back(std::to_string(Zmax()));
 	if (m_bCopc) { // Fichier COPC
+		juce::int64 gpsMinTime = (juce::int64)m_CopcReader.GpsTimeMin() + (juce::int64)1000000000.;
+		juce::int64 gpsMaxTime = (juce::int64)m_CopcReader.GpsTimeMax() + (juce::int64)1000000000.;
+		juce::Time origin(1980, 0, 6, 0, 0);
+		juce::Time minTime(origin.toMilliseconds() + gpsMinTime * (juce::int64)1000);
+		juce::Time maxTime(origin.toMilliseconds() + gpsMaxTime * (juce::int64)1000);
+		Att.push_back("GPS Time Min"); Att.push_back(minTime.formatted("%Y/%m/%d %H:%M:%S").toStdString());
+		Att.push_back("GPS Time Max"); Att.push_back(maxTime.formatted("%Y/%m/%d %H:%M:%S").toStdString());
 		Att.push_back("COPC spacing"); Att.push_back(std::to_string(m_CopcReader.m_dSpacing));
 		Att.push_back("COPC level"); Att.push_back(std::to_string(m_CopcReader.MaxLevel()));
 	}

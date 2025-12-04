@@ -572,6 +572,8 @@ bool CopcReader::SetInfo(laszip_U8* data, std::string filename)
   m_dHalfSize = info->halfsize;
   m_dXmin = info->center_x - info->halfsize;
   m_dYmin = info->center_y - info->halfsize;
+  m_dGpsTimeMin = info->gpstime_minimum;
+  m_dGpsTimeMax = info->gpstime_maximum;
   Entry* entries = new Entry[nb_entries];
   std::ifstream in;
   in.open(filename, std::ios_base::in | std::ios_base::binary);

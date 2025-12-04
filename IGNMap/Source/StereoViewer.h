@@ -133,7 +133,7 @@ private:
 class StereoViewer : public ToolWindow {
 public:
   StereoViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons,
-    juce::ActionListener* listener, XGeoBase* base)
+    juce::ActionListener* /*listener*/, XGeoBase* /*base*/)
     : ToolWindow(name, backgroundColour, requiredButtons)
   {
     setResizable(true, true);

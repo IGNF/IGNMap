@@ -115,7 +115,7 @@ void SelTreeItem::itemClicked(const juce::MouseEvent& event)
       };
     std::function< void() > Properties = [=]() { // Proprietes de l'objet
       int index = getIndexInParent();
-      viewer->sendActionMessage("Properties:" + juce::String(index));
+      viewer->sendActionMessage("Properties:Object:" + juce::String(index));
       };
     
     juce::PopupMenu menu;

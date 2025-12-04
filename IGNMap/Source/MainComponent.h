@@ -164,7 +164,7 @@ private:
 
   void Test();
   ToolWindow* OpenTool(juce::String toolName);
-  void ShowProperties(uint32_t index);
+  void ShowProperties(uint32_t index, bool typeVector);
   void OpenPanoramax();
 
   void Synchronize();

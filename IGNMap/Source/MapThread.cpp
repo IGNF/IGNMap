@@ -308,7 +308,7 @@ bool MapThread::DrawVectorClass(XGeoClass* C)
 						g.fillPath(m_Path);
 					}
 					m_Path.clear();
-					DrawText(&g, V);
+					DrawText(&g, V, R);
 				}
 			}
 
@@ -381,14 +381,33 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 //==============================================================================
 // Dessin des textes associes aux geometries
 //==============================================================================
-bool MapThread::DrawText(juce::Graphics* g, XGeoVector* V)
+bool MapThread::DrawText(juce::Graphics* g, XGeoVector* V, XGeoRepres* R)
 {
 	if (V->Name().empty())
 		return false;
 	XPt2D P = V->Frame().Center();
 	int X = (int)((P.X - m_dX0) / m_dGsd) + 5;
 	int Y = (int)((m_dY0 - P.Y) / m_dGsd) - 5;
-	g->drawSingleLineText(V->Name(), X, Y);
+
+	juce::Path textPath;
+	juce::GlyphArrangement glyphs;
+	juce::PathStrokeType strokeHaloType(2.5f);
+
+	if (R->Font().empty()) {
+		glyphs.addLineOfText(g->getCurrentFont(), V->Name(), X, Y);
+	}
+	else {
+		juce::Font font(juce::FontOptions(R->Font(), R->FontSize(), juce::Font::plain));
+		glyphs.addLineOfText(font, V->Name(), X, Y);
+	}
+
+	glyphs.createPath(textPath);
+	g->setOpacity(1.f);
+	g->setColour(juce::Colour(R->FillColor()));
+	g->strokePath(textPath, strokeHaloType);
+	g->setColour(juce::Colour(R->Color()));
+	g->fillPath(textPath);
+
 	return true;
 }
 

@@ -34,8 +34,6 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-	//Test();
-
   m_MapView.reset(new MapView("View1"));
   addAndMakeVisible(m_MapView.get());
 	m_MapView.get()->SetGeoBase(&m_GeoBase);
@@ -249,7 +247,9 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolPanoramax);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
+#ifdef DEBUG
 		menu.addItem(1000, "Test");
+#endif // DEBUG
 	}
 	else if (menuIndex == 3)
 	{
@@ -888,10 +888,13 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_ImageViewer.get()->SetBase(&m_GeoBase);
 	}
 	if (T[0] == "Properties") {
-		if (T.size() < 1)
+		if (T.size() < 2)
 			return;
-		int index = T[1].getIntValue();
-		ShowProperties((uint32_t)index);
+		int index = T[2].getIntValue();
+		if (T[1] == "Object")
+			ShowProperties((uint32_t)index, true);
+		if (T[1] == "Class")
+			ShowProperties((uint32_t)index, false);
 	}
 }
 
@@ -1018,7 +1021,7 @@ void MainComponent::RunCommandLine()
 		if (C != nullptr) {
 			if (C->NbVector() == 1) {
 				m_GeoBase.SelectFeature(C->Vector((uint32_t)0));
-				ShowProperties(0);
+				ShowProperties(0, true);
 			}
 		}
 	}
@@ -1053,7 +1056,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.1.2";
+	juce::String version = "0.1.3";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
@@ -1544,6 +1547,8 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	AddMvtServer("https://data.geopf.fr/tms/1.0.0/IGNF_NUAGES-DE-POINTS-LIDAR-HD-produit", "pbf", "", 256, 256, 16);
+
 	/* Creation d'un differentiel MNS*/
 	/*
 	XFrame F = m_MapView.get()->GetViewFrame();
@@ -1758,34 +1763,6 @@ void MainComponent::Test()
 	return;
 	*/
 
-	/* Connexion Panoramax */
-	XGeoPref pref;
-	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
-	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
-	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
-	
-	std::string url = "https://panoramax.ign.fr/api/map";
-	std::string ext = "mvt";
-	std::string style = "https://panoramax.ign.fr/api/map/style.json";
-	int zoom = 15;
-	
-	//std::string url = "data.geopf.fr/tms/1.0.0/PCI";
-	//std::string ext = "pbf";
-	//std::string style = "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PCI/pci.json";
-	MvtLayer* mvt = new MvtLayer(url, ext, 256, 256, zoom);
-	mvt->SetFrame(F);
-	mvt->LoadStyle(style);
-	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url)) {
-		delete mvt;
-		return;
-	}
-
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, true, false, false, false, true);
-	m_ImageViewer.get()->SetBase(&m_GeoBase);
-	return;
-
-
 	/*
 	juce::String filename;
 	if (filename.isEmpty())
@@ -1830,10 +1807,14 @@ void MainComponent::Test()
 //==============================================================================
 // Affiche les proprietes d'un objet
 //==============================================================================
-void MainComponent::ShowProperties(uint32_t index)
+void MainComponent::ShowProperties(uint32_t index, bool typeVector)
 {
-	XGeoVector* V = m_GeoBase.Selection(index);
-	if (V == nullptr)
+	XGeoObject* obj = nullptr;
+	if (typeVector)
+		obj = m_GeoBase.Selection(index);
+	else 
+		obj = m_GeoBase.Class(index);
+	if (obj == nullptr)
 		return;
 	ObjectViewer* viewer = nullptr;
 	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
@@ -1849,7 +1830,7 @@ void MainComponent::ShowProperties(uint32_t index)
 		viewer->setVisible(true);
 		m_ToolWindows.push_back(viewer);
 	}
-	viewer->SetSelection(V);
+	viewer->SetSelection(obj);
 }
 
 //==============================================================================

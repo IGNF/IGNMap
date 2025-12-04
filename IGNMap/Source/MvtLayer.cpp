@@ -115,7 +115,7 @@ MvtLayer::MvtLayer(std::string server, std::string format, uint32_t tileW, uint3
 	m_nMaxZoom = max_zoom;
 	m_nMinZoom = 0;
 	m_nLastZoom = 0;
-	m_bTrueProjection = true;
+	m_bTrueProjection = false;
 
 	CreateCacheDir("MVT");
 }
@@ -223,6 +223,10 @@ juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
 		count++;
 		if (count > 100) break;
 	}
+	if (task.get()->hadError())
+		return "";
+	if (task.get()->statusCode() >= 400)
+		return "";
 	return filename;
 }
 
@@ -389,7 +393,8 @@ bool MvtLayer::ReadSprite(juce::String server)
 	juce::URL image_url(server + ".png");
 	juce::WebInputStream image_web(image_url, false);
 	juce::MemoryBlock block;	// Pour une raison obscure, il faut passer par un MemoryBlock plutot que faire un loadFrom sur le WebInputStream
-	size_t count = image_web.readIntoMemoryBlock(block);
+	if (image_web.readIntoMemoryBlock(block) == 0)
+		return false;
 	m_SpriteImage = juce::PNGImageFormat::loadFrom(block.getData(), block.getSize());
 	if (m_SpriteImage.isNull())
 		return false;
@@ -405,10 +410,67 @@ bool MvtLayer::ReadSprite(juce::String server)
 		int y = sub["y"];
 		int width = sub["width"];
 		int height = sub["height"];
-		int pixelRatio = sub["pixelRatio"];
+		//int pixelRatio = sub["pixelRatio"];
 		sprite.m_Image = m_SpriteImage.getClippedImage(juce::Rectangle<int>(x, y, width, height));
 		m_Sprite.push_back(sprite);
 	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Affichage brut sans fichier de style
+//-----------------------------------------------------------------------------
+bool MvtLayer::Draw(const XFrame& F, int zoomlevel)
+{
+	// Dalles a charger pour couvrir l'emprise
+	double XYori = -(6378137 * XPI);  // Origine du referentiel des dalles
+	double xmin = (F.Xmin - XYori) / Swath(zoomlevel);
+	int firstX = (int)floor(xmin);
+	double xmax = (F.Xmax - XYori) / Swath(zoomlevel);
+	int lastX = (int)ceil(xmax);
+	double ymin = (-XYori - F.Ymax) / Swath(zoomlevel);
+	int firstY = (int)floor(ymin);
+	double ymax = (-XYori - F.Ymin) / Swath(zoomlevel);
+	int lastY = (int)ceil(ymax);
+
+	int nb_tilex = lastX - firstX;
+	int nb_tiley = lastY - firstY;
+
+	std::vector<MvtTile> T;
+	T.resize(nb_tiley * nb_tilex);
+
+	//if (zoomlevel < 7)
+		m_bTrueProjection = true;
+	//else
+	//	m_bTrueProjection = false;
+
+	// Lecture des tiles
+	int index = 0;
+	for (int i = 0; i < nb_tiley; i++) {
+		for (int j = 0; j < nb_tilex; j++) {
+			int x = firstX + j;
+			int y = firstY + i;
+			double GSD0 = Resol(zoomlevel);
+			double X0 = x * Swath(zoomlevel) + XYori;
+			double Y0 = -XYori - y * Swath(zoomlevel);
+			if (!T[index].IsLoaded()) {
+				juce::String filename = LoadTile(x, y, zoomlevel);
+				if (filename.isEmpty())
+					continue;
+				bool flag = T[index].Load(filename, X0, Y0, GSD0);
+				if (!flag) {
+					juce::File badFile(filename); // Le fichier est peut etre corrompu
+					badFile.deleteFile();
+					continue;
+				}
+				T[index].PrepareForDrawing(m_LastFrame, m_LastGsd, m_nTileW, m_nTileH);
+			}
+			DrawMvt(&T[index]);
+			index++;
+		}
+	}
+
+	T.clear();
 	return true;
 }
 
@@ -417,6 +479,8 @@ bool MvtLayer::ReadSprite(juce::String server)
 //-----------------------------------------------------------------------------
 bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 {
+	if (m_Layer.size() < 1)
+		return Draw(F, zoomlevel);
 	// Dalles a charger pour couvrir l'emprise
 	double XYori = -(6378137 * XPI);  // Origine du referentiel des dalles
 	double xmin = (F.Xmin - XYori) / Swath(zoomlevel);
@@ -456,6 +520,10 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 			continue;
 		if (zoomlevel >= layer.MaxZoomLevel())
 			continue;
+		if (zoomlevel < 7)
+			m_bTrueProjection = true;
+		else
+			m_bTrueProjection = false;
 
 		// Lecture des tiles
 		int index = 0;
@@ -468,6 +536,8 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 				double Y0 = -XYori - y * Swath(zoomlevel);
 				if (!T[index].IsLoaded()) {
 					juce::String filename = LoadTile(x, y, zoomlevel);
+					if (filename.isEmpty())
+						continue;
 					bool flag = T[index].Load(filename, X0, Y0, GSD0);
 					if (!flag) {
 						juce::File badFile(filename); // Le fichier est peut etre corrompu
@@ -513,10 +583,13 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 
 	juce::Colour pen, halo;
 	juce::FillType fillType;
+	juce::Path textPath;
+	juce::GlyphArrangement glyphs;
+	juce::PathStrokeType strokeHaloType(2.5f);
 
 	// Zoom level du style a appliquer
 	int styleZoomLevel =	XRint(log(40075016.686 / m_LastGsd) / log(2.)) - 8;
-	if (styleZoomLevel < m_nMaxZoom)
+	if (styleZoomLevel < (int)m_nMaxZoom)
 		styleZoomLevel = (int)m_nLastZoom;
 
 	style->SetStyle(styleZoomLevel, &pen, &fillType, &line_width, &iconSize, &radius, &textSize, &halo, &opacity);
@@ -559,7 +632,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 				feature.reset_property();
 				while (auto property = feature.next_property()) {
 					if (property.key().to_string() == style->FilterAtt(i)) {
-						if ((int)property.value().type() == 1)
+						if (property.value().type() == vtzero::property_value_type::string_value)
 							filtering = style->TestAtt(i, property.value().string_value().to_string());
 						break;
 					}
@@ -605,7 +678,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 						g.setOpacity(1.f);
 						int wout = style->Icon().getWidth(), hout = style->Icon().getHeight();
 						if (fabs(iconSize - 1.) < 0.001)
-							g.drawImageAt(style->Icon(), Xter - wout / 2, Yter - hout / 2);
+							g.drawImageAt(style->Icon(), (int)(Xter - wout / 2.), (int)(Yter - hout / 2.));
 						else {
 							wout *= iconSize;
 							hout *= iconSize;
@@ -626,16 +699,15 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 					feature.reset_property();
 					while (auto property = feature.next_property()) {
 						if (property.key().to_string() == text_field) {
-							if ((int)property.value().type() == 1) {
+							if (property.value().type() == vtzero::property_value_type::string_value) {
 								juce::String label = property.value().string_value().to_string();
+								glyphs.addLineOfText(g.getCurrentFont(), label, Xter, Yter);
+								glyphs.createPath(textPath);
 								if (!halo.isTransparent()) {
 									g.setOpacity(1.f);
 									if (textSize >= 1) {
 										g.setColour(halo);
-										g.drawSingleLineText(label, Xter - 1, Yter);
-										g.drawSingleLineText(label, Xter + 1, Yter);
-										g.drawSingleLineText(label, Xter, Yter - 1);
-										g.drawSingleLineText(label, Xter, Yter + 1);
+										g.strokePath(textPath, strokeHaloType);
 									}
 									else {
 										g.setFillType(juce::FillType(halo));
@@ -647,7 +719,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 								if (!pen.isTransparent())
 									g.setOpacity(1.f);
 									g.setColour(pen);
-									g.drawSingleLineText(label, Xter, Yter);
+									g.fillPath(textPath);
 							}
 							break;
 						}
@@ -663,11 +735,16 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 
 		// Dessin des polylignes et des polygones
 		for (int parts = 0; parts < handler.parts.size(); parts++) {
-			Xima = X0 + (handler.points[2 * index] / factor) * GSD0;
-			Yima = Y0 - (handler.points[2 * index + 1] / factor) * GSD0;
-			pref.Convert(XGeoProjection::WebMercator, pref.Projection(), Xima, Yima, Xter, Yter);
-			Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
-			Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+			Xima = (handler.points[2 * index] / factor);
+			Yima = (handler.points[2 * index + 1] / factor);
+			if (m_bTrueProjection) {
+				pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+				Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+				Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+			}
+			else {
+				T->Tile2Ground(Xima, Yima, Xter, Yter);
+			}
 			path.startNewSubPath(Xter, Yter);
 			Xlast = Xter;
 			Ylast = Yter;
@@ -716,6 +793,178 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 	} // feature
 
 	if (dash != nullptr) delete[] dash;
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Affichage brut d'une tile
+//-----------------------------------------------------------------------------
+bool MvtLayer::DrawMvt(MvtTile* T)
+{
+	if (!T->IsPrepared())
+		return false;
+	XGeoPref pref;
+	juce::Graphics g(m_ProjImage);
+
+	for (size_t num_layer = 0; num_layer < T->Tile()->count_layers(); num_layer++) {
+		auto layer = T->Tile()->get_layer(num_layer);
+		if (layer.empty())
+			continue;
+		std::string layer_name = layer.name().to_string();
+
+		float factor = (float)layer.extent() / (float)m_nTileW, gsd_factor = (float)(m_LastGsd / T->GSD());
+		gsd_factor = 1.;
+
+		float line_width = 1.f, iconSize = 1.f, radius = 1.f, textSize = 10.f, opacity = 1.f;
+		juce::String text_field = "name";
+		juce::Path path;
+
+		juce::Colour pen = juce::Colours::aquamarine, halo;
+		juce::FillType fillType = juce::FillType(juce::Colours::grey);
+
+		// Zoom level du style a appliquer
+		int styleZoomLevel = XRint(log(40075016.686 / m_LastGsd) / log(2.)) - 8;
+		if (styleZoomLevel < (int)m_nMaxZoom)
+			styleZoomLevel = (int)m_nLastZoom;
+
+		g.setColour(pen);
+		g.setOpacity(opacity);
+		g.setFont(textSize);
+
+		juce::PathStrokeType stroke(line_width * gsd_factor, juce::PathStrokeType::mitered, juce::PathStrokeType::rounded);
+
+		double X0 = T->X0(), Y0 = T->Y0(), GSD0 = T->GSD();
+
+		while (auto feature = layer.next_feature()) {
+
+			// Lecture de la geometrie
+			vtzero::geometry geom = feature.geometry();
+			if (geom.type() == vtzero::GeomType::UNKNOWN)
+				continue;
+
+			geom_handler handler;
+			vtzero::decode_geometry(geom, handler);
+
+			// Lecture des attributs
+			juce::String propStr;
+			feature.reset_property();
+			std::string key, value;
+			while (auto property = feature.next_property()) {
+				key = property.key().to_string();
+				if (property.value().type() == vtzero::property_value_type::string_value)
+					propStr = property.value().string_value().to_string();
+				if (property.value().type() == vtzero::property_value_type::int_value)
+					propStr = juce::String(property.value().int_value());
+				if (property.value().type() == vtzero::property_value_type::double_value)
+					propStr = juce::String(property.value().double_value());
+				if (property.value().type() == vtzero::property_value_type::float_value)
+					propStr = juce::String(property.value().float_value());
+
+				if (property.value().type() == vtzero::property_value_type::bool_value) {
+					if (property.value().bool_value())
+						propStr = "True";
+					else
+						propStr = "False";
+				}
+				if (property.value().type() == vtzero::property_value_type::sint_value)
+					propStr = juce::String(property.value().sint_value());
+				if (property.value().type() == vtzero::property_value_type::uint_value)
+					propStr = juce::String(property.value().uint_value());
+
+				if (property.key().to_string() != "url")
+					continue;
+				propStr += juce::String(property.key().to_string());
+				propStr += " : ";
+				if ((int)property.value().type() == 1)
+					propStr += juce::String(property.value().string_value().to_string());
+				propStr += "\n";
+			}
+
+			double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0., d = 2.;
+			XPt2D PtV;
+
+			// Dessin des points et multi-points
+			if (geom.type() == vtzero::GeomType::POINT) {
+				for (int i = 0; i < handler.points.size() / 2; i++) {
+					Xima = (handler.points[2 * i] / factor);
+					Yima = (handler.points[2 * i + 1] / factor);
+					if (m_bTrueProjection) {
+						pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+						Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+						Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+					}
+					else {
+						T->Tile2Ground(Xima, Yima, Xter, Yter);
+					}
+
+					g.drawEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius, line_width);
+
+					// Text
+					g.drawText(propStr, Xter, Yter, 100, 100, juce::Justification::topLeft);
+				}
+				continue;
+			}
+
+			path.clear();
+			path.preallocateSpace((handler.points.size() * 3) / 2);
+			int index = 0;
+
+			// Dessin des polylignes et des polygones
+			for (int parts = 0; parts < handler.parts.size(); parts++) {
+				Xima = (handler.points[2 * index] / factor);
+				Yima = (handler.points[2 * index + 1] / factor);
+				if (m_bTrueProjection) {
+					pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+					Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+					Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+				}
+				else {
+					T->Tile2Ground(Xima, Yima, Xter, Yter);
+				}
+				path.startNewSubPath(Xter, Yter);
+				Xlast = Xter;
+				Ylast = Yter;
+				for (int i = 1; i < handler.parts[parts]; i++) {
+					index++;
+					Xima = (handler.points[2 * index] / factor);
+					Yima = (handler.points[2 * index + 1] / factor);
+					if (m_bTrueProjection) {
+						pref.Convert(XGeoProjection::WebMercator, pref.Projection(), X0 + Xima * GSD0, Y0 - Yima * GSD0, Xter, Yter);
+						Xter = (Xter - m_LastFrame.Xmin) / m_LastGsd;
+						Yter = (m_LastFrame.Ymax - Yter) / m_LastGsd;
+					}
+					else {
+						T->Tile2Ground(Xima, Yima, Xter, Yter);
+					}
+
+					if ((fabs(Xter - Xlast) >= 1.) || (fabs(Yter - Ylast) >= 1.)) {
+						path.lineTo(Xter, Yter);
+						Xlast = Xter;
+						Ylast = Yter;
+					}
+				}
+				if (geom.type() == vtzero::GeomType::POLYGON)
+					path.closeSubPath();
+				index++;
+			}
+			g.drawText(propStr, Xter, Yter, 400, 400, juce::Justification::topLeft);
+
+			if (geom.type() == vtzero::GeomType::LINESTRING) {
+				g.strokePath(path, stroke);
+				continue;
+			}
+
+			if ((geom.type() == vtzero::GeomType::POLYGON)) {
+				//g.setFillType(fillType);
+				//g.fillPath(path);
+				g.setColour(pen);
+				g.strokePath(path, stroke);;
+				continue;
+			}
+
+		} // feature
+	} // layer
 
 	return true;
 }

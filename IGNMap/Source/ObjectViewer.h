@@ -16,6 +16,7 @@
 
 class XGeoObject;
 class XGeoVector;
+class XGeoRepres;
 class RotationImage;
 class GeoInternetImage;
 
@@ -26,21 +27,23 @@ class ObjectViewerComponent : public juce::Component, public juce::ActionListene
 	public juce::Button::Listener, public juce::ComboBox::Listener, public juce::Slider::Listener {
 public:
 	ObjectViewerComponent();
+	virtual ~ObjectViewerComponent() { if (m_Repres != nullptr) delete m_Repres; }
 	
 	void actionListenerCallback(const juce::String& message) override;
 	void buttonClicked(juce::Button*) override;
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	void sliderValueChanged(juce::Slider* slider) override;
 
-	bool SetSelection(void*);
+	bool SetSelection(XGeoObject*);
 	bool SetRotationImage(RotationImage* image);
 	bool UpdateRotationImage(RotationImage* image);
-	bool SetGeoVector(XGeoVector* V);
+	bool SetGeoRepres(XGeoRepres* R);
 	bool SetInternetImage(GeoInternetImage* internet);
 	bool UpdateInternetImage(GeoInternetImage* internet);
 
 private:
 	XGeoObject* m_Object;
+	XGeoRepres* m_Repres;
 
 	// Interface pour les images rotation
 	juce::Slider m_sldXCenter;
@@ -56,6 +59,8 @@ private:
 	juce::Slider m_sldPenWidth;
 	juce::TextButton m_btnApply;
 	juce::TextButton m_btnRestore;
+	juce::ComboBox m_cbxFont;
+	juce::Slider m_sldFontSize;
 
 	// Interface pour les images internet
 	juce::Slider m_sldZoomCorrection;
@@ -81,7 +86,7 @@ public:
 	}
 
 	void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) override { ; }
-	void SetSelection(void* S) override { m_Object.SetSelection(S); }
+	void SetSelection(void* S) override { m_Object.SetSelection((XGeoObject*)S); }
 
 private:
 	ObjectViewerComponent		m_Object;

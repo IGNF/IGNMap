@@ -65,7 +65,7 @@ private:
 
   bool DrawVectorClass(XGeoClass* C);
   bool DrawGeometry(XGeoVector* V);
-  bool DrawText(juce::Graphics* g, XGeoVector* V);
+  bool DrawText(juce::Graphics* g, XGeoVector* V, XGeoRepres* R);
   bool DrawCentroide(XGeoVector* G);
   bool DrawPoint(XGeoVector* G);
   bool DrawPolyline(XGeoVector* G);

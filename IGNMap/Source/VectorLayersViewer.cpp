@@ -203,11 +203,14 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 			sendActionMessage("ExportRepresVector"); };
 		std::function< void() > ImportRepresVector = [=]() { // Import des representations des classes
 			sendActionMessage("ImportRepresVector"); };
+		std::function< void() > Properties = [=]() { // Proprietes de la classe
+			sendActionMessage("Properties"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
 		menu.addItem(juce::translate("Layer Frame"), LayerFrame);
 		menu.addItem(juce::translate("View Objects"), ViewObjects);
+		menu.addItem(juce::translate("Properties"), Properties);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Export Layer"), ExportClass);
 		menu.addItem(juce::translate("Export Representations"), ExportRepresVector);
@@ -424,6 +427,10 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 				T.push_back(C);
 		}
 	}
+	if (T.size() < 1) {	// Aucune classe selectionnee
+		sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
+		return;
+	}
 
 	if (message == "UpdateVectorVisibility") {
 		for (int i = 0; i < T.size(); i++)
@@ -455,6 +462,14 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 	if (message == "ExportClass") {
 		ExportClass(T);
 		return;
+	}
+	if (message == "Properties") {
+		int index = -1;
+		for (int i = 0; i < m_Base->NbClass(); i++)
+			if (m_Base->Class(i) == T[0])
+				index = i;
+		if (index >= 0)
+			sendActionMessage("Properties:Class:" + juce::String(index));
 	}
 	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
