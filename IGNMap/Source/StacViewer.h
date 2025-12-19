@@ -96,6 +96,7 @@ private:
 	XPt2D m_Pos;
 
 	void SetImage();
+	void ComputeSphereImage();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StacViewer)
 };

@@ -35,11 +35,13 @@ void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
   if (!m_bThumb)
     return;
   juce::MouseCursor::showWaitCursor();
-  juce::String server = m_StacServer + "pictures/" + m_Id + "/sd.jpg";
+  juce::String server = m_StacServer + "pictures/" + m_Id + "/hd.jpg";
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
   m_Image = format.decodeImage(web_image);
   m_bThumb = false;
+  m_nTx = 180;
+  m_nTy = 0;
   SetImage();
   juce::MouseCursor::hideWaitCursor();
 }
@@ -63,12 +65,24 @@ bool StacViewer::keyPressed(const juce::KeyPress& key)
   if (key.isCurrentlyDown())
     down = 5;
   if (key.getKeyCode() == juce::KeyPress::leftKey) {
-    m_nTx -= 20 * down;
+    m_nTx -= 5 * down;
     SetImage();
     return true;
   }
   if (key.getKeyCode() == juce::KeyPress::rightKey) {
-    m_nTx += 20 * down;
+    m_nTx += 5 * down;
+    SetImage();
+    return true;
+  }
+  if (key.getKeyCode() == juce::KeyPress::upKey) {
+    m_nTy += 1 * down;
+    if (m_nTy >= 90) m_nTy = 89;
+    SetImage();
+    return true;
+  }
+  if (key.getKeyCode() == juce::KeyPress::downKey) {
+    m_nTy -= 1 * down;
+    if (m_nTy <= -45) m_nTy = -44;
     SetImage();
     return true;
   }
@@ -154,35 +168,49 @@ void StacViewer::SetImage()
     m_Stac.m_ImageComponent.setImage(m_Image);
     return;
   }
-
-  int scaleFactor = m_Image.getWidth() / (m_Stac.m_ImageComponent.getWidth() * 2);
-  if (scaleFactor < 1) scaleFactor = 1;
-  juce::Image image = m_Image.rescaled(m_Image.getWidth() / scaleFactor, m_Image.getHeight() / scaleFactor);
-
-  int Wima = image.getWidth(), Hima = image.getHeight();
-  int Wcomp = m_Stac.m_ImageComponent.getWidth() / 2, Hcomp = m_Stac.m_ImageComponent.getHeight();
-  
-  int W = Wcomp * Hima / Hcomp;
-  int X0 = ((Wima - W) / 2 + m_nTx) % Wima;
-  if (X0 < 0)
-    X0 = Wima + X0;
-  int Wcrop = Wima - X0;
-  if (Wcrop > W) Wcrop = W;
-
-  juce::Image crop(juce::Image::PixelFormat::ARGB, W, Hima, true, juce::SoftwareImageType());
-  juce::Graphics g(crop);
-  {
-    g.drawImage(image, 0, 0, Wcrop, Hima, X0, 0, Wcrop, Hima);
-    if (Wcrop < W)
-      g.drawImage(image, Wcrop, 0, (W - Wcrop), Hima, 0, 0, (W - Wcrop), Hima);
-  }
-  juce::AffineTransform transform = juce::AffineTransform::fromTargetPoints(0, 0, 0, 0, W / 2, Hima / 2,  W, Hima / 2, W, 0, W * 2, 0);
-  juce::Image final(juce::Image::PixelFormat::ARGB, W * 2, Hima, true, juce::SoftwareImageType());
-  juce::Graphics gfinal(final);
-  {
-    gfinal.drawImageTransformed(crop, transform);
-  }
-  
-  m_Stac.m_ImageComponent.setImage(final);
+  ComputeSphereImage();
 }
 
+//-----------------------------------------------------------------------------
+// Calcul d'une image a partir d'une image equirectangulaire
+//-----------------------------------------------------------------------------
+void StacViewer::ComputeSphereImage()
+{
+  juce::Image image(juce::Image::RGB, m_Stac.m_ImageComponent.getWidth(), m_Stac.m_ImageComponent.getHeight(), true, juce::SoftwareImageType());
+  {
+    juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readWrite);
+    juce::Image::BitmapData source(m_Image, juce::Image::BitmapData::readOnly);
+
+    int x = 0, y = 0, sh2 = source.height / 2, sw2 = source.width / 2;
+    double startAlpha = (m_nTx % 360) * XPI / 180., startBeta = m_nTy * XPI / 180., alpha = 0., beta = 0., focal = bitmap.width / 2;
+
+    for (int line = 0; line < bitmap.height; line++) {
+      if ((bitmap.height / 2 - line) != 0)
+        beta = startBeta + atan((bitmap.height / 2 - line) / focal);
+      else
+        beta = startBeta;
+      
+      y = XRint(sh2 - sh2 * beta / (XPI / 2.));
+      if (y < 0) y = 0;
+      if (y >= source.height) y = source.height - 1;
+
+      for (int col = 0; col < bitmap.width; col++) {
+        if ((col - bitmap.width / 2) != 0)
+          alpha = startAlpha + atan((col - bitmap.width / 2) / focal);
+        else
+          alpha = startAlpha;
+
+        alpha = fmod(alpha, 2 * XPI);
+        x = XRint(source.width * alpha / (2 * XPI));
+        if (x < 0) 
+          x = source.width + x;
+        if (x >= source.width) 
+          x = x - source.width;
+
+        bitmap.setPixelColour(col, line, source.getPixelColour(x, y));
+      }
+    }
+  }
+
+  m_Stac.m_ImageComponent.setImage(image);
+}
