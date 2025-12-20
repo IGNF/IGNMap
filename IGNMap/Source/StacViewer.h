@@ -45,9 +45,19 @@ protected:
 			g.fillAll(getUIColourIfAvailable(juce::LookAndFeel_V4::ColourScheme::UIColour::windowBackground));
 		}
 		void resized() override {
+			SetThumbMode(m_Tree.isVisible());
+		}
+		void SetThumbMode(bool thumb) {
 			auto area = getLocalBounds();
-			m_ImageComponent.setBounds(area.removeFromTop(area.getHeight() / 2).reduced(8));
-			m_Tree.setBounds(area.reduced(8));
+			if (thumb) {
+				m_ImageComponent.setBounds(area.removeFromTop(area.getHeight() / 2).reduced(8));
+				m_Tree.setBounds(area.reduced(8));
+				m_Tree.setVisible(true);
+			}
+			else {
+				m_ImageComponent.setBounds(area.removeFromTop(area.getHeight()).reduced(8));
+				m_Tree.setVisible(false);
+			}
 		}
 
 	};
@@ -84,6 +94,7 @@ public:
 
 private:
 	juce::Image m_Image;
+	juce::Image m_Thumb;
 	StacComponent m_Stac;
 	juce::String m_StacServer;
 	juce::String m_Id;

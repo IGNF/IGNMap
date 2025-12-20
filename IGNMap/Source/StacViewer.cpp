@@ -32,18 +32,26 @@ void StacViewer::mouseDown(const juce::MouseEvent& event)
 //-----------------------------------------------------------------------------
 void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
 {
-  if (!m_bThumb)
+  if (!m_bThumb) {
+    m_Stac.SetThumbMode(true);
+    if (m_Thumb.isValid())
+      m_Stac.m_ImageComponent.setImage(m_Thumb);
+    m_bThumb = true;
     return;
-  juce::MouseCursor::showWaitCursor();
-  juce::String server = m_StacServer + "pictures/" + m_Id + "/hd.jpg";
-  juce::WebInputStream web_image(juce::URL(server), false);
-  juce::JPEGImageFormat format;
-  m_Image = format.decodeImage(web_image);
+  }
+  if (m_Image.isNull()) {
+    juce::MouseCursor::showWaitCursor();
+    juce::String server = m_StacServer + "pictures/" + m_Id + "/hd.jpg";
+    juce::WebInputStream web_image(juce::URL(server), false);
+    juce::JPEGImageFormat format;
+    m_Image = format.decodeImage(web_image);
+    juce::MouseCursor::hideWaitCursor();
+  }
+  m_Stac.SetThumbMode(false);
   m_bThumb = false;
   m_nTx = 180;
   m_nTy = 0;
   SetImage();
-  juce::MouseCursor::hideWaitCursor();
 }
 
 //-----------------------------------------------------------------------------
@@ -51,8 +59,10 @@ void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
 //-----------------------------------------------------------------------------
 void StacViewer::mouseDrag(const juce::MouseEvent& event)
 {
-  m_nTx -= event.getDistanceFromDragStartX();
-  m_nTy -= event.getDistanceFromDragStartY();
+  m_nTx -= event.getDistanceFromDragStartX() / 5;
+  m_nTy -= event.getDistanceFromDragStartY() / 5;
+  if (m_nTy >= 90) m_nTy = 89;
+  if (m_nTy <= -45) m_nTy = -44;
   SetImage();
 }
 
@@ -150,9 +160,10 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   server = m_StacServer + "pictures/" + m_Id + "/thumb.jpg";
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
-  m_Image = format.decodeImage(web_image);
-  m_Stac.m_ImageComponent.setImage(m_Image);
+  m_Thumb = format.decodeImage(web_image);
+  m_Stac.m_ImageComponent.setImage(m_Thumb);
   m_bThumb = true;
+  m_Image = juce::Image();
 }
 
 //-----------------------------------------------------------------------------
