@@ -34,6 +34,7 @@ public:
 		m_ImageComponent.setInterceptsMouseClicks(false, false);
 		setResizeLimits(400, 450, 10000, 10000);
 		m_nZoom = 4;
+		m_nTone = 0;
 	}
 
 	virtual ~ZoomViewer() { Clear(); }
@@ -44,12 +45,15 @@ public:
 	void SetSelection(void*) override { ; }
 	bool NeedTargetImage() override { return true; }
 	void SetTargetImage(const juce::Image& image) override;
+	void ComputeZoom();
 
 	void mouseDown(const juce::MouseEvent& event) override;
 
 private:
 	juce::ImageComponent m_ImageComponent;
+	juce::Image m_TargetImage;
 	int m_nZoom;
+	int m_nTone;
 
 #ifdef  IGNMAP_ONNX
 	Ort::Env* m_Env = nullptr;

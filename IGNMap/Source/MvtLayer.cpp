@@ -217,8 +217,7 @@ juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
 	if (task.get() == nullptr)
 		return filename;
 	int count = 0;
-	while (task.get()->isFinished() == false)
-	{
+	while (task.get()->isFinished() == false) {
 		juce::Thread::sleep(10);
 		count++;
 		if (count > 100) break;
@@ -540,8 +539,8 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 						continue;
 					bool flag = T[index].Load(filename, X0, Y0, GSD0);
 					if (!flag) {
-						juce::File badFile(filename); // Le fichier est peut etre corrompu
-						badFile.deleteFile();
+						//juce::File badFile(filename); // Le fichier est peut etre corrompu
+						//badFile.deleteFile();
 						continue;
 					}
 					T[index].PrepareForDrawing(m_LastFrame, m_LastGsd, m_nTileW, m_nTileH);

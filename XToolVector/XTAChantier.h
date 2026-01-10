@@ -105,6 +105,7 @@ public:
 
 	virtual std::string Name() { char buf[20]; snprintf(buf, 20, "%u", m_nNum); return buf;}
 	virtual std::string ImageName() { return m_strImage;}
+	std::string ImagePath();
 
 	virtual inline XGeoMap* Map() const { return m_TA;}
 

@@ -15,7 +15,6 @@
 #include "../XTool/XInterpol.h"
 #include "../../XToolAlgo/XToneMapper.h"
 
-
 class XTransfoZoom : public XTransfo {
 protected:
   double	m_dZoom;
@@ -110,15 +109,19 @@ void ZoomViewer::mouseDown(const juce::MouseEvent& event)
   std::function< void() > ZoomIA = [=]() {	LoadModel(); };
   menu.addItem(juce::translate("IA"), ZoomIA);
 #endif
-  std::function< void() > Zoom2X = [=]() {	m_nZoom = 2; };
+  std::function< void() > Zoom2X = [=]() {	m_nZoom = 2; ComputeZoom(); };
   if (m_nZoom == 2) tick = true; else tick = false;
   menu.addItem(juce::translate("Zoom x 2"), true, tick, Zoom2X);
-  std::function< void() > Zoom4X = [=]() {	m_nZoom = 4; };
+  std::function< void() > Zoom4X = [=]() {	m_nZoom = 4; ComputeZoom(); };
   if (m_nZoom == 4) tick = true; else tick = false;
   menu.addItem(juce::translate("Zoom x 4"), true, tick, Zoom4X);
   if (m_nZoom == 6) tick = true; else tick = false;
-  std::function< void() > Zoom6X = [=]() {	m_nZoom = 6; };
+  std::function< void() > Zoom6X = [=]() {	m_nZoom = 6; ComputeZoom(); };
   menu.addItem(juce::translate("Zoom x 6"), true, tick, Zoom6X);
+
+  if (m_nTone == 1) tick = true; else tick = false;
+  std::function< void() > Magic = [=]() {	m_nTone = (m_nTone + 1) % 2; ComputeZoom(); };
+  menu.addItem(juce::translate("Tone Mapping"), true, tick, Magic);
 
   menu.showMenuAsync(juce::PopupMenu::Options());
 
@@ -138,7 +141,9 @@ void ZoomViewer::SetTargetImage(const juce::Image& image)
 		RunModel(image);
 }
 #else
-void ZoomViewer::SetTargetImage(const juce::Image& image)
+void ZoomViewer::SetTargetImage(const juce::Image& image) { m_TargetImage = image; ComputeZoom(); }
+
+void ZoomViewer::ComputeZoom()
 {
   /*
   juce::Image resized_image = image.rescaled(image.getWidth() * 4, image.getHeight() * 4, juce::Graphics::highResamplingQuality);
@@ -146,7 +151,7 @@ void ZoomViewer::SetTargetImage(const juce::Image& image)
   */
   //juce::Image resized_image = image.rescaled(image.getWidth() * 4, image.getHeight() * 4, juce::Graphics::highResamplingQuality);
 
-  juce::Image imageRGB = image.convertedToFormat(juce::Image::RGB);
+  juce::Image imageRGB = m_TargetImage.convertedToFormat(juce::Image::RGB);
 
   juce::Image resized_image(imageRGB.getFormat(), imageRGB.getWidth() * m_nZoom, imageRGB.getHeight() * m_nZoom, true);
 
@@ -157,20 +162,17 @@ void ZoomViewer::SetTargetImage(const juce::Image& image)
     int offset = bitmap.lineStride - (w * nbSample);
     XTransfoZoom transfo(m_nZoom);
     XInterCubCatmull interpol;
-    //uint8_t* out = new uint8_t[w * h * nbSample];
     uint8_t* out = resized.data;
-    XBaseImage::Resample(bitmap.data, out, w, h, nbSample, offset, &transfo, &interpol);
+    XBaseImage::Resample(bitmap.data, out, w, h, nbSample, offset, &transfo, &interpol, true);
 
-    
-    XToneMapper::ToneMappingInt mapper;
-    mapper.set_enabled(0, true);
-    mapper.set_power(0, (float)5);
-    mapper.set_unsharp_mask_enabled(true);
-    mapper.set_unsharp_mask_power((float)20);
-    mapper.process_8bit_rgb_image(out, w * m_nZoom, h * m_nZoom);
-   
-
-    //delete[] out;
+    if (m_nTone != 0) {
+      XToneMapper::ToneMappingInt mapper;
+      mapper.set_enabled(0, true);
+      mapper.set_power(0, (float)5);
+      mapper.set_unsharp_mask_enabled(true);
+      mapper.set_unsharp_mask_power((float)20);
+      mapper.process_8bit_rgb_image(out, w * m_nZoom, h * m_nZoom);
+    }
   }
   /*
   juce::ImageConvolutionKernel kernel(3);

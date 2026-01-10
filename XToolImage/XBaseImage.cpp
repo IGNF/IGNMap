@@ -966,7 +966,7 @@ bool XBaseImage::FastZoomBil(float* in, uint32_t win, uint32_t hin, float* out, 
 // Fonction de réechantillonnage
 //-----------------------------------------------------------------------------
 bool XBaseImage::Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset,
-                          XTransfo* transfo, XInterpol* interpol)
+                          XTransfo* transfo, XInterpol* interpol, bool noBorder)
 {
   int wout, hout;
   transfo->Dimension((int)w, (int)h, &wout, &hout);
@@ -984,12 +984,26 @@ bool XBaseImage::Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uin
       transfo->Direct(j, i, &xi, &yi);
       u = (int)xi;
       v = (int)yi;
-      if (u >= w - win) continue;
-      if (v >= h - win) continue;
-      if (u < win) continue;
-      if (v < win) continue;
-      for (int k = 0; k < win_size; k++)
-        ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample);
+     
+      if ((u < w - win) && (v < h - win) && (u >= win) && (v >= win)) {
+        for (int k = 0; k < win_size; k++)
+          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample);
+      }
+      else {
+        if (!noBorder)  // On ne traite par les bords d'image
+          continue;
+        for (int k = 0; k < win_size; k++) {
+          int y = (v - win + k);
+          if (y < 0) y = 0;
+          if (y >= h) y = h - 1;
+          for (int m = 0; m < win_size; m++) {
+            int x = (u - win + m);
+            if (x < 0) x = 0;
+            if (x >= w) x = w - 1;
+            ::memcpy(&pix[k * win_size * nbSample + m * nbSample], &in[y * (w * nbSample + offset) + x * nbSample], nbSample);
+          }
+        }
+      }
 
       for (int k = 0; k < nbSample; k++) {
         uint8_t* ptr = (uint8_t*)pix + k;

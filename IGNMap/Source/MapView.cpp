@@ -72,6 +72,7 @@ void MapView::paint(juce::Graphics& g)
 	DrawFrames(g);
 	DrawTarget(g);
 	DrawDecoration(g);
+	DrawCurrentAnnotation(g);
 }
 
 void MapView::resized()
@@ -175,7 +176,7 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 {
 	SaveImage();
 	m_StartPt = event.position;
-	m_DragPt = juce::Point<float>(0, 0);
+	m_DragPt = m_MovePt = juce::Point<float>(0, 0);
 	//setMouseCursor(juce::MouseCursor(juce::MouseCursor::CrosshairCursor));
 	if ((event.mods.isCtrlDown()) || (m_nMouseMode == Zoom)) {
 		m_bZoom = true;
@@ -200,6 +201,7 @@ void MapView::mouseDown(const juce::MouseEvent& event)
 
 void MapView::mouseMove(const juce::MouseEvent& event)
 {
+	m_MovePt = juce::Point<float>((float)event.x, (float)event.y);
 	m_dX = event.x;
 	m_dY = event.y;
 	m_dZ = m_MapThread.GetZ(event.x, event.y);
@@ -213,6 +215,8 @@ void MapView::mouseMove(const juce::MouseEvent& event)
 		m_TargetImage = m_MapThread.GetRaster(R);
 		SetTarget(XPt3D(m_dX, m_dY, m_dZ));
 	}
+	if (m_nMouseMode == MouseMode::Rectangle)
+		repaint();
 }
 
 void MapView::mouseDrag(const juce::MouseEvent& event)
@@ -621,6 +625,7 @@ void MapView::CloseAnnotation()
 {
 	if (!m_Annotation.Close())
 		return;
+	m_StartPt = m_MovePt = juce::Point<float>(0.f, 0.f);
 	m_Annotation.Text(m_Annotation.TypeVectorString());
 	m_Annot.push_back(m_Annotation);
 	m_Annotation.Clear();
@@ -661,7 +666,8 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 		Ground2Pixel(P1.X, P1.Y);
 		P1 += XPt2D(deltaX, deltaY);
 		g.drawEllipse((float)P1.X - 3.f, (float)P1.Y - 3.f, 6.f, 6.f, 2.f);
-		g.drawRect(juce::Rectangle<float>(juce::Point<float>((float)P0.X, (float)P0.Y), juce::Point<float>((float)P1.X, (float)P1.Y)));
+		g.drawRect(juce::Rectangle<float>(juce::Point<float>((float)P0.X, (float)P0.Y), juce::Point<float>((float)P1.X, (float)P1.Y)),
+								annot->Repres()->Size());
 		return;
 	}
 	if (annot->NbPt() < 2)
@@ -678,5 +684,29 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 	if (annot->Primitive() == XAnnotation::pPolygon) {
 		g.setFillType(juce::FillType(juce::Colour(annot->Repres()->FillColor())));
 		g.fillPath(path);
+	}
+}
+
+//==============================================================================
+// Dessin de l'annotation en cours d'edition
+//==============================================================================
+void MapView::DrawCurrentAnnotation(juce::Graphics& g)
+{
+	if (m_nMouseMode == MouseMode::Rectangle) {
+		if ((m_Annotation.NbPt() >= 1)&&(!m_MovePt.isOrigin())) {
+			XPt2D P0 = m_Annotation.Pt(0);
+			Ground2Pixel(P0.X, P0.Y);
+			g.setColour(juce::Colours::red);
+			juce::Point<float> P1 = m_MovePt;
+			juce::Rectangle<float> R(juce::Point<float>((float)P0.X, (float)P0.Y), P1);
+			float w = R.getWidth(), h = R.getHeight();
+			if (juce::ModifierKeys::currentModifiers.isShiftDown()) {
+				w = h = XMin(w, h);
+				R.setWidth(w);
+				R.setHeight(h);
+			}
+			g.drawRect(R, 2);
+			return;
+		}
 	}
 }

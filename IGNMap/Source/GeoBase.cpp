@@ -335,7 +335,7 @@ bool GeoDTM::ReadAll(float* area)
 //-----------------------------------------------------------------------------
 // Ouverture du MNT Tiff
 //-----------------------------------------------------------------------------
-bool GeoDTM::ImportTif(std::string file_tif, std::string file_bin)
+bool GeoDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
 {
 	if (!m_Image.AnalyzeImage(file_tif))
 		return false;
@@ -901,7 +901,23 @@ bool GeoTools::AddImageInObect(XGeoBase* base, int index)
 	if (V == nullptr)
 		return false;
 	juce::String filename;
-	filename = AppUtil::OpenFile("RasterPath");
+	XTACliche* cliche = dynamic_cast<XTACliche*>(V);
+	if (cliche != nullptr) { // Cas particulier des cliches aeriens
+		filename = cliche->ImagePath();
+		juce::File file(filename + ".jp2");
+		if (!file.exists()) {
+			file = juce::File(filename + ".tif");
+			if (file.exists())
+				filename = filename + ".tif";
+			else
+				filename = "";
+		}
+		else
+			filename = filename + ".jp2";
+	}
+
+	if (filename.isEmpty())
+		filename = AppUtil::OpenFile("RasterPath");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -911,8 +927,7 @@ bool GeoTools::AddImageInObect(XGeoBase* base, int index)
 		delete affine;
 		return false;
 	}
-
-	XTACliche* cliche = dynamic_cast<XTACliche*>(V);
+	
 	if (cliche != nullptr) {	// Cas particulier des cliches aeriens
 		XPt2D S = cliche->Centroide();
 		double gsd = cliche->Resol();
@@ -940,6 +955,7 @@ bool GeoTools::AddImageInObect(XGeoBase* base, int index)
 		delete affine;
 		return false;
 	}
+	base->SelectFeature(affine);
 	return true;
 }
 

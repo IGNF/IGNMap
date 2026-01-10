@@ -326,3 +326,15 @@ bool XTACliche::ReadAttributes(std::vector<std::string>& V)
 
 	return true;
 }
+
+//-----------------------------------------------------------------------------
+// Nom du chemin image (sans extension
+//-----------------------------------------------------------------------------
+std::string XTACliche::ImagePath()
+{
+	std::string strTAFolder;
+	if (m_TA != nullptr)
+		strTAFolder = m_TA->ImagePath();
+	XPath path;
+	return path.FullName(strTAFolder.c_str(), m_strImage.c_str());
+}

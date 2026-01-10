@@ -883,6 +883,7 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		int index = T[1].getIntValue();
 		if (!GeoTools::AddImageInObect(&m_GeoBase, index))
 			return;
+		actionListenerCallback("UpdateSelectFeatures");
 		m_MapView.get()->SetFrame(m_GeoBase.Frame());
 		m_MapView.get()->RenderMap(false, true, false, false, false, true);
 		m_ImageViewer.get()->SetBase(&m_GeoBase);
@@ -1818,15 +1819,17 @@ void MainComponent::ShowProperties(uint32_t index, bool typeVector)
 		return;
 	ObjectViewer* viewer = nullptr;
 	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
-		if (m_ToolWindows[i]->getName() == "ObjectViewer") {
+		viewer = dynamic_cast<ObjectViewer*>(m_ToolWindows[i]);
+		if (viewer != nullptr) {
 			m_ToolWindows[i]->setVisible(true);
 			m_ToolWindows[i]->toFront(true);
-			viewer = dynamic_cast<ObjectViewer*>(m_ToolWindows[i]);
 			break;
 		}
 	}
 	if (viewer == nullptr) {
-		viewer = new ObjectViewer("ObjectViewer", juce::Colours::grey, juce::DocumentWindow::allButtons, this);
+		juce::String title = obj->Name();
+		if (title.isEmpty()) title = "ObjectViewer";
+		viewer = new ObjectViewer(title, juce::Colours::grey, juce::DocumentWindow::allButtons, this);
 		viewer->setVisible(true);
 		m_ToolWindows.push_back(viewer);
 	}

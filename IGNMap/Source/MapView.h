@@ -46,6 +46,7 @@ public:
   void DrawDecoration(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawAnnotation(XAnnotation* annot, juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawAllAnnotations(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
+  void DrawCurrentAnnotation(juce::Graphics&);
   double ComputeCartoScale(double cartoscale = 0.);
   void SetTarget(const XPt3D& P, bool notify = true);
   XPt3D GetTarget() const { return m_Target; }
@@ -92,6 +93,7 @@ private:
   int           m_nMouseMode;
   juce::Point<float>  m_StartPt;
   juce::Point<float>  m_DragPt;
+  juce::Point<float>  m_MovePt;
   juce::Image   m_Image;    // Image de la vue
   juce::Image   m_SelImage; // Partie de l'image de la vue selectionnee
   juce::Image   m_TargetImage;
