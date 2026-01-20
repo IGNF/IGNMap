@@ -39,6 +39,7 @@ countries: fr be mc ch lu
 "GSD of the view" = "Résolution de la vue"
 "Search" = "Recherche"
 "Layers" = "Couches"
+"Layer" = "Couche"
 "Add OSM data" = "Ajout d'une couche OSM"
 "View" = "Afficher"
 "View Side Panel" = "Afficher le panneau d'information"
@@ -160,4 +161,8 @@ countries: fr be mc ch lu
 "This tool allows to compute a DTM or a DSM for each LAS file" = "Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS"
 "Compute DTM/DSM" = "Calcul de MNT / MNS"
 "Fill NOZ Hole" = "Remplissage des cellules sans valeur"
+"Scale of the view" = "Echelle de la vue"
+"Stereoscopic View" = "Vue Stéréoscopique"
+"Zoom correction" = "Correction de zoom"
+"Useful Frame" = "Cadre utile"
 

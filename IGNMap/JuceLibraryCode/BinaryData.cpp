@@ -4509,6 +4509,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"GSD of the view\" = \"R\xc3\xa9solution de la vue\"\r\n"
 "\"Search\" = \"Recherche\"\r\n"
 "\"Layers\" = \"Couches\"\r\n"
+"\"Layer\" = \"Couche\"\r\n"
 "\"Add OSM data\" = \"Ajout d'une couche OSM\"\r\n"
 "\"View\" = \"Afficher\"\r\n"
 "\"View Side Panel\" = \"Afficher le panneau d'information\"\r\n"
@@ -4630,6 +4631,10 @@ static const unsigned char temp_binary_data_21[] =
 "\"This tool allows to compute a DTM or a DSM for each LAS file\" = \"Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS\"\r\n"
 "\"Compute DTM/DSM\" = \"Calcul de MNT / MNS\"\r\n"
 "\"Fill NOZ Hole\" = \"Remplissage des cellules sans valeur\"\r\n"
+"\"Scale of the view\" = \"Echelle de la vue\"\r\n"
+"\"Stereoscopic View\" = \"Vue St\xc3\xa9r\xc3\xa9oscopique\"\r\n"
+"\"Zoom correction\" = \"Correction de zoom\"\r\n"
+"\"Useful Frame\" = \"Cadre utile\"\r\n"
 "\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_21;
@@ -4667,7 +4672,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 6623; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 6806; return Translation_fr_txt;
         default: break;
     }
 

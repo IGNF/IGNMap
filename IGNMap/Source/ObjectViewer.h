@@ -13,7 +13,8 @@
 #define OBJECTVIEWER_H
 
 #include "AppUtil.h"
-#include "../XTool//XPt3D.h"
+#include "../XTool/XPt3D.h"
+#include "../XTool/XGeoRepres.h"
 
 class XGeoObject;
 class XGeoVector;
