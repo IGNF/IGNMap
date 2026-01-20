@@ -64,6 +64,13 @@ ObjectViewerComponent::ObjectViewerComponent()
 	addAndMakeVisible(m_sldToneMappingSharpness);
 	m_sldToneMappingSharpness.addListener(this);
 
+	m_sldFrameExport.setSliderStyle(juce::Slider::LinearHorizontal);
+	m_sldFrameExport.setRange(0., 100., 1.);
+	m_sldFrameExport.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+	m_sldFrameExport.setTextValueSuffix(juce::String(" : ") + juce::translate("Useful Frame"));
+	addAndMakeVisible(m_sldFrameExport);
+	m_sldFrameExport.addListener(this);
+
 	// Interface pour les objets vectoriels
 	m_btnPen.setButtonText(juce::translate("Pen"));
 	m_btnFill.setButtonText(juce::translate("Fill"));
@@ -123,6 +130,7 @@ void ObjectViewerComponent::resized()
 	m_sldRotation.setBounds(55, 90, 120, 120);
 	m_sldToneMappingPower.setBounds(10, 220, 100, 40);
 	m_sldToneMappingSharpness.setBounds(120, 220, 100, 40);
+	m_sldFrameExport.setBounds(10, 270, 100, 40);
 
 	// Interface pour les objets vectoriels
 	m_btnPen.setBounds(10, 10, 100, 30);
@@ -149,15 +157,21 @@ void ObjectViewerComponent::actionListenerCallback(const juce::String& /*message
 //==============================================================================
 // ObjectViewerComponent :modification des sliders
 //==============================================================================
-void ObjectViewerComponent::sliderValueChanged(juce::Slider* /*slider*/)
+void ObjectViewerComponent::sliderValueChanged(juce::Slider* slider)
 {
 	if (m_Object == nullptr)
 		return;
 	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
 	if (image != nullptr) {
-		UpdateRotationImage(image);
-		image->SetDirty();
-		sendActionMessage("UpdateRaster");
+		if (slider == &m_sldFrameExport) {
+			UpdateFrameExport(image);
+		}
+		else {
+			UpdateRotationImage(image);
+			image->SetDirty();
+			sendActionMessage("UpdateRaster");
+		}
+		return;
 	}
 
 	GeoInternetImage* internet = dynamic_cast<GeoInternetImage*>(m_Object);
@@ -165,6 +179,7 @@ void ObjectViewerComponent::sliderValueChanged(juce::Slider* /*slider*/)
 		UpdateInternetImage(internet);
 		internet->SetDirty();
 		sendActionMessage("UpdateRaster");
+		return;
 	}
 
 }
@@ -245,6 +260,7 @@ bool ObjectViewerComponent::SetSelection(XGeoObject* S)
 	m_sldRotation.setVisible(false);
 	m_sldToneMappingPower.setVisible(false);
 	m_sldToneMappingSharpness.setVisible(false);
+	m_sldFrameExport.setVisible(false);
 	m_btnPen.setVisible(false);
 	m_btnFill.setVisible(false);
 	m_sldPenWidth.setVisible(false);
@@ -294,6 +310,7 @@ bool ObjectViewerComponent::SetRotationImage(RotationImage* image)
 	m_sldRotation.setVisible(true);
 	m_sldToneMappingPower.setVisible(true);
 	m_sldToneMappingSharpness.setVisible(true);
+	m_sldFrameExport.setVisible(true);
 	
 	XPt2D S = image->Centroide();
 	m_sldXCenter.setRange(S.X - 200., S.X + 200., 5.);
@@ -307,6 +324,7 @@ bool ObjectViewerComponent::SetRotationImage(RotationImage* image)
 	m_sldRotation.setValue(rot, juce::NotificationType::dontSendNotification);
 	m_sldToneMappingPower.setValue(image->GetToneMapperPower(), juce::NotificationType::dontSendNotification);
 	m_sldToneMappingSharpness.setValue(image->GetToneMapperSharpness(), juce::NotificationType::dontSendNotification);
+	m_sldFrameExport.setValue(0, juce::NotificationType::dontSendNotification);;
 	return true;
 }
 
@@ -383,5 +401,39 @@ bool ObjectViewerComponent::UpdateInternetImage(GeoInternetImage* internet)
 {
 	double X = m_sldZoomCorrection.getValue();
 	internet->SetZoomCorrection((int)X);
+	return true;
+}
+
+//==============================================================================
+// UpdateFrameExport : mise a jour du cadre pour l'export
+//==============================================================================
+bool ObjectViewerComponent::UpdateFrameExport(RotationImage* image)
+{
+	XPt3D C = m_Target;
+	double rot = image->Rotation();
+	double ratio = m_sldFrameExport.getValue() * 0.005;
+	double W = image->GetImageW(), H = image->GetImageH();
+	double gsd = image->Resolution();
+	juce::String message = "UpdateTargetPoly:";
+	std::vector<XPt3D> T;
+	double X = ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
+	double Y = ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
+	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
+	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
+	X = ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
+	Y = ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
+	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
+	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
+	X = -ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
+	Y = -ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
+	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
+	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
+	X = -ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
+	Y = -ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
+	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
+	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0");
+
+	sendActionMessage(message);
+
 	return true;
 }

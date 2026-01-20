@@ -24,6 +24,7 @@
 #include "../XTool/XInterpol.h"
 #include "../XTool/XFrame.h"
 #include "XTiffWriter.h"
+#include "../XTool/XPath.h"
 
 //-----------------------------------------------------------------------------
 // Constructeur
@@ -49,6 +50,15 @@ void XFileImage::Close()
   if (m_Palette != nullptr)
     delete[] m_Palette;
   m_Palette = nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Nom de l'image (sans chemin mais avec extension)
+//-----------------------------------------------------------------------------
+std::string XFileImage::ImageName()
+{
+  XPath P;
+  return P.Name(m_strFilename.c_str());
 }
 
 //-----------------------------------------------------------------------------

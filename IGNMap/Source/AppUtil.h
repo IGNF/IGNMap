@@ -23,6 +23,8 @@ namespace AppUtil {
 	std::string GetStringFilename(juce::String filename);
 	void SaveComponent(juce::Component* component);
 	void SaveTableComponent(juce::TableListBox* table);
+
+	juce::String DownloadFile(const juce::String& request, const juce::String& filename, int nb_try = 10, int timeout = 10);
 }
 
 //==============================================================================

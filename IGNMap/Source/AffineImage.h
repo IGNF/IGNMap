@@ -58,6 +58,7 @@ public:
   RotationImage() { m_dGsd = 1.; m_dRot = 0.; m_nW = 0; m_nH = 0; m_ToneMapper = nullptr; }
   virtual ~RotationImage() { if (m_ToneMapper != nullptr) delete m_ToneMapper; }
 
+  virtual std::string Name() { return m_Image.ImageName(); }
   virtual	bool ReadAttributes(std::vector<std::string>& V);
   inline virtual double Resolution() const { return m_dGsd; }
   inline double Rotation() const { return m_dRot; }

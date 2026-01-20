@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "TmsLayer.h"
+#include "AppUtil.h"
 #include <algorithm>
 #include <limits>
 #include "../../XToolGeod/XGeoPref.h"
@@ -131,19 +132,7 @@ juce::String TmsLayer::LoadTile(int x, int y, int zoomlevel)
 
 	// Telechargement du fichier
 	m_strRequest = m_TileSet[zoomlevel].m_strHRef + "/" + juce::String(x) + "/" + juce::String(y) + "." + m_strFormat;
-	juce::URL url(m_strRequest);
-	juce::URL::DownloadTaskOptions options;
-	std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
-	if (task.get() == nullptr)
-		return filename;
-	int count = 0;
-	while (task.get()->isFinished() == false)
-	{
-		juce::Thread::sleep(5);
-		count++;
-		if (count > 100) break;
-	}
-	return filename;
+	return AppUtil::DownloadFile(m_strRequest, filename);
 }
 
 //-----------------------------------------------------------------------------

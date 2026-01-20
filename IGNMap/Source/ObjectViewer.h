@@ -13,6 +13,7 @@
 #define OBJECTVIEWER_H
 
 #include "AppUtil.h"
+#include "../XTool//XPt3D.h"
 
 class XGeoObject;
 class XGeoVector;
@@ -37,13 +38,17 @@ public:
 	bool SetSelection(XGeoObject*);
 	bool SetRotationImage(RotationImage* image);
 	bool UpdateRotationImage(RotationImage* image);
+	bool UpdateFrameExport(RotationImage* image);
 	bool SetGeoRepres(XGeoRepres* R);
 	bool SetInternetImage(GeoInternetImage* internet);
 	bool UpdateInternetImage(GeoInternetImage* internet);
 
+	void SetTarget(const double& X, const double& Y, const double& Z) { m_Target = XPt3D(X, Y, Z); }
+
 private:
 	XGeoObject* m_Object;
 	XGeoRepres* m_Repres;
+	XPt3D m_Target;
 
 	// Interface pour les images rotation
 	juce::Slider m_sldXCenter;
@@ -52,6 +57,7 @@ private:
 	juce::Slider m_sldRotation;
 	juce::Slider m_sldToneMappingPower;
 	juce::Slider m_sldToneMappingSharpness;
+	juce::Slider m_sldFrameExport;
 
 	// Interface pour les objets vectoriels
 	ColourChangeButton m_btnPen;
@@ -85,7 +91,7 @@ public:
 		setResizeLimits(230, 400, 1000, 1000);
 	}
 
-	void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) override { ; }
+	void SetTarget(const double& X, const double& Y, const double& Z) override { m_Object.SetTarget(X, Y, Z); }
 	void SetSelection(void* S) override { m_Object.SetSelection((XGeoObject*)S); }
 
 private:

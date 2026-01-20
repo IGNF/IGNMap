@@ -43,6 +43,8 @@ void MapView::Clear()
 	m_Annot.clear();
 	m_Annotation.Repres()->Color(juce::Colours::chartreuse.getARGB());
 	m_Annotation.Repres()->FillColor(0x30dc143c);
+	m_Target = XPt3D();
+	m_TargetPoly.clear();
 }
 
 void MapView::paint(juce::Graphics& g)
@@ -58,6 +60,7 @@ void MapView::paint(juce::Graphics& g)
 		g.fillAll(juce::Colours::white);
 		g.drawImageAt(m_Image, (int)m_DragPt.x, (int)m_DragPt.y);
 		DrawAnnotation(&m_Annotation, g, m_DragPt.x, m_DragPt.y);
+		DrawTargetPoly(g, m_DragPt.x, m_DragPt.y);
 		DrawTarget(g, m_DragPt.x, m_DragPt.y);
 		DrawDecoration(g, m_DragPt.x, m_DragPt.y);
 		return;
@@ -70,6 +73,7 @@ void MapView::paint(juce::Graphics& g)
 	if (!m_MapThread.isThreadRunning())
 		DrawAllAnnotations(g);
 	DrawFrames(g);
+	DrawTargetPoly(g);
 	DrawTarget(g);
 	DrawDecoration(g);
 	DrawCurrentAnnotation(g);
@@ -516,6 +520,23 @@ void MapView::SetTarget(const XPt3D& P, bool notify)
 }
 
 //==============================================================================
+// Fixe le polygone cible de la vue
+//==============================================================================
+void MapView::SetTargetPoly(const std::vector<XPt3D>& P, bool notify)
+{
+	m_TargetPoly = P;
+	if (!notify)
+		return;
+	juce::String message = "UpdateTargetPoly:";
+	for (size_t i = 0; i < m_TargetPoly.size(); i++) {
+		message += (juce::String(m_TargetPoly[i].X, 2) + ":");
+		message += (juce::String(m_TargetPoly[i].Y, 2) + ":");
+		message += juce::String(m_TargetPoly[i].Z, 2);
+	}
+	sendActionMessage(message);
+}
+
+//==============================================================================
 // Dessin du point cible
 //==============================================================================
 void MapView::DrawTarget(juce::Graphics& g, float deltaX, float deltaY)
@@ -528,6 +549,32 @@ void MapView::DrawTarget(juce::Graphics& g, float deltaX, float deltaY)
 	g.setColour(juce::Colours::fuchsia);
 	g.drawEllipse((float)P0.X - 2.f, (float)P0.Y - 2.f, 4.f, 4.f, 1.f);
 	g.drawEllipse((float)P0.X - 4.f, (float)P0.Y - 4.f, 8.f, 8.f, 2.f);
+}
+
+//==============================================================================
+// Dessin du polygone cible
+//==============================================================================
+void MapView::DrawTargetPoly(juce::Graphics& g, float deltaX, float deltaY)
+{
+	if (m_TargetPoly.size() < 3)
+		return;
+	g.setColour(juce::Colours::fuchsia);
+	XPt2D P0 = m_TargetPoly[0];
+	Ground2Pixel(P0.X, P0.Y);
+	P0 += XPt2D(deltaX, deltaY);
+	g.drawEllipse((float)P0.X, (float)P0.Y, 4.f, 4.f, 1.f);
+	juce::Path path;
+	path.startNewSubPath((float)P0.X, (float)P0.Y);
+	for (size_t i = 1; i < m_TargetPoly.size(); i++) {
+		XPt2D Pi = m_TargetPoly[i];
+		Ground2Pixel(Pi.X, Pi.Y);
+		Pi += XPt2D(deltaX, deltaY);
+		g.drawEllipse((float)Pi.X - 2.f, (float)Pi.Y - 2.f, 4.f, 4.f, 1.f);
+		path.lineTo((float)Pi.X, (float)Pi.Y);
+	}
+	path.closeSubPath();
+	juce::PathStrokeType strokeType(2.f);
+	g.strokePath(path, strokeType);
 }
 
 //==============================================================================

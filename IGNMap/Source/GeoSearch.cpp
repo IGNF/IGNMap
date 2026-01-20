@@ -96,9 +96,9 @@ bool GeoSearch::RunQuery(juce::String query)
   int count = 0;
   while (task.get()->isFinished() == false)
   {
-    juce::Thread::sleep(50);
+    juce::Thread::sleep(10);
     count++;
-    if (count > 100) return false;
+    if (count > 10) return false;
   }
   return true;
 }

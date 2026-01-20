@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "WmtsLayer.h"
+#include "AppUtil.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 
@@ -63,6 +64,8 @@ bool WmtsLayerWebMerc::LoadFrame(const XFrame& F, int zoomlevel)
       juce::Image image = FindCachedTile(x, y, zoomlevel);
       if (image.isNull()) {
         juce::String filename = LoadTile(x, y, zoomlevel);
+        if (filename.isEmpty())
+          continue;
         image = juce::ImageFileFormat::loadFrom(juce::File(filename));
         if (!image.isValid()) {
           juce::File badFile(filename); // Le fichier est peut etre corrompu
@@ -102,19 +105,7 @@ juce::String WmtsLayerWebMerc::LoadTile(int x, int y, int zoomlevel)
     "&TILEMATRIX=" + juce::String(zoomlevel) + "&TILEROW=" + juce::String(y) + "&TILECOL=" + juce::String(x);
   if (m_strApiKey.isNotEmpty())
     m_strRequest += ("&apikey=" + m_strApiKey);
-  juce::URL url(m_strRequest);
-  juce::URL::DownloadTaskOptions options;
-  std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
-  if (task.get() == nullptr)
-    return filename;
-  int count = 0;
-  while (task.get()->isFinished() == false)
-  {
-    juce::Thread::sleep(5);
-    count++;
-    if (count > 100) break;
-  }
-  return filename;
+  return AppUtil::DownloadFile(m_strRequest, filename);
 }
 
 //-----------------------------------------------------------------------------
@@ -246,20 +237,7 @@ juce::String WmtsLayerTMS::LoadTile(uint32_t x, uint32_t y, std::string idLevel)
     "&TILEMATRIX=" + idLevel + "&TILEROW=" + juce::String(y) + "&TILECOL=" + juce::String(x);
   if (m_strApiKey.isNotEmpty())
     m_strRequest += ("&apikey=" + m_strApiKey);
-
-  juce::URL url(m_strRequest);
-  juce::URL::DownloadTaskOptions options;
-  std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
-  if (task.get() == nullptr)
-    return filename;
-  int count = 0;
-  while (task.get()->isFinished() == false)
-  {
-    juce::Thread::sleep(10);
-    count++;
-    if (count > 100) break;
-  }
-  return filename;
+  return AppUtil::DownloadFile(m_strRequest, filename);
 }
 
 //-----------------------------------------------------------------------------

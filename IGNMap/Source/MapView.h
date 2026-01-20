@@ -50,7 +50,9 @@ public:
   double ComputeCartoScale(double cartoscale = 0.);
   void SetTarget(const XPt3D& P, bool notify = true);
   XPt3D GetTarget() const { return m_Target; }
+  void SetTargetPoly(const std::vector<XPt3D>& P, bool notify = true);
   void DrawTarget(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
+  void DrawTargetPoly(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetFrame() const { return m_Frame; }
   XFrame GetSelectionFrame() const { return m_SelectionFrame; }
@@ -102,6 +104,7 @@ private:
   XAnnotation   m_Annotation; // Annotation en cours d'edition
   std::vector<XAnnotation>  m_Annot;  // Liste des annotations
   XPt3D         m_Target;     // Point cible
+  std::vector<XPt3D> m_TargetPoly;  // Polygone cible
   XFrame        m_SelectionFrame;  // Rectangle de selection
   XFrame        m_3DFrame;         // Rectangle de vue 3D
   uint64_t      m_nFrameCounter;

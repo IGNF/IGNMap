@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "MvtLayer.h"
+#include "AppUtil.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 
@@ -211,22 +212,7 @@ juce::String MvtLayer::LoadTile(int x, int y, int zoomlevel)
 
 	// Telechargement du fichier
 	m_strRequest = m_strServer + "/" + juce::String(zoomlevel) + "/" + juce::String(x) + "/" + juce::String(y) + "." + m_strFormat;
-	juce::URL url(m_strRequest);
-	juce::URL::DownloadTaskOptions options;
-	std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
-	if (task.get() == nullptr)
-		return filename;
-	int count = 0;
-	while (task.get()->isFinished() == false) {
-		juce::Thread::sleep(10);
-		count++;
-		if (count > 100) break;
-	}
-	if (task.get()->hadError())
-		return "";
-	if (task.get()->statusCode() >= 400)
-		return "";
-	return filename;
+	return AppUtil::DownloadFile(m_strRequest, filename);
 }
 
 //-----------------------------------------------------------------------------

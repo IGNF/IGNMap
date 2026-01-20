@@ -860,6 +860,16 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 					m_ToolWindows[i]->SetTargetImage(m_MapView.get()->GetTargetImage());
 		}
 	}
+	if (T[0] == "UpdateTargetPoly") {
+		if (((T.size() - 1) % 3 != 0) || (T.size() == 1))
+			return;
+		std::vector<XPt3D> target;
+		for (size_t i = 0; i < (T.size() - 1) / 3; i++) {
+			target.push_back(XPt3D(T[3*i + 1].getDoubleValue(), T[3*i + 2].getDoubleValue(), T[3*i + 3].getDoubleValue()));
+		}
+		if (m_MapView.get() != nullptr)
+			m_MapView.get()->SetTargetPoly(target, false);
+	}
 	if (T[0] == "CenterView") {
 		if (isConnected()) {
 			juce::MemoryBlock block(message.getCharPointer(), message.length());
@@ -1057,7 +1067,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.1.3";
+	juce::String version = "0.1.4";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
@@ -1817,18 +1827,19 @@ void MainComponent::ShowProperties(uint32_t index, bool typeVector)
 		obj = m_GeoBase.Class(index);
 	if (obj == nullptr)
 		return;
+	juce::String title = obj->Name();
+	if (title.isEmpty()) title = "ObjectViewer";
 	ObjectViewer* viewer = nullptr;
 	for (size_t i = 0; i < m_ToolWindows.size(); i++) {
 		viewer = dynamic_cast<ObjectViewer*>(m_ToolWindows[i]);
 		if (viewer != nullptr) {
 			m_ToolWindows[i]->setVisible(true);
 			m_ToolWindows[i]->toFront(true);
+			m_ToolWindows[i]->setTitle(title);
 			break;
 		}
 	}
 	if (viewer == nullptr) {
-		juce::String title = obj->Name();
-		if (title.isEmpty()) title = "ObjectViewer";
 		viewer = new ObjectViewer(title, juce::Colours::grey, juce::DocumentWindow::allButtons, this);
 		viewer->setVisible(true);
 		m_ToolWindows.push_back(viewer);

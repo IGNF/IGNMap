@@ -158,6 +158,30 @@ void AppUtil::SaveTableComponent(juce::TableListBox* table)
 }
 
 //==============================================================================
+// Telechargement d'un fichier
+//==============================================================================
+juce::String AppUtil::DownloadFile(const juce::String& request, const juce::String& filename, int nb_try, int timeout)
+{
+	juce::URL url(request);
+	juce::URL::DownloadTaskOptions options;
+	std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
+	if (task.get() == nullptr)
+		return "";
+	int count = 0;
+	while (task.get()->isFinished() == false)
+	{
+		juce::Thread::sleep(timeout);
+		count++;
+		if (count > nb_try) break;
+	}
+	if (task.get()->hadError())
+		return "";
+	if (task.get()->statusCode() >= 400)
+		return "";
+	return filename;
+}
+
+//==============================================================================
 // Clic sur le bouton
 //==============================================================================
 void ColourChangeButton::clicked()
