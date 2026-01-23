@@ -72,7 +72,7 @@ void XAnnotation::Clear()
 uint32_t XAnnotation::NbPt() const
 {
   if ((m_Primitive >= pPolyline) && (m_Primitive <= pPolygon))
-    return m_Pt.size();
+    return (uint32_t)m_Pt.size();
   if ((m_Primitive == pEllipse) || (m_Primitive == pRect))
     return 4;
   if (m_Primitive == pText)

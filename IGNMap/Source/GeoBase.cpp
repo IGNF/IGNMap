@@ -759,11 +759,13 @@ void GeoTools::ColorizeClasses(XGeoBase* base)
 // Enregistrement d'un objet dans une map et une classe
 //-----------------------------------------------------------------------------
 bool GeoTools::RegisterObject(XGeoBase* base, XGeoVector* V, std::string mapName, std::string layerName, std::string className,
-														 int transparency, uint32_t color, uint32_t fill, uint32_t zorder, uint8_t size)
+														 bool selectable, uint32_t zorder,
+														 int transparency, uint32_t color, uint32_t fill, uint8_t size)
 {
 	XGeoClass* raster_class = base->AddClass(layerName.c_str(), className.c_str());
 	if (raster_class == nullptr)
 		return false;
+	raster_class->Selectable(selectable);
 	raster_class->Repres()->Transparency((uint8_t)transparency);
 	raster_class->Repres()->Color(color);
 	raster_class->Repres()->FillColor(fill);

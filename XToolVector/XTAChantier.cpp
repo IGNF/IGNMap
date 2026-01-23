@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 // Import d'un TA dans une XGeoBase
 //-----------------------------------------------------------------------------
-XGeoClass* XTAChantier::ImportTA(XGeoBase* base, const char* path, XGeoMap* map)
+XGeoClass* XTAChantier::ImportTA(XGeoBase* base, const char* path, XGeoMap* /*map*/)
 {
 	XPath P;
 	XTAChantier* file = new XTAChantier;

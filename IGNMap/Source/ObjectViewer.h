@@ -39,7 +39,9 @@ public:
 	bool SetSelection(XGeoObject*);
 	bool SetRotationImage(RotationImage* image);
 	bool UpdateRotationImage(RotationImage* image);
+	void ComputeFrameExport(RotationImage* image, std::vector<XPt2D>& T);
 	bool UpdateFrameExport(RotationImage* image);
+	void ExportUsefulFrame();
 	bool SetGeoRepres(XGeoRepres* R);
 	bool SetInternetImage(GeoInternetImage* internet);
 	bool UpdateInternetImage(GeoInternetImage* internet);
@@ -59,6 +61,8 @@ private:
 	juce::Slider m_sldToneMappingPower;
 	juce::Slider m_sldToneMappingSharpness;
 	juce::Slider m_sldFrameExport;
+	juce::TextButton m_btnExportUsefulFrame;
+	juce::Label m_lblFrameSize;
 
 	// Interface pour les objets vectoriels
 	ColourChangeButton m_btnPen;

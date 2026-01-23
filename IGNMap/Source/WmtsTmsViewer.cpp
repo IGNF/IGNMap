@@ -225,7 +225,7 @@ void WmtsViewerComponent::actionListenerCallback(const juce::String& message)
 		WmtsLayerTMS* layer = new WmtsLayerTMS(m_strLastUrl.toStdString());
 		if (m_Capabilities.SetLayerTMS(layer, m_Model.m_Proxy[index].Id, m_Model.m_Proxy[index].TMS)) {
 			if (layer->FindProjection()) {
-				if (GeoTools::RegisterObject(m_Base, layer, "WMTS", "WMTS", layer->Name())) {
+				if (GeoTools::RegisterObject(m_Base, layer, "WMTS", "WMTS", layer->Name(), false, 0)) {
 					sendActionMessage("AddWmtsLayer");
 					m_Table.repaint();
 					return;
@@ -489,7 +489,7 @@ void TmsViewerComponent::actionListenerCallback(const juce::String& message)
 		if ((m_Model.m_Proxy[index].Format == "pbf")|| (m_Model.m_Proxy[index].Format == "mvt")) {
 			MvtLayer* mvt = new MvtLayer();
 			if (mvt->ReadServer(m_Model.m_Proxy[index].Href)) {
-				if (GeoTools::RegisterObject(m_Base, mvt, "MVT", "MVT", m_Model.m_Proxy[index].Id.toStdString())) {
+				if (GeoTools::RegisterObject(m_Base, mvt, "MVT", "MVT", m_Model.m_Proxy[index].Id.toStdString(), false, 0)) {
 					sendActionMessage("AddWmtsLayer");
 					m_Table.repaint();
 					return;
@@ -500,7 +500,7 @@ void TmsViewerComponent::actionListenerCallback(const juce::String& message)
 		else {
 			TmsLayer* layer = new TmsLayer();
 			if (layer->ReadServer(m_Model.m_Proxy[index].Href)) {
-				if (GeoTools::RegisterObject(m_Base, layer, "TMS", "TMS", m_Model.m_Proxy[index].Id.toStdString())) {
+				if (GeoTools::RegisterObject(m_Base, layer, "TMS", "TMS", m_Model.m_Proxy[index].Id.toStdString(), false, 0)) {
 					sendActionMessage("AddWmtsLayer");
 					m_Table.repaint();
 					return;

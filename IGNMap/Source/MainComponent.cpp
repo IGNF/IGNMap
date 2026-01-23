@@ -581,7 +581,8 @@ bool MainComponent::perform(const InvocationInfo& info)
 		//AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2024", "PM_0_19", "jpeg", 256, 256, 19);
 		break;
 	case CommandIDs::menuAddGeoportailCartes:
-		AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
+		//AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
+		AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
 		break;
 	case CommandIDs::menuAddGeoportailPlanIGN:
 		AddWmtsServer("data.geopf.fr/wmts", "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2", "PM_0_19", "png", 256, 256, 19);
@@ -1303,7 +1304,7 @@ bool MainComponent::AddOSMServer()
 
 	OsmLayer* osm = new OsmLayer("tile.openstreetmap.org");
 	osm->SetFrame(F);
-	if (!GeoTools::RegisterObject(&m_GeoBase, osm, "OSM", "OSM", "tile.openstreetmap.org")) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, osm, "OSM", "OSM", "tile.openstreetmap.org", false, 0)) {
 		delete osm;
 		return false;
 	}
@@ -1336,7 +1337,7 @@ bool MainComponent::AddWmtsServer(std::string server, std::string layer, std::st
 
 	WmtsLayerWebMerc* wmts = new WmtsLayerWebMerc(server, layer, TMS, format, tileW, tileH, max_zoom, apikey);
 	wmts->SetFrame(F);
-	if (!GeoTools::RegisterObject(&m_GeoBase, wmts, "WMTS", "WMTS", layer)) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, wmts, "WMTS", "WMTS", layer, false, 0)) {
 		delete wmts;
 		return false;
 	}
@@ -1369,7 +1370,7 @@ bool MainComponent::AddMvtServer(std::string url, std::string ext, std::string s
 	MvtLayer* mvt = new MvtLayer(url, ext, tileW, tileH, max_zoom);
 	mvt->SetFrame(F);
 	mvt->LoadStyle(style);
-	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url)) {
+	if (!GeoTools::RegisterObject(&m_GeoBase, mvt, "MVT", "MVT", url, false, 0)) {
 		delete mvt;
 		return false;
 	}
@@ -1996,23 +1997,27 @@ void MainComponent::SetDefaultLayers(juce::String layers)
 {
 	if (layers.isEmpty())
 		return;
-	m_MapView.get()->setMouseCursor(juce::MouseCursor(juce::MouseCursor::WaitCursor));
+	juce::MouseCursor::showWaitCursor();
 	m_GeoBase.ClearSelection();
 	actionListenerCallback("UpdateSelectFeatures");
 	if (layers == "Empty") {
 		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		m_GeoBase.RemoveClass("WMTS", "GEOGRAPHICALGRIDSYSTEMS.MAPS");
 		m_GeoBase.RemoveClass("WMTS", "ORTHOIMAGERY.ORTHOPHOTOS");
 		m_ImageViewer.get()->SetBase(&m_GeoBase);
 		actionListenerCallback("UpdateRaster");
 	}
 	if (layers == "Ortho") {
 		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		m_GeoBase.RemoveClass("WMTS", "GEOGRAPHICALGRIDSYSTEMS.MAPS");
 		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
 	}
 	if (layers == "Carto") {
 		m_GeoBase.RemoveClass("WMTS", "ORTHOIMAGERY.ORTHOPHOTOS");
-		AddMvtServer("https://data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", 
-			"https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
+		m_GeoBase.RemoveClass("MVT", "https://data.geopf.fr/tms/1.0.0/PLAN.IGN");
+		AddWmtsServer("data.geopf.fr/private/wmts", "GEOGRAPHICALGRIDSYSTEMS.MAPS", "PM", "jpeg", 256, 256, 16, "ign_scan_ws");
+		//AddMvtServer("https://data.geopf.fr/tms/1.0.0/PLAN.IGN", "pbf", 
+		//	"https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json", 256, 256, 18);
 	}
 	if (layers == "Ortho+Carto") {
 		AddWmtsServer("data.geopf.fr/wmts", "ORTHOIMAGERY.ORTHOPHOTOS", "PM_0_19", "jpeg", 256, 256, 20);
@@ -2021,9 +2026,8 @@ void MainComponent::SetDefaultLayers(juce::String layers)
 			"https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/toponymes.json", 256, 256, 18);
 	}
 	
-	m_MapView.get()->setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+	juce::MouseCursor::hideWaitCursor();
 }
-
 
 //==============================================================================
 // Ouverture d'une fenetre outil

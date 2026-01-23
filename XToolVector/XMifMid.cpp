@@ -81,7 +81,7 @@ void XMifMid::Class(XGeoClass* C)
 				length = 20;
 		}
 
-		schema.AddAttribut(name, name, "", attType, length, dec);
+		schema.AddAttribut(name, name, "", attType, length, (uint8_t)dec);
 	}
 	C->SetSchema(schema);
 }
@@ -511,8 +511,8 @@ bool XMifMid::ReadRepres(XGeoRepres* repres)
 
 		if (type == "pen") {
 			m_In.get(buf, 1024);
-			sscanf(buf,"(%u,%u,%u)", &width, &pattern, &fill);
-			repres->Size(width);
+			(void)sscanf(buf,"(%u,%u,%u)", &width, &pattern, &fill);
+			repres->Size((uint8_t)width);
 			repres->Color(MifColor(fill));
 			pen_flag = true;
 			if (m_nNbPoly < 1)
@@ -523,7 +523,7 @@ bool XMifMid::ReadRepres(XGeoRepres* repres)
 
 		if (type == "brush") {
 			m_In.get(buf, 1024);
-			sscanf(buf,"(%u,%u,%u)", &pattern, &fill, &back);
+			(void)sscanf(buf,"(%u,%u,%u)", &pattern, &fill, &back);
 			repres->FillColor(MifColor(fill));
 			if (pattern == 1)
 				repres->FillColor(0xFFFFFFFF);

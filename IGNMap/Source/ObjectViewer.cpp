@@ -13,6 +13,7 @@
 #include "AffineImage.h"
 #include "GeoBase.h"
 #include "MvtLayer.h"
+#include "../XToolImage/XTiffWriter.h"
 
 //==============================================================================
 // ObjectViewerComponent : constructeur
@@ -70,6 +71,12 @@ ObjectViewerComponent::ObjectViewerComponent()
 	m_sldFrameExport.setTextValueSuffix(juce::String(" : ") + juce::translate("Useful Frame"));
 	addAndMakeVisible(m_sldFrameExport);
 	m_sldFrameExport.addListener(this);
+
+	addAndMakeVisible(m_lblFrameSize);
+
+	m_btnExportUsefulFrame.setButtonText(juce::translate("Export"));
+	addAndMakeVisible(m_btnExportUsefulFrame);
+	m_btnExportUsefulFrame.addListener(this);
 
 	// Interface pour les objets vectoriels
 	m_btnPen.setButtonText(juce::translate("Pen"));
@@ -131,6 +138,8 @@ void ObjectViewerComponent::resized()
 	m_sldToneMappingPower.setBounds(10, 220, 100, 40);
 	m_sldToneMappingSharpness.setBounds(120, 220, 100, 40);
 	m_sldFrameExport.setBounds(10, 270, 100, 40);
+	m_lblFrameSize.setBounds(120, 275, 100, 30);
+	m_btnExportUsefulFrame.setBounds(65, 320, 100, 30);
 
 	// Interface pour les objets vectoriels
 	m_btnPen.setBounds(10, 10, 100, 30);
@@ -191,6 +200,10 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 {
 	if (m_Object == nullptr)
 		return;
+	if (button == &m_btnExportUsefulFrame) {
+		ExportUsefulFrame();
+		return;
+	}
 	XGeoVector* V = dynamic_cast<XGeoVector*>(m_Object);
 	if (V != nullptr) {
 		if (button == &m_btnRestore) {
@@ -261,6 +274,8 @@ bool ObjectViewerComponent::SetSelection(XGeoObject* S)
 	m_sldToneMappingPower.setVisible(false);
 	m_sldToneMappingSharpness.setVisible(false);
 	m_sldFrameExport.setVisible(false);
+	m_btnExportUsefulFrame.setVisible(false);
+	m_lblFrameSize.setVisible(false);
 	m_btnPen.setVisible(false);
 	m_btnFill.setVisible(false);
 	m_sldPenWidth.setVisible(false);
@@ -311,6 +326,8 @@ bool ObjectViewerComponent::SetRotationImage(RotationImage* image)
 	m_sldToneMappingPower.setVisible(true);
 	m_sldToneMappingSharpness.setVisible(true);
 	m_sldFrameExport.setVisible(true);
+	m_btnExportUsefulFrame.setVisible(true);
+	m_lblFrameSize.setVisible(true);
 	
 	XPt2D S = image->Centroide();
 	m_sldXCenter.setRange(S.X - 200., S.X + 200., 5.);
@@ -405,35 +422,74 @@ bool ObjectViewerComponent::UpdateInternetImage(GeoInternetImage* internet)
 }
 
 //==============================================================================
+// ComputeFrameExport : calcul du cadre pour l'export
+//==============================================================================
+void ObjectViewerComponent::ComputeFrameExport(RotationImage* image, std::vector<XPt2D>& T)
+{
+	XPt3D C = m_Target;
+	double rot = image->Rotation(); rot = 0.;
+	double ratio = m_sldFrameExport.getValue() * 0.005;
+	double W = image->GetImageW(), H = image->GetImageH();
+	W = H = XMin(W, H);
+	double gsd = image->Resolution();
+	
+	T.clear();
+	double X = ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
+	double Y = ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
+	T.push_back(XPt2D(C.X + X, C.Y + Y));
+	X = ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
+	Y = ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
+	T.push_back(XPt2D(C.X + X, C.Y + Y));
+	X = -ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
+	Y = -ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
+	T.push_back(XPt2D(C.X + X, C.Y + Y));
+	X = -ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
+	Y = -ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
+	T.push_back(XPt2D(C.X + X, C.Y + Y));
+}
+
+//==============================================================================
 // UpdateFrameExport : mise a jour du cadre pour l'export
 //==============================================================================
 bool ObjectViewerComponent::UpdateFrameExport(RotationImage* image)
 {
-	XPt3D C = m_Target;
-	double rot = image->Rotation();
-	double ratio = m_sldFrameExport.getValue() * 0.005;
-	double W = image->GetImageW(), H = image->GetImageH();
-	double gsd = image->Resolution();
 	juce::String message = "UpdateTargetPoly:";
-	std::vector<XPt3D> T;
-	double X = ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
-	double Y = ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
-	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
-	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
-	X = ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
-	Y = ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
-	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
-	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
-	X = -ratio * W * gsd * cos(rot) + ratio * H * gsd * sin(rot);
-	Y = -ratio * W * gsd * sin(rot) - ratio * H * gsd * cos(rot);
-	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
-	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0:");
-	X = -ratio * W * gsd * cos(rot) - ratio * H * gsd * sin(rot);
-	Y = -ratio * W * gsd * sin(rot) + ratio * H * gsd * cos(rot);
-	T.push_back(XPt3D(C.X + X, C.Y + Y, 0.));
-	message += (juce::String(C.X + X, 2) + ":" + juce::String(C.Y + Y, 2) + ":0.0");
-
+	std::vector<XPt2D> T;
+	ComputeFrameExport(image, T);
+	message += (juce::String(T[0].X, 2) + ":" + juce::String(T[0].Y, 2) + ":0.0:");
+	message += (juce::String(T[1].X, 2) + ":" + juce::String(T[1].Y, 2) + ":0.0:");
+	message += (juce::String(T[2].X, 2) + ":" + juce::String(T[2].Y, 2) + ":0.0:");
+	message += (juce::String(T[3].X, 2) + ":" + juce::String(T[3].Y, 2) + ":0.0");
 	sendActionMessage(message);
-
+	double gsd = image->Resolution();
+	m_lblFrameSize.setText(juce::String(XRint(fabs(T[2].X - T[0].X)/gsd)) + ";" + juce::String(XRint(fabs(T[1].Y - T[0].Y)/gsd)), 
+												 juce::NotificationType::dontSendNotification);
 	return true;
+}
+
+//==============================================================================
+// ExportUsefulFrame : export du cadre pour l'export
+//==============================================================================
+void ObjectViewerComponent::ExportUsefulFrame()
+{
+	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
+	if (image == nullptr)
+		return;
+	std::vector<XPt2D> T;
+	ComputeFrameExport(image, T);
+	XFrame F;
+	for (size_t i = 0; i < T.size(); i++)
+		F += T[i];
+	juce::String filename = AppUtil::SaveFile("ExportUsefulFrame", juce::translate("File to save"), "*.png");
+	if (filename.isEmpty())
+		return;
+	juce::MouseCursor::showWaitCursor();
+	juce::Image export_ima = image->GetAreaImage(F, image->Resolution());
+	juce::File file(filename);
+	if (file.existsAsFile())
+		file.deleteFile();
+	juce::FileOutputStream outputFileStream(file);
+	juce::PNGImageFormat png;
+	png.writeImageToStream(export_ima, outputFileStream);
+	juce::MouseCursor::hideWaitCursor();
 }

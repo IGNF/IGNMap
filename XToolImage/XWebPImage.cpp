@@ -33,7 +33,7 @@ XWebPImage::XWebPImage(const char* filename) : XBaseImage()
 		return;
 	// Taille du fichier
 	in.seekg(0, std::ios_base::end);
-	m_nDataSize = in.tellg();
+	m_nDataSize = (uint32_t)in.tellg();
 	m_Data = new uint8_t[m_nDataSize];
 	if (m_Data == NULL)
 		return;
@@ -59,12 +59,12 @@ XWebPImage::~XWebPImage()
 		delete[] m_Data;
 }
 
-bool XWebPImage::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
+bool XWebPImage::GetArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
 {
 	return GetWebPArea(x, y, w, h, area);
 }
 
-bool XWebPImage::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
+bool XWebPImage::GetZoomArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
 {
 	return GetWebPArea(x, y, w, h, area, factor, w / factor, h / factor);
 }
