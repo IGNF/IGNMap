@@ -46,7 +46,7 @@ public:
 	bool SetInternetImage(GeoInternetImage* internet);
 	bool UpdateInternetImage(GeoInternetImage* internet);
 
-	void SetTarget(const double& X, const double& Y, const double& Z) { m_Target = XPt3D(X, Y, Z); }
+	void SetTarget(const double& X, const double& Y, const double& Z);
 
 private:
 	XGeoObject* m_Object;

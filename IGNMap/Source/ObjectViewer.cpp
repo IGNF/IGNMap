@@ -263,6 +263,19 @@ void ObjectViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChang
 }
 
 //==============================================================================
+// ObjectViewerComponent : fixe le point cible
+//==============================================================================
+void ObjectViewerComponent::SetTarget(const double& X, const double& Y, const double& Z)
+{
+	m_Target = XPt3D(X, Y, Z); 
+	if (m_Object == nullptr)
+		return;
+	RotationImage* image = dynamic_cast<RotationImage*>(m_Object);
+	if (image != nullptr)
+		UpdateFrameExport(image);
+}
+
+//==============================================================================
 // ObjectViewerComponent : fixe la selection
 //==============================================================================
 bool ObjectViewerComponent::SetSelection(XGeoObject* S)
@@ -492,4 +505,5 @@ void ObjectViewerComponent::ExportUsefulFrame()
 	juce::PNGImageFormat png;
 	png.writeImageToStream(export_ima, outputFileStream);
 	juce::MouseCursor::hideWaitCursor();
+	file.revealToUser();
 }

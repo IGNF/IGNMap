@@ -865,7 +865,7 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		if (((T.size() - 1) % 3 != 0) || (T.size() == 1))
 			return;
 		std::vector<XPt3D> target;
-		for (size_t i = 0; i < (T.size() - 1) / 3; i++) {
+		for (int i = 0; i < ((int)T.size() - 1) / 3; i++) {
 			target.push_back(XPt3D(T[3*i + 1].getDoubleValue(), T[3*i + 2].getDoubleValue(), T[3*i + 3].getDoubleValue()));
 		}
 		if (m_MapView.get() != nullptr)
@@ -1068,7 +1068,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.1.4";
+	juce::String version = "0.1.5";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
@@ -1845,6 +1845,8 @@ void MainComponent::ShowProperties(uint32_t index, bool typeVector)
 		viewer->setVisible(true);
 		m_ToolWindows.push_back(viewer);
 	}
+	XPt3D T = m_MapView.get()->GetTarget();
+	viewer->SetTarget(T.X, T.Y, T.Z);
 	viewer->SetSelection(obj);
 }
 
