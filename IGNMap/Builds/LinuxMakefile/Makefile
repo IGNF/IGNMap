@@ -336,6 +336,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XOpenJp2Image_9a97e091.o \
   $(JUCE_OBJDIR)/XPackBitsCodec_476eb49.o \
   $(JUCE_OBJDIR)/XPredictor_739e6f2e.o \
+  $(JUCE_OBJDIR)/XStbImage_5f423fd2.o \
   $(JUCE_OBJDIR)/XTiffReader_7e523770.o \
   $(JUCE_OBJDIR)/XTiffStripImage_304717d0.o \
   $(JUCE_OBJDIR)/XTiffTileImage_c8a2bf0a.o \
@@ -1713,6 +1714,11 @@ $(JUCE_OBJDIR)/XPackBitsCodec_476eb49.o: ../../../XToolImage/XPackBitsCodec.cpp
 $(JUCE_OBJDIR)/XPredictor_739e6f2e.o: ../../../XToolImage/XPredictor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XPredictor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XStbImage_5f423fd2.o: ../../../XToolImage/XStbImage.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XStbImage.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XTiffReader_7e523770.o: ../../../XToolImage/XTiffReader.cpp

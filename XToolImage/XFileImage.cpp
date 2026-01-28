@@ -19,6 +19,7 @@
 #include "XOpenJp2Image.h"
 #include "XJpegImage.h"
 #include "XWebPImage.h"
+#include "XStbImage.h"
 #include "XDtmShader.h"
 #include "../XTool/XTransfo.h"
 #include "../XTool/XInterpol.h"
@@ -127,6 +128,8 @@ bool XFileImage::AnalyzeImage(std::string path)
   if (AnalyzeWebP())
     return true;
   if (AnalyzeJpeg())
+    return true;
+  if (AnalyzeStb())
     return true;
   return false;
 }
@@ -284,6 +287,20 @@ bool XFileImage::AnalyzeJpeg()
 {
   XJpegImage* image = new XJpegImage;
   if (!image->Open(m_strFilename)) {
+    delete image;
+    return false;
+  }
+  m_Image = image;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Analyse d'une image STB
+//-----------------------------------------------------------------------------
+bool XFileImage::AnalyzeStb()
+{
+  XStbImage* image = new XStbImage(m_strFilename.c_str());
+  if (!image->IsValid()) {
     delete image;
     return false;
   }

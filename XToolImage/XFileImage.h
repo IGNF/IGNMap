@@ -91,6 +91,7 @@ protected:
   bool AnalyzeJpeg2000();
   bool AnalyzeWebP();
   bool AnalyzeJpeg();
+  bool AnalyzeStb();
 
   bool PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_t h, uint32_t factor = 1);
 };

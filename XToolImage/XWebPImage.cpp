@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------------
 XWebPImage::XWebPImage(const char* filename) : XBaseImage()
 {
-	m_Data = NULL;
+	m_Data = nullptr;
 	m_nDataSize = 0;
 	m_bValid = false;
 	std::ifstream in;
@@ -35,7 +35,7 @@ XWebPImage::XWebPImage(const char* filename) : XBaseImage()
 	in.seekg(0, std::ios_base::end);
 	m_nDataSize = (uint32_t)in.tellg();
 	m_Data = new uint8_t[m_nDataSize];
-	if (m_Data == NULL)
+	if (m_Data == nullptr)
 		return;
 	in.seekg(0, std::ios_base::beg);
 	in.read((char*)m_Data, m_nDataSize);
@@ -43,7 +43,7 @@ XWebPImage::XWebPImage(const char* filename) : XBaseImage()
 	int w, h;
 	if (!WebPGetInfo(m_Data, m_nDataSize, &w, &h)) {
 		delete[] m_Data;
-		m_Data = NULL;
+		m_Data = nullptr;
 		return;
 	}
 	m_nW = w;
@@ -55,7 +55,7 @@ XWebPImage::XWebPImage(const char* filename) : XBaseImage()
 
 XWebPImage::~XWebPImage()
 {
-	if (m_Data != NULL)
+	if (m_Data != nullptr)
 		delete[] m_Data;
 }
 

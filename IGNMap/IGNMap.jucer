@@ -672,6 +672,8 @@
             file="../XToolImage/XPackBitsCodec.h"/>
       <FILE id="rH6JKd" name="XPredictor.cpp" compile="1" resource="0" file="../XToolImage/XPredictor.cpp"/>
       <FILE id="C4m4mq" name="XPredictor.h" compile="0" resource="0" file="../XToolImage/XPredictor.h"/>
+      <FILE id="qkyw0B" name="XStbImage.cpp" compile="1" resource="0" file="../XToolImage/XStbImage.cpp"/>
+      <FILE id="Yal05U" name="XStbImage.h" compile="0" resource="0" file="../XToolImage/XStbImage.h"/>
       <FILE id="UAg1fO" name="XTiffReader.cpp" compile="1" resource="0" file="../XToolImage/XTiffReader.cpp"/>
       <FILE id="wJmgoV" name="XTiffReader.h" compile="0" resource="0" file="../XToolImage/XTiffReader.h"/>
       <FILE id="HudPUL" name="XTiffStripImage.cpp" compile="1" resource="0"
