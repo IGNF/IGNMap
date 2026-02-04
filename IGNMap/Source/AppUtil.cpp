@@ -12,6 +12,8 @@
 #include "AppUtil.h"
 #include <filesystem>
 
+extern int AppUtil::DownloadNbTry = 10;
+
 //==============================================================================
 // Choix d'un repertoire
 //==============================================================================
@@ -115,7 +117,7 @@ void AppUtil::SaveAppOption(juce::String name, juce::String value)
 }
 
 //==============================================================================
-// Permet de recuperer un nom de fichier sous forme de st:string en reglant les problemes UTF8 ou pas ...
+// Permet de recuperer un nom de fichier sous forme de std:string en reglant les problemes UTF8 ou pas ...
 //==============================================================================
 std::string AppUtil::GetStringFilename(juce::String filename)
 {
@@ -142,6 +144,7 @@ void AppUtil::SaveComponent(juce::Component* component)
 	juce::FileOutputStream outputFileStream(file);
 	juce::PNGImageFormat png;
 	png.writeImageToStream(image, outputFileStream);
+	file.revealToUser();
 }
 
 //==============================================================================
@@ -167,12 +170,13 @@ juce::String AppUtil::DownloadFile(const juce::String& request, const juce::Stri
 	std::unique_ptr< juce::URL::DownloadTask > task = url.downloadToFile(filename, options);
 	if (task.get() == nullptr)
 		return "";
-	int count = 0;
+	int count = 0, max_count = nb_try;
+	if (max_count == 0) max_count = DownloadNbTry;
 	while (task.get()->isFinished() == false)
 	{
-		juce::Thread::sleep(timeout);
 		count++;
-		if (count > nb_try) break;
+		if (count > max_count) break;
+		juce::Thread::sleep(timeout);
 	}
 	if (task.get()->hadError())
 		return "";

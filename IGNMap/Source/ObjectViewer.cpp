@@ -496,8 +496,9 @@ void ObjectViewerComponent::ExportUsefulFrame()
 	juce::String filename = AppUtil::SaveFile("ExportUsefulFrame", juce::translate("File to save"), "*.png");
 	if (filename.isEmpty())
 		return;
+	double gsd = image->Resolution();
 	juce::MouseCursor::showWaitCursor();
-	juce::Image export_ima = image->GetAreaImage(F, image->Resolution());
+	juce::Image export_ima = image->GetAreaImage(F, gsd);
 	juce::File file(filename);
 	if (file.existsAsFile())
 		file.deleteFile();
@@ -506,4 +507,8 @@ void ObjectViewerComponent::ExportUsefulFrame()
 	png.writeImageToStream(export_ima, outputFileStream);
 	juce::MouseCursor::hideWaitCursor();
 	file.revealToUser();
+	// Creation du fichier TFW
+	juce::File tfw = file.withFileExtension("tfw");
+	tfw.replaceWithText(juce::String(gsd, 2) + "\n0.\n0.\n0.\n" + juce::String(F.Xmin + gsd * 0.5, 2) +
+																							"\n" + juce::String(F.Ymax - gsd * 0.5, 2));
 }

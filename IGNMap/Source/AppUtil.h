@@ -24,7 +24,8 @@ namespace AppUtil {
 	void SaveComponent(juce::Component* component);
 	void SaveTableComponent(juce::TableListBox* table);
 
-	juce::String DownloadFile(const juce::String& request, const juce::String& filename, int nb_try = 10, int timeout = 10);
+	static int DownloadNbTry;
+	juce::String DownloadFile(const juce::String& request, const juce::String& filename, int nb_try = 0, int timeout = 10);
 }
 
 //==============================================================================

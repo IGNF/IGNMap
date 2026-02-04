@@ -177,8 +177,8 @@ class ToneMappingInt:public ToneMappingBase{
     };
     inline void rgb2hsv(unsigned char r,unsigned char g,unsigned char b,
               unsigned int &h,unsigned int &s,unsigned int &v){
-      unsigned char min=min3(r,g,b);
-      unsigned char max=max3(r,g,b);
+      unsigned char min = (unsigned char)min3(r,g,b);
+      unsigned char max = (unsigned char)max3(r,g,b);
       int diff=max-min;
       if (max==0) {
         h=v=s=0;
@@ -213,28 +213,28 @@ class ToneMappingInt:public ToneMappingBase{
       unsigned int hi=(h>>12)%6;
       unsigned int f=(h&4095)>>4;
 
-      unsigned char p=(v*(255^s))>>8;
-      unsigned char q=( v*(65535^(f*s)))>>16;
-      unsigned char t=(v*(65535^(255^f)*s))>>16;
+      unsigned char p = (unsigned char)((v*(255^s))>>8);
+      unsigned char q = (unsigned char)((v*(65535^(f*s)))>>16);
+      unsigned char t = (unsigned char)((v*(65535^(255^f)*s))>>16);
 
       switch(hi){
         case 0:
-          r=v;g=t;b=p;
+          r= (unsigned char)v;g=t;b=p;
           break;
         case 1:
-          r=q;g=v;b=p;
+          r=q;g= (unsigned char)v;b=p;
           break;
         case 2:
-          r=p;g=v;b=t;
+          r=p;g= (unsigned char)v;b=t;
           break;
         case 3:
-          r=p;g=q;b=v;
+          r=p;g=q;b= (unsigned char)v;
           break;
         case 4:
-          r=t;g=p;b=v;
+          r=t;g=p;b= (unsigned char)v;
           break;
         case 5:
-          r=v;g=p;b=q;
+          r= (unsigned char)v;g=p;b=q;
           break;
       };
     };
@@ -276,12 +276,12 @@ class ToneMappingFloat:public ToneMappingBase{
         h=0.0;
       }else{
         if (max==r){
-          h=fmod(60.0*(g-b)/delta+360.0,360.0);
+          h=(float)fmod(60.0*(g-b)/delta+360.0,360.0);
         }else{
           if (max==g){
-            h=60.0*(b-r)/delta+120.0;
+            h=(float)(60.0*(b-r)/delta+120.0);
           }else{//max==b
-            h=60.0*(r-g)/delta+240.0;
+            h=(float)(60.0*(r-g)/delta+240.0);
           };
         };
       };
@@ -290,7 +290,7 @@ class ToneMappingFloat:public ToneMappingBase{
       if (max<1e-6){
         s=0;
       }else{
-        s=1.0-min/max;
+        s=1.0f-min/max;
       };
 
       //value

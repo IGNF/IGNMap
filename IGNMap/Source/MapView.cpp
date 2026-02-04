@@ -77,6 +77,7 @@ void MapView::paint(juce::Graphics& g)
 	DrawTarget(g);
 	DrawDecoration(g);
 	DrawCurrentAnnotation(g);
+	SaveImage();
 }
 
 void MapView::resized()
@@ -336,6 +337,14 @@ bool MapView::keyPressed(const juce::KeyPress& key)
 		//m_MapThread.signalThreadShouldExit();
 		//m_MapThread.notify();
 		return true;
+	}
+	if ((key.getTextCharacter() == 'C') || (key.getTextCharacter() == 'c')) {
+		juce::File dir = juce::File::getSpecialLocation(juce::File::userPicturesDirectory);
+		juce::File file = dir.getNonexistentChildFile("clip_ignmap", ".png");
+		juce::FileOutputStream outputFileStream(file);
+		juce::PNGImageFormat png;
+		png.writeImageToStream(m_Image, outputFileStream);
+		file.revealToUser();
 	}
 	return false;	// On transmet l'evenement sans le traiter
 }

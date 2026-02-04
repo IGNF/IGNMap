@@ -29,7 +29,7 @@ XStbImage::XStbImage(const char* filename)
 		return;
 	m_nW = x;
 	m_nH = y;
-	m_nNbSample = n;
+	m_nNbSample = (uint16_t)n;
 	m_nNbBits = 8;
 	m_bValid = true;
 	m_strFilename = filename;
@@ -44,17 +44,23 @@ XStbImage::~XStbImage()
 		delete[] m_Data;
 }
 
+//-----------------------------------------------------------------------------
+// Recuperation d'une zone de pixels
+//-----------------------------------------------------------------------------
 bool XStbImage::GetArea(XFile*, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
 {
 	if (m_Data == nullptr) {
-		int x, y, n;
-		m_Data = stbi_load(m_strFilename.c_str(), &x, &y, &n, 0);
+		int wima, hima, n;
+		m_Data = stbi_load(m_strFilename.c_str(), &wima, &hima, &n, 0);
 		if (m_Data == nullptr)
 			return false;
 	}
 	return XBaseImage::ExtractArea(m_Data, area, m_nW * m_nNbSample, m_nH, w * m_nNbSample, h, x * m_nNbSample, y);
 }
 
+//-----------------------------------------------------------------------------
+// Recuperation d'une zone de pixels avec zoom
+//-----------------------------------------------------------------------------
 bool XStbImage::GetZoomArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area, uint32_t factor)
 {
 	if (factor == 0) return false;

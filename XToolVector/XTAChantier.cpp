@@ -23,13 +23,19 @@ XGeoClass* XTAChantier::ImportTA(XGeoBase* base, const char* path, XGeoMap* /*ma
 {
 	XPath P;
 	XTAChantier* file = new XTAChantier;
-	XGeoClass* C = NULL;
+	XGeoClass* C = nullptr;
 
 	if (file->Read(path)) {
 		C = base->AddClass("TA", P.Name(path, false).c_str());
 		file->Class(C);
 		base->AddMap(file);
 		base->SortClass();
+		XGeoRepres* repres = C->Repres();
+		if (repres != nullptr) {
+			repres->Name("TA");
+			repres->FillColor(0xFFFFFF00);
+			repres->Color(0xFFAA1100);
+		}
 	}
 	else
 		delete file;

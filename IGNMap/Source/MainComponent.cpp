@@ -1434,8 +1434,10 @@ bool MainComponent::ExportImage()
 {
 	m_MapView.get()->StopThread();
 	XFrame F = m_MapView.get()->GetSelectionFrame();
+	if (F.IsEmpty())
+		F = m_MapView.get()->GetViewFrame();
 	double gsd = m_MapView.get()->GetGsd();
-	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), XRint(gsd));
+	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), gsd);
 	dlg->addActionListener(this);
 	juce::DialogWindow::LaunchOptions options;
 	options.content.setOwned(dlg);
