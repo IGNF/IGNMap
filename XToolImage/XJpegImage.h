@@ -12,7 +12,7 @@
 
 #include <cstdio>
 extern "C" {
-#include "../jpeg-9f/jpeglib.h"
+#include "../jpeg-10/jpeglib.h"
 }
 #include "XBaseImage.h"
 

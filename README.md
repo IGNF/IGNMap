@@ -40,8 +40,8 @@ IGNMap utilise un certain nombre de bibliothèques :
 * [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) : pour la lecture des champs EXIF dans les images JPEG
 * [ZLib](https://www.zlib.net/) : pour la décompression ZLib
 * [LASzip](https://github.com/LASzip/LASzip) : pour lecture des nuages de points au format LAS/LAZ
-* [Protozero] (https://github.com/mapbox/protozero) : pour lire les protocol buffer
-* [Vtzero] (https://github.com/mapbox/vtzero) : pour lire les Mapbox Vector Tiles
+* [Protozero](https://github.com/mapbox/protozero) : pour lire les protocol buffer
+* [Vtzero](https://github.com/mapbox/vtzero) : pour lire les Mapbox Vector Tiles
 
 De plus IGNMap utilise du code C++ "pur" qui permet la gestion de données et un certain nombre de données :
 * XTool : les outils de base pour organiser des données géographiques sous une forme d'une base de données

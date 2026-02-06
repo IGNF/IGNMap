@@ -155,6 +155,14 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
       if (exif.hasProperty("Xmp.GPano.ProjectionType"))
         m_Projection = exif["Xmp.GPano.ProjectionType"].toString();
     }
+    if (prop.hasProperty("pers:interior_orientation")) {
+      juce::var pers = prop["pers:interior_orientation"];
+      if (pers.hasProperty("field_of_view")) {
+        double field = (double)pers["field_of_view"];
+        if (field >= 360.)
+          m_Projection = "equirectangular";
+      }
+    }
   }
 
   server = m_StacServer + "pictures/" + m_Id + "/thumb.jpg";

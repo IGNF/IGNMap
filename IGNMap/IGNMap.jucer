@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               companyWebsite="www.ign.fr" companyName="IGN" companyCopyright="Institut National de l'Information G&#233;ographique et Foresti&#232;re"
               defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1&#10;OPJ_STATIC=1&#10;LASZIPDLL_EXPORTS=1"
-              userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;">
+              userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h&#10;">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
       <FILE id="ILbuJM" name="Carto.png" compile="0" resource="1" file="Images/Carto.png"/>
@@ -31,65 +31,65 @@
       <FILE id="QwTqKW" name="View.png" compile="0" resource="1" file="Images/View.png"/>
       <FILE id="g44xDI" name="Zoom.png" compile="0" resource="1" file="Images/Zoom.png"/>
     </GROUP>
-    <GROUP id="{7FB695EE-758D-98D5-CDC3-20CD7DEF086E}" name="jpeg-9f">
+    <GROUP id="{7FB695EE-758D-98D5-CDC3-20CD7DEF086E}" name="jpeg-10">
       <GROUP id="{F39B650A-2A44-7CB1-AAEB-E7FEA7B804A9}" name="Header">
-        <FILE id="D5u4sk" name="jconfig.h" compile="0" resource="0" file="../jpeg-9f/jconfig.h"/>
-        <FILE id="dq8yDo" name="jdct.h" compile="0" resource="0" file="../jpeg-9f/jdct.h"/>
-        <FILE id="qw1dMx" name="jerror.h" compile="0" resource="0" file="../jpeg-9f/jerror.h"/>
-        <FILE id="WP6pw4" name="jinclude.h" compile="0" resource="0" file="../jpeg-9f/jinclude.h"/>
-        <FILE id="Ryub7Y" name="jmemsys.h" compile="0" resource="0" file="../jpeg-9f/jmemsys.h"/>
-        <FILE id="KRPGeP" name="jmorecfg.h" compile="0" resource="0" file="../jpeg-9f/jmorecfg.h"/>
-        <FILE id="PHoW8f" name="jpegint.h" compile="0" resource="0" file="../jpeg-9f/jpegint.h"/>
-        <FILE id="tTDS9F" name="jpeglib.h" compile="0" resource="0" file="../jpeg-9f/jpeglib.h"/>
-        <FILE id="Da1IoY" name="jversion.h" compile="0" resource="0" file="../jpeg-9f/jversion.h"/>
+        <FILE id="D5u4sk" name="jconfig.h" compile="0" resource="0" file="../jpeg-10/jconfig.h"/>
+        <FILE id="dq8yDo" name="jdct.h" compile="0" resource="0" file="../jpeg-10/jdct.h"/>
+        <FILE id="qw1dMx" name="jerror.h" compile="0" resource="0" file="../jpeg-10/jerror.h"/>
+        <FILE id="WP6pw4" name="jinclude.h" compile="0" resource="0" file="../jpeg-10/jinclude.h"/>
+        <FILE id="Ryub7Y" name="jmemsys.h" compile="0" resource="0" file="../jpeg-10/jmemsys.h"/>
+        <FILE id="KRPGeP" name="jmorecfg.h" compile="0" resource="0" file="../jpeg-10/jmorecfg.h"/>
+        <FILE id="PHoW8f" name="jpegint.h" compile="0" resource="0" file="../jpeg-10/jpegint.h"/>
+        <FILE id="tTDS9F" name="jpeglib.h" compile="0" resource="0" file="../jpeg-10/jpeglib.h"/>
+        <FILE id="Da1IoY" name="jversion.h" compile="0" resource="0" file="../jpeg-10/jversion.h"/>
       </GROUP>
       <GROUP id="{B55B88FA-825F-1850-788D-FAD582BA695F}" name="Source">
-        <FILE id="Krx8dL" name="jaricom.c" compile="1" resource="0" file="../jpeg-9f/jaricom.c"/>
-        <FILE id="fRcZ8K" name="jcapimin.c" compile="1" resource="0" file="../jpeg-9f/jcapimin.c"/>
-        <FILE id="qPEsra" name="jcapistd.c" compile="1" resource="0" file="../jpeg-9f/jcapistd.c"/>
-        <FILE id="wEpOy0" name="jcarith.c" compile="1" resource="0" file="../jpeg-9f/jcarith.c"/>
-        <FILE id="hZIVnP" name="jccoefct.c" compile="1" resource="0" file="../jpeg-9f/jccoefct.c"/>
-        <FILE id="WeKdb4" name="jccolor.c" compile="1" resource="0" file="../jpeg-9f/jccolor.c"/>
-        <FILE id="oaFFuf" name="jcdctmgr.c" compile="1" resource="0" file="../jpeg-9f/jcdctmgr.c"/>
-        <FILE id="YlVq6Y" name="jchuff.c" compile="1" resource="0" file="../jpeg-9f/jchuff.c"/>
-        <FILE id="NqoDeu" name="jcinit.c" compile="1" resource="0" file="../jpeg-9f/jcinit.c"/>
-        <FILE id="k2lUHZ" name="jcmainct.c" compile="1" resource="0" file="../jpeg-9f/jcmainct.c"/>
-        <FILE id="D3E1JX" name="jcmarker.c" compile="1" resource="0" file="../jpeg-9f/jcmarker.c"/>
-        <FILE id="MiR1oM" name="jcmaster.c" compile="1" resource="0" file="../jpeg-9f/jcmaster.c"/>
-        <FILE id="RMXakc" name="jcomapi.c" compile="1" resource="0" file="../jpeg-9f/jcomapi.c"/>
-        <FILE id="Px1Bp0" name="jcparam.c" compile="1" resource="0" file="../jpeg-9f/jcparam.c"/>
-        <FILE id="MZXGau" name="jcprepct.c" compile="1" resource="0" file="../jpeg-9f/jcprepct.c"/>
-        <FILE id="uSXEq2" name="jcsample.c" compile="1" resource="0" file="../jpeg-9f/jcsample.c"/>
-        <FILE id="OPtzpN" name="jctrans.c" compile="1" resource="0" file="../jpeg-9f/jctrans.c"/>
-        <FILE id="nF0bNd" name="jdapimin.c" compile="1" resource="0" file="../jpeg-9f/jdapimin.c"/>
-        <FILE id="fD28Lm" name="jdapistd.c" compile="1" resource="0" file="../jpeg-9f/jdapistd.c"/>
-        <FILE id="Slg7di" name="jdarith.c" compile="1" resource="0" file="../jpeg-9f/jdarith.c"/>
-        <FILE id="ve8Tgf" name="jdatadst.c" compile="1" resource="0" file="../jpeg-9f/jdatadst.c"/>
-        <FILE id="eaR9bl" name="jdatasrc.c" compile="1" resource="0" file="../jpeg-9f/jdatasrc.c"/>
-        <FILE id="eEvkAw" name="jdcoefct.c" compile="1" resource="0" file="../jpeg-9f/jdcoefct.c"/>
-        <FILE id="ozIPrr" name="jdcolor.c" compile="1" resource="0" file="../jpeg-9f/jdcolor.c"/>
-        <FILE id="tDEQyj" name="jddctmgr.c" compile="1" resource="0" file="../jpeg-9f/jddctmgr.c"/>
-        <FILE id="RQXocL" name="jdhuff.c" compile="1" resource="0" file="../jpeg-9f/jdhuff.c"/>
-        <FILE id="g8yuL8" name="jdinput.c" compile="1" resource="0" file="../jpeg-9f/jdinput.c"/>
-        <FILE id="EHVBaF" name="jdmainct.c" compile="1" resource="0" file="../jpeg-9f/jdmainct.c"/>
-        <FILE id="pRAggy" name="jdmarker.c" compile="1" resource="0" file="../jpeg-9f/jdmarker.c"/>
-        <FILE id="erXhFH" name="jdmaster.c" compile="1" resource="0" file="../jpeg-9f/jdmaster.c"/>
-        <FILE id="Bk7Vcd" name="jdmerge.c" compile="1" resource="0" file="../jpeg-9f/jdmerge.c"/>
-        <FILE id="MvxxRQ" name="jdpostct.c" compile="1" resource="0" file="../jpeg-9f/jdpostct.c"/>
-        <FILE id="ZyqeJ7" name="jdsample.c" compile="1" resource="0" file="../jpeg-9f/jdsample.c"/>
-        <FILE id="rGlw7K" name="jdtrans.c" compile="1" resource="0" file="../jpeg-9f/jdtrans.c"/>
-        <FILE id="PYY6eu" name="jerror.c" compile="1" resource="0" file="../jpeg-9f/jerror.c"/>
-        <FILE id="YaJQxS" name="jfdctflt.c" compile="1" resource="0" file="../jpeg-9f/jfdctflt.c"/>
-        <FILE id="vTMmYn" name="jfdctfst.c" compile="1" resource="0" file="../jpeg-9f/jfdctfst.c"/>
-        <FILE id="CuvIwO" name="jfdctint.c" compile="1" resource="0" file="../jpeg-9f/jfdctint.c"/>
-        <FILE id="ucqO4G" name="jidctflt.c" compile="1" resource="0" file="../jpeg-9f/jidctflt.c"/>
-        <FILE id="lk0NsO" name="jidctfst.c" compile="1" resource="0" file="../jpeg-9f/jidctfst.c"/>
-        <FILE id="h68XRI" name="jidctint.c" compile="1" resource="0" file="../jpeg-9f/jidctint.c"/>
-        <FILE id="fuYkFC" name="jmemmgr.c" compile="1" resource="0" file="../jpeg-9f/jmemmgr.c"/>
-        <FILE id="Kg02Mz" name="jmemnobs.c" compile="1" resource="0" file="../jpeg-9f/jmemnobs.c"/>
-        <FILE id="UXisz0" name="jquant1.c" compile="1" resource="0" file="../jpeg-9f/jquant1.c"/>
-        <FILE id="u3OPuS" name="jquant2.c" compile="1" resource="0" file="../jpeg-9f/jquant2.c"/>
-        <FILE id="vDFN6v" name="jutils.c" compile="1" resource="0" file="../jpeg-9f/jutils.c"/>
+        <FILE id="Krx8dL" name="jaricom.c" compile="1" resource="0" file="../jpeg-10/jaricom.c"/>
+        <FILE id="fRcZ8K" name="jcapimin.c" compile="1" resource="0" file="../jpeg-10/jcapimin.c"/>
+        <FILE id="qPEsra" name="jcapistd.c" compile="1" resource="0" file="../jpeg-10/jcapistd.c"/>
+        <FILE id="wEpOy0" name="jcarith.c" compile="1" resource="0" file="../jpeg-10/jcarith.c"/>
+        <FILE id="hZIVnP" name="jccoefct.c" compile="1" resource="0" file="../jpeg-10/jccoefct.c"/>
+        <FILE id="WeKdb4" name="jccolor.c" compile="1" resource="0" file="../jpeg-10/jccolor.c"/>
+        <FILE id="oaFFuf" name="jcdctmgr.c" compile="1" resource="0" file="../jpeg-10/jcdctmgr.c"/>
+        <FILE id="YlVq6Y" name="jchuff.c" compile="1" resource="0" file="../jpeg-10/jchuff.c"/>
+        <FILE id="NqoDeu" name="jcinit.c" compile="1" resource="0" file="../jpeg-10/jcinit.c"/>
+        <FILE id="k2lUHZ" name="jcmainct.c" compile="1" resource="0" file="../jpeg-10/jcmainct.c"/>
+        <FILE id="D3E1JX" name="jcmarker.c" compile="1" resource="0" file="../jpeg-10/jcmarker.c"/>
+        <FILE id="MiR1oM" name="jcmaster.c" compile="1" resource="0" file="../jpeg-10/jcmaster.c"/>
+        <FILE id="RMXakc" name="jcomapi.c" compile="1" resource="0" file="../jpeg-10/jcomapi.c"/>
+        <FILE id="Px1Bp0" name="jcparam.c" compile="1" resource="0" file="../jpeg-10/jcparam.c"/>
+        <FILE id="MZXGau" name="jcprepct.c" compile="1" resource="0" file="../jpeg-10/jcprepct.c"/>
+        <FILE id="uSXEq2" name="jcsample.c" compile="1" resource="0" file="../jpeg-10/jcsample.c"/>
+        <FILE id="OPtzpN" name="jctrans.c" compile="1" resource="0" file="../jpeg-10/jctrans.c"/>
+        <FILE id="nF0bNd" name="jdapimin.c" compile="1" resource="0" file="../jpeg-10/jdapimin.c"/>
+        <FILE id="fD28Lm" name="jdapistd.c" compile="1" resource="0" file="../jpeg-10/jdapistd.c"/>
+        <FILE id="Slg7di" name="jdarith.c" compile="1" resource="0" file="../jpeg-10/jdarith.c"/>
+        <FILE id="ve8Tgf" name="jdatadst.c" compile="1" resource="0" file="../jpeg-10/jdatadst.c"/>
+        <FILE id="eaR9bl" name="jdatasrc.c" compile="1" resource="0" file="../jpeg-10/jdatasrc.c"/>
+        <FILE id="eEvkAw" name="jdcoefct.c" compile="1" resource="0" file="../jpeg-10/jdcoefct.c"/>
+        <FILE id="ozIPrr" name="jdcolor.c" compile="1" resource="0" file="../jpeg-10/jdcolor.c"/>
+        <FILE id="tDEQyj" name="jddctmgr.c" compile="1" resource="0" file="../jpeg-10/jddctmgr.c"/>
+        <FILE id="RQXocL" name="jdhuff.c" compile="1" resource="0" file="../jpeg-10/jdhuff.c"/>
+        <FILE id="g8yuL8" name="jdinput.c" compile="1" resource="0" file="../jpeg-10/jdinput.c"/>
+        <FILE id="EHVBaF" name="jdmainct.c" compile="1" resource="0" file="../jpeg-10/jdmainct.c"/>
+        <FILE id="pRAggy" name="jdmarker.c" compile="1" resource="0" file="../jpeg-10/jdmarker.c"/>
+        <FILE id="erXhFH" name="jdmaster.c" compile="1" resource="0" file="../jpeg-10/jdmaster.c"/>
+        <FILE id="Bk7Vcd" name="jdmerge.c" compile="1" resource="0" file="../jpeg-10/jdmerge.c"/>
+        <FILE id="MvxxRQ" name="jdpostct.c" compile="1" resource="0" file="../jpeg-10/jdpostct.c"/>
+        <FILE id="ZyqeJ7" name="jdsample.c" compile="1" resource="0" file="../jpeg-10/jdsample.c"/>
+        <FILE id="rGlw7K" name="jdtrans.c" compile="1" resource="0" file="../jpeg-10/jdtrans.c"/>
+        <FILE id="PYY6eu" name="jerror.c" compile="1" resource="0" file="../jpeg-10/jerror.c"/>
+        <FILE id="YaJQxS" name="jfdctflt.c" compile="1" resource="0" file="../jpeg-10/jfdctflt.c"/>
+        <FILE id="vTMmYn" name="jfdctfst.c" compile="1" resource="0" file="../jpeg-10/jfdctfst.c"/>
+        <FILE id="CuvIwO" name="jfdctint.c" compile="1" resource="0" file="../jpeg-10/jfdctint.c"/>
+        <FILE id="ucqO4G" name="jidctflt.c" compile="1" resource="0" file="../jpeg-10/jidctflt.c"/>
+        <FILE id="lk0NsO" name="jidctfst.c" compile="1" resource="0" file="../jpeg-10/jidctfst.c"/>
+        <FILE id="h68XRI" name="jidctint.c" compile="1" resource="0" file="../jpeg-10/jidctint.c"/>
+        <FILE id="fuYkFC" name="jmemmgr.c" compile="1" resource="0" file="../jpeg-10/jmemmgr.c"/>
+        <FILE id="Kg02Mz" name="jmemnobs.c" compile="1" resource="0" file="../jpeg-10/jmemnobs.c"/>
+        <FILE id="UXisz0" name="jquant1.c" compile="1" resource="0" file="../jpeg-10/jquant1.c"/>
+        <FILE id="u3OPuS" name="jquant2.c" compile="1" resource="0" file="../jpeg-10/jquant2.c"/>
+        <FILE id="vDFN6v" name="jutils.c" compile="1" resource="0" file="../jpeg-10/jutils.c"/>
       </GROUP>
     </GROUP>
     <GROUP id="{87C22E3B-7A51-7B8D-14CC-656E430AEDA9}" name="LASzip">
@@ -770,12 +770,12 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="JUCE_WEB_BROWSER=0"
-                userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
+                userNotes="Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h"
                 smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include&#10;.\..\..\..\LASzip\include\laszip"
                        userNotes="make CONFIG=Debug"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include"
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath=".\..\..\..\libwebp-1.3.2&#10;.\..\..\..\protozero\include&#10;.\..\..\..\vtzero\include&#10;.\..\..\..\LASzip\include\laszip"
                        userNotes="make CONFIG=Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -788,29 +788,11 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022" userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h"
-            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
-                       useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
-                       useRuntimeLibDLL="0"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2022>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="off64_t=off_t&#10;Z_HAVE_UNISTD_H"
                smallIcon="cCtoK8" bigIcon="bOamUH">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include"
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip\include\laszip"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip\include\laszip"
                        osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -823,12 +805,30 @@
         <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2026 targetFolder="Builds/VisualStudio2026" extraLinkerFlags="/STACK:10000000"
-            bigIcon="bOamUH" userNotes="Installation de la LibJpeg (jpeg-9f) : copier jconfig.vc en jconfig.h">
+    <VS2022 targetFolder="Builds/VisualStudio2022" userNotes="Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h"
+            smallIcon="cCtoK8" bigIcon="bOamUH" extraLinkerFlags="/STACK:10000000">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include&#10;$(SolutionDir)\..\..\..\LASzip\include\laszip"
                        useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include"
+        <CONFIGURATION isDebug="0" name="Release" targetName="IGNMap" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include&#10;$(SolutionDir)\..\..\..\LASzip\include\laszip"
+                       useRuntimeLibDLL="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+    <VS2026 targetFolder="Builds/VisualStudio2026" extraLinkerFlags="/STACK:10000000"
+            bigIcon="bOamUH" userNotes="Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include&#10;$(SolutionDir)\..\..\..\LASzip\include\laszip"
+                       useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="$(SolutionDir)\..\..\..\libwebp-1.3.2&#10;$(SolutionDir)\..\..\..\protozero\include&#10;$(SolutionDir)\..\..\..\vtzero\include&#10;$(SolutionDir)\..\..\..\LASzip\include\laszip"
                        useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
