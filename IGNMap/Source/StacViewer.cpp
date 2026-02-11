@@ -30,7 +30,7 @@ void StacViewer::mouseDown(const juce::MouseEvent& event)
 //-----------------------------------------------------------------------------
 // Double-clic souris
 //-----------------------------------------------------------------------------
-void StacViewer::mouseDoubleClick(const juce::MouseEvent& event)
+void StacViewer::mouseDoubleClick(const juce::MouseEvent&)
 {
   if (!m_bThumb) {
     m_Stac.SetThumbMode(true);
@@ -96,6 +96,20 @@ bool StacViewer::keyPressed(const juce::KeyPress& key)
     SetImage();
     return true;
   }
+  if (key.getKeyCode() == juce::KeyPress::pageDownKey) {
+    LoadPicture(m_PrevId);
+    LoadThumb();
+    sendActionMessage("UpdateTargetPos:" + juce::String(m_Pos.X, 2) + ":" + juce::String(m_Pos.Y, 2)
+      + ":" + juce::String(0., 2));
+    return true;
+  }
+  if (key.getKeyCode() == juce::KeyPress::pageUpKey) {
+    LoadPicture(m_NextId);
+    LoadThumb();
+    sendActionMessage("UpdateTargetPos:" + juce::String(m_Pos.X, 2) + ":" + juce::String(m_Pos.Y, 2)
+      + ":" + juce::String(0., 2));
+    return true;
+  }
   return false;	// On transmet l'evenement sans le traiter
 }
 
@@ -132,6 +146,16 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   if (features.size() < 1)
     return;
   juce::var first = features[0];
+
+  AnalyzePictureMetadata(first);
+  LoadThumb();
+}
+
+//-----------------------------------------------------------------------------
+// Analyse de l'image
+//-----------------------------------------------------------------------------
+void StacViewer::AnalyzePictureMetadata(juce::var& first)
+{
   juce::var id = first["id"];
   if (!id.isString())
     return;
@@ -139,7 +163,21 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
   if (idStr == m_Id)
     return;
   m_Id = idStr;
-  
+
+  // Position
+  if (first.hasProperty("bbox")) {
+    juce::var bbox = first["bbox"];
+    if (bbox.size() > 1) {
+      double lon = (double)bbox[0];
+      double lat = (double)bbox[1];
+      XGeoPref pref;
+      pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), lon, lat, m_Pos.X, m_Pos.Y);
+    }
+    else
+      m_Pos = XPt2D();
+  }
+
+  // Proprietes
   m_Stac.m_Tree.setRootItem(nullptr);
   m_Stac.m_RootItem.reset();
   if (first.hasProperty("properties")) {
@@ -165,7 +203,42 @@ void StacViewer::SetTarget(const double& X, const double& Y, const double& Z)
     }
   }
 
-  server = m_StacServer + "pictures/" + m_Id + "/thumb.jpg";
+  // Recherche des images avant et apres
+  if (first.hasProperty("links")) {
+    juce::var links = first["links"];
+    for (int i = 0; i < links.size(); i++) {
+      juce::var L = links[i];
+      if (L.hasProperty("rel")) {
+        juce::String rel = L["rel"].toString();
+        if (rel == "next")
+          m_NextId = L["id"].toString();
+        if (rel == "prev")
+          m_PrevId = L["id"].toString();
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+// Charge une image grace a son identifiant
+//-----------------------------------------------------------------------------
+void StacViewer::LoadPicture(juce::String id)
+{
+  juce::String server = m_StacServer + "pictures/" + id;
+  juce::URL url(server);
+  juce::WebInputStream web(url, false);
+  juce::String content = web.readEntireStreamAsString();
+
+  juce::var parsedJSON = juce::JSON::parse(content);
+  AnalyzePictureMetadata(parsedJSON);
+}
+
+//-----------------------------------------------------------------------------
+// Charge l'imagette
+//-----------------------------------------------------------------------------
+void StacViewer::LoadThumb()
+{
+  juce::String server = m_StacServer + "pictures/" + m_Id + "/thumb.jpg";
   juce::WebInputStream web_image(juce::URL(server), false);
   juce::JPEGImageFormat format;
   m_Thumb = format.decodeImage(web_image);
@@ -200,7 +273,7 @@ void StacViewer::ComputeSphereImage()
     juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readWrite);
     juce::Image::BitmapData source(m_Image, juce::Image::BitmapData::readOnly);
 
-    int x = 0, y = 0, sh2 = source.height / 2, sw2 = source.width / 2;
+    int x = 0, y = 0, sh2 = source.height / 2;
     double startAlpha = (m_nTx % 360) * XPI / 180., startBeta = m_nTy * XPI / 180., alpha = 0., beta = 0., focal = bitmap.width / 2;
 
     for (int line = 0; line < bitmap.height; line++) {

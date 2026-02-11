@@ -850,7 +850,9 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 		if ((!C->IsDTM()) || (!C->Visible()))
 			continue;
 		for (uint32_t j = 0; j < C->NbVector(); j++) {
-			GeoDTM* dtm = (GeoDTM*)C->Vector(j);
+			GeoDTM* dtm = dynamic_cast<GeoDTM*>(C->Vector(j));
+			if (dtm == nullptr)
+				continue;
 			if (!dtm->Visible())
 				continue;
 			if (!F->Intersect(dtm->Frame()))

@@ -97,17 +97,20 @@ private:
 	juce::Image m_Thumb;
 	StacComponent m_Stac;
 	juce::String m_StacServer;
-	juce::String m_Id;
+	juce::String m_Id, m_PrevId, m_NextId;
 	juce::File m_Cache;
 	bool m_bThumb;
 	juce::String m_Projection;
 	double m_Azimuth;
 	XGeoBase* m_Base;
 	int m_nTx, m_nTy;
-	XPt2D m_Pos;
+	XPt2D m_Pos;		// Position de l'image Panoramax
 
 	void SetImage();
 	void ComputeSphereImage();
+	void AnalyzePictureMetadata(juce::var& first);
+	void LoadPicture(juce::String id);
+	void LoadThumb();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StacViewer)
 };

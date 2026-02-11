@@ -394,11 +394,11 @@ bool MapThread::DrawText(juce::Graphics* g, XGeoVector* V, XGeoRepres* R)
 	juce::PathStrokeType strokeHaloType(2.5f);
 
 	if (R->Font().empty()) {
-		glyphs.addLineOfText(g->getCurrentFont(), V->Name(), X, Y);
+		glyphs.addLineOfText(g->getCurrentFont(), V->Name(), (float)X, (float)Y);
 	}
 	else {
 		juce::Font font(juce::FontOptions(R->Font(), R->FontSize(), juce::Font::plain));
-		glyphs.addLineOfText(font, V->Name(), X, Y);
+		glyphs.addLineOfText(font, V->Name(), (float)X, (float)Y);
 	}
 
 	glyphs.createPath(textPath);
@@ -801,7 +801,9 @@ bool MapThread::DrawDtmClass(XGeoClass* C)
 		return false;
 	bool flag = false;
 	for (uint32_t i = 0; i < C->NbVector(); i++) {
-		GeoDTM* dtm = (GeoDTM*)C->Vector(i);
+		GeoDTM* dtm = dynamic_cast<GeoDTM*>(C->Vector(i));
+		if (dtm == nullptr)
+			continue;
 		if (!dtm->Visible())
 			continue;
 		if (m_Frame.Intersect(dtm->Frame()))

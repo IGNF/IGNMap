@@ -77,7 +77,7 @@ void XGeoFDtm::Close()
 bool XGeoFDtm::StreamReady()
 {
   m_ActiveStream = m_In.IStream();
-  if (m_ActiveStream == NULL)
+  if (m_ActiveStream == nullptr)
     return false;
   return true;
 }
@@ -641,8 +641,8 @@ bool XGeoFDtm::ImportXyz(std::string file_asc, std::string file_bin)
 	in.open(file_asc.c_str());
 
 	float *area;
-	area = new float[m_nW * m_nH];
-	if (area == NULL)
+	area = new(std::nothrow) float[m_nW * m_nH];
+	if (area == nullptr)
 		return false;
 	for (uint32_t k = 0; k < m_nW * m_nH; k++)
 		area[k] = m_dNoData;
@@ -765,8 +765,8 @@ bool XGeoFDtm::ImportHdr(std::string file_hdr, std::string file_bin)
   // Cas des fichiers BIL en 32 bits -> lecture directe
   if (nbbits == 32) {
     float *line;
-    line = new float[m_nW];
-    if (line == NULL)
+    line = new(std::nothrow) float[m_nW];
+    if (line == nullptr)
       return false;
     for (uint32_t k = 0; k < m_nH; k++) {
       data.read((char*)line, m_nW * sizeof(float));
@@ -787,12 +787,12 @@ bool XGeoFDtm::ImportHdr(std::string file_hdr, std::string file_bin)
   // Cas des fichiers BIL en 16 bits -> Conversion des donnees
   if (nbbits == 16) {
     short int *line_in;
-    line_in = new short int[m_nW];
-    if (line_in == NULL)
+    line_in = new(std::nothrow) short int[m_nW];
+    if (line_in == nullptr)
       return false;
     float *line_out;
-    line_out = new float[m_nW];
-    if (line_out == NULL)
+    line_out = new(std::nothrow) float[m_nW];
+    if (line_out == nullptr)
       return false;
 
     for (uint32_t k = 0; k < m_nH; k++) {
@@ -852,8 +852,8 @@ bool XGeoFDtm::Export(std::string filename)
 	// Ecriture des donnees
   if (!StreamReady())
     return false;
-	float* line = new float[m_nW];
-	if (line == NULL)
+	float* line = new(std::nothrow) float[m_nW];
+	if (line == nullptr)
 		return false;
 	for (uint32_t i = 0; i < m_nH; i++) {
     ReadLine(line, i);
@@ -910,11 +910,11 @@ bool XGeoFDtm::ExportTiff16(std::string filename)
   // Ecriture des donnees
   if (!StreamReady())
     return false;
-  float* line_in = new float[m_nW];
-  if (line_in == NULL)
+  float* line_in = new(std::nothrow) float[m_nW];
+  if (line_in == nullptr)
     return false;
-  short* line_out = new short[m_nW];
-  if (line_out == NULL)
+  short* line_out = new(std::nothrow) short[m_nW];
+  if (line_out == nullptr)
     return false;
   for (uint32_t i = 0; i < m_nH; i++) {
     ReadLine(line_in, i);
@@ -950,8 +950,8 @@ bool XGeoFDtm::ExportAsc(std::string filename)
 	// Ecriture des donnees
   if (!StreamReady())
     return false;
-	float* line = new float[m_nW];
-	if (line == NULL)
+	float* line = new(std::nothrow) float[m_nW];
+	if (line == nullptr)
 		return false;
 	for (uint32_t i = 0; i < m_nH; i++) {
     ReadLine(line, i);
@@ -982,8 +982,8 @@ bool XGeoFDtm::ExportXyz(std::string filename)
 	// Ecriture des donnees
   if (!StreamReady())
     return false;
-	float* line = new float[m_nW];
-	if (line == NULL)
+	float* line = new(std::nothrow) float[m_nW];
+	if (line == nullptr)
 		return false;
 	for (uint32_t i = 0; i < m_nH; i++) {
     ReadLine(line, i);
@@ -1194,11 +1194,11 @@ bool XGeoFDtm::ExportContour(std::string filename, double equi, double resol)
   if (!StreamReady())
     return false;
   // Ecriture des donnees
-  float* lineT = new float[m_nW];
-  float* lineB = new float[m_nW];
-  uint8_t* pix = new uint8_t[m_nW * factor * factor];
-  int* Z = new int[factor * factor];
-  if ((lineB == NULL)||(lineT == NULL||(pix == NULL)||(Z == NULL))) {
+  float* lineT = new(std::nothrow) float[m_nW];
+  float* lineB = new(std::nothrow) float[m_nW];
+  uint8_t* pix = new(std::nothrow) uint8_t[m_nW * factor * factor];
+  int* Z = new(std::nothrow) int[factor * factor];
+  if ((lineB == nullptr)||(lineT == nullptr||(pix == nullptr)||(Z == nullptr))) {
     delete[] lineB;
     delete[] lineT;
     delete[] pix;
@@ -1280,7 +1280,7 @@ int XGeoFDtm::ExportFlood(std::string filename, double Z0, std::vector<XPt2D>& P
                           int nb_seed, std::vector<XGeoVector*> *V)
 {
   if (m_dZmin > Z0)
-    return false;
+    return 0;
   // Test si les points de depart concernent ce MNT
   XFrame frame = m_Frame;
   frame.Xmin -= m_dGSD;
@@ -1299,7 +1299,9 @@ int XGeoFDtm::ExportFlood(std::string filename, double Z0, std::vector<XPt2D>& P
   if (inside_pt <= nb_seed)
     return nb_seed;
 
-  uint8_t* T = new uint8_t[m_nW * m_nH];
+  uint8_t* T = new(std::nothrow) uint8_t[m_nW * m_nH];
+  if (T == nullptr)
+    return 0;
   ::memset(T, 0, m_nW * m_nH * sizeof(uint8_t));
 
   // Detection des noeuds sous le niveau Z0
@@ -1482,8 +1484,8 @@ bool XGeoFDtm::Volume(std::vector<double>& P, std::vector<uint32_t>& N, double& 
   if (P.size() < 1)
     return false;
   uint32_t nb_val = P.size() + 1;
-  uint32_t* tab = new uint32_t[nb_val];
-  if (tab == NULL)
+  uint32_t* tab = new(std::nothrow) uint32_t[nb_val];
+  if (tab == nullptr)
     return false;
   for (uint32_t i = 0; i < nb_val; i++) tab[i] = 0;
 
@@ -1560,11 +1562,11 @@ bool XGeoFDtm::ExportDiff(std::string filename, XGeoFDtm* dtm)
     return false;
   if (!dtm->StreamReady())
     return false;
-  float* line = new float[m_nW];
-  if (line == NULL)
+  float* line = new(std::nothrow) float[m_nW];
+  if (line == nullptr)
     return false;
-  float* line_diff = new float[m_nW];
-  if (line_diff == NULL) {
+  float* line_diff = new(std::nothrow) float[m_nW];
+  if (line_diff == nullptr) {
     delete[] line;
     return false;
   }
@@ -1635,11 +1637,11 @@ bool XGeoFDtm::DeltaMax(double Dz, std::vector<XPt3D>& T)
   // Lecture des donnees
   if (!StreamReady())
     return false;
-  float* lineP = new float[m_nW];
-  if (lineP == NULL)
+  float* lineP = new(std::nothrow) float[m_nW];
+  if (lineP == nullptr)
     return false;
-  float* lineQ = new float[m_nW];
-  if (lineQ == NULL) {
+  float* lineQ = new(std::nothrow) float[m_nW];
+  if (lineQ == nullptr) {
     delete[] lineP;
     return false;
   }
@@ -1687,11 +1689,11 @@ bool XGeoFDtm::FindContourLine(double Z0, uint8_t* area)
   // Lecture des donnees
   if (!StreamReady())
     return false;
-  float* lineP = new float[m_nW];
-  if (lineP == NULL)
+  float* lineP = new(std::nothrow) float[m_nW];
+  if (lineP == nullptr)
     return false;
-  float* lineQ = new float[m_nW];
-  if (lineQ == NULL) {
+  float* lineQ = new(std::nothrow) float[m_nW];
+  if (lineQ == nullptr) {
     delete[] lineP;
     return false;
   }
@@ -1754,22 +1756,22 @@ bool XGeoFDtm::FindThalweg(std::string filename)
   // Ecriture des donnees
   if (!StreamReady())
     return false;
-  float* mnt = new float[m_nW*m_nH];
-  if (mnt == NULL)
+  float* mnt = new(std::nothrow) float[m_nW*m_nH];
+  if (mnt == nullptr)
     return false;
-  uint16_t* thal = new uint16_t[m_nW*m_nH];
-  if (thal == NULL) {
+  uint16_t* thal = new(std::nothrow) uint16_t[m_nW*m_nH];
+  if (thal == nullptr) {
     delete[] mnt;
     return false;
   }
-  uint8_t* water = new uint8_t[m_nW*m_nH];
-  if (water == NULL) {
+  uint8_t* water = new(std::nothrow) uint8_t[m_nW*m_nH];
+  if (water == nullptr) {
     delete[] mnt;
     delete[] thal;
     return false;
   }
-  uint8_t* volume = new uint8_t[m_nW*m_nH];
-  if (volume == NULL){
+  uint8_t* volume = new(std::nothrow) uint8_t[m_nW*m_nH];
+  if (volume == nullptr){
     delete[] mnt;
     delete[] thal;
     delete[] water;
@@ -2138,8 +2140,8 @@ bool XGeoFDtm::FindMinMax(XGeoVector* V, XPt3D* Pmin, XPt3D* Pmax, double* zmean
   // Lecture des donnees
   if (!StreamReady())
     return false;
-  float* line = new float[m_nW];
-  if (line == NULL)
+  float* line = new(std::nothrow) float[m_nW];
+  if (line == nullptr)
     return false;
   // Analyse de chaque noeud
   uint32_t nb = 0;
@@ -2191,8 +2193,8 @@ bool XGeoFDtm::FindMinMax(XGeoVector* V, XPt3D* Pmin, XPt3D* Pmax)
   // Lecture des donnees
   if (!StreamReady())
     return false;
-  float* line = new float[m_nW];
-  if (line == NULL)
+  float* line = new(std::nothrow) float[m_nW];
+  if (line == nullptr)
     return false;
   // Analyse de chaque noeud
   uint32_t nb = 0;

@@ -41,7 +41,7 @@ public:
 	void Clear();
 	bool LoadModel();
 
-	void SetTarget(const double& X, const double& Y, const double& Z) override { ; }
+	void SetTarget(const double& , const double& , const double& ) override { ; }
 	void SetSelection(void*) override { ; }
 	bool NeedTargetImage() override { return true; }
 	void SetTargetImage(const juce::Image& image) override;
