@@ -163,7 +163,7 @@ void ZoomViewer::ComputeZoom()
     XTransfoZoom transfo(m_nZoom);
     XInterCubCatmull interpol;
     uint8_t* out = resized.data;
-    XBaseImage::Resample(bitmap.data, out, w, h, nbSample, offset, &transfo, &interpol, true);
+    XBaseImage::Resample(bitmap.data, out, w, h, (uint16_t)nbSample, (uint16_t)offset, &transfo, &interpol, true);
 
     if (m_nTone != 0) {
       XToneMapper::ToneMappingInt mapper;

@@ -25,6 +25,7 @@
 #include "StacViewer.h"
 #include "StereoViewer.h"
 #include "AffineImage.h"
+#include "DtmTmsLayer.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolImage/XTiffWriter.h"
 #include "../../XToolAlgo/XInternetMap.h"
@@ -1211,7 +1212,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 	juce::File file(filename);
 	juce::String name = file.getFileNameWithoutExtension();
 
-	GeoDTM* dtm = new GeoDTM;
+	GeoFileDTM* dtm = new GeoFileDTM;
 	juce::File tmpFile = juce::File::createTempFile("tif");
 	if (!dtm->OpenDtm(AppUtil::GetStringFilename(filename).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
 		delete dtm;
@@ -1561,7 +1562,23 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	AddMvtServer("https://data.geopf.fr/tms/1.0.0/IGNF_NUAGES-DE-POINTS-LIDAR-HD-produit", "pbf", "", 256, 256, 16);
+	XGeoPref pref;
+	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+	DtmTmsLayer* dtm = new DtmTmsLayer("s3.amazonaws.com/elevation-tiles-prod/terrarium");
+	dtm->SetFrame(F);
+	if (!GeoTools::RegisterObject(&m_GeoBase, dtm, "Terrarium", "DTM", "Terrarium")) {
+		delete dtm;
+		return;
+	}
+
+	m_MapView.get()->SetFrame(m_GeoBase.Frame());
+	m_MapView.get()->RenderMap(false, false, true, false, false, true);
+	m_DtmViewer.get()->SetBase(&m_GeoBase);
+
+	// AddMvtServer("https://data.geopf.fr/tms/1.0.0/IGNF_NUAGES-DE-POINTS-LIDAR-HD-produit", "pbf", "", 256, 256, 16);
 
 	/* Creation d'un differentiel MNS*/
 	/*

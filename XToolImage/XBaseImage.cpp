@@ -572,6 +572,24 @@ bool XBaseImage::CopyArea(uint8_t* patch, uint8_t* image, uint32_t wpatch, uint3
 }
 
 //-----------------------------------------------------------------------------
+// Crop d'une image
+//-----------------------------------------------------------------------------
+bool XBaseImage::Crop(uint8_t* buffer, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t x0, uint32_t y0)
+{
+  if (x0 + wout > win) return false;
+  if (y0 + hout > hin) return false;
+
+  uint8_t* buf_in = &buffer[y0 * win + x0];
+  uint8_t* buf_out = buffer;
+  for (uint32_t i = 0; i < hout; i++) {
+    ::memmove(buf_out, buf_in, wout);
+    buf_in += win;
+    buf_out += wout;
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // Zoom sur un buffer de pixels
 //-----------------------------------------------------------------------------
 bool XBaseImage::ZoomArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t nbbyte)
@@ -1015,6 +1033,66 @@ bool XBaseImage::Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uin
         if (result < 0) result = 0;
         if (result > 255) result = 255;
         *pix_out = (uint8_t)result;
+        pix_out++;
+      }
+    }
+  }
+  delete[] value;
+  delete[] pix;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Fonction de réechantillonnage
+//-----------------------------------------------------------------------------
+bool XBaseImage::Resample(float* in, float* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset,
+                          XTransfo* transfo, XInterpol* interpol, bool noBorder)
+{
+  int wout, hout;
+  transfo->Dimension((int)w, (int)h, &wout, &hout);
+
+  int win = interpol->Win(), win_size = (interpol->Win() * 2);
+  double* value = new double[win_size * win_size];
+  float result;
+  float* pix = new float[win_size * win_size * nbSample];
+  double xi = 0., yi = 0.;
+  int u = 0, v = 0;
+  for (int i = 0; i < hout; i++) {
+    float* line_out = &out[i * wout * nbSample];
+    for (int j = 0; j < wout; j++) {
+      float* pix_out = line_out + j * nbSample;
+      transfo->Direct(j, i, &xi, &yi);
+      u = (int)xi;
+      v = (int)yi;
+
+      if ((u < w - win) && (v < h - win) && (u >= win) && (v >= win)) {
+        for (int k = 0; k < win_size; k++)
+          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample * sizeof(float));
+      }
+      else {
+        if (!noBorder)  // On ne traite par les bords d'image
+          continue;
+        for (int k = 0; k < win_size; k++) {
+          int y = (v - win + k);
+          if (y < 0) y = 0;
+          if (y >= h) y = h - 1;
+          for (int m = 0; m < win_size; m++) {
+            int x = (u - win + m);
+            if (x < 0) x = 0;
+            if (x >= w) x = w - 1;
+            ::memcpy(&pix[k * win_size * nbSample + m * nbSample], &in[y * (w * nbSample + offset) + x * nbSample], nbSample * sizeof(float));
+          }
+        }
+      }
+
+      for (int k = 0; k < nbSample; k++) {
+        float* ptr = (float*)pix + k;
+        for (int p = 0; p < win_size * win_size; p++) {
+          value[p] = *ptr;
+          ptr += nbSample;
+        }
+        *pix_out = (float)interpol->BiCompute(value, xi - u, yi - v);
         pix_out++;
       }
     }

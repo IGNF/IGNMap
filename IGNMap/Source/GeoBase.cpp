@@ -121,7 +121,7 @@ bool GeoFileImage::AnalyzeImage(std::string path)
 //-----------------------------------------------------------------------------
 // Creation du repertoire cache pour le stockage des imagettes
 //-----------------------------------------------------------------------------
-void GeoInternetImage::CreateCacheDir(juce::String name)
+void GeoCacheImage::CreateCacheDir(juce::String name)
 { 
 	m_Cache = GeoTools::CreateCacheDir(name);
 }
@@ -129,7 +129,7 @@ void GeoInternetImage::CreateCacheDir(juce::String name)
 //-----------------------------------------------------------------------------
 // Recherche si l'image existe dans le cache image
 //-----------------------------------------------------------------------------
-juce::Image GeoInternetImage::FindCachedTile(int x, int y, int zoomLevel)
+juce::Image GeoCacheImage::FindCachedTile(int x, int y, int zoomLevel)
 {
 	for (int i = 0; i < m_CachedTiles.size(); i++) {
 		CachedTile T = m_CachedTiles[i];
@@ -157,10 +157,9 @@ bool GeoInternetImage::SaveSourceImage(juce::String filename)
 //-----------------------------------------------------------------------------
 // Reechantillonnage rapide
 //-----------------------------------------------------------------------------
-bool GeoInternetImage::Resample(XTransfo* transfo)
+bool GeoInternetImage::Resample(XTransfo* transfo, XInterpol* interpol)
 {
-	int Wproj = 0, Hproj = 0, u, v, Wsource = m_SourceImage.getWidth(), Hsource = m_SourceImage.getHeight();
-	double xi = 0., yi = 0.;
+	int Wproj = 0, Hproj = 0, Wsource = m_SourceImage.getWidth(), Hsource = m_SourceImage.getHeight();
 	transfo->Dimension(Wsource, Hsource, &Wproj, &Hproj);
 
 	m_ProjImage = juce::Image(juce::Image::PixelFormat::ARGB, Wproj, Hproj, true, juce::SoftwareImageType());
@@ -169,48 +168,10 @@ bool GeoInternetImage::Resample(XTransfo* transfo)
 	juce::Image::BitmapData projData(m_ProjImage, juce::Image::BitmapData::readWrite);
 	if ((sourceData.pixelStride != 4) || (projData.pixelStride != 4))
 		return false; // Les images doivent etre ARGB
-	int sourceLineW = sourceData.lineStride;
 
-	XInterCubCatmull interpol;
-	int win = interpol.Win(), win_size = (interpol.Win() * 2);
-	double* value = new double[win_size * win_size];
-	int result[4];
-	juce::uint8* pix = new juce::uint8[win_size * win_size * 4];
-	for (int i = 0; i < Hproj; i++) {
-		juce::uint8* line_out = projData.getLinePointer(i);
-		for (int j = 0; j < Wproj; j++) {
-			juce::uint8* pix_out = line_out + j * 4;
-			transfo->Direct(j, i, &xi, &yi);
-			u = (int)xi;
-			v = (int)yi;
-			if (u >= Wsource - win) continue;
-			if (v >= Hsource - win) continue;
-			if (u < win) continue;
-			if (v < win) continue;
-			for (int k = 0; k < win_size; k++)
-				::memcpy(&pix[k * win_size * 4], &sourceData.data[(v - win + k) * sourceLineW + (u - win) * 4], win_size * 4);
-
-			for (int k = 0; k < 4; k++) {
-				uint8_t* ptr = (uint8_t*)pix + k;
-				for (int p = 0; p < win_size * win_size; p++) {
-					value[p] = *ptr;
-					ptr += 4;
-				}
-				result[k] = (int)interpol.BiCompute(value, xi - u, yi - v);
-				if (result[k] < 0) result[k] = 0;
-				if (result[k] > 255) result[k] = 255;
-			}
-
-			pix_out[0] = (juce::uint8)result[0];
-			pix_out[1] = (juce::uint8)result[1];
-			pix_out[2] = (juce::uint8)result[2];
-			pix_out[3] = (juce::uint8)result[3];
-		}
-	}
-	delete[] value;
-	delete[] pix;
-
-	return true;
+	XInterCubCatmull interCub;
+	if (interpol == nullptr) interpol = &interCub;
+	return XBaseImage::Resample(sourceData.data, projData.data, Wsource, Hsource, 4, 0, transfo, interpol, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -279,7 +240,7 @@ juce::Image GeoSentinelImage::GetQuickView()
 //-----------------------------------------------------------------------------
 // Fermeture du MNT
 //-----------------------------------------------------------------------------
-void GeoDTM::Close()
+void GeoFileDTM::Close()
 {
 	m_In.Close();
 	if (m_bTmpFile) {
@@ -292,7 +253,7 @@ void GeoDTM::Close()
 //-----------------------------------------------------------------------------
 // Indique si la lecture est possible
 //-----------------------------------------------------------------------------
-bool GeoDTM::StreamReady()
+bool GeoFileDTM::StreamReady()
 {
 	if (m_bTmpFile)
 		return XGeoFDtm::StreamReady();
@@ -302,7 +263,7 @@ bool GeoDTM::StreamReady()
 //-----------------------------------------------------------------------------
 // Lecture d'une ligne de noeuds
 //-----------------------------------------------------------------------------
-bool GeoDTM::ReadLine(float* line, uint32_t numLine)
+bool GeoFileDTM::ReadLine(float* line, uint32_t numLine)
 {
 	if (m_bTmpFile)
 		return XGeoFDtm::ReadLine(line, numLine);
@@ -313,7 +274,7 @@ bool GeoDTM::ReadLine(float* line, uint32_t numLine)
 //-----------------------------------------------------------------------------
 // Lecture d'un noeud
 //-----------------------------------------------------------------------------
-bool GeoDTM::ReadNode(float* node, uint32_t x, uint32_t y)
+bool GeoFileDTM::ReadNode(float* node, uint32_t x, uint32_t y)
 {
 	if (m_bTmpFile)
 		return XGeoFDtm::ReadNode(node, x, y);
@@ -324,7 +285,7 @@ bool GeoDTM::ReadNode(float* node, uint32_t x, uint32_t y)
 //-----------------------------------------------------------------------------
 // Lecture de tout le MNT
 //-----------------------------------------------------------------------------
-bool GeoDTM::ReadAll(float* area)
+bool GeoFileDTM::ReadAll(float* area)
 {
 	if (m_bTmpFile)
 		return XGeoFDtm::ReadAll(area);
@@ -335,7 +296,7 @@ bool GeoDTM::ReadAll(float* area)
 //-----------------------------------------------------------------------------
 // Ouverture du MNT Tiff
 //-----------------------------------------------------------------------------
-bool GeoDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
+bool GeoFileDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
 {
 	if (!m_Image.AnalyzeImage(file_tif))
 		return false;
@@ -374,6 +335,7 @@ bool GeoDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
 			m_Frame.Xmax = m_Frame.Xmin + m_dGSD * (m_nW - 1);
 			m_Frame.Ymin = m_Frame.Ymax - m_dGSD * (m_nH - 1);
 		}
+		m_Image.SetGeoref(Frame().Xmin - m_dGSD * 0.5, Frame().Ymax + m_dGSD * 0.5, m_dGSD);
 	}
 
 	if (!xml_file) {
@@ -390,6 +352,49 @@ bool GeoDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
 	}
 	m_bValid = true;
 	return m_bValid;
+}
+
+//==============================================================================
+// Classe GeoFileDTM : creation d'une grille
+//==============================================================================
+bool GeoFileDTM::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
+{
+	if (!Visible())
+		return true;
+	if (!F->Intersect(Frame()))
+		return true;
+	if (m_Image.NbSample() != 1)
+		return false;
+	//double gsd = Resolution();
+	//image.SetGeoref(dtm->Frame().Xmin - gsd * 0.5, dtm->Frame().Ymax + gsd * 0.5, gsd);
+	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
+	if (!m_Image.PrepareRasterDraw(F, F->Width() / w, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
+		return false;
+	if (R0 < 0) R0 = 0;
+	if (S0 < 0) S0 = 0;
+
+	int factor = win / wout;
+	if (factor < 1)
+		factor = 1;
+	int wtmp = win / factor, htmp = hin / factor;
+	if ((wtmp == 0) || (htmp == 0))
+		return false;
+
+	float* area = new (std::nothrow) float[wtmp * htmp];
+	if (area == nullptr) return false;
+	float* data = new (std::nothrow) float[wout * hout];
+	if (data == nullptr) {
+		delete[] area;
+		return false;
+	}
+
+	uint32_t nb_sample;
+	m_Image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
+	XBaseImage::FastZoomBil(area, wtmp, htmp, data, wout, hout);
+	XBaseImage::CopyArea((uint8_t*)data, (uint8_t*)grid, wout * sizeof(float), hout, w * sizeof(float), h, R0 * sizeof(float), S0);
+	delete[] area;
+	delete[] data;
+	return true;
 }
 
 //==============================================================================
@@ -698,7 +703,7 @@ XGeoClass* GeoTools::ImportDataFolder(juce::String folderName, XGeoBase* base, X
 					las->CloseIfNeeded();	// Pour eviter d'utiliser trop de descripteurs de fichiers
 				}
 				if (type == XGeoVector::DTM) {
-					GeoDTM* dtm = new GeoDTM;
+					GeoFileDTM* dtm = new GeoFileDTM;
 					juce::File tmpFile = juce::File::createTempFile("tif");
 					if (!dtm->OpenDtm(AppUtil::GetStringFilename((*T)[i].getFullPathName()).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
 						delete dtm;
@@ -853,44 +858,7 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 			GeoDTM* dtm = dynamic_cast<GeoDTM*>(C->Vector(j));
 			if (dtm == nullptr)
 				continue;
-			if (!dtm->Visible())
-				continue;
-			if (!F->Intersect(dtm->Frame()))
-				continue;
-			XFileImage image;
-			if (!image.AnalyzeImage(dtm->ImageName()))
-				continue;
-			if (image.NbSample() != 1)
-				continue;
-			double gsd = dtm->Resolution();
-			image.SetGeoref(dtm->Frame().Xmin - gsd * 0.5, dtm->Frame().Ymax + gsd * 0.5, gsd);
-			int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
-			if (!image.PrepareRasterDraw(F, F->Width() / w, U0, V0, win, hin, nbBand, R0, S0, wout, hout))
-				continue;
-			if (R0 < 0) R0 = 0;
-			if (S0 < 0) S0 = 0;
-
-			int factor = win / wout;
-			if (factor < 1)
-				factor = 1;
-			int wtmp = win / factor, htmp = hin / factor;
-			if ((wtmp == 0) || (htmp == 0))
-				continue;
-
-			float* area = new (std::nothrow) float[wtmp * htmp];
-			if (area == nullptr) continue;
-			float* data = new (std::nothrow) float[wout * hout];
-			if (data == nullptr) {
-				delete[] area;
-				continue;
-			}
-
-			uint32_t nb_sample;
-			image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
-			XBaseImage::FastZoomBil(area, wtmp, htmp, data, wout, hout);
-			XBaseImage::CopyArea((uint8_t*)data, (uint8_t*)grid, wout * sizeof(float), hout, w * sizeof(float), h, R0 * sizeof(float), S0);
-			delete[] area;
-			delete[] data;
+			dtm->ComputeZGrid(grid, w, h, F);
 		}
 	}
 	return true;

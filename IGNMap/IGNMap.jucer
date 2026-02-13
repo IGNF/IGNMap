@@ -445,6 +445,8 @@
             file="Source/DtmLayersViewer.h"/>
       <FILE id="wv4RK7" name="DtmShader.cpp" compile="1" resource="0" file="Source/DtmShader.cpp"/>
       <FILE id="Ysux8W" name="DtmShader.h" compile="0" resource="0" file="Source/DtmShader.h"/>
+      <FILE id="dwqtwl" name="DtmTmsLayer.cpp" compile="1" resource="0" file="Source/DtmTmsLayer.cpp"/>
+      <FILE id="qkxe1N" name="DtmTmsLayer.h" compile="0" resource="0" file="Source/DtmTmsLayer.h"/>
       <FILE id="IUCQEA" name="ExportImageDlg.cpp" compile="1" resource="0"
             file="Source/ExportImageDlg.cpp"/>
       <FILE id="bJ7a4v" name="ExportImageDlg.h" compile="0" resource="0"

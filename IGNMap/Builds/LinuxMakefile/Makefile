@@ -253,6 +253,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ClassViewer_44f830b.o \
   $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
   $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
+  $(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o \
   $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
   $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
   $(JUCE_OBJDIR)/GeoBase_343e9923.o \
@@ -1299,6 +1300,11 @@ $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o: ../../Source/DtmLayersViewer.cpp
 $(JUCE_OBJDIR)/DtmShader_bfa70483.o: ../../Source/DtmShader.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling DtmShader.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o: ../../Source/DtmTmsLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DtmTmsLayer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o: ../../Source/ExportImageDlg.cpp

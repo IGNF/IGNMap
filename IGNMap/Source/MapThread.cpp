@@ -819,44 +819,12 @@ bool MapThread::DrawDtmClass(XGeoClass* C)
 //==============================================================================
 bool MapThread::DrawDtm(GeoDTM* dtm)
 {
-	XFileImage image;
-	if (!image.AnalyzeImage(dtm->ImageName()))
-		return false;
-	if (image.NbSample() != 1)
-		return false;
-	double gsd = dtm->Resolution();
-	image.SetGeoref(dtm->Frame().Xmin - gsd * 0.5, dtm->Frame().Ymax + gsd * 0.5, gsd);
-	int U0, V0, win, hin, R0, S0, wout, hout, nbBand;
-	if (!image.PrepareRasterDraw(&m_Frame, m_Frame.Width() / m_Raster.getWidth(), U0, V0, win, hin, nbBand, R0, S0, wout, hout))
-		return false;
-	
-	int factor = win / wout;
-	if (factor < 1)
-		factor = 1;
-	int wtmp = win / factor, htmp = hin / factor;
-	if ((wtmp == 0) || (htmp == 0))
+	juce::Image::BitmapData bitmap(m_RawDtm, juce::Image::BitmapData::readWrite);
+	if (dtm->ComputeZGrid((float*)bitmap.data, bitmap.width, bitmap.height, &m_Frame)) {
+		m_nNumObjects++;
 		return true;
-	
-	float* area = new float[wtmp * htmp];
-	if (area == nullptr)
-		return false;
-	uint32_t nb_sample;
-	image.GetRawArea(U0, V0, win, hin, area, &nb_sample, factor);
-	juce::Image tmpImage(m_RawDtm.getFormat(), wout, hout, true, juce::SoftwareImageType());
-	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
-		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-		XBaseImage::FastZoomBil(area, wtmp, htmp, (float*)bitmap.data, wout, hout);
-		delete[] area;
-		XBaseImage::OffsetArea(bitmap.data, wout * 4, bitmap.height, bitmap.lineStride);
 	}
-
-	m_RawDtm.clear(juce::Rectangle<int>(R0, S0, wout, hout));
-	juce::Graphics g(m_RawDtm);
-	g.setOpacity(1.f);
-	g.drawImageAt(tmpImage, R0, S0);
-
-	m_nNumObjects++;
-	return true;
+	return false;
 }
 
 //==============================================================================

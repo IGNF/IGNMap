@@ -25,7 +25,7 @@ class XGeoBase;
 class ZoomViewer : public ToolWindow {
 public:
 	ZoomViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons,
-		juce::ActionListener* listener, XGeoBase* base)
+		juce::ActionListener* , XGeoBase*)
 		: ToolWindow(name, backgroundColour, requiredButtons)
 	{
 		setResizable(true, true);

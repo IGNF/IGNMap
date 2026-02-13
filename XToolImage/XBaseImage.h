@@ -97,6 +97,7 @@ public:
 	static bool MultiSample2RGB(uint8_t* buffer, uint32_t w, uint32_t h, uint16_t nbSample, uint8_t* paletteRGB);
   static bool ExtractArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t x0, uint32_t y0);
 	static bool CopyArea(uint8_t* patch, uint8_t* image, uint32_t wpatch, uint32_t hpatch, uint32_t wimage, uint32_t himage, uint32_t x0, uint32_t y0);
+	static bool Crop(uint8_t* buffer, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t x0, uint32_t y0);
 	static bool ZoomArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout, uint32_t nbbyte);
 	static bool ZoomAreaRGB(uint8_t* R, uint8_t* G, uint8_t* B, uint8_t* out, uint32_t win, uint32_t hin, uint32_t wout, uint32_t hout);
 	static void SwitchRGB2BGR(uint8_t* buf, uint32_t nb_pix);
@@ -115,6 +116,9 @@ public:
 	static bool FastZoomBil(float* in, uint32_t win, uint32_t hin, float* out, uint32_t wout, uint32_t hout);
 	static bool Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset, 
 											 XTransfo* transfo, XInterpol* interpol, bool noBorder);
+	static bool Resample(float* in, float* out, uint32_t w, uint32_t h, uint16_t nbSample, uint16_t offset,
+											 XTransfo* transfo, XInterpol* interpol, bool noBorder);
+
 };
 
 #endif //XBASEIMAGE_H
