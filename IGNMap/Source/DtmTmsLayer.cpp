@@ -206,6 +206,7 @@ bool DtmTmsLayer::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
   FwebMerc.Ymin = XMin(y0, y3);
   FwebMerc.Ymax = XMax(y1, y2);
 
+  /*
   LoadFrame(FwebMerc, zoom_level);
   int wscaled = (int)(FwebMerc.Width() / gsd), hscaled = (int)(FwebMerc.Height() / gsd);
   float* scaledBuf = new float[wscaled * hscaled];
@@ -224,6 +225,21 @@ bool DtmTmsLayer::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
   XInterpol interpol;
   XBaseImage::Resample(scaledBuf, grid, wscaled, hscaled, 1, 0, &transfo, &interpol, false);
   delete[] scaledBuf;
+  */
+
+  LoadFrame(FwebMerc, zoom_level);
+
+  // Reechantillonage dans la projection souhaitee
+  XTransfoGeodZoomInterpol transfo(&geod);
+  transfo.SetStartFrame(FwebMerc, FwebMerc.Width() / m_SourceW);
+  transfo.SetEndFrame(*F, gsd);
+  transfo.AutoCalibration();
+
+  XInterpol interpol;
+  XBaseImage::Resample(m_SourceGrid, grid, m_SourceW, m_SourceH, 1, 0, &transfo, &interpol, false);
+  delete[] m_SourceGrid;
+  m_SourceW = m_SourceH = 0;
+  m_SourceGrid = nullptr;
 
 	return true;
 }
