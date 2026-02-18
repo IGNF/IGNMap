@@ -500,8 +500,10 @@ double MapView::ComputeCartoScale(double cartoscale)
 //==============================================================================
 // Fixe l'envelope totale de la vue
 //==============================================================================
-void MapView::SetFrame(XFrame F)
+void MapView::SetFrame(const XFrame& F)
 {
+	if (F == m_Frame)
+		return;
 	auto b = getLocalBounds();
 	double X = b.getCentreX(), Y = b.getCentreY();
 	if (!m_Frame.IsEmpty())

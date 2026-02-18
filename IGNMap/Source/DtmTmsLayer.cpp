@@ -14,6 +14,7 @@
 #include "../../XToolGeod/XGeoPref.h"
 #include "../../XToolGeod/XTransfoGeod.h"
 #include "../../XTool/XInterpol.h"
+#include "../../XToolImage/XWebPImage.h"
 
 //-----------------------------------------------------------------------------
 // Constructeur
@@ -36,7 +37,7 @@ DtmTmsLayer::DtmTmsLayer(std::string server, std::string apikey, std::string for
   m_SourceGrid = nullptr;
   m_SourceW = m_SourceH = 0;
 
-  m_dZmin = 0.;
+  m_dZmin = -1000.;
   m_dZmax = 8900.;
   m_nNbNoZ = 0;
 
@@ -57,7 +58,29 @@ DtmTmsLayer::~DtmTmsLayer()
 //-----------------------------------------------------------------------------
 bool DtmTmsLayer::ReadAttributes(std::vector<std::string>& V)
 {
+  V.clear();
+  V.push_back("Nom"); V.push_back(Name());
+  V.push_back("Serveur"); V.push_back(m_strServer.toStdString());
+  V.push_back("Requete"); V.push_back(m_strRequest.toStdString());
+  V.push_back("Format"); V.push_back(m_strFormat.toStdString());
+  V.push_back("Encodage"); V.push_back(m_strEncoding.toStdString());
+
 	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Chargement d'une image WebP
+//-----------------------------------------------------------------------------
+juce::Image DtmTmsLayer::LoadWebp(juce::String filename)
+{
+  XWebPImage webp(filename.toStdString().c_str());
+  if (!webp.IsValid())
+    return juce::Image();
+  juce::Image image(juce::Image::PixelFormat::RGB, webp.W(), webp.H(), true);
+  juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readWrite);
+  webp.GetArea(nullptr, 0, 0, webp.W(), webp.H(), bitmap.data);
+  XBaseImage::SwitchRGB2BGR(bitmap.data, webp.W() * webp.H());
+  return image;
 }
 
 //-----------------------------------------------------------------------------
@@ -73,6 +96,8 @@ juce::String DtmTmsLayer::LoadTile(int x, int y, int zoomlevel)
 
 	// Telechargement du fichier
 	m_strRequest = "https://" + m_strServer + "/" + juce::String(zoomlevel) + "/" + juce::String(x) + "/" + juce::String(y) + "." + m_strFormat;
+  if (m_strKey.isNotEmpty())
+    m_strRequest = m_strRequest + "?" + m_strKey;
 	return AppUtil::DownloadFile(m_strRequest, filename, 20, 50);
 }
 
@@ -84,16 +109,35 @@ bool DtmTmsLayer::ConvertTile(const juce::Image& image, float* grid)
   juce::Image::BitmapData data(image, juce::Image::BitmapData::readOnly);
   if ((data.height != m_nTileH) || (data.width != m_nTileW))
     return false;
-  //(red * 256 + green + blue / 256) - 32768
+  // Terrarium = (red * 256 + green + blue / 256) - 32768
+  // TerrainRGB = -10000 + ((R * 256 * 256 + G * 256 + B) * 0.1)
   float* ptr_grid = grid;
-  for (int i = 0; i < data.height; i++) {
-    uint8_t* line = data.getLinePointer(i);
-    for (int j = 0; j < data.width; j++) {
-      *ptr_grid = (float)((line[2] * 256. + line[1] + line[0] / 256.) - 32768.);
-      ptr_grid++;
-      line += data.pixelStride;
+  if (m_strEncoding == "Terrarium") {
+    for (int i = 0; i < data.height; i++) {
+      uint8_t* line = data.getLinePointer(i);
+      for (int j = 0; j < data.width; j++) {
+        *ptr_grid = (float)((line[2] * 256. + line[1] + line[0] / 256.) - 32768.);
+        m_dZmin = XMin(m_dZmin, (double)*ptr_grid);
+        m_dZmax = XMax(m_dZmax, (double)*ptr_grid);
+        ptr_grid++;
+        line += data.pixelStride;
+      }
     }
   }
+
+  if (m_strEncoding == "TerrainRGB") {
+    for (int i = 0; i < data.height; i++) {
+      uint8_t* line = data.getLinePointer(i);
+      for (int j = 0; j < data.width; j++) {
+        *ptr_grid = (float)((line[2] * 256. * 256. + line[1] * 256. + line[0]) * 0.1 - 10000.);
+        m_dZmin = XMin(m_dZmin, (double)*ptr_grid);
+        m_dZmax = XMax(m_dZmax, (double)*ptr_grid);
+        ptr_grid++;
+        line += data.pixelStride;
+      }
+    }
+  }
+
   return true;
 }
 
@@ -126,6 +170,9 @@ bool DtmTmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
     m_SourceGrid = nullptr;
     return false;
   }
+  // On reinitialise le Zmin et le Zmax
+  m_dZmin = std::numeric_limits<double>::max();
+  m_dZmax = std::numeric_limits<double>::min();
 
   for (int i = 0; i < nb_tiley; i++) {
     for (int j = 0; j < nb_tilex; j++) {
@@ -134,7 +181,10 @@ bool DtmTmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
       juce::Image image = FindCachedTile(x, y, zoomlevel);
       if (image.isNull()) {
         juce::String filename = LoadTile(x, y, zoomlevel);
-        image = juce::ImageFileFormat::loadFrom(juce::File(filename));
+        if (m_strFormat != "webp")
+          image = juce::ImageFileFormat::loadFrom(juce::File(filename));
+        else
+          image = LoadWebp(filename);
         if (!image.isValid()) {
           juce::File badFile(filename); // Le fichier est peut etre corrompu
           badFile.deleteFile();
@@ -206,27 +256,6 @@ bool DtmTmsLayer::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
   FwebMerc.Ymin = XMin(y0, y3);
   FwebMerc.Ymax = XMax(y1, y2);
 
-  /*
-  LoadFrame(FwebMerc, zoom_level);
-  int wscaled = (int)(FwebMerc.Width() / gsd), hscaled = (int)(FwebMerc.Height() / gsd);
-  float* scaledBuf = new float[wscaled * hscaled];
-  XBaseImage::FastZoomBil(m_SourceGrid, m_SourceW, m_SourceH, scaledBuf, wscaled, hscaled);
-  delete[] m_SourceGrid;
-  m_SourceW = m_SourceH = 0;
-  m_SourceGrid = nullptr;
-
-  // Reechantillonage dans la projection souhaitee
-  XTransfoGeodInterpol transfo(&geod);
-  transfo.SetStartFrame(FwebMerc);
-  transfo.SetEndFrame(*F);
-  transfo.SetResolution(gsd);
-  transfo.AutoCalibration();
-  
-  XInterpol interpol;
-  XBaseImage::Resample(scaledBuf, grid, wscaled, hscaled, 1, 0, &transfo, &interpol, false);
-  delete[] scaledBuf;
-  */
-
   LoadFrame(FwebMerc, zoom_level);
 
   // Reechantillonage dans la projection souhaitee
@@ -235,11 +264,146 @@ bool DtmTmsLayer::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
   transfo.SetEndFrame(*F, gsd);
   transfo.AutoCalibration();
 
-  XInterpol interpol;
+  //XInterpol interpol;
+  XInterCubCatmull interpol;
   XBaseImage::Resample(m_SourceGrid, grid, m_SourceW, m_SourceH, 1, 0, &transfo, &interpol, false);
   delete[] m_SourceGrid;
   m_SourceW = m_SourceH = 0;
   m_SourceGrid = nullptr;
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------
+// DtmTmsComponent : constructeur
+//-----------------------------------------------------------------------------
+DtmTmsComponent::DtmTmsComponent(XGeoBase* base)
+{
+  m_Base = base;
+  setSize(400, 300);
+
+  m_cbxTitle.addItem("Mapterhorn", 1);
+  m_cbxTitle.addItem("Mapzen", 2);
+  m_cbxTitle.addItem("MapBox", 3);
+  m_cbxTitle.addItem("MapTiler", 4);
+  addAndMakeVisible(m_cbxTitle);
+  m_cbxTitle.setBounds(100, 10, 200, 30);
+  m_cbxTitle.addListener(this);
+
+  m_lblServer.setText(juce::translate("Server :"), juce::NotificationType::dontSendNotification);
+  m_lblServer.setBounds(10, 50, 80, 30);
+  addAndMakeVisible(m_lblServer);
+  m_edtServer.setBounds(100, 50, 290, 30);
+  addAndMakeVisible(m_edtServer);
+  m_lblKey.setText(juce::translate("API Key :"), juce::NotificationType::dontSendNotification);
+  m_lblKey.setBounds(10, 85, 80, 30);
+  addAndMakeVisible(m_lblKey);
+  m_edtKey.setBounds(100, 85, 290, 30);
+  addAndMakeVisible(m_edtKey);
+  
+  m_lblFormat.setText(juce::translate("Format :"), juce::NotificationType::dontSendNotification);
+  m_lblFormat.setBounds(10, 120, 80, 30);
+  addAndMakeVisible(m_lblFormat);
+  m_cbxFormat.addItem("PNG", 1);
+  m_cbxFormat.addItem("WEBP", 2);
+  m_cbxFormat.setBounds(100, 120, 100, 30);
+  addAndMakeVisible(m_cbxFormat);
+
+  m_lblEncoding.setText(juce::translate("Encoding :"), juce::NotificationType::dontSendNotification);
+  m_lblEncoding.setBounds(10, 155, 80, 30);
+  addAndMakeVisible(m_lblEncoding);
+  m_cbxEncoding.addItem("Terrarium", 1);
+  m_cbxEncoding.addItem("TerrainRGB", 2);
+  m_cbxEncoding.setBounds(100, 155, 100, 30);
+  addAndMakeVisible(m_cbxEncoding);
+
+  m_lblTileSize.setText(juce::translate("Tile size :"), juce::NotificationType::dontSendNotification);
+  m_lblTileSize.setBounds(10, 190, 80, 30);
+  addAndMakeVisible(m_lblTileSize);
+  m_edtTileSize.setBounds(100, 190, 100, 30);
+  addAndMakeVisible(m_edtTileSize);
+  m_lblZoomMax.setText(juce::translate("Zoom max :"), juce::NotificationType::dontSendNotification);
+  m_lblZoomMax.setBounds(10, 225, 80, 30);
+  addAndMakeVisible(m_lblZoomMax);
+  m_edtZoomMax.setBounds(100, 225, 100, 30);
+  addAndMakeVisible(m_edtZoomMax);
+
+  m_btnOK.setBounds(170, 260, 60, 30);
+  m_btnOK.setButtonText("OK");
+  addAndMakeVisible(m_btnOK);
+  m_btnOK.addListener(this);
+}
+
+//-----------------------------------------------------------------------------
+// DtmTmsComponent : changement des combo box
+//-----------------------------------------------------------------------------
+void DtmTmsComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) 
+{ 
+  if (comboBoxThatHasChanged != &m_cbxTitle)
+    return;
+  if (m_cbxTitle.getText() == "Mapterhorn") {
+    m_edtServer.setText("tiles.mapterhorn.com", false);
+    m_edtKey.setText("", false);
+    m_edtTileSize.setText("512", false);
+    m_edtZoomMax.setText("14", false);
+    m_cbxEncoding.setSelectedId(1);
+    m_cbxFormat.setSelectedId(2);
+  }
+  if (m_cbxTitle.getText() == "Mapzen") {
+    m_edtServer.setText("s3.amazonaws.com/elevation-tiles-prod/terrarium", false);
+    m_edtKey.setText("", false);
+    m_edtTileSize.setText("256", false);
+    m_edtZoomMax.setText("15", false);
+    m_cbxEncoding.setSelectedId(1);
+    m_cbxFormat.setSelectedId(1);
+  }
+  if (m_cbxTitle.getText() == "MapBox") {
+    m_edtServer.setText("api.mapbox.com/v4/mapbox.terrain-rgb", false);
+    m_edtKey.setText("", false);  // A remplir pour MapBox
+    m_edtTileSize.setText("256", false);
+    m_edtZoomMax.setText("14", false);
+    m_cbxEncoding.setSelectedId(2);
+    m_cbxFormat.setSelectedId(1);
+  }
+  if (m_cbxTitle.getText() == "MapTiler") {
+    m_edtServer.setText("api.maptiler.com/tiles/terrain-rgb-v2", false);
+    m_edtKey.setText("", false);  // A remplir pour MapTiler
+    m_edtTileSize.setText("512", false);
+    m_edtZoomMax.setText("12", false);
+    m_cbxEncoding.setSelectedId(2);
+    m_cbxFormat.setSelectedId(2);
+  }
+}
+
+//-----------------------------------------------------------------------------
+// DtmTmsComponent : reponse aux boutons
+//-----------------------------------------------------------------------------
+void DtmTmsComponent::buttonClicked(juce::Button* button)
+{
+  if ((button != &m_btnOK)||(m_Base == nullptr))
+    return;
+  juce::String server = m_edtServer.getText().toLowerCase();
+  if (server.startsWith("https://"))
+    server = server.replaceFirstOccurrenceOf("https://", "");
+  if (server.endsWithChar('/'))
+    server = server.dropLastCharacters(1);
+  m_edtServer.setText(server);
+
+  if ((!m_edtServer.isEmpty()) && (!m_edtTileSize.isEmpty()) && (!m_edtZoomMax.isEmpty())) {
+    XGeoPref pref;
+    XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
+    pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
+    pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
+
+    DtmTmsLayer* dtm = new DtmTmsLayer(Server(), ApiKey(), Format(), Encoding(),
+      (uint16_t)TileSize(), (uint16_t)TileSize(), (uint16_t)ZoomMax());
+
+    dtm->SetFrame(F);
+    if (!GeoTools::RegisterObject(m_Base, dtm, "Terrarium", "DTM", Server()))
+      delete dtm;
+    else 
+      sendActionMessage("AddDtmLayer");
+  }
+  if (juce::DialogWindow* dw = findParentComponentOfClass<juce::DialogWindow>())
+    dw->exitModalState(1);
 }

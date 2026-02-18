@@ -27,7 +27,7 @@ public:
   ~MapView() override;
   void Clear();
 
-  void SetFrame(XFrame F);
+  void SetFrame(const XFrame& F);
   void ZoomWorld();
   void ZoomLevel();
   void ZoomScale(double scale);

@@ -204,6 +204,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddWmtsServer);
 		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddTmsServer);
+		ImportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddDtmServer);
 		juce::PopupMenu GeoportailSubMenu;
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailOrthophoto);
 		GeoportailSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuAddGeoportailOrthophotoIRC);
@@ -308,7 +309,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddGeoportailOrthohisto, CommandIDs::menuAddGeoportailSatellite, CommandIDs::menuAddGeoportailCartes,
 		CommandIDs::menuAddGeoportailOrthophotoIRC, CommandIDs::menuAddGeoportailPlanIGN, CommandIDs::menuAddGeoportailParcelExpress,
 		CommandIDs::menuAddGeoportailSCAN50Histo,
-		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuSynchronize,
+		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuAddDtmServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
 		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolPanoramax, CommandIDs::menuToolStereo,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
@@ -411,6 +412,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuAddTmsServer:
 		result.setInfo(juce::translate("TMS Server"), juce::translate("TMS Server"), "Menu", 0);
+		break;
+	case CommandIDs::menuAddDtmServer:
+		result.setInfo(juce::translate("DTM Server"), juce::translate("DTM Server"), "Menu", 0);
 		break;
 	case CommandIDs::menuExportVector:
 		result.setInfo(juce::translate("Export vector"), juce::translate("Export vector"), "Menu", 0);
@@ -600,6 +604,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuAddTmsServer:
 		AddTmsServer();
 		break;
+	case CommandIDs::menuAddDtmServer:
+		AddDtmServer();
+		break;
 	case CommandIDs::menuExportVector:
 		ExportVector();
 		break;
@@ -778,6 +785,11 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_ImageViewer.get()->SetBase(&m_GeoBase);
 		m_Panel.get()->expandPanelFully(m_Panel.get()->getPanel(1), true);
 		return;
+	}
+	if (message == "AddDtmLayer") {
+		m_MapView.get()->SetFrame(m_GeoBase.Frame());
+		m_MapView.get()->RenderMap(false, false, true, false, false, true);
+		m_DtmViewer.get()->SetBase(&m_GeoBase);
 	}
 
 	juce::StringArray T;
@@ -1193,10 +1205,8 @@ void MainComponent::ImportDtmFolder()
 	juce::String folderName = AppUtil::OpenFolder("DtmFolderPath");
 	if (folderName.isEmpty())
 		return;
-	if (ImportDataFolder(folderName, XGeoVector::DTM) != nullptr) {
-		m_DtmViewer.get()->SetBase(&m_GeoBase);
-		m_MapView.get()->RenderMap(false, false, true, false, false, true);
-	}
+	if (ImportDataFolder(folderName, XGeoVector::DTM) != nullptr)
+		actionListenerCallback("AddDtmLayer");
 }
 
 //==============================================================================
@@ -1226,10 +1236,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 		delete dtm;
 		return false;
 	}
-
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, false, true, false, false, true);
-	m_DtmViewer.get()->SetBase(&m_GeoBase);
+	actionListenerCallback("AddDtmLayer");
 
 	return true;
 }
@@ -1379,6 +1386,26 @@ bool MainComponent::AddMvtServer(std::string url, std::string ext, std::string s
 	m_MapView.get()->SetFrame(m_GeoBase.Frame());
 	m_MapView.get()->RenderMap(false, true, false, false, false, true);
 	m_ImageViewer.get()->SetBase(&m_GeoBase);
+	return true;
+}
+
+//==============================================================================
+// Ajout d'un serveur MNT
+//==============================================================================
+bool MainComponent::AddDtmServer()
+{
+	DtmTmsComponent* comp = new DtmTmsComponent(&m_GeoBase);
+	comp->addActionListener(this);
+
+	juce::DialogWindow::LaunchOptions options;
+	options.content.setOwned(comp);
+	options.dialogTitle = juce::translate("DTM");
+	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.escapeKeyTriggersCloseButton = true;
+	options.useNativeTitleBar = false;
+	options.resizable = false;
+	options.launchAsync();
+
 	return true;
 }
 
@@ -1562,22 +1589,6 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
-	XGeoPref pref;
-	XFrame F, geoF = XGeoProjection::FrameGeo(pref.Projection());
-	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmin, geoF.Ymin, F.Xmin, F.Ymin);
-	pref.ConvertDeg(XGeoProjection::RGF93, pref.Projection(), geoF.Xmax, geoF.Ymax, F.Xmax, F.Ymax);
-
-	DtmTmsLayer* dtm = new DtmTmsLayer("s3.amazonaws.com/elevation-tiles-prod/terrarium");
-	dtm->SetFrame(F);
-	if (!GeoTools::RegisterObject(&m_GeoBase, dtm, "Terrarium", "DTM", "Terrarium")) {
-		delete dtm;
-		return;
-	}
-
-	m_MapView.get()->SetFrame(m_GeoBase.Frame());
-	m_MapView.get()->RenderMap(false, false, true, false, false, true);
-	m_DtmViewer.get()->SetBase(&m_GeoBase);
-
 	// AddMvtServer("https://data.geopf.fr/tms/1.0.0/IGNF_NUAGES-DE-POINTS-LIDAR-HD-produit", "pbf", "", 256, 256, 16);
 
 	/* Creation d'un differentiel MNS*/

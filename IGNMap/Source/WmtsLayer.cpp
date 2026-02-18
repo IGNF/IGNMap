@@ -51,7 +51,14 @@ bool WmtsLayerWebMerc::LoadFrame(const XFrame& F, int zoomlevel)
 
   int nb_tilex = lastX - firstX;
   int nb_tiley = lastY - firstY;
-  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * m_nTileW, nb_tiley * m_nTileH, true, juce::SoftwareImageType());
+
+  double resol = 6378137. * 2 * XPI / pow(2, (zoomlevel + 8));
+  int xcrop = XRint((xmin - firstX) * m_nTileW);
+  int ycrop = XRint((ymin - firstY) * m_nTileH);
+  int wcrop = XRint(F.Width() / resol);
+  int hcrop = XRint(F.Height() / resol);
+
+  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wcrop, hcrop, true, juce::SoftwareImageType());
   juce::Graphics g(m_SourceImage);
   g.setOpacity(1.0f);
 
@@ -74,16 +81,9 @@ bool WmtsLayerWebMerc::LoadFrame(const XFrame& F, int zoomlevel)
         }
         AddCachedTile(x, y, zoomlevel, image);
       }
-      g.drawImageAt(image, j * m_nTileW, i * m_nTileH);
+      g.drawImageAt(image, j * m_nTileW - xcrop, i * m_nTileH - ycrop);
     }
   }
-
-  double resol = 6378137. * 2 * XPI / pow(2, (zoomlevel + 8));
-  int xcrop = XRint((xmin - firstX) * m_nTileW);
-  int ycrop = XRint((ymin - firstY) * m_nTileH);
-  int wcrop = XRint(F.Width() / resol);
-  int hcrop = XRint(F.Height() / resol);
-  m_SourceImage = m_SourceImage.getClippedImage(juce::Rectangle<int>(xcrop, ycrop, wcrop, hcrop));
 
   return true;
 }
@@ -160,13 +160,11 @@ juce::Image& WmtsLayerWebMerc::GetAreaImage(const XFrame& F, double gsd)
   FwebMerc.Ymax = XMax(y1, y2) + 5. * gsd;
 
   LoadFrame(FwebMerc, osm_zoom);
-  m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));
 
   // Reechantillonage dans la projection souhaitee
-  XTransfoGeodInterpol transfo(&geod);
-  transfo.SetStartFrame(FwebMerc);
-  transfo.SetEndFrame(F);
-  transfo.SetResolution(gsd);
+  XTransfoGeodZoomInterpol transfo(&geod);
+  transfo.SetStartFrame(FwebMerc, FwebMerc.Width() / m_SourceImage.getWidth());
+  transfo.SetEndFrame(F, gsd);
   transfo.AutoCalibration();
   Resample(&transfo);
 
@@ -263,7 +261,13 @@ bool WmtsLayerTMS::LoadFrame(const XFrame& F, int numMatrix)
 
   int nb_tilex = lastX - firstX;
   int nb_tiley = lastY - firstY;
-  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * tm.TileW(), nb_tiley * tm.TileH(), true, juce::SoftwareImageType());
+
+  int xcrop = XRint((xmin - firstX) * tm.TileW());
+  int ycrop = XRint((ymin - firstY) * tm.TileH());
+  int wcrop = XRint(F.Width() / gsd);
+  int hcrop = XRint(F.Height() / gsd);
+
+  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wcrop, hcrop, true, juce::SoftwareImageType());
   juce::Graphics g(m_SourceImage);
   g.setOpacity(1.0f);
 
@@ -283,18 +287,12 @@ bool WmtsLayerTMS::LoadFrame(const XFrame& F, int numMatrix)
         badFile.deleteFile();
         continue;
       }
-      g.drawImageAt(image, j * tm.TileW(), i * tm.TileH());
+      g.drawImageAt(image, j * tm.TileW() - xcrop, i * tm.TileH() - ycrop);
       nb_image_drawn++;
     }
   }
   if (nb_image_drawn < 1) // L'image est vide
     return false;
-
-  int xcrop = XRint((xmin - firstX) * tm.TileW());
-  int ycrop = XRint((ymin - firstY) * tm.TileH());
-  int wcrop = XRint(F.Width() / gsd);
-  int hcrop = XRint(F.Height() / gsd);
-  m_SourceImage = m_SourceImage.getClippedImage(juce::Rectangle<int>(xcrop, ycrop, wcrop, hcrop));
 
   return true;
 }
@@ -351,13 +349,11 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
 
   if (!LoadFrame(FwebMerc, index))
     return m_ProjImage;
-  m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));
 
   // Reechantillonage dans la projection souhaitee
-  XTransfoGeodInterpol transfo(&geod);
-  transfo.SetStartFrame(FwebMerc);
-  transfo.SetEndFrame(F);
-  transfo.SetResolution(gsd);
+  XTransfoGeodZoomInterpol transfo(&geod);
+  transfo.SetStartFrame(FwebMerc, FwebMerc.Width() / m_SourceImage.getWidth());
+  transfo.SetEndFrame(F, gsd);
   transfo.AutoCalibration();
   Resample(&transfo);
 

@@ -73,7 +73,15 @@ bool OsmLayer::LoadFrame(const XFrame& F, int zoomlevel)
 
   int nb_tilex = lastX - firstX;
   int nb_tiley = lastY - firstY;
-  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * m_nTileW, nb_tiley * m_nTileH, true, juce::SoftwareImageType());
+
+  double osm_resol = Resol(zoomlevel);
+  int xcrop = XRint((xmin - firstX) * m_nTileW);
+  int ycrop = XRint((ymin - firstY) * m_nTileH);
+  int wcrop = XRint(F.Width() / osm_resol);
+  int hcrop = XRint(F.Height() / osm_resol);
+
+  //m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, nb_tilex * m_nTileW, nb_tiley * m_nTileH, true, juce::SoftwareImageType());
+  m_SourceImage = juce::Image(juce::Image::PixelFormat::ARGB, wcrop, hcrop, true, juce::SoftwareImageType());
   juce::Graphics g(m_SourceImage);
   g.setOpacity(1.0f);
 
@@ -92,16 +100,11 @@ bool OsmLayer::LoadFrame(const XFrame& F, int zoomlevel)
         }
         AddCachedTile(x, y, zoomlevel, image);
       }
-      g.drawImageAt(image, j * m_nTileW, i * m_nTileH);
+      g.drawImageAt(image, j * m_nTileW - xcrop, i * m_nTileH - ycrop);
     }
   }
 
-  double osm_resol = Resol(zoomlevel);;
-  int xcrop = XRint((xmin - firstX) * m_nTileW);
-  int ycrop = XRint((ymin - firstY) * m_nTileH);
-  int wcrop = XRint(F.Width() / osm_resol);
-  int hcrop = XRint(F.Height() / osm_resol);
-  m_SourceImage = m_SourceImage.getClippedImage(juce::Rectangle<int>(xcrop, ycrop, wcrop, hcrop));
+  //m_SourceImage = m_SourceImage.getClippedImage(juce::Rectangle<int>(xcrop, ycrop, wcrop, hcrop));
 
   return true;
 }
@@ -174,16 +177,13 @@ juce::Image& OsmLayer::GetAreaImage(const XFrame& F, double gsd)
   FwebMerc.Ymax = XMax(y1, y2);
 
   LoadFrame(FwebMerc, osm_zoom);
-  m_SourceImage = m_SourceImage.rescaled((int)(FwebMerc.Width() / gsd), (int)(FwebMerc.Height() / gsd));
-
   // Reechantillonage dans la projection souhaitee
-  XTransfoGeodInterpol transfo(&geod);
-  transfo.SetStartFrame(FwebMerc);
-  transfo.SetEndFrame(F);
-  transfo.SetResolution(gsd);
+  XTransfoGeodZoomInterpol transfo(&geod);
+  transfo.SetStartFrame(FwebMerc, Resol(osm_zoom));
+  transfo.SetEndFrame(F, gsd);
   transfo.AutoCalibration();
   Resample(&transfo);
-
+  
   return m_ProjImage;
 }
 

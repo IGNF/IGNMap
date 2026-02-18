@@ -4533,6 +4533,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"Automatic Range\" = \"Intervalle automatique\"\r\n"
 "\"WMTS Server\"=\"Serveur WMTS\"\r\n"
 "\"TMS Server\"=\"Serveur TMS\"\r\n"
+"\"DTM Server\"=\"Serveur MNT\"\r\n"
 "\"Cancel\"=\"Annuler\"\r\n"
 "\"OK\"=\"OK\"\r\n"
 "\"Apply\" = \"Appliquer\"\r\n"
@@ -4635,6 +4636,11 @@ static const unsigned char temp_binary_data_21[] =
 "\"Stereoscopic View\" = \"Vue St\xc3\xa9r\xc3\xa9oscopique\"\r\n"
 "\"Zoom correction\" = \"Correction de zoom\"\r\n"
 "\"Useful Frame\" = \"Cadre utile\"\r\n"
+"\"API Key :\"=\"Clef API :\"\r\n"
+"\"Server :\"=\"Serveur :\"\r\n"
+"\"Encoding :\"=\"Encodage :\"\r\n"
+"\"Tile size :\"=\"Taille des dalles :\"\r\n"
+"\"Zoom max :\"=\"Zoom maximum :\"\r\n"
 "\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_21;
@@ -4672,7 +4678,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 6806; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 6979; return Translation_fr_txt;
         default: break;
     }
 

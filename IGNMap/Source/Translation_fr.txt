@@ -63,6 +63,7 @@ countries: fr be mc ch lu
 "Automatic Range" = "Intervalle automatique"
 "WMTS Server"="Serveur WMTS"
 "TMS Server"="Serveur TMS"
+"DTM Server"="Serveur MNT"
 "Cancel"="Annuler"
 "OK"="OK"
 "Apply" = "Appliquer"
@@ -165,4 +166,9 @@ countries: fr be mc ch lu
 "Stereoscopic View" = "Vue Stéréoscopique"
 "Zoom correction" = "Correction de zoom"
 "Useful Frame" = "Cadre utile"
+"API Key :"="Clef API :"
+"Server :"="Serveur :"
+"Encoding :"="Encodage :"
+"Tile size :"="Taille des dalles :"
+"Zoom max :"="Zoom maximum :"
 
