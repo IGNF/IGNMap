@@ -790,6 +790,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->SetFrame(m_GeoBase.Frame());
 		m_MapView.get()->RenderMap(false, false, true, false, false, true);
 		m_DtmViewer.get()->SetBase(&m_GeoBase);
+		return;
+	}
+	if (message == "RenderMapTerminated") {
+		return;
 	}
 
 	juce::StringArray T;
@@ -809,9 +813,20 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 			m_OGL3DViewer.get()->setVisible(true);
 			m_OGL3DViewer.get()->toFront(true);
 			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
-			m_OGL3DViewer.get()->SetQuickLook(m_MapView.get()->GetSelImage());
 			m_OGL3DViewer.get()->SetTarget(m_MapView.get()->GetTarget());
 		}
+		return;
+	}
+
+	if (T[0] == "Translate3DView") {
+		if (T.size() < 5)
+			return;
+		XFrame F;
+		F.Xmin = T[1].getDoubleValue();
+		F.Xmax = T[2].getDoubleValue();
+		F.Ymin = T[3].getDoubleValue();
+		F.Ymax = T[4].getDoubleValue();
+		m_MapView.get()->Set3DFrame(F);
 		return;
 	}
 

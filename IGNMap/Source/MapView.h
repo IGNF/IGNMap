@@ -63,9 +63,10 @@ public:
   juce::Image GetTargetImage() const { return m_TargetImage; }
   std::vector<XAnnotation>* GetAnnot() { return &m_Annot; }
   void SetSelectionFrame(const XFrame& F) { m_SelectionFrame = F; }
+  void Set3DFrame(const XFrame& F) { m_3DFrame = F; }
 
   void paint(juce::Graphics&) override;
-  void exitSignalSent() override { repaint(); }
+  void exitSignalSent() override;
   void resized() override;
   void mouseDown(const juce::MouseEvent& event) override;
   void mouseMove(const juce::MouseEvent& event) override;

@@ -32,13 +32,14 @@ OGL3DViewer::OGL3DViewer(const juce::String& name, juce::Colour backgroundColour
 //==============================================================================
 // OGLWidget
 //==============================================================================
-OGLWidget::OGLWidget()
+OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
 {
   setSize(500, 500);
   setWantsKeyboardFocus(true);
   openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL3_2);
   // openGL3_2 est recommande par JUCE mais probleme sur MacOS avec glLineWidth
   openGLContext.setContinuousRepainting(true);
+  m_MapThread.addListener(this);
   vertexShader = nullptr;
   fragmentShader = nullptr;
   m_nNbLasVertex = m_nNbPolyVertex = m_nNbLineVertex = m_nNbDtmVertex = 0;
@@ -50,6 +51,7 @@ OGLWidget::OGLWidget()
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
   m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
+  m_bTranslateView = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -63,6 +65,7 @@ OGLWidget::OGLWidget()
   m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
   m_bUpdateDtmColor = m_bDtmTextured = false;
   m_bShowF1Help = false;
+  m_QuickLook = juce::Image(juce::Image::ARGB, 100, 100, true);
 }
 
 //==============================================================================
@@ -535,6 +538,9 @@ void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
   }
+  if (event.mods.isCtrlDown()) {
+    m_bTranslateView = true;
+  }
   repaint();
 }
 
@@ -607,13 +613,27 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_bNeedUpdate = true;
   }
   if ((key.getTextCharacter() == 'O') || (key.getTextCharacter() == 'o')) {
-    m_bUpdateLasColor = true;
-    m_bNeedUpdate = true;
     m_bRasterLas = !m_bRasterLas;
+    if (m_bRasterLas) {
+      UpdateQuickLook();
+      m_bUpdateLasColor = true;
+    }
+    else {
+      m_bUpdateLasColor = true;
+      m_bNeedUpdate = true;
+    }
+    
   }
   if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
-    m_bUpdateDtmColor = true;
-    m_bNeedUpdate = true;
+    m_bDtmTextured = !m_bDtmTextured;
+    if (m_bDtmTextured) {
+      UpdateQuickLook();
+    }
+    else {
+      m_bUpdateDtmColor = true;
+      m_bNeedUpdate = true;
+    }
+    //m_bDtmTextured = !m_bDtmTextured;
   }
 
   if (key.getKeyCode() == juce::KeyPress::F2Key) {
@@ -635,7 +655,7 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
     return;
   m_Frame = *F;
   m_Base = base;
-  m_bNeedUpdate = true;
+  //m_bNeedUpdate = true;
   m_dX0 = F->Center().X;
   m_dY0 = F->Center().Y;
   if (F->Width() > F->Height())
@@ -644,6 +664,7 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
     m_dGsd = F->Height() / 4.;
   m_dZ0 = base->Z(F->Center());
   m_dDeltaZ = m_dOffsetZ = 0.;
+  UpdateQuickLook();
 }
 
 //==============================================================================
@@ -775,6 +796,9 @@ void OGLWidget::DrawLas(GeoLAS* las)
   bool classif_newtype = las->IsNewClassification();
 
   LasShader shader;
+  juce::Image::BitmapData bitmap(m_QuickLook, juce::Image::BitmapData::readOnly);
+  int x, y;
+
   while (las->GetNextPoint(&X, &Y, &Z)) {
     if (classif_newtype)
       classification = point->extended_classification;
@@ -787,44 +811,51 @@ void OGLWidget::DrawLas(GeoLAS* las)
     ptr_vertex->position[2] = (float) ((Z - m_dZ0) / m_dGsd);
     m_dDeltaZ += ptr_vertex->position[2];
 
-    switch (shader.Mode()) {
-    case LasShader::ShaderMode::Altitude:
-      *data_ptr = shader.AltiColorARGB((uint8_t)((Z - Z0) * 255 / deltaZ));
-      break;
-    case LasShader::ShaderMode::RGB:
-      data[0] = (uint8_t)(point->rgb[2] / 256);
-      data[1] = (uint8_t)(point->rgb[1] / 256);
-      data[2] = (uint8_t)(point->rgb[0] / 256);
-      // data[3] = 255; // deja fixe dans l'initialisation de data
-      break;
-    case LasShader::ShaderMode::IRC:
-      data[0] = (uint8_t)(point->rgb[1] / 256);
-      data[1] = (uint8_t)(point->rgb[0] / 256);
-      data[2] = (uint8_t)(point->rgb[3] / 256);
-      // data[3] = 255; // deja fixe dans l'initialisation de data
-      break;
-    case LasShader::ShaderMode::Classification:
-      col = shader.ClassificationColor(classification);
-      *data_ptr = (uint32_t)col.getARGB();
-      break;
-    case LasShader::ShaderMode::Intensity:
-      //data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
-      //memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
-      *data_ptr = shader.IntensityColorARGB(point->intensity);
-      break;
-    case LasShader::ShaderMode::Angle:
-      if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
-        data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
-        data[1] = 0;
-        data[0] = 0; // 255 - data[2];
+    if (m_bRasterLas) { // Affichage avec le raster
+      x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
+      y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
+      *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
+    }
+    else {
+      switch (shader.Mode()) {
+      case LasShader::ShaderMode::Altitude:
+        *data_ptr = shader.AltiColorARGB((uint8_t)((Z - Z0) * 255 / deltaZ));
+        break;
+      case LasShader::ShaderMode::RGB:
+        data[0] = (uint8_t)(point->rgb[2] / 256);
+        data[1] = (uint8_t)(point->rgb[1] / 256);
+        data[2] = (uint8_t)(point->rgb[0] / 256);
+        // data[3] = 255; // deja fixe dans l'initialisation de data
+        break;
+      case LasShader::ShaderMode::IRC:
+        data[0] = (uint8_t)(point->rgb[1] / 256);
+        data[1] = (uint8_t)(point->rgb[0] / 256);
+        data[2] = (uint8_t)(point->rgb[3] / 256);
+        // data[3] = 255; // deja fixe dans l'initialisation de data
+        break;
+      case LasShader::ShaderMode::Classification:
+        col = shader.ClassificationColor(classification);
+        *data_ptr = (uint32_t)col.getARGB();
+        break;
+      case LasShader::ShaderMode::Intensity:
+        //data[0] = point->intensity;	// L'intensite est normalisee sur 16 bits
+        //memcpy(data, &point->intensity, 2 * sizeof(uint8_t));
+        *data_ptr = shader.IntensityColorARGB(point->intensity);
+        break;
+      case LasShader::ShaderMode::Angle:
+        if (point->extended_scan_angle < 0) {	// Angle en degree = extended_scan_angle * 0.006
+          data[2] = (uint8_t)(255 - point->extended_scan_angle * (-0.0085));	 // Normalise sur [0; 255]
+          data[1] = 0;
+          data[0] = 0; // 255 - data[2];
+        }
+        else {
+          data[2] = 0;
+          data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
+          data[0] = 0; // 255 - data[1];
+        }
+        break;
+      default:;
       }
-      else {
-        data[2] = 0;
-        data[1] = (uint8_t)(255 - point->extended_scan_angle * (0.0085));	 // Normalise sur [0; 255]
-        data[0] = 0; // 255 - data[1];
-      }
-      break;
-			default:;
     }
     ptr_vertex->colour[0] = (float)data[2] / 255.f;
     ptr_vertex->colour[1] = (float)data[1] / 255.f;
@@ -850,7 +881,7 @@ void OGLWidget::DrawDtm()
 {
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
-  DtmShader shader;
+  DtmShader shader(m_Frame.Width() / m_nDtmW);
 
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -859,8 +890,6 @@ void OGLWidget::DrawDtm()
   double deltaY = m_Frame.Height() / m_nDtmH;
   XPt3D P;
   double Zmin = m_Base->ZMin();
-  if (m_dZ0 <= XGEO_NO_DATA)
-    m_dZ0 = Zmin;
 
   juce::Colour colour;
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
@@ -876,15 +905,25 @@ void OGLWidget::DrawDtm()
     for (uint32_t i = 0; i < gridW * gridH; i++)
       grid[i] = (float)XGEO_NO_DATA;
     GeoTools::ComputeZGrid(m_Base, grid, gridW, gridH, &m_Frame);
+    Zmin = XGEO_NO_DATA;
+    for (uint32_t i = 0; i < gridW * gridH; i++) {
+      if (grid[i] > (float)XGEO_NO_DATA) {
+        if (Zmin <= XGEO_NO_DATA) Zmin = grid[i]; else Zmin = XMin(Zmin, (double)grid[i]);
+      }
+    }
     XBaseImage::FastZoomBil(grid, gridW, gridH, (float*)bitmap.data, bitmap.width, bitmap.height);
     delete[] grid;
   }
+  if (m_dZ0 <= XGEO_NO_DATA)
+    m_dZ0 = Zmin;
  
   juce::Image rgbImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
   if (m_bDtmTextured)
     rgbImage = m_QuickLook.rescaled(m_nDtmW, m_nDtmH, juce::Graphics::ResamplingQuality::highResamplingQuality);
-  else
+  else {
     shader.ConvertImage(&m_RawDtm, &rgbImage);
+    opacity = 1.f; // On ne respecte pas l'opacite du DtmShader car il n'y a pas de fond raster
+  }
   
   juce::Image::BitmapData colors(rgbImage, juce::Image::BitmapData::readWrite);
   juce::Image::BitmapData bitmap(m_RawDtm, juce::Image::BitmapData::readOnly);
@@ -1099,7 +1138,7 @@ void OGLWidget::ChangeDtmColor()
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   if (ptr_vertex == nullptr)
     return;
-  m_bDtmTextured = !m_bDtmTextured;
+  //m_bDtmTextured = !m_bDtmTextured;
   XPt3D P;
   double Zmin = m_Base->ZMin();
 
@@ -1425,9 +1464,60 @@ void OGLWidget::Select(int u, int v)
   }
   else {
     m_LastPt = A;
+    if (m_bTranslateView) {
+      TranslateView();
+      M.position[0] = M.position[1] = M.position[2] = 0.f;
+    }
     openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
     openGLContext.extensions.glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M), &M);
   }
+}
+
+//==============================================================================
+// Translation de la vue
+//==============================================================================
+void OGLWidget::TranslateView()
+{
+  XFrame newFrame3D;
+  double W = m_Frame.Width() * 0.5, H = m_Frame.Height() * 0.5;
+  newFrame3D.Xmin = m_LastPt.X - W;
+  newFrame3D.Xmax = m_LastPt.X + W;
+  newFrame3D.Ymin = m_LastPt.Y - H;
+  newFrame3D.Ymax = m_LastPt.Y + H;
+  m_bTranslateView = false;
+  sendActionMessage("Translate3DView:" + juce::String(newFrame3D.Xmin) + ":" + juce::String(newFrame3D.Xmax) + ":" +
+    juce::String(newFrame3D.Ymin) + ":" + juce::String(newFrame3D.Ymax));
+  LoadObjects(m_Base, &newFrame3D);
+  m_bNeedUpdate = false;  // L'update sera effectue apres la mise a jour du quick look
+  UpdateQuickLook();
+}
+
+//==============================================================================
+// Mise a jour du quick look
+//==============================================================================
+void OGLWidget::UpdateQuickLook()
+{
+  if (m_bRasterLas || m_bDtmTextured) {
+    m_MapThread.SetGeoBase(m_Base);
+    double gsd = m_Frame.Width() / 1000.;
+    m_MapThread.SetWorld(m_Frame.Xmin, m_Frame.Ymax, gsd,
+      (int)(m_Frame.Width() / gsd), (int)(m_Frame.Height() / gsd), true);
+    m_MapThread.SetUpdate(false, true, false, false, false);
+    m_MapThread.startThread(juce::Thread::Priority::high);
+  } else
+    m_bNeedUpdate = true;
+}
+
+//==============================================================================
+// Fin du thread de mise a jour du quick look
+//==============================================================================
+void OGLWidget::exitSignalSent()
+{
+  //m_bUpdateDtmColor = true;
+  //m_bUpdateLasColor = true;
+  m_bNeedUpdate = true;
+  m_QuickLook = m_MapThread.GetRaster();
+  //repaint();
 }
 
 //-----------------------------------------------------------------------------

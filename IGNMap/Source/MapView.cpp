@@ -29,6 +29,9 @@ MapView::~MapView()
 	StopThread();
 }
 
+//==============================================================================
+// Remise a 0 de la vue
+//==============================================================================
 void MapView::Clear()
 {
 	StopThread();
@@ -47,6 +50,9 @@ void MapView::Clear()
 	m_TargetPoly.clear();
 }
 
+//==============================================================================
+// Affichage de la vue.
+//==============================================================================
 void MapView::paint(juce::Graphics& g)
 {
 	if ((m_bZoom) || (m_bSelect)) {
@@ -80,6 +86,9 @@ void MapView::paint(juce::Graphics& g)
 	SaveImage();
 }
 
+//==============================================================================
+// Redimensionnement de la vue
+//==============================================================================
 void MapView::resized()
 {
 	auto b = getLocalBounds();
@@ -87,6 +96,15 @@ void MapView::resized()
 		return;
 	m_Image = juce::Image(juce::Image::PixelFormat::ARGB, b.getWidth(), b.getHeight(), true, juce::SoftwareImageType());
 	RenderMap();
+}
+
+//==============================================================================
+// Fin du thread de mise a jour de la vue
+//==============================================================================
+void MapView::exitSignalSent()
+{ 
+	//repaint();
+	sendActionMessage("RenderMapTerminated");
 }
 
 //==============================================================================

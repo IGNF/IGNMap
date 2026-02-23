@@ -37,6 +37,7 @@ public:
   virtual void 	run() override;
   bool Draw(juce::Graphics& g, int x0 = 0, int y0 = 0, bool overlay = true);
   juce::Image GetRaster(juce::Rectangle<int> R) { if (m_bRasterDone) return m_Raster.getClippedImage(R); return juce::Image(); }
+  juce::Image GetRaster() { if (m_bRasterDone) return m_Raster; return juce::Image(); }
 
 private:
   juce::Image m_Raster;

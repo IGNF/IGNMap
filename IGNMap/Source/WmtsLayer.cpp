@@ -342,10 +342,10 @@ juce::Image& WmtsLayerTMS::GetAreaImage(const XFrame& F, double gsd)
   geod.Convert(F.Xmax, F.Ymin, x3, y3);
 
   XFrame FwebMerc;
-  FwebMerc.Xmin = XMin(x0, x1);
-  FwebMerc.Xmax = XMax(x2, x3);
-  FwebMerc.Ymin = XMin(y0, y3);
-  FwebMerc.Ymax = XMax(y1, y2);
+  FwebMerc.Xmin = XMin(x0, x1) - 5. * gsd;  // On ajoute un buffer pour eviter les pixels blancs
+  FwebMerc.Xmax = XMax(x2, x3) + 5. * gsd;  // On ajoute un buffer pour eviter les pixels blancs
+  FwebMerc.Ymin = XMin(y0, y3) - 5. * gsd;  // On ajoute un buffer pour eviter les pixels blancs
+  FwebMerc.Ymax = XMax(y1, y2) + 5. * gsd;  // On ajoute un buffer pour eviter les pixels blancs
 
   if (!LoadFrame(FwebMerc, index))
     return m_ProjImage;

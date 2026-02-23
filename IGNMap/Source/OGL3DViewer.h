@@ -12,6 +12,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "MapThread.h"
 #include "../../XTool/XFrame.h"
 #include "../../XTool/XPt2D.h"
 #include "../../XTool/XPt3D.h"
@@ -22,7 +23,7 @@ class XGeoVector;
 class GeoLAS;
 class GeoDTM;
 
-class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster {
+class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster, public juce::Thread::Listener {
 public:
   OGLWidget();
   ~OGLWidget() { shutdownOpenGL(); }
@@ -44,10 +45,12 @@ public:
   void mouseDoubleClick(const juce::MouseEvent& event) override;
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   bool keyPressed(const juce::KeyPress& key) override;
+  void exitSignalSent() override;
 
   void LoadObjects(XGeoBase* base, XFrame* F);
-  void SetQuickLook(juce::Image image) { m_QuickLook = image; }
   void SetTarget(const XPt3D& P);
+  void TranslateView();
+  void UpdateQuickLook();
 
 protected:
   void LoadLasClass(XGeoClass* C);
@@ -86,6 +89,7 @@ private:
   juce::Image   m_RawDtm;
   juce::Image   m_QuickLook;
   juce::String  m_strFileSave;
+  MapThread     m_MapThread;
 
   uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
   uint32_t  m_nMaxPolyPt;        // Nombre maximum de points polygone
@@ -115,6 +119,7 @@ private:
   bool      m_bNeedLasPoint;    // Indique que l'on veut recuperer la position du point double-clique
   bool      m_bNeedTarget;      // Indique que l'on veut recuperer la position du point cible
   bool      m_bUpdateTarget;    // Indique que l'on modifie la position du point cible
+  bool      m_bTranslateView;   // Indique que l'on translate la vue
   bool      m_bSaveImage;       // Sauvegarde dans un fichier du rendu
   float     m_LasPointSize;     // Taille des points LAS
   float     m_VectorWidth;      // Epaisseur des lignes des donnees vectorielles
@@ -244,7 +249,6 @@ public:
   void closeButtonPressed() { setVisible(false); }
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
-  void SetQuickLook(juce::Image image) { m_OGLWidget.SetQuickLook(image); }
   void SetTarget(const XPt3D& P) { m_OGLWidget.SetTarget(P); }
   void SetListener(juce::ActionListener* listener) { m_OGLWidget.addActionListener(listener); }
 
