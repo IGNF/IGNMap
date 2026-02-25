@@ -76,7 +76,7 @@ bool XJpegImage::Open(std::string filename)
 	m_nW = cinfo.image_width;
 	m_nH = cinfo.image_height;
 	m_nNbBits = 8;
-	m_nNbSample = cinfo.num_components;
+	m_nNbSample = (uint16_t)cinfo.num_components;
 	m_strFilename = filename;
 
 	jpeg_destroy_decompress(&cinfo);
@@ -90,7 +90,7 @@ bool XJpegImage::Open(std::string filename)
 //-----------------------------------------------------------------------------
 // lecture d'une ROI
 //-----------------------------------------------------------------------------
-bool XJpegImage::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
+bool XJpegImage::GetArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
 {
 	// Lecture JPEG
 	struct jpeg_decompress_struct cinfo;
@@ -144,9 +144,9 @@ bool XJpegImage::GetArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uint32
 }
 
 //-----------------------------------------------------------------------------
-// Ouverture d'une image COG
+// Lecture d'une ligne
 //-----------------------------------------------------------------------------
-bool XJpegImage::GetLine(XFile* file, uint32_t num, uint8_t* area)
+bool XJpegImage::GetLine(XFile* /*file*/, uint32_t /*num*/, uint8_t* /*area*/)
 {
 	return false;
 }

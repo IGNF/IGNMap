@@ -51,7 +51,7 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = 10000;
   m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
-  m_bTranslateView = false;
+  m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -59,13 +59,24 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_LasPointSize = 4.f;
   m_VectorWidth = 2.f;
   m_DtmLineWidth = 1.f;
-  m_nDtmW = m_nDtmH = 300;
+  m_nDtmW = m_nDtmH = 600;
   m_bViewLas = m_bViewDtm = m_bViewVector = m_bViewRepere = true;
   m_dDeltaZ = m_dOffsetZ = 0.;
   m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
   m_bUpdateDtmColor = m_bDtmTextured = false;
   m_bShowF1Help = false;
   m_QuickLook = juce::Image(juce::Image::ARGB, 100, 100, true);
+  juce::Image image = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
+  m_btnOptions.setImages(true, true, true, image, 1.f, juce::Colours::green, juce::Image(), 1.f, juce::Colours::green, 
+                        juce::Image(), 1.f, juce::Colours::red);
+  m_btnOptions.setToggleable(true);
+  m_btnOptions.setClickingTogglesState(true);
+  addAndMakeVisible(m_btnOptions);
+  m_btnOptions.addListener(this);
+  m_btnOptions.setBounds(0, 0, 30, 30);
+  addChildComponent(m_Control3D);
+  m_Control3D.setBounds(30, 0, 200, 200);
+  m_Control3D.AddListener(this);
 }
 
 //==============================================================================
@@ -144,6 +155,7 @@ void OGLWidget::initialise()
   openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
   CreateRepere();
+  juce::OpenGLHelpers::resetErrorState();
 }
 
 //==============================================================================
@@ -259,6 +271,7 @@ void OGLWidget::CreateShaders()
 //==============================================================================
 void OGLWidget::paint(juce::Graphics& g)
 {
+  auto b = getLocalBounds();
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
   g.setFont(12);
   /*
@@ -267,28 +280,28 @@ void OGLWidget::paint(juce::Graphics& g)
   juce::String translation = "Translations : (" + juce::String(m_T.X) + " ; " + juce::String(m_T.Y) + " ; " + juce::String(m_T.Z) + ")";
   g.drawText(translation, 25, 40, 300, 30, juce::Justification::left);
   */
+  int info_origin = b.getBottom() - 125;
   juce::String help = juce::translate("Help : F1");
-  g.drawText(help, 25, 20, 300, 30, juce::Justification::left);
+  g.drawText(help, 5, info_origin + 30, 300, 30, juce::Justification::left);
   juce::String nbPoint = "Points : " + juce::String(m_nNbLasVertex) + " Las";
   nbPoint += " | " + juce::String(m_nNbPolyVertex) + " Polygon";
   nbPoint += " | " + juce::String(m_nNbLineVertex) + " Line";
-  g.drawText(nbPoint, 25, 40, 300, 30, juce::Justification::left);
+  g.drawText(nbPoint, 5, info_origin + 50, 300, 30, juce::Justification::left);
 
   // Cible
   juce::String target = "T = " + juce::String(m_Target.X, 2) + " ; " + juce::String(m_Target.Y, 2) + " ; " + juce::String(m_Target.Z, 2);
   g.setColour(juce::Colours::magenta);
-  g.drawText(target, 25, 60, 300, 30, juce::Justification::left);
+  g.drawText(target, 5, info_origin + 70, 300, 30, juce::Justification::left);
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
 
   // Point clique
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
-  g.drawText(lastPt, 25, 80, 300, 30, juce::Justification::left);
-  g.drawLine(20, 20, 170, 20);
-  g.drawLine(20, 110, 170, 110);
+  g.drawText(lastPt, 5, info_origin + 90, 300, 30, juce::Justification::left);
+  g.drawLine(0, info_origin + 30, 150, info_origin + 30);
+  g.drawLine(0, info_origin + 120, 150, info_origin + 120);
 
   if (!m_bShowF1Help)
     return;
-  auto b = getLocalBounds();
   b.expand(-20, -20);
   g.setOpacity(0.7f);
   g.setFillType(juce::FillType(juce::Colours::lightskyblue));
@@ -538,8 +551,14 @@ void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
   }
-  if (event.mods.isCtrlDown()) {
+  if (event.mods.isShiftDown()) {
     m_bTranslateView = true;
+  }
+  if (event.mods.isCtrlDown()) {
+    if (event.mods.isRightButtonDown())
+      m_bZoomOutView = true;
+    if (event.mods.isLeftButtonDown())
+      m_bZoomInView = true;
   }
   repaint();
 }
@@ -559,10 +578,14 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_T.X -= 0.1;
   if (key.getKeyCode() == juce::KeyPress::rightKey)
     m_T.X += 0.1;
-  if (key.getKeyCode() == juce::KeyPress::pageUpKey)
-    m_S.Z += 0.1;
-  if (key.getKeyCode() == juce::KeyPress::pageDownKey)
-    m_S.Z -= 0.1;
+  if (key.getKeyCode() == juce::KeyPress::pageUpKey) {
+    m_S.Z = std::clamp(m_S.Z + 0.1, 0.1, 10.);
+    m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
+  }
+  if (key.getKeyCode() == juce::KeyPress::pageDownKey) {
+    m_S.Z = std::clamp(m_S.Z - 0.1, 0.1, 10.);
+    m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
+  }
   if ((key.getTextCharacter() == 'R')||(key.getTextCharacter() == 'r')) {
     m_R = XPt3D();
     m_T = XPt3D();
@@ -614,6 +637,7 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   }
   if ((key.getTextCharacter() == 'O') || (key.getTextCharacter() == 'o')) {
     m_bRasterLas = !m_bRasterLas;
+    m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
     if (m_bRasterLas) {
       UpdateQuickLook();
       m_bUpdateLasColor = true;
@@ -622,10 +646,10 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
       m_bUpdateLasColor = true;
       m_bNeedUpdate = true;
     }
-    
   }
   if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
     m_bDtmTextured = !m_bDtmTextured;
+    m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
     if (m_bDtmTextured) {
       UpdateQuickLook();
     }
@@ -633,7 +657,6 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
       m_bUpdateDtmColor = true;
       m_bNeedUpdate = true;
     }
-    //m_bDtmTextured = !m_bDtmTextured;
   }
 
   if (key.getKeyCode() == juce::KeyPress::F2Key) {
@@ -644,6 +667,55 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
 
   repaint();
   return true;
+}
+
+//==============================================================================
+// Reponses aux boutons
+//==============================================================================
+void OGLWidget::buttonClicked(juce::Button* button)
+{
+  if (button == &m_btnOptions) {
+    m_Control3D.setVisible(!m_Control3D.isVisible());
+    return;
+  }
+  if (button == &m_Control3D.m_btnRasterDtm) {
+    m_bDtmTextured = !m_bDtmTextured;
+    if (m_bDtmTextured) {
+      UpdateQuickLook();
+    }
+    else {
+      m_bUpdateDtmColor = true;
+      m_bNeedUpdate = true;
+    }
+  }
+  if (button == &m_Control3D.m_btnMeshDtm)
+    m_bDtmTriangle = (!m_bDtmTriangle);
+  if (button == &m_Control3D.m_btnFillDtm)
+    m_bDtmFill = (!m_bDtmFill);
+
+  if (button == &m_Control3D.m_btnRasterLas) {
+    m_bRasterLas = !m_bRasterLas;
+    if (m_bRasterLas) {
+      UpdateQuickLook();
+      m_bUpdateLasColor = true;
+    }
+    else {
+      m_bUpdateLasColor = true;
+      m_bNeedUpdate = true;
+    }
+  }
+  repaint();
+}
+
+//==============================================================================
+// Reponses aux sliders
+//==============================================================================
+void OGLWidget::sliderValueChanged(juce::Slider* slider)
+{
+  if (slider == &m_Control3D.m_sldZFactor) {
+    m_S.Z = slider->getValue();
+  }
+  repaint();
 }
 
 //==============================================================================
@@ -682,6 +754,8 @@ void OGLWidget::SetTarget(const XPt3D& P)
 //==============================================================================
 void OGLWidget::UpdateBase()
 {
+  if (m_Base == nullptr)
+    return;
   if (m_dDeltaZ != 0.) {  // Juste un changement d'echelle altimetrique
     MoveZ((float)m_dDeltaZ);
     m_dDeltaZ = 0.;
@@ -1464,7 +1538,7 @@ void OGLWidget::Select(int u, int v)
   }
   else {
     m_LastPt = A;
-    if (m_bTranslateView) {
+    if (m_bTranslateView || m_bZoomInView || m_bZoomOutView) {
       TranslateView();
       M.position[0] = M.position[1] = M.position[2] = 0.f;
     }
@@ -1479,12 +1553,15 @@ void OGLWidget::Select(int u, int v)
 void OGLWidget::TranslateView()
 {
   XFrame newFrame3D;
-  double W = m_Frame.Width() * 0.5, H = m_Frame.Height() * 0.5;
+  double factor = 0.5;
+  if (m_bZoomInView) factor = 0.25;
+  if (m_bZoomOutView) factor = 2;
+  double W = m_Frame.Width() * factor, H = m_Frame.Height() * factor;
   newFrame3D.Xmin = m_LastPt.X - W;
   newFrame3D.Xmax = m_LastPt.X + W;
   newFrame3D.Ymin = m_LastPt.Y - H;
   newFrame3D.Ymax = m_LastPt.Y + H;
-  m_bTranslateView = false;
+  m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
   sendActionMessage("Translate3DView:" + juce::String(newFrame3D.Xmin) + ":" + juce::String(newFrame3D.Xmax) + ":" +
     juce::String(newFrame3D.Ymin) + ":" + juce::String(newFrame3D.Ymax));
   LoadObjects(m_Base, &newFrame3D);
@@ -1497,7 +1574,10 @@ void OGLWidget::TranslateView()
 //==============================================================================
 void OGLWidget::UpdateQuickLook()
 {
+  if (m_Frame.IsEmpty())
+    return;
   if (m_bRasterLas || m_bDtmTextured) {
+    juce::MouseCursor::showWaitCursor();
     m_MapThread.SetGeoBase(m_Base);
     double gsd = m_Frame.Width() / 1000.;
     m_MapThread.SetWorld(m_Frame.Xmin, m_Frame.Ymax, gsd,
@@ -1515,6 +1595,7 @@ void OGLWidget::exitSignalSent()
 {
   //m_bUpdateDtmColor = true;
   //m_bUpdateLasColor = true;
+  juce::MouseCursor::hideWaitCursor();
   m_bNeedUpdate = true;
   m_QuickLook = m_MapThread.GetRaster();
   //repaint();

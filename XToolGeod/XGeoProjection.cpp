@@ -649,7 +649,7 @@ XFrame XGeoProjection::FrameGeo(XProjCode proj)
 
   case WebMercator : return Monde;
 
-	default : return XFrame();
+	default : ;
 	}
 	return XFrame();
 }
@@ -724,7 +724,7 @@ std::string XGeoProjection::Region(XProjCode proj)
 	case NC_RGNC91_UTM58: return Caledonie;
 	case NC_RGNC91_UTM59: return Caledonie;
 
-	default: return "";
+	default: ;
 	}
 	return "";
 }

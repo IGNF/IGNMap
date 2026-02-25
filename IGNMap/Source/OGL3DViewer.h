@@ -23,7 +23,8 @@ class XGeoVector;
 class GeoLAS;
 class GeoDTM;
 
-class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster, public juce::Thread::Listener {
+class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster, public juce::Thread::Listener,
+  juce::Button::Listener, juce::Slider::Listener {
 public:
   OGLWidget();
   ~OGLWidget() { shutdownOpenGL(); }
@@ -46,6 +47,9 @@ public:
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
   bool keyPressed(const juce::KeyPress& key) override;
   void exitSignalSent() override;
+
+  virtual void buttonClicked(juce::Button*) override;
+  virtual void sliderValueChanged(juce::Slider*) override;
 
   void LoadObjects(XGeoBase* base, XFrame* F);
   void SetTarget(const XPt3D& P);
@@ -120,6 +124,8 @@ private:
   bool      m_bNeedTarget;      // Indique que l'on veut recuperer la position du point cible
   bool      m_bUpdateTarget;    // Indique que l'on modifie la position du point cible
   bool      m_bTranslateView;   // Indique que l'on translate la vue
+  bool      m_bZoomInView;      // Indique que l'on zoome dans la vue
+  bool      m_bZoomOutView;     // Indique que l'on dezoome dans la vue
   bool      m_bSaveImage;       // Sauvegarde dans un fichier du rendu
   float     m_LasPointSize;     // Taille des points LAS
   float     m_VectorWidth;      // Epaisseur des lignes des donnees vectorielles
@@ -145,6 +151,55 @@ private:
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
   XPt3D               m_Target;   // Point cible de la vue principale
+
+  class Control3D : public juce::Component {
+  public:
+    juce::ToggleButton  m_btnRasterDtm;
+    juce::ToggleButton  m_btnMeshDtm;
+    juce::ToggleButton  m_btnFillDtm;
+    juce::ToggleButton  m_btnRasterLas;
+    juce::Slider        m_sldZFactor;
+    juce::Slider        m_sldDtmPointSize;
+    juce::Slider        m_sldLasPointSize;
+
+    Control3D() {
+      m_btnRasterDtm.setButtonText(juce::translate("DTM with raster overlay"));
+      m_btnRasterDtm.setBounds(0, 0, 200, 24);
+      addAndMakeVisible(m_btnRasterDtm);
+      m_btnMeshDtm.setButtonText(juce::translate("DTM points"));
+      m_btnMeshDtm.setBounds(0, 30, 200, 24);
+      addAndMakeVisible(m_btnMeshDtm);
+      m_btnFillDtm.setButtonText(juce::translate("DTM filled"));
+      m_btnFillDtm.setBounds(0, 60, 200, 24);
+      addAndMakeVisible(m_btnFillDtm);
+
+      m_btnRasterLas.setButtonText(juce::translate("LAS with raster overlay"));
+      m_btnRasterLas.setBounds(0, 90, 200, 24);
+      addAndMakeVisible(m_btnRasterLas);
+      m_sldZFactor.setSliderStyle(juce::Slider::LinearHorizontal);
+      m_sldZFactor.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+      m_sldZFactor.setTextValueSuffix(juce::translate(" : Z factor"));
+      m_sldZFactor.setRange(0.1, 10., 0.1);
+      m_sldZFactor.setValue(1., juce::dontSendNotification);
+      m_sldZFactor.setBounds(0, 120, 200, 30);
+      addAndMakeVisible(m_sldZFactor);
+      setSize(200, 200);
+      setAlpha(0.7f);
+    }
+    void AddListener(OGLWidget* widget) {
+      m_btnRasterDtm.addListener(widget);
+      m_btnMeshDtm.addListener(widget);
+      m_btnFillDtm.addListener(widget);
+      m_btnRasterLas.addListener(widget);
+      m_sldZFactor.addListener(widget);
+    }
+    void paint(juce::Graphics& g) {
+      g.fillAll(juce::Colours::black);
+    }
+  };
+
+  juce::ImageButton   m_btnOptions;
+  Control3D   m_Control3D;
 
 private:
   //==============================================================================
