@@ -75,8 +75,9 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_btnOptions.addListener(this);
   m_btnOptions.setBounds(0, 0, 30, 30);
   addChildComponent(m_Control3D);
-  m_Control3D.setBounds(30, 0, 200, 200);
+  m_Control3D.setBounds(30, 0, 250, 250);
   m_Control3D.AddListener(this);
+  SyncControl3D();
 }
 
 //==============================================================================
@@ -578,15 +579,12 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_T.X -= 0.1;
   if (key.getKeyCode() == juce::KeyPress::rightKey)
     m_T.X += 0.1;
-  if (key.getKeyCode() == juce::KeyPress::pageUpKey) {
+  if (key.getKeyCode() == juce::KeyPress::pageUpKey)
     m_S.Z = std::clamp(m_S.Z + 0.1, 0.1, 10.);
-    m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
-  }
-  if (key.getKeyCode() == juce::KeyPress::pageDownKey) {
+   if (key.getKeyCode() == juce::KeyPress::pageDownKey)
     m_S.Z = std::clamp(m_S.Z - 0.1, 0.1, 10.);
-    m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
-  }
-  if ((key.getTextCharacter() == 'R')||(key.getTextCharacter() == 'r')) {
+ 
+    if ((key.getTextCharacter() == 'R')||(key.getTextCharacter() == 'r')) {
     m_R = XPt3D();
     m_T = XPt3D();
     m_S = XPt3D(1., 1., 1.);
@@ -637,7 +635,6 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   }
   if ((key.getTextCharacter() == 'O') || (key.getTextCharacter() == 'o')) {
     m_bRasterLas = !m_bRasterLas;
-    m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
     if (m_bRasterLas) {
       UpdateQuickLook();
       m_bUpdateLasColor = true;
@@ -649,7 +646,6 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   }
   if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
     m_bDtmTextured = !m_bDtmTextured;
-    m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
     if (m_bDtmTextured) {
       UpdateQuickLook();
     }
@@ -664,7 +660,7 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     if (!m_strFileSave.isEmpty())
       m_bSaveImage = true;
   }
-
+  SyncControl3D();
   repaint();
   return true;
 }
@@ -678,6 +674,15 @@ void OGLWidget::buttonClicked(juce::Button* button)
     m_Control3D.setVisible(!m_Control3D.isVisible());
     return;
   }
+  if (button == &m_Control3D.m_btnViewDtm)
+    m_bViewDtm = (!m_bViewDtm);
+  if (button == &m_Control3D.m_btnViewLas)
+    m_bViewLas = (!m_bViewLas);
+  if (button == &m_Control3D.m_btnViewVector)
+    m_bViewVector = (!m_bViewVector);
+  if (button == &m_Control3D.m_btnViewRepere)
+    m_bViewRepere = (!m_bViewRepere);
+
   if (button == &m_Control3D.m_btnRasterDtm) {
     m_bDtmTextured = !m_bDtmTextured;
     if (m_bDtmTextured) {
@@ -717,6 +722,23 @@ void OGLWidget::sliderValueChanged(juce::Slider* slider)
   }
   repaint();
 }
+
+//==============================================================================
+// Synchronisation des contrôles
+//==============================================================================
+void OGLWidget::SyncControl3D()
+{
+  m_Control3D.m_btnViewDtm.setToggleState(m_bViewDtm, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_btnViewLas.setToggleState(m_bViewLas, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_btnViewVector.setToggleState(m_bViewVector, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_btnViewRepere.setToggleState(m_bViewRepere, juce::NotificationType::dontSendNotification);
+
+  m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
+
+}
+
 
 //==============================================================================
 // Chargement d'objets

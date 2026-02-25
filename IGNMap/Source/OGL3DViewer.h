@@ -50,6 +50,7 @@ public:
 
   virtual void buttonClicked(juce::Button*) override;
   virtual void sliderValueChanged(juce::Slider*) override;
+  void SyncControl3D();
 
   void LoadObjects(XGeoBase* base, XFrame* F);
   void SetTarget(const XPt3D& P);
@@ -154,6 +155,10 @@ private:
 
   class Control3D : public juce::Component {
   public:
+    juce::ToggleButton  m_btnViewDtm;
+    juce::ToggleButton  m_btnViewLas;
+    juce::ToggleButton  m_btnViewVector;
+    juce::ToggleButton  m_btnViewRepere;
     juce::ToggleButton  m_btnRasterDtm;
     juce::ToggleButton  m_btnMeshDtm;
     juce::ToggleButton  m_btnFillDtm;
@@ -163,30 +168,48 @@ private:
     juce::Slider        m_sldLasPointSize;
 
     Control3D() {
+      m_btnViewDtm.setButtonText(juce::translate("View DTM"));
+      m_btnViewDtm.setBounds(0, 0, 120, 24);
+      addAndMakeVisible(m_btnViewDtm);
+      m_btnViewLas.setButtonText(juce::translate("View LAS"));
+      m_btnViewLas.setBounds(125, 0, 120, 24);
+      addAndMakeVisible(m_btnViewLas);
+      m_btnViewVector.setButtonText(juce::translate("View Vector"));
+      m_btnViewVector.setBounds(0, 30, 120, 24);
+      addAndMakeVisible(m_btnViewVector);
+      m_btnViewRepere.setButtonText(juce::translate("View Repere"));
+      m_btnViewRepere.setBounds(125, 30, 120, 24);
+      addAndMakeVisible(m_btnViewRepere);
+
       m_btnRasterDtm.setButtonText(juce::translate("DTM with raster overlay"));
-      m_btnRasterDtm.setBounds(0, 0, 200, 24);
+      m_btnRasterDtm.setBounds(0, 60, 200, 24);
       addAndMakeVisible(m_btnRasterDtm);
       m_btnMeshDtm.setButtonText(juce::translate("DTM points"));
-      m_btnMeshDtm.setBounds(0, 30, 200, 24);
+      m_btnMeshDtm.setBounds(0, 90, 200, 24);
       addAndMakeVisible(m_btnMeshDtm);
       m_btnFillDtm.setButtonText(juce::translate("DTM filled"));
-      m_btnFillDtm.setBounds(0, 60, 200, 24);
+      m_btnFillDtm.setBounds(0, 120, 200, 24);
       addAndMakeVisible(m_btnFillDtm);
 
       m_btnRasterLas.setButtonText(juce::translate("LAS with raster overlay"));
-      m_btnRasterLas.setBounds(0, 90, 200, 24);
+      m_btnRasterLas.setBounds(0, 150, 200, 24);
       addAndMakeVisible(m_btnRasterLas);
       m_sldZFactor.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldZFactor.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
       m_sldZFactor.setTextValueSuffix(juce::translate(" : Z factor"));
       m_sldZFactor.setRange(0.1, 10., 0.1);
       m_sldZFactor.setValue(1., juce::dontSendNotification);
-      m_sldZFactor.setBounds(0, 120, 200, 30);
+      m_sldZFactor.setBounds(0, 180, 200, 30);
       addAndMakeVisible(m_sldZFactor);
-      setSize(200, 200);
+      setSize(250, 250);
       setAlpha(0.7f);
     }
     void AddListener(OGLWidget* widget) {
+      m_btnViewDtm.addListener(widget);
+      m_btnViewLas.addListener(widget);
+      m_btnViewVector.addListener(widget);
+      m_btnViewRepere.addListener(widget);
+      m_btnMeshDtm.addListener(widget);
       m_btnRasterDtm.addListener(widget);
       m_btnMeshDtm.addListener(widget);
       m_btnFillDtm.addListener(widget);
