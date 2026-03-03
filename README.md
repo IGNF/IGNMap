@@ -76,7 +76,7 @@ un même répertoire :
 * `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
 * `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
 * `TinyEXIF/` : dossier contenant la bibliothèque [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) ;
-* `stb/` : dossier contenant la bibliothèque [STB] (https://github.com/nothings/stb) (seul le fichier stb_image.h est utilisé) ;
+* `stb/` : dossier contenant la bibliothèque [STB](https://github.com/nothings/stb) (seul le fichier stb_image.h est utilisé) ;
 * `XTool/` : bibliothèque de base pour la gestion de données géographiques ;
 * `XToolAlgo/` : bibliothèque pour les algorithmes géomatiques ;
 * `XToolGeod/` : bibliothèque pour les calculs géodésiques ;
