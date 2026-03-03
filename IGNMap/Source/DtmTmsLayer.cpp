@@ -76,7 +76,7 @@ juce::Image DtmTmsLayer::LoadWebp(juce::String filename)
   XWebPImage webp(filename.toStdString().c_str());
   if (!webp.IsValid())
     return juce::Image();
-  juce::Image image(juce::Image::PixelFormat::RGB, webp.W(), webp.H(), true);
+  juce::Image image(juce::Image::PixelFormat::RGB, webp.W(), webp.H(), true, juce::SoftwareImageType());
   juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readWrite);
   webp.GetArea(nullptr, 0, 0, webp.W(), webp.H(), bitmap.data);
   XBaseImage::SwitchRGB2BGR(bitmap.data, webp.W() * webp.H());
