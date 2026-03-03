@@ -39,6 +39,7 @@ IGNMap utilise un certain nombre de bibliothèques :
 * [SQLite](https://www.sqlite.org/index.html) : pour la lecture du format GeoPackage
 * [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) : pour la lecture des champs EXIF dans les images JPEG
 * [ZLib](https://www.zlib.net/) : pour la décompression ZLib
+* [STB](https://github.com/nothings/stb) : pour lire certains formats d'images
 * [LASzip](https://github.com/LASzip/LASzip) : pour lecture des nuages de points au format LAS/LAZ
 * [Protozero](https://github.com/mapbox/protozero) : pour lire les protocol buffer
 * [Vtzero](https://github.com/mapbox/vtzero) : pour lire les Mapbox Vector Tiles
@@ -75,6 +76,7 @@ un même répertoire :
 * `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
 * `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
 * `TinyEXIF/` : dossier contenant la bibliothèque [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) ;
+* `stb/` : dossier contenant la bibliothèque [STB] (https://github.com/nothings/stb) (seul le fichier stb_image.h est utilisé) ;
 * `XTool/` : bibliothèque de base pour la gestion de données géographiques ;
 * `XToolAlgo/` : bibliothèque pour les algorithmes géomatiques ;
 * `XToolGeod/` : bibliothèque pour les calculs géodésiques ;
