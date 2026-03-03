@@ -41,6 +41,7 @@ public:
   void paint(juce::Graphics& g) override;
   void resized() override;
   void mouseDown(const juce::MouseEvent& event) override;
+  void mouseUp(const juce::MouseEvent& event) override;
   void mouseMove(const juce::MouseEvent& event) override;
   void mouseDrag(const juce::MouseEvent& event) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
@@ -166,6 +167,7 @@ private:
     juce::Slider        m_sldZFactor;
     juce::Slider        m_sldDtmPointSize;
     juce::Slider        m_sldLasPointSize;
+    juce::Slider        m_sldVectorWidth;
 
     Control3D() {
       m_btnViewDtm.setButtonText(juce::translate("View DTM"));
@@ -177,7 +179,7 @@ private:
       m_btnViewVector.setButtonText(juce::translate("View Vector"));
       m_btnViewVector.setBounds(0, 30, 120, 24);
       addAndMakeVisible(m_btnViewVector);
-      m_btnViewRepere.setButtonText(juce::translate("View Repere"));
+      m_btnViewRepere.setButtonText(juce::translate("View Axis"));
       m_btnViewRepere.setBounds(125, 30, 120, 24);
       addAndMakeVisible(m_btnViewRepere);
 
@@ -188,20 +190,46 @@ private:
       m_btnMeshDtm.setBounds(0, 90, 200, 24);
       addAndMakeVisible(m_btnMeshDtm);
       m_btnFillDtm.setButtonText(juce::translate("DTM filled"));
-      m_btnFillDtm.setBounds(0, 120, 200, 24);
+      m_btnFillDtm.setBounds(125, 90, 200, 24);
       addAndMakeVisible(m_btnFillDtm);
 
       m_btnRasterLas.setButtonText(juce::translate("LAS with raster overlay"));
-      m_btnRasterLas.setBounds(0, 150, 200, 24);
+      m_btnRasterLas.setBounds(0, 120, 200, 24);
       addAndMakeVisible(m_btnRasterLas);
+
       m_sldZFactor.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldZFactor.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
       m_sldZFactor.setTextValueSuffix(juce::translate(" : Z factor"));
       m_sldZFactor.setRange(0.1, 10., 0.1);
       m_sldZFactor.setValue(1., juce::dontSendNotification);
-      m_sldZFactor.setBounds(0, 180, 200, 30);
+      m_sldZFactor.setBounds(10, 150, 230, 30);
       addAndMakeVisible(m_sldZFactor);
-      setSize(250, 250);
+
+      m_sldLasPointSize.setSliderStyle(juce::Slider::LinearHorizontal);
+      m_sldLasPointSize.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+      m_sldLasPointSize.setTextValueSuffix(juce::translate(" : LAS point size"));
+      m_sldLasPointSize.setRange(1., 10., 1.);
+      m_sldLasPointSize.setValue(1., juce::dontSendNotification);
+      m_sldLasPointSize.setBounds(10, 180, 110, 30);
+      addAndMakeVisible(m_sldLasPointSize);
+
+      m_sldDtmPointSize.setSliderStyle(juce::Slider::LinearHorizontal);
+      m_sldDtmPointSize.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+      m_sldDtmPointSize.setTextValueSuffix(juce::translate(" : DTM point size"));
+      m_sldDtmPointSize.setRange(1., 10., 1.);
+      m_sldDtmPointSize.setValue(1., juce::dontSendNotification);
+      m_sldDtmPointSize.setBounds(130, 180, 110, 30);
+      addAndMakeVisible(m_sldDtmPointSize);
+
+      m_sldVectorWidth.setSliderStyle(juce::Slider::LinearHorizontal);
+      m_sldVectorWidth.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+      m_sldVectorWidth.setTextValueSuffix(juce::translate(" : Vector width"));
+      m_sldVectorWidth.setRange(1., 10., 1.);
+      m_sldVectorWidth.setValue(1., juce::dontSendNotification);
+      m_sldVectorWidth.setBounds(10, 210, 110, 30);
+      addAndMakeVisible(m_sldVectorWidth);
+
+      setSize(250, 300);
       setAlpha(0.7f);
     }
     void AddListener(OGLWidget* widget) {
@@ -215,6 +243,9 @@ private:
       m_btnFillDtm.addListener(widget);
       m_btnRasterLas.addListener(widget);
       m_sldZFactor.addListener(widget);
+      m_sldLasPointSize.addListener(widget);
+      m_sldDtmPointSize.addListener(widget);
+      m_sldVectorWidth.addListener(widget);
     }
     void paint(juce::Graphics& g) {
       g.fillAll(juce::Colours::black);

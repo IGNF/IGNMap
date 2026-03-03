@@ -312,13 +312,13 @@ void OGLWidget::paint(juce::Graphics& g)
   g.setFont(18);
   help = juce::translate("Help : F1 ; Copy image : F2");
   g.drawText(help, b.getX(), b.getY() + 5, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)");
+  help = juce::translate("Shift + click : move");
   g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("DTM : D (point / triangle), F (fill triangles)");
+  help = juce::translate("Ctrl + left click : zoom in");
   g.drawText(help, b.getX(), b.getY() + 65, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Visibility : J (Axis) ; K (Vector) ; L (Las) ; M (DTM)");
+  help = juce::translate("Ctrl + right click : zoom out");
   g.drawText(help, b.getX(), b.getY() + 95, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Z scale: PageUp ; PageDown");
+  help = juce::translate("");
   g.drawText(help, b.getX(), b.getY() + 125, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("Position : Left ; Right ; Up ; Down");
   g.drawText(help, b.getX(), b.getY() + 155, b.getWidth(), 40, juce::Justification::left);
@@ -326,7 +326,7 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 185, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("A : automatic rotation ;  R : reset");
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("LAS color : P palette ; O raster");
+  help = juce::translate("");
   g.drawText(help, b.getX(), b.getY() + 245, b.getWidth(), 40, juce::Justification::left);
 }
 
@@ -403,7 +403,7 @@ void OGLWidget::render()
     else {
       openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
       m_Attributes->enable();
-      glPointSize(m_LasPointSize);
+      glPointSize(m_DtmLineWidth);
       glDrawArrays(GL_POINTS, 0, m_nDtmH * m_nDtmW);
       m_Attributes->disable();
     }
@@ -509,6 +509,22 @@ void OGLWidget::mouseDown(const juce::MouseEvent& event)
   m_LastPos = event.position;
 }
 
+void OGLWidget::mouseUp(const juce::MouseEvent& event)
+{
+  m_bNeedLasPoint = true;
+  if (event.mods.isShiftDown()) {
+    m_bTranslateView = true;
+    repaint();
+  }
+  if (event.mods.isCtrlDown()) {
+    if (event.mods.isRightButtonDown())
+      m_bZoomOutView = true;
+    if (event.mods.isLeftButtonDown())
+      m_bZoomInView = true;
+    repaint();
+  }
+}
+
 void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
 {
   
@@ -551,15 +567,6 @@ void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
   if (event.mods.isAltDown()) {
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
-  }
-  if (event.mods.isShiftDown()) {
-    m_bTranslateView = true;
-  }
-  if (event.mods.isCtrlDown()) {
-    if (event.mods.isRightButtonDown())
-      m_bZoomOutView = true;
-    if (event.mods.isLeftButtonDown())
-      m_bZoomInView = true;
   }
   repaint();
 }
@@ -717,9 +724,15 @@ void OGLWidget::buttonClicked(juce::Button* button)
 //==============================================================================
 void OGLWidget::sliderValueChanged(juce::Slider* slider)
 {
-  if (slider == &m_Control3D.m_sldZFactor) {
+  if (slider == &m_Control3D.m_sldZFactor)
     m_S.Z = slider->getValue();
-  }
+  if (slider == &m_Control3D.m_sldLasPointSize)
+    m_LasPointSize = (float)std::clamp(slider->getValue(), 1., 10.);
+  if (slider == &m_Control3D.m_sldDtmPointSize)
+    m_DtmLineWidth = (float)std::clamp(slider->getValue(), 1., 10.);
+  if (slider == &m_Control3D.m_sldVectorWidth)
+    m_VectorWidth = (float)std::clamp(slider->getValue(), 1., 10.);
+
   repaint();
 }
 
@@ -735,10 +748,12 @@ void OGLWidget::SyncControl3D()
 
   m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
   m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_btnFillDtm.setToggleState(m_bDtmFill, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
-
+  m_Control3D.m_sldLasPointSize.setValue((double)m_LasPointSize, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_sldDtmPointSize.setValue((double)m_DtmLineWidth, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_sldVectorWidth.setValue((double)m_VectorWidth, juce::NotificationType::dontSendNotification);
 }
-
 
 //==============================================================================
 // Chargement d'objets
@@ -1577,7 +1592,7 @@ void OGLWidget::TranslateView()
   XFrame newFrame3D;
   double factor = 0.5;
   if (m_bZoomInView) factor = 0.25;
-  if (m_bZoomOutView) factor = 2;
+  if (m_bZoomOutView) factor = 1;
   double W = m_Frame.Width() * factor, H = m_Frame.Height() * factor;
   newFrame3D.Xmin = m_LastPt.X - W;
   newFrame3D.Xmax = m_LastPt.X + W;
