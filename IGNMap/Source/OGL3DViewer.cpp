@@ -310,7 +310,7 @@ void OGLWidget::paint(juce::Graphics& g)
   b.expand(-5, -5);
   g.setFillType(juce::FillType(juce::Colours::darkblue));
   g.setFont(18);
-  help = juce::translate("Help : F1 ; Copy image : F2");
+  help = juce::translate("F1 : Help ; F2 : Copy image");
   g.drawText(help, b.getX(), b.getY() + 5, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("Shift + click : move");
   g.drawText(help, b.getX(), b.getY() + 35, b.getWidth(), 40, juce::Justification::left);
@@ -320,13 +320,13 @@ void OGLWidget::paint(juce::Graphics& g)
   g.drawText(help, b.getX(), b.getY() + 95, b.getWidth(), 40, juce::Justification::left);
   help = juce::translate("");
   g.drawText(help, b.getX(), b.getY() + 125, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Position : Left ; Right ; Up ; Down");
+  help = juce::translate("Position XY : Left ; Right ; Up ; Down");
   g.drawText(help, b.getX(), b.getY() + 155, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("Z Position : Y ; H");
+  help = juce::translate("Position Z : Y ; H");
   g.drawText(help, b.getX(), b.getY() + 185, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("A : automatic rotation ;  R : reset");
+  help = juce::translate("A : automatic rotation");
   g.drawText(help, b.getX(), b.getY() + 215, b.getWidth(), 40, juce::Justification::left);
-  help = juce::translate("");
+  help = juce::translate("R : reset");
   g.drawText(help, b.getX(), b.getY() + 245, b.getWidth(), 40, juce::Justification::left);
 }
 
@@ -338,17 +338,19 @@ void OGLWidget::render()
   using namespace ::juce::gl;
   const juce::ScopedLock lock(m_Mutex);
 
+  auto desktopScale = (float)openGLContext.getRenderingScale();
+  juce::OpenGLHelpers::clear(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  int W = juce::roundToInt(desktopScale * (float)m_Bounds.getWidth());
+  int H = juce::roundToInt(desktopScale * (float)m_Bounds.getHeight());
+
   juce::OpenGLFrameBuffer* buffer = nullptr;
   juce::Image snapshotImage;
   if (m_bSaveImage) {
-    snapshotImage = juce::Image(juce::OpenGLImageType().create(juce::Image::ARGB, getWidth(), getHeight(), true));
+    snapshotImage = juce::Image(juce::OpenGLImageType().create(juce::Image::ARGB, W, H, true));
     buffer = juce::OpenGLImageType::getFrameBufferFrom(snapshotImage);
     if (buffer != nullptr)
       buffer->makeCurrentRenderingTarget();
   }
-
-  auto desktopScale = (float)openGLContext.getRenderingScale();
-  juce::OpenGLHelpers::clear(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
   //glEnable(GL_BLEND);
   //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -365,9 +367,7 @@ void OGLWidget::render()
   glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-  glViewport(0, 0,
-      juce::roundToInt(desktopScale * (float)m_Bounds.getWidth()),
-      juce::roundToInt(desktopScale * (float)m_Bounds.getHeight()));
+  glViewport(0, 0, W, H);
 
   m_Shader->use();
 
@@ -602,32 +602,7 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
       m_R.Z += ((float)getFrameCounter() * 0.01f);
     m_bAutoRotation = (!m_bAutoRotation);
   }
-  if ((key.getTextCharacter() == 'Q') || (key.getTextCharacter() == 'q'))
-    m_LasPointSize += 1.f;
-  if ((key.getTextCharacter() == 'S') || (key.getTextCharacter() == 's'))
-    m_LasPointSize = std::clamp(m_LasPointSize - 1.f, 1.f, m_LasPointSize);
-  if ((key.getTextCharacter() == 'W') || (key.getTextCharacter() == 'w'))
-    m_DtmLineWidth += 1.f;
-  if ((key.getTextCharacter() == 'X') || (key.getTextCharacter() == 'x'))
-    m_DtmLineWidth = std::clamp(m_DtmLineWidth - 1.f, 1.f, m_DtmLineWidth);
-  if ((key.getTextCharacter() == 'C') || (key.getTextCharacter() == 'c'))
-    m_VectorWidth += 1.f;
-  if ((key.getTextCharacter() == 'V') || (key.getTextCharacter() == 'v'))
-    m_VectorWidth = std::clamp(m_VectorWidth - 1.f, 1.f, m_VectorWidth);
-
-  if ((key.getTextCharacter() == 'D') || (key.getTextCharacter() == 'd'))
-    m_bDtmTriangle = (!m_bDtmTriangle);
-  if ((key.getTextCharacter() == 'F') || (key.getTextCharacter() == 'f'))
-    m_bDtmFill = (!m_bDtmFill);
-  if ((key.getTextCharacter() == 'J') || (key.getTextCharacter() == 'j'))
-    m_bViewRepere = (!m_bViewRepere);
-  if ((key.getTextCharacter() == 'K') || (key.getTextCharacter() == 'k'))
-    m_bViewVector = (!m_bViewVector);
-  if ((key.getTextCharacter() == 'L') || (key.getTextCharacter() == 'l'))
-    m_bViewLas = (!m_bViewLas);
-  if ((key.getTextCharacter() == 'M') || (key.getTextCharacter() == 'm'))
-    m_bViewDtm = (!m_bViewDtm);
-
+ 
   if ((key.getTextCharacter() == 'Y') || (key.getTextCharacter() == 'y')) {
     m_dDeltaZ = 1.;
     m_bNeedUpdate = true;
@@ -639,27 +614,6 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
     m_bUpdateLasColor = true;
     m_bNeedUpdate = true;
-  }
-  if ((key.getTextCharacter() == 'O') || (key.getTextCharacter() == 'o')) {
-    m_bRasterLas = !m_bRasterLas;
-    if (m_bRasterLas) {
-      UpdateQuickLook();
-      m_bUpdateLasColor = true;
-    }
-    else {
-      m_bUpdateLasColor = true;
-      m_bNeedUpdate = true;
-    }
-  }
-  if ((key.getTextCharacter() == 'G') || (key.getTextCharacter() == 'g')) {
-    m_bDtmTextured = !m_bDtmTextured;
-    if (m_bDtmTextured) {
-      UpdateQuickLook();
-    }
-    else {
-      m_bUpdateDtmColor = true;
-      m_bNeedUpdate = true;
-    }
   }
 
   if (key.getKeyCode() == juce::KeyPress::F2Key) {

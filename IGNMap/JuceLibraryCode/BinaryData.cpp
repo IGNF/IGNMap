@@ -4584,16 +4584,26 @@ static const unsigned char temp_binary_data_21[] =
 "\"New Caledonia\" = \"Nouvelle-Cal\xc3\xa9""donie\"\r\n"
 "\"French Guiana\" = \"Guyane\"\r\n"
 "\"Reunion\" = \"R\xc3\xa9union\"\r\n"
-"\"Help : F1 ; Copy image : F2\" = \"Aide : F1 ; Copier l'image : F2\"\r\n"
-"\"Point size : Q/S (Las) ; W/X (DTM) ; C/V (Vector)\" = \"Dimension des points : Q/S (LAS) ; W/X (MNT) ; C/V (Vecteurs)\"\r\n"
-"\"DTM : D (point / triangle), F (fill triangles)\" = \"MNT : D (affichage par points / par triangles), F (remplissage des triangles)\"\r\n"
-"\"Visibility : J (Axis) ; K (Vector) ; L (Las) ; M (DTM)\" = \"Visibilit\xc3\xa9 : J (Axes) ; K (Vecteurs) ; L (Las) ; M (MNT)\"\r\n"
-"\"Z scale: PageUp ; PageDown\" = \"Echelle altim\xc3\xa9trique : PageUp ; PageDown\"\r\n"
-"\"Position : Left ; Right ; Up ; Down\" = \"Position : fl\xc3\xa8""ches Haut ; Bas ; Droite ; Gauche\"\r\n"
-"\"Z Position : T ; G\" = \"Position altim\xc3\xa9trique : T ; G\"\r\n"
-"\"A : automatic rotation ;  R : reset\" = \"A : rotation automatique ; R : remise \xc3\xa0 0\"\r\n"
-"\"LAS color : P palette ; O raster\" = \"Couleur des points LAS : P palette ; O fond image\"\r\n"
-"\"E : view axis\" : \"E : affichage des axes\"\r\n"
+"\"F1 : Help ; F2 : Copy image\" = \"F1 : Aide ; F2 : Copier l'image\"\r\n"
+"\"Position XY : Left ; Right ; Up ; Down\" = \"Position XY : fl\xc3\xa8""ches Haut ; Bas ; Droite ; Gauche\"\r\n"
+"\"Position Z : T ; G\" = \"Position altim\xc3\xa9trique : T ; G\"\r\n"
+"\"A : automatic rotation\" = \"A : rotation automatique\"\r\n"
+"\"R : reset\" = \"R : remise \xc3\xa0 0\"\r\n"
+"\"View DTM\" = \"Affichage MNT\"\r\n"
+"\"View LAS\" = \"Affichage LAS\"\r\n"
+"\"View Vector\" = \"Affichage vecteur\"\r\n"
+"\"View Axis\" = \"Affichage des axes\"\r\n"
+"\"DTM with raster overlay\" = \"MNT avec fond image\"\r\n"
+"\"DTM points\" = \"Points MNT\"\r\n"
+"\"DTM filled\" = \"MNT plein\"\r\n"
+"\"LAS with raster overlay\" = \"LAS avec fond image\"\r\n"
+"\" : Z factor\" = \" : facteur Z\"\r\n"
+"\" : LAS point size\" = \" : taille points LAS\"\r\n"
+"\" : DTM point size\" = \" : taille points MNT\"\r\n"
+"\" : Vector width\" = \" : \xc3\xa9paisseurs des vecteurs\"\r\n"
+"\"Shift + click : move\" = \"Shift + clic : d\xc3\xa9placement\"\r\n"
+"\"Ctrl + left click : zoom in\" = \"Ctrl + clic gauche : zoom avant\"\r\n"
+"\"Ctrl + right click : zoom out\" = \"Ctrl + clic droit : zoom arri\xc3\xa8re\"\r\n"
 "\"Copy Attributes\" = \"Copier les attributs\"\r\n"
 "\"Object Frame\"=\"Emprise de l'objet\"\r\n"
 "\"Add Image\"=\"Ajout d'une image\"\r\n"
@@ -4678,7 +4688,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 6979; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 7067; return Translation_fr_txt;
         default: break;
     }
 
