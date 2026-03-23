@@ -13,22 +13,23 @@
 
 #include <JuceHeader.h>
 #include "MapThread.h"
+#include "AppUtil.h"
 
 class XGeoBase;
 
 class ExportImageDlg : public juce::Component, public juce::Button::Listener, public juce::ActionBroadcaster, private juce::Timer {
 public:
-	ExportImageDlg(XGeoBase* base, double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0., double gsd = 1.);
+	ExportImageDlg(XGeoBase* base, double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0., 
+									double gsd = 1., juce::ActionListener* listener = nullptr);
 	virtual ~ExportImageDlg();
 	void buttonClicked(juce::Button*) override;
 
 private:
 	XGeoBase* m_Base;
-	juce::TextEditor	m_edtXmin, m_edtYmin, m_edtXmax, m_edtYmax, m_edtGsd, m_edtFilename;
-	juce::Label m_lblXmin, m_lblYmin, m_lblXmax, m_lblYmax, m_lblGsd;
+	juce::TextEditor m_edtGsd, m_edtFilename;
+	juce::Label m_lblGsd;
 	juce::TextButton m_btnExport;
-	juce::ImageButton m_btnView;
-	juce::DrawableButton m_btnKm;
+	FrameComponent m_FrameCmp;
 
 	MapThread		m_MapThread;
 	juce::String m_strFilename;
@@ -37,8 +38,6 @@ private:
 	double m_dProgress = 0.;
 	juce::ProgressBar* m_progressBar;
 
-	void ViewFrame();
-	void RoundFrame();
 	void Export();
 	void timerCallback() override;
 	void StartNextThread();

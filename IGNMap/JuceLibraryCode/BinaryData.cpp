@@ -4640,7 +4640,9 @@ static const unsigned char temp_binary_data_21[] =
 "\"Density\" = \"Densit\xc3\xa9\"\r\n"
 "\"Algorithm\" = \"Algorithme\"\r\n"
 "\"This tool allows to compute a DTM or a DSM for each LAS file\" = \"Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS\"\r\n"
+"\"This tool allows to find the delta Z between successive nodes\" = \"Cet outil permet de calculer la diff\xc3\xa9rence altim\xc3\xa9trique entre n\xc5\x93uds successifs\"\r\n"
 "\"Compute DTM/DSM\" = \"Calcul de MNT / MNS\"\r\n"
+"\"Compute Delta Vector\" = \"Diff\xc3\xa9rence Vecteur / MNT\"\r\n"
 "\"Fill NOZ Hole\" = \"Remplissage des cellules sans valeur\"\r\n"
 "\"Scale of the view\" = \"Echelle de la vue\"\r\n"
 "\"Stereoscopic View\" = \"Vue St\xc3\xa9r\xc3\xa9oscopique\"\r\n"
@@ -4651,6 +4653,16 @@ static const unsigned char temp_binary_data_21[] =
 "\"Encoding :\"=\"Encodage :\"\r\n"
 "\"Tile size :\"=\"Taille des dalles :\"\r\n"
 "\"Zoom max :\"=\"Zoom maximum :\"\r\n"
+"\"STL Format\" = \"Format STL\"\r\n"
+"\"Planimetric scale :\" = \"Echelle planim\xc3\xa9trique :\"\r\n"
+"\"Z factor :\" = \"Exag\xc3\xa9ration en Z\"\r\n"
+"\"Step (mm) :\" = \"Pas (en mm)\"\r\n"
+"\"View borders\" = \"Affichage des bords\"\r\n"
+"\"Automatic Zmin\" = \"Zmin automatique\"\r\n"
+"\"Export\" = \"Exporter\"\r\n"
+"\"Unable to allocate memory ! The DTM is too big !\" = \"Impossible d'allouer la m\xc3\xa9moire ! La zone est trop grande !\"\r\n"
+"\"The Zmin field is higher than the Zmin of the DTM !\" = \"Attention le ZMin choisi est sup\xc3\xa9rieur au Zmin du MNT\"\r\n"
+"\r\n"
 "\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_21;
@@ -4688,7 +4700,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 7067; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 7755; return Translation_fr_txt;
         default: break;
     }
 

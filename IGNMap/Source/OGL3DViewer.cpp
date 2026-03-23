@@ -42,14 +42,14 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_MapThread.addListener(this);
   vertexShader = nullptr;
   fragmentShader = nullptr;
-  m_nNbLasVertex = m_nNbPolyVertex = m_nNbLineVertex = m_nNbDtmVertex = 0;
+  m_nNbLasVertex = m_nNbPolyVertex = m_nNbLineVertex = m_nNbDtmVertex = m_nNbVecPointVertex = 0;
   m_nNbPoly = m_nNbLine = 0;
-  m_LasBufferID = m_RepereID = m_PtBufferID = m_TargetID = 0;
+  m_LasBufferID = m_RepereID = m_PtBufferID = m_TargetID = m_VecPointBufferID = 0;
   m_DtmBufferID = m_DtmVertexArrayID = m_DtmElementID = 0;
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   m_nMaxLasPt = 2000000;
-  m_nMaxPolyPt = m_nMaxLinePt = 10000;
+  m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 10000;
   m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
   m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
   m_bDtmTriangle = m_bDtmFill = true;
@@ -140,6 +140,11 @@ void OGLWidget::initialise()
   openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_LineElementID);
   openGLContext.extensions.glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nMaxLinePt * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
 
+  // Creation du buffer de points vectoriels
+  openGLContext.extensions.glGenBuffers(1, &m_VecPointBufferID);
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
+  openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER, m_nMaxVecPointPt * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+
   // Creation du buffer de points du repere
   openGLContext.extensions.glGenBuffers(1, &m_RepereID);
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_RepereID);
@@ -174,6 +179,7 @@ void OGLWidget::shutdown()
   openGLContext.extensions.glDeleteBuffers(1, &m_LineBufferID);
   openGLContext.extensions.glDeleteBuffers(1, &m_LineElementID);
   openGLContext.extensions.glDeleteBuffers(1, &m_LineVertexArrayID);
+  openGLContext.extensions.glDeleteBuffers(1, &m_VecPointBufferID);
 
   openGLContext.extensions.glDeleteBuffers(1, &m_RepereID);
   openGLContext.extensions.glDeleteBuffers(1, &m_PtBufferID);
@@ -433,6 +439,15 @@ void OGLWidget::render()
     m_Attributes->disable();
   }
   glDisable(GL_PRIMITIVE_RESTART);
+
+  // Dessin des points vectoriels
+  if ((m_nNbVecPointVertex > 0) && (!m_bNeedUpdate) && (m_bViewVector)) {
+    openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
+    m_Attributes->enable();
+    glPointSize(m_VectorWidth);
+    glDrawArrays(GL_POINTS, 0, m_nNbVecPointVertex);
+    m_Attributes->disable();
+  }
 
   if (m_bNeedUpdate)
     UpdateBase();
@@ -1268,6 +1283,8 @@ void OGLWidget::LoadVectorClass(XGeoClass* C)
       DrawPolyVector(V);
     if ((V->TypeVector() == XGeoVector::LineZ) || (V->TypeVector() == XGeoVector::MLineZ))
       DrawLineVector(V);
+    if ((V->TypeVector() == XGeoVector::PointZ) || (V->TypeVector() == XGeoVector::MPointZ))
+      DrawPointVector(V);
   }
 }
 
@@ -1286,8 +1303,10 @@ void OGLWidget::DrawPolyVector(XGeoVector* V)
 
   if (!V->LoadGeom())
     return;
-  if (V->Zmin() < -99.)
+  if (V->Zmin() < -99.) {
+    V->Unload();
     return;
+  }
   if (m_dZ0 <= XGEO_NO_DATA)
     m_dZ0 = V->Zmin();
   uint32_t color = V->Repres()->Color();
@@ -1362,8 +1381,10 @@ void OGLWidget::DrawLineVector(XGeoVector* V)
 
   if (!V->LoadGeom())
     return;
-  if (V->Zmin() < -99.)
+  if (V->Zmin() < -99.) {
+    V->Unload();
     return;
+  }
   if (m_dZ0 <= XGEO_NO_DATA)
     m_dZ0 = V->Zmin();
   uint32_t color = V->Repres()->Color();
@@ -1420,6 +1441,66 @@ void OGLWidget::DrawLineVector(XGeoVector* V)
 
   m_nNbLineVertex += V->NbPt();
   m_nNbLine += V->NbPart();
+  V->Unload();
+}
+
+//==============================================================================
+// Dessin d'une polyligne
+//==============================================================================
+void OGLWidget::DrawPointVector(XGeoVector* V)
+{
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+
+  if ((V->NbPt() + m_nNbVecPointVertex) >= m_nMaxVecPointPt) // Trop de points charges
+    return;
+
+  if (!V->LoadGeom())
+    return;
+  if (V->Zmin() < -99.) {
+    V->Unload();
+    return;
+  }
+  if (m_dZ0 <= XGEO_NO_DATA)
+    m_dZ0 = V->Zmin();
+  uint32_t color = V->Repres()->Color();
+  uint8_t* ptr_color = (uint8_t*)&color;
+  float red = ptr_color[2] / 255.f;
+  float green = ptr_color[1] / 255.f;
+  float blue = ptr_color[0] / 255.f;
+
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  ptr_vertex += m_nNbVecPointVertex;
+
+  if (V->NbPt() > 1) { // Cas des multipoints
+    XPt* P = V->Pt();
+    double* Z = V->Z();
+    for (uint32_t i = 0; i < V->NbPt(); i++) {
+      ptr_vertex->position[0] = (float)((P->X - m_dX0) / m_dGsd);
+      ptr_vertex->position[1] = (float)((P->Y - m_dY0) / m_dGsd);
+      ptr_vertex->position[2] = (float)((*Z - m_dZ0) / m_dGsd);
+      ptr_vertex->colour[0] = red;
+      ptr_vertex->colour[1] = green;
+      ptr_vertex->colour[2] = blue;
+      ptr_vertex->colour[3] = (float)1.f;
+      ptr_vertex++;
+      P++;
+      Z++;
+    }
+  }
+  else {
+    ptr_vertex->position[0] = (float)((V->Pt(0).X - m_dX0) / m_dGsd);
+    ptr_vertex->position[1] = (float)((V->Pt(0).Y - m_dY0) / m_dGsd);
+    ptr_vertex->position[2] = (float)((V->Z(0) - m_dZ0) / m_dGsd);
+    ptr_vertex->colour[0] = red;
+    ptr_vertex->colour[1] = green;
+    ptr_vertex->colour[2] = blue;
+    ptr_vertex->colour[3] = (float)1.f;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+
+  m_nNbVecPointVertex += V->NbPt();
   V->Unload();
 }
 

@@ -202,3 +202,137 @@ void ColourChangeButton::clicked()
 
 	juce::CallOutBox::launchAsynchronously(std::move(colourSelector), getScreenBounds(), nullptr);
 }
+
+//==============================================================================
+// FieldEditor : composant pour remplir un champ
+//==============================================================================
+void FieldEditor::SetEditor(juce::String label, juce::String value, FieldType type, int labelW, int editorW)
+{
+	addAndMakeVisible(m_Label);
+	m_Label.setBounds(0, 0, labelW, 24);
+	m_Label.setText(label, juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_Editor);
+	m_Editor.setBounds(labelW, 0, editorW, 24);
+	m_Editor.setText(value);
+	switch (type) {
+	case Double: m_Editor.setInputRestrictions(10, "0123456789.-"); break;
+	case Int: m_Editor.setInputRestrictions(10, "0123456789-"); break;
+	case Uint: m_Editor.setInputRestrictions(10, "0123456789"); break;
+	default:;
+	}
+}
+
+//==============================================================================
+// FrameComponent : composant pour visualiser et modifier un cadre
+//==============================================================================
+FrameComponent::FrameComponent(double xmin, double ymin, double xmax, double ymax) :
+	m_btnKm("Km", juce::DrawableButton::ImageRaw)
+{
+	addAndMakeVisible(m_lblXmin);
+	m_lblXmin.setBounds(10, 50, 50, 24);
+	m_lblXmin.setText(juce::translate("Xmin : "), juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_edtXmin);
+	m_edtXmin.setBounds(60, 50, 100, 24);
+	m_edtXmin.setText(juce::String(xmin, 2));
+
+	addAndMakeVisible(m_lblXmax);
+	m_lblXmax.setBounds(350, 50, 50, 24);
+	m_lblXmax.setText(juce::translate(" : Xmax"), juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_edtXmax);
+	m_edtXmax.setBounds(240, 50, 100, 24);
+	m_edtXmax.setText(juce::String(xmax, 2));
+
+	addAndMakeVisible(m_lblYmax);
+	m_lblYmax.setBounds(100, 10, 50, 24);
+	m_lblYmax.setText(juce::translate("Ymax : "), juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_edtYmax);
+	m_edtYmax.setBounds(150, 10, 100, 24);
+	m_edtYmax.setText(juce::String(ymax, 2));
+
+	addAndMakeVisible(m_lblYmin);
+	m_lblYmin.setBounds(260, 90, 50, 24);
+	m_lblYmin.setText(juce::translate(" : Ymin"), juce::NotificationType::dontSendNotification);
+	addAndMakeVisible(m_edtYmin);
+	m_edtYmin.setBounds(150, 90, 100, 24);
+	m_edtYmin.setText(juce::String(ymin, 2));
+
+	addAndMakeVisible(m_btnView);
+	auto image = juce::ImageCache::getFromMemory(BinaryData::View_png, BinaryData::View_pngSize);
+	m_btnView.setImages(false, false, true, image, 1.f, juce::Colours::transparentWhite,
+		image, 0.5f, juce::Colours::transparentWhite, image, 1.f, juce::Colours::transparentWhite);
+	m_btnView.setBounds(160, 50, 40, 24);
+	m_btnView.addListener(this);
+
+	addAndMakeVisible(m_btnKm);
+	juce::DrawableText text_on, text_over;
+	text_on.setText("Km"); text_over.setText("Km");
+	text_on.setColour(juce::Colours::red); text_over.setColour(juce::Colours::blue);
+	m_btnKm.setImages(&text_on, &text_over);
+	m_btnKm.setBounds(200, 50, 40, 24);
+	m_btnKm.addListener(this);
+}
+
+//==============================================================================
+// FrameComponent : Clic des boutons
+//==============================================================================
+void FrameComponent::buttonClicked(juce::Button* button)
+{
+	if (button == &m_btnView)
+		ViewFrame();
+	if (button == &m_btnKm)
+		RoundFrame();
+}
+
+//==============================================================================
+// FrameComponent : Affichage de la zone d'export
+//==============================================================================
+void FrameComponent::ViewFrame()
+{
+	double xmin = m_edtXmin.getText().getDoubleValue();
+	double xmax = m_edtXmax.getText().getDoubleValue();
+	double ymin = m_edtYmin.getText().getDoubleValue();
+	double ymax = m_edtYmax.getText().getDoubleValue();
+	juce::Component* parent = getParentComponent();
+	juce::ActionBroadcaster* broadcaster = dynamic_cast<juce::ActionBroadcaster*>(parent);
+	if (broadcaster != nullptr) {
+		broadcaster->sendActionMessage("SetSelectionFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
+			juce::String(ymin) + ":" + juce::String(ymax));
+		broadcaster->sendActionMessage("ZoomFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
+			juce::String(ymin) + ":" + juce::String(ymax));
+	}
+}
+
+//==============================================================================
+// FrameComponent : Arrondi au km de la zone d'export
+//==============================================================================
+void FrameComponent::RoundFrame()
+{
+	double xmin = m_edtXmin.getText().getDoubleValue();
+	xmin = floor(xmin / 1000.) * 1000.;
+	m_edtXmin.setText(juce::String(xmin, 2));
+	double xmax = m_edtXmax.getText().getDoubleValue();
+	xmax = ceil(xmax / 1000.) * 1000.;
+	m_edtXmax.setText(juce::String(xmax, 2));
+	double ymin = m_edtYmin.getText().getDoubleValue();
+	ymin = floor(ymin / 1000.) * 1000.;
+	m_edtYmin.setText(juce::String(ymin, 2));
+	double ymax = m_edtYmax.getText().getDoubleValue();
+	ymax = ceil(ymax / 1000.) * 1000.;
+	m_edtYmax.setText(juce::String(ymax, 2));
+	juce::Component* parent = getParentComponent();
+	juce::ActionBroadcaster* broadcaster = dynamic_cast<juce::ActionBroadcaster*>(parent);
+	if (broadcaster != nullptr)
+		broadcaster->sendActionMessage("SetSelectionFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
+																		juce::String(ymin) + ":" + juce::String(ymax));
+}
+
+//==============================================================================
+// FrameComponent : Recuperation du cadre
+//==============================================================================
+void FrameComponent::GetFrame(double& xmin, double& ymin, double& xmax, double& ymax)
+{
+	xmin = m_edtXmin.getText().getDoubleValue();
+	xmax = m_edtXmax.getText().getDoubleValue();
+	ymin = m_edtYmin.getText().getDoubleValue();
+	ymax = m_edtYmax.getText().getDoubleValue();
+}

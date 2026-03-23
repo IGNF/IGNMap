@@ -17,38 +17,15 @@
 // Constructeur
 //==============================================================================
 ExportImageDlg::ExportImageDlg(XGeoBase* base, double xmin, double ymin, double xmax, 
-                                               double ymax, double gsd) : 
-                m_MapThread("MapThread"), m_btnKm("Km", juce::DrawableButton::ImageRaw)
+                                               double ymax, double gsd, juce::ActionListener* listener) :
+                m_MapThread("MapThread"), m_FrameCmp(xmin, ymin, xmax, ymax)
 {
   m_Base = base;
+  if (listener != nullptr)
+    addActionListener(listener);
 
-  addAndMakeVisible(m_lblXmin);
-  m_lblXmin.setBounds(10, 50, 50, 24);
-  m_lblXmin.setText(juce::translate("Xmin : "), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtXmin);
-  m_edtXmin.setBounds(60, 50, 100, 24);
-  m_edtXmin.setText(juce::String(xmin, 2));
-
-  addAndMakeVisible(m_lblXmax);
-  m_lblXmax.setBounds(350, 50, 50, 24);
-  m_lblXmax.setText(juce::translate(" : Xmax"), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtXmax);
-  m_edtXmax.setBounds(240, 50, 100, 24);
-  m_edtXmax.setText(juce::String(xmax, 2));
-
-  addAndMakeVisible(m_lblYmax);
-  m_lblYmax.setBounds(100, 10, 50, 24);
-  m_lblYmax.setText(juce::translate("Ymax : "), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtYmax);
-  m_edtYmax.setBounds(150, 10, 100, 24);
-  m_edtYmax.setText(juce::String(ymax, 2));
-
-  addAndMakeVisible(m_lblYmin);
-  m_lblYmin.setBounds(260, 90, 50, 24);
-  m_lblYmin.setText(juce::translate(" : Ymin"), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtYmin);
-  m_edtYmin.setBounds(150, 90, 100, 24);
-  m_edtYmin.setText(juce::String(ymin, 2));
+  addAndMakeVisible(m_FrameCmp);
+  m_FrameCmp.setBounds(0, 0, 400, 200);
   
   addAndMakeVisible(m_lblGsd);
   m_lblGsd.setBounds(100, 130, 50, 24);
@@ -61,21 +38,6 @@ ExportImageDlg::ExportImageDlg(XGeoBase* base, double xmin, double ymin, double 
   m_btnExport.setButtonText(juce::translate("Export"));
   m_btnExport.setBounds(160, 170, 80, 30);
   m_btnExport.addListener(this);
-
-  addAndMakeVisible(m_btnView);
-  auto image = juce::ImageCache::getFromMemory(BinaryData::View_png, BinaryData::View_pngSize);
-  m_btnView.setImages(false, false, true, image, 1.f, juce::Colours::transparentWhite, 
-                      image, 0.5f, juce::Colours::transparentWhite, image, 1.f, juce::Colours::transparentWhite);
-  m_btnView.setBounds(160, 50, 40, 24);
-  m_btnView.addListener(this);
-
-  addAndMakeVisible(m_btnKm);
-  juce::DrawableText text_on, text_over;
-  text_on.setText("Km"); text_over.setText("Km");
-  text_on.setColour(juce::Colours::red); text_over.setColour(juce::Colours::blue);
-  m_btnKm.setImages(&text_on, &text_over);
-  m_btnKm.setBounds(200, 50, 40, 24);
-  m_btnKm.addListener(this);
 
   m_progressBar = new juce::ProgressBar(m_dProgress);
   addAndMakeVisible(m_progressBar);
@@ -109,46 +71,6 @@ void ExportImageDlg::buttonClicked(juce::Button* button)
     return;
   if (button == &m_btnExport)
     Export();
-  if (button == &m_btnView)
-    ViewFrame();
-  if (button == &m_btnKm)
-    RoundFrame();
-}
-
-//==============================================================================
-// Affichage de la zone d'export
-//==============================================================================
-void ExportImageDlg::ViewFrame()
-{
-  double xmin = m_edtXmin.getText().getDoubleValue();
-  double xmax = m_edtXmax.getText().getDoubleValue();
-  double ymin = m_edtYmin.getText().getDoubleValue();
-  double ymax = m_edtYmax.getText().getDoubleValue();
-  sendActionMessage("SetSelectionFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
-    juce::String(ymin) + ":" + juce::String(ymax));
-  sendActionMessage("ZoomFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
-    juce::String(ymin) + ":" + juce::String(ymax));
-}
-
-//==============================================================================
-// Arrondi au km de la zone d'export
-//==============================================================================
-void ExportImageDlg::RoundFrame()
-{
-  double xmin = m_edtXmin.getText().getDoubleValue();
-  xmin = floor(xmin / 1000.) * 1000.;
-  m_edtXmin.setText(juce::String(xmin, 2));
-  double xmax = m_edtXmax.getText().getDoubleValue();
-  xmax = ceil(xmax / 1000.) * 1000.;
-  m_edtXmax.setText(juce::String(xmax, 2));
-  double ymin = m_edtYmin.getText().getDoubleValue();
-  ymin = floor(ymin / 1000.) * 1000.;
-  m_edtYmin.setText(juce::String(ymin, 2));
-  double ymax = m_edtYmax.getText().getDoubleValue();
-  ymax = ceil(ymax / 1000.) * 1000.;
-  m_edtYmax.setText(juce::String(ymax, 2));
-  sendActionMessage("SetSelectionFrame:" + juce::String(xmin) + ":" + juce::String(xmax) + ":" +
-    juce::String(ymin) + ":" + juce::String(ymax));
 }
 
 //==============================================================================
@@ -168,11 +90,8 @@ void ExportImageDlg::Export()
     AppUtil::DownloadNbTry = 10;
     return;
   }
-
-  double xmin = m_edtXmin.getText().getDoubleValue();
-  double xmax = m_edtXmax.getText().getDoubleValue();
-  double ymin = m_edtYmin.getText().getDoubleValue();
-  double ymax = m_edtYmax.getText().getDoubleValue();
+  double xmin = 0., ymin = 0., xmax = 0., ymax = 0.;
+  m_FrameCmp.GetFrame(xmin, ymin, xmax, ymax);
   double gsd = m_edtGsd.getText().getDoubleValue();
   m_nW = (int)((xmax - xmin) / gsd);
   m_nH = (int)((ymax - ymin) / gsd);

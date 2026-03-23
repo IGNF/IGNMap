@@ -156,11 +156,12 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 				sendActionMessage("ZoomGsd:" + juce::String(V->Resolution(), 2)); };
 		std::function< void() > LayerRemove = [=]() { // Retire la couche
 			sendActionMessage("RemoveDtmClass"); };
+		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
+			gClassViewerMgr.AddClassViewer(dtmClass->Name(), dtmClass, this); };
 		std::function< void() > ComputeDeltaZ = [=]() { // Calcul des deltaZ importants
 			sendActionMessage("ComputeDeltaZ"); };
-		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			gClassViewerMgr.AddClassViewer(dtmClass->Name(), dtmClass, this);
-			};
+		std::function< void() > ComputeDeltaVector = [=]() { // Calcul des delta entre noeuds et vecteurs
+			sendActionMessage("ComputeDeltaVector"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -169,6 +170,7 @@ void DtmViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 		menu.addItem(juce::translate("View Objects"), ViewObjects);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute Delta Z"), ComputeDeltaZ);
+		menu.addItem(juce::translate("Compute Delta Vector"), ComputeDeltaVector);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -601,6 +603,10 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		ComputeDeltaZ(T);
 		return;
 	}
+	if (message == "ComputeDeltaVector") {
+		ComputeDeltaVector(T);
+		return;
+	}
 	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
@@ -735,6 +741,101 @@ void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
 	juce::StringArray Att;
 	Att.add("DeltaZ decimal (10,2)");
 	M.CreateMifMidFile(m_Cache, juce::String("DeltaZ_") + juce::String(deltaZ,2) , Att);
+	M.runThread();
+	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	GeoTools::ColorizeClasses(m_Base);
+	sendActionMessage("UpdateVector");
+}
+
+//==============================================================================
+// Calcul des delta Z entre noeuds et vecteurs
+//==============================================================================
+void DtmLayersViewer::ComputeDeltaVector(std::vector< XGeoClass*> T)
+{
+	std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
+	asyncAlertWindow = std::make_unique<juce::AlertWindow>(juce::translate("Compute Delta Vector"),
+		juce::translate("This tool allows to find the delta Z between nodes and vectorial data"),
+		juce::MessageBoxIconType::QuestionIcon);
+
+	asyncAlertWindow->addTextEditor("DeltaZ", "5.0", juce::translate("Delta Z minimum :"));
+	juce::TextEditor* deltaZ_editor = asyncAlertWindow->getTextEditor("DeltaZ");
+	deltaZ_editor->setInputRestrictions(5, "0123456789.");
+	asyncAlertWindow->addTextEditor("ID", "", juce::translate("ID :"));
+	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
+
+	if (asyncAlertWindow->runModalLoop() == 0)
+		return;
+	double deltaZ = asyncAlertWindow->getTextEditorContents("DeltaZ").getDoubleValue();
+	juce::String idStr = asyncAlertWindow->getTextEditorContents("ID");
+
+	// Thread de traitement
+	class MyTask : public ThreadClassProcessor {
+	public:
+		double deltaZ = 5.;
+		juce::String idStr;
+		XGeoBase* m_Base = nullptr;
+
+		MyTask() : ThreadClassProcessor(juce::translate("Compute Delta Z Vector..."), true) { ; }
+
+		virtual bool Process(XGeoVector* V)
+		{
+			if (V->TypeVector() != XGeoVector::DTM)
+				return false;
+			XGeoFDtm* dtm = dynamic_cast<XGeoFDtm*>(V);
+			if (dtm == nullptr)
+				return false;
+
+			std::ofstream mif, mid;
+			mif.open(m_strMifFile.toStdString(), std::ios::out | std::ios::app);
+			mid.open(m_strMidFile.toStdString(), std::ios::out | std::ios::app);
+			mif.setf(std::ios::fixed); mif.precision(2);
+			mid.setf(std::ios::fixed); mid.precision(2);
+
+			for (uint32_t i = 0; i < m_Base->NbLayer(); i++) {
+				XGeoLayer* layer = m_Base->Layer(i);
+				if (!layer->Visible()) continue;
+				for (uint32_t p = 0; p < layer->NbClass(); p++) {
+					XGeoClass* classe = layer->Class(p);
+					if (!classe->Visible()) continue;
+					for (uint32_t j = 0; j < classe->NbVector(); j++) {
+						XGeoVector* vector = classe->Vector(j);
+						if (!vector->Visible()) continue;
+						if (!vector->Is3D()) continue;
+						if (!vector->LoadGeom()) continue;
+						for (uint32_t k = 0; k < vector->NbPt(); k++) {
+							juce::String id;
+							double z = vector->Z(k);
+							if (z <= XGEO_NO_DATA) continue;
+							if (z <= -99.0) continue;         // Cas du Shapefile IGN
+
+							XPt2D P = vector->Pt(k);
+							double zmnt = dtm->Z(P);
+							if (zmnt <= XGEO_NO_DATA) continue;
+							if (fabs(zmnt - z) < deltaZ) continue;
+							if (id.isEmpty())
+								id = vector->FindAttribute(idStr.toStdString());
+
+							mif << "POINT " << P.X << " " << P.Y << std::endl;
+							mid << (zmnt - z) << "\t" << classe->Name() << "\t" << id << std::endl;
+						}
+					}
+				}
+			}
+			return true;
+		}
+	};
+
+	MyTask M;
+	M.deltaZ = deltaZ;
+	M.idStr = idStr;
+	M.m_T = T;
+	M.m_Base = m_Base;
+	juce::StringArray Att;
+	Att.add("DeltaZ decimal (10,2)");
+	Att.add("Class char (64)");
+	Att.add("ID char (64)");
+	M.CreateMifMidFile(m_Cache, juce::String("DeltaZVector_") + juce::String(deltaZ, 2), Att);
 	M.runThread();
 	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);

@@ -18,6 +18,7 @@
 #include "WmtsTmsViewer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
+#include "ExportDtmDlg.h"
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
 #include "ObjectViewer.h"
@@ -224,6 +225,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		juce::PopupMenu ExportSubMenu;
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportVector);
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportImage);
+		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportDtm);
 		ExportSubMenu.addCommandItem(&m_CommandManager, CommandIDs::menuExportLas);
 		menu.addSubMenu(juce::translate("Export"), ExportSubMenu);
 
@@ -301,7 +303,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuImportVectorFile, CommandIDs::menuImportVectorFolder, 
 		CommandIDs::menuImportImageFile, CommandIDs::menuImportImageFolder, CommandIDs::menuImportDtmFile,
 		CommandIDs::menuImportDtmFolder, CommandIDs::menuImportLasFile, CommandIDs::menuImportLasFolder,
-		CommandIDs::menuExportVector, CommandIDs::menuExportImage, CommandIDs::menuExportLas,
+		CommandIDs::menuExportVector, CommandIDs::menuExportImage, CommandIDs::menuExportLas, CommandIDs::menuExportDtm,
 		CommandIDs::menuTest, CommandIDs::menuShowSidePanel,
 		CommandIDs::menuShowVectorLayers, CommandIDs::menuShowImageLayers, CommandIDs::menuShowDtmLayers, 
 		CommandIDs::menuShowLasLayers, CommandIDs::menuShowSelection, CommandIDs::menuShowImageOptions, CommandIDs::menuShowAnnotations,
@@ -421,6 +423,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 		break;
 	case CommandIDs::menuExportImage:
 		result.setInfo(juce::translate("Export image"), juce::translate("Export image"), "Menu", 0);
+		break;
+	case CommandIDs::menuExportDtm:
+		result.setInfo(juce::translate("Export DTM"), juce::translate("Export DTM"), "Menu", 0);
 		break;
 	case CommandIDs::menuExportLas:
 		result.setInfo(juce::translate("Export LAS"), juce::translate("Export LAS"), "Menu", 0);
@@ -611,10 +616,13 @@ bool MainComponent::perform(const InvocationInfo& info)
 		ExportVector();
 		break;
 	case CommandIDs::menuExportImage:
-		ExportImage();
+		LaunchExport(menuExportImage);
+		break;
+	case CommandIDs::menuExportDtm:
+		LaunchExport(menuExportDtm);
 		break;
 	case CommandIDs::menuExportLas:
-		ExportLas();
+		LaunchExport(menuExportLas);
 		break;
 	case CommandIDs::menuShowSidePanel:
 		return ShowHideSidePanel();
@@ -1425,6 +1433,47 @@ bool MainComponent::AddDtmServer()
 }
 
 //==============================================================================
+// Lance un export
+//==============================================================================
+bool MainComponent::LaunchExport(CommandIDs id)
+{
+	m_MapView.get()->StopThread();
+	XFrame F = m_MapView.get()->GetSelectionFrame();
+	if (F.IsEmpty())
+		F = m_MapView.get()->GetViewFrame();
+	double gsd = m_MapView.get()->GetGsd();
+	juce::Component* dlg;
+	juce::String title;
+	switch (id) {
+	case menuExportImage:
+		dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), gsd, this);
+		title = juce::translate("Export Image");
+		break;
+	case menuExportLas:
+		dlg = new ExportLasDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), this);
+		title = juce::translate("Export LAS");
+		break;
+	case menuExportDtm:
+		dlg = new ExportDtmDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), gsd, this);
+		title = juce::translate("Export DTM");
+		break;
+	default:	return false;
+	}
+	juce::DialogWindow::LaunchOptions options;
+	options.content.setOwned(dlg);
+	options.content->setSize(410, 320);
+	options.dialogTitle = title;
+	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
+	options.escapeKeyTriggersCloseButton = true;
+	options.useNativeTitleBar = false;
+	options.resizable = false;
+
+	options.launchAsync();
+
+	return true;
+}
+
+//==============================================================================
 // Export vectoriel
 //==============================================================================
 bool MainComponent::ExportVector()
@@ -1467,52 +1516,6 @@ bool MainComponent::ExportVector()
 	task.runThread();
 	
 	juce::File(foldername).revealToUser();
-	return true;
-}
-
-//==============================================================================
-// Export sous forme d'image
-//==============================================================================
-bool MainComponent::ExportImage()
-{
-	m_MapView.get()->StopThread();
-	XFrame F = m_MapView.get()->GetSelectionFrame();
-	if (F.IsEmpty())
-		F = m_MapView.get()->GetViewFrame();
-	double gsd = m_MapView.get()->GetGsd();
-	ExportImageDlg* dlg = new ExportImageDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax), gsd);
-	dlg->addActionListener(this);
-	juce::DialogWindow::LaunchOptions options;
-	options.content.setOwned(dlg);
-	options.content->setSize(410, 300);
-	options.dialogTitle = juce::translate("Export Image");
-	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
-	options.escapeKeyTriggersCloseButton = true;
-	options.useNativeTitleBar = false;
-	options.resizable = false;
-
-	options.launchAsync();
-	return true;
-}
-
-//==============================================================================
-// Export sous forme d'un nuage de points LAS
-//==============================================================================
-bool MainComponent::ExportLas()
-{
-	m_MapView.get()->StopThread();
-	XFrame F = m_MapView.get()->GetSelectionFrame();
-	ExportLasDlg* dlg = new ExportLasDlg(&m_GeoBase, XRint(F.Xmin), XRint(F.Ymin), XRint(F.Xmax), XRint(F.Ymax));
-	juce::DialogWindow::LaunchOptions options;
-	options.content.setOwned(dlg);
-	options.content->setSize(410, 300);
-	options.dialogTitle = juce::translate("Export LAS");
-	options.dialogBackgroundColour = juce::Colour(0xff0e345a);
-	options.escapeKeyTriggersCloseButton = true;
-	options.useNativeTitleBar = false;
-	options.resizable = false;
-
-	options.runModal();
 	return true;
 }
 
@@ -1604,6 +1607,31 @@ void MainComponent::ShowHidePanel(juce::Component* component)
 //==============================================================================
 void MainComponent::Test()
 {
+	juce::AlertWindow* window = new juce::AlertWindow("Export STL", "", juce::MessageBoxIconType::NoIcon, this);
+	XFrame F = m_MapView.get()->GetSelectionFrame();
+	FrameComponent* frame = new FrameComponent(F.Xmin, F.Ymin, F.Xmax, F.Ymax);
+	frame->setBounds(0, 0, 400, 130);
+	window->addCustomComponent(frame);
+	window->addTextEditor("Scale", "10000", juce::translate("Planimetric Scale 1 :"));
+	window->addTextEditor("ZFactor", "1", juce::translate("ZFactor"));
+	window->addTextEditor("Step", "1", juce::translate("Step (mm)"));
+
+
+
+	window->addButton("Cancel", 0);
+	window->addButton("OK", 1);
+
+
+	window->enterModalState(true, juce::ModalCallbackFunction::create([window, frame, ref = SafePointer{ this }](int result)
+		{
+			if (ref == nullptr)
+				return;
+			juce::String text = window->getTextEditorContents("Champ1");
+			ref->AboutIGNMap();
+			delete frame;
+			delete window;
+		}));
+
 	// AddMvtServer("https://data.geopf.fr/tms/1.0.0/IGNF_NUAGES-DE-POINTS-LIDAR-HD-produit", "pbf", "", 256, 256, 16);
 
 	/* Creation d'un differentiel MNS*/

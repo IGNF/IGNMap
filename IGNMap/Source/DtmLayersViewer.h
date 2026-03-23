@@ -101,6 +101,7 @@ public:
 
 	// Algorithmes
 	void ComputeDeltaZ(std::vector< XGeoClass*>);
+	void ComputeDeltaVector(std::vector< XGeoClass*>);
 
 private:
 	XGeoBase* m_Base;

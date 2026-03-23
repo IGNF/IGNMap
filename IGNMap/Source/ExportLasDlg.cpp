@@ -216,37 +216,15 @@ void LasExportThread::ExportLas(GeoLAS* las)
 // Constructeur
 //==============================================================================
 ExportLasDlg::ExportLasDlg(XGeoBase* base, double xmin, double ymin, double xmax,
-                           double ymax) : m_ExportThread("ExportThread")
+                           double ymax, juce::ActionListener* listener) :
+                            m_ExportThread("ExportThread"), m_FrameCmp(xmin, ymin, xmax, ymax)
 {
   m_Base = base;
+  if (listener != nullptr)
+    addActionListener(listener);
 
-  addAndMakeVisible(m_lblXmin);
-  m_lblXmin.setBounds(10, 50, 50, 24);
-  m_lblXmin.setText(juce::translate("Xmin : "), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtXmin);
-  m_edtXmin.setBounds(60, 50, 100, 24);
-  m_edtXmin.setText(juce::String(xmin, 2));
-
-  addAndMakeVisible(m_lblXmax);
-  m_lblXmax.setBounds(350, 50, 50, 24);
-  m_lblXmax.setText(juce::translate(" : Xmax"), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtXmax);
-  m_edtXmax.setBounds(240, 50, 100, 24);
-  m_edtXmax.setText(juce::String(xmax, 2));
-
-  addAndMakeVisible(m_lblYmax);
-  m_lblYmax.setBounds(100, 10, 50, 24);
-  m_lblYmax.setText(juce::translate("Ymax : "), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtYmax);
-  m_edtYmax.setBounds(150, 10, 100, 24);
-  m_edtYmax.setText(juce::String(ymax, 2));
-
-  addAndMakeVisible(m_lblYmin);
-  m_lblYmin.setBounds(260, 90, 50, 24);
-  m_lblYmin.setText(juce::translate(" : Ymin"), juce::NotificationType::dontSendNotification);
-  addAndMakeVisible(m_edtYmin);
-  m_edtYmin.setBounds(150, 90, 100, 24);
-  m_edtYmin.setText(juce::String(ymin, 2));
+  addAndMakeVisible(m_FrameCmp);
+  m_FrameCmp.setBounds(0, 0, 400, 200);
 
   addAndMakeVisible(m_btnLaz);
   m_btnLaz.setButtonText(juce::translate("LAZ Compression"));
@@ -300,11 +278,7 @@ void ExportLasDlg::buttonClicked(juce::Button* button)
 
   m_btnExport.setButtonText(juce::translate("Cancel"));
 
-  m_Frame.Xmin = m_edtXmin.getText().getDoubleValue();
-  m_Frame.Xmax = m_edtXmax.getText().getDoubleValue();
-  m_Frame.Ymin = m_edtYmin.getText().getDoubleValue();
-  m_Frame.Ymax = m_edtYmax.getText().getDoubleValue();
-  
+  m_FrameCmp.GetFrame(m_Frame.Xmin, m_Frame.Ymin, m_Frame.Xmax, m_Frame.Ymax);
   m_dProgress = 0.;
 
   // Creation du fichier LAS

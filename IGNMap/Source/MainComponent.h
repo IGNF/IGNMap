@@ -52,7 +52,7 @@ public:
     menuTranslate, menuTest, menuPreferences,
     menuImportVectorFolder, menuImportVectorFile, menuImportImageFolder, menuImportImageFile,
     menuImportDtmFolder, menuImportDtmFile, menuImportLasFile, menuImportLasFolder,
-    menuExportVector, menuExportImage, menuExportLas,
+    menuExportVector, menuExportImage, menuExportLas, menuExportDtm,
     menuShowSidePanel, menuShow3DViewer,
     menuShowVectorLayers, menuShowImageLayers, menuShowDtmLayers, menuShowLasLayers, menuShowSelection, menuShowImageOptions,
     menuShowAnnotations, menuAddOSM, menuAddPlanIGN, menuAddWmtsServer, menuAddTmsServer, menuAddDtmServer,
@@ -149,9 +149,8 @@ private:
   bool ImportDtmFile(juce::String dtmfile = "");
   bool ImportLasFile(juce::String lasfile = "");
 
+  bool LaunchExport(CommandIDs id);
   bool ExportVector(); 
-  bool ExportImage();
-  bool ExportLas();
 
   bool AddOSMServer();
   bool AddWmtsServer();

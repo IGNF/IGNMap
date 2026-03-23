@@ -78,3 +78,43 @@ public:
 		setColour(juce::TextButton::textColourOffId, color.contrasting());
 	}
 };
+
+//==============================================================================
+// FieldEditor : composant pour remplir un champ
+//==============================================================================
+class FieldEditor : public juce::Component {
+public:
+	enum FieldType { String = 0, Double = 1, Int = 2, Uint = 3};
+	FieldEditor() { ; }
+	void SetEditor(juce::String label, juce::String value, FieldType type, int labelW, int editorW);
+
+	juce::String StringValue() { return m_Editor.getText(); }
+	double DoubleValue() { return m_Editor.getText().getDoubleValue(); }
+	int IntValue() { return m_Editor.getText().getIntValue(); }
+	uint32_t UintValue() { return (uint32_t)m_Editor.getText().getIntValue(); }
+	void SetReadOnly(bool shouldBeReadOnly) { m_Editor.setReadOnly(shouldBeReadOnly); }
+
+private:
+	juce::Label m_Label;
+	juce::TextEditor	m_Editor;
+};
+
+//==============================================================================
+// FrameComponent : composant pour visualiser et modifier un cadre
+//==============================================================================
+class FrameComponent : public juce::Component, public juce::Button::Listener, public juce::ActionBroadcaster {
+public:
+	FrameComponent(double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0.);
+	virtual ~FrameComponent() { ; }
+	void buttonClicked(juce::Button*) override;
+	void GetFrame(double& xmin, double& ymin, double& xmax, double& ymax);
+
+private:
+	juce::TextEditor	m_edtXmin, m_edtYmin, m_edtXmax, m_edtYmax;
+	juce::Label m_lblXmin, m_lblYmin, m_lblXmax, m_lblYmax;
+	juce::ImageButton m_btnView;
+	juce::DrawableButton m_btnKm;
+
+	void ViewFrame();
+	void RoundFrame();
+};

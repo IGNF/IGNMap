@@ -9,6 +9,7 @@
 
 #include "XShapefileConverter.h"
 #include "../XTool/XGeoBase.h"
+#include "../XTool/XPath.h"
 #include "XShapefile.h"
 #include "XShapefileRecord.h"
 #include "XDBase.h"
@@ -25,7 +26,7 @@ bool XShapefileConverter::ConvertBase(XGeoBase* base, const char* folder, XWait*
 		XGeoLayer* layer = base->Layer(i);
 		if (!layer->Visible())
 			continue;
-    layer_folder = (std::string)folder + "/" + layer->Name();
+    layer_folder = (std::string)folder + XPath::gDefaultSep + layer->Name();
 		for (uint32_t j = 0; j < layer->NbClass(); j++) {
 			XGeoClass* classe = layer->Class(j);
 			XWaitStatus(wait, ("Export de la classe " + classe->Name()).c_str());
@@ -48,7 +49,7 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 	XShapefile shapefile;
 	XGeoVector* vector;
 	XDBaseFile dbase;
-  std::string filename = (std::string)folder + "/" + classe->Name();
+  std::string filename = (std::string)folder + XPath::gDefaultSep + classe->Name();
 
 	// Filtrage des classes raster
   if (classe->NbVector() < 1)

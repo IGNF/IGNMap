@@ -12,6 +12,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "GeoBase.h"
+#include "AppUtil.h"
 
 class XGeoBase;
 
@@ -46,16 +47,17 @@ private:
 //==============================================================================
 // Dialogue pour l'export
 //==============================================================================
-class ExportLasDlg : public juce::Component, public juce::Button::Listener, private juce::Timer {
+class ExportLasDlg : public juce::Component, public juce::Button::Listener, public juce::ActionBroadcaster, private juce::Timer {
 public:
-	ExportLasDlg(XGeoBase* base, double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0.);
+	ExportLasDlg(XGeoBase* base, double xmin = 0., double ymin = 0., double xmax = 0., double ymax = 0.,
+								juce::ActionListener* listener = nullptr);
 	virtual ~ExportLasDlg();
 	void buttonClicked(juce::Button*) override;
 	
 private:
 	XGeoBase* m_Base;
-	juce::TextEditor	m_edtXmin, m_edtYmin, m_edtXmax, m_edtYmax, m_edtFilename;
-	juce::Label m_lblXmin, m_lblYmin, m_lblXmax, m_lblYmax;
+	FrameComponent m_FrameCmp;
+	juce::TextEditor m_edtFilename;
 	juce::TextButton m_btnExport;
 	juce::ToggleButton m_btnLaz;
 

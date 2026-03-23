@@ -586,6 +586,9 @@ void MapThread::DrawSelection()
 		return;
 	juce::Graphics g(m_Overlay);
 	juce::Rectangle<int> clipR = juce::Rectangle<int>(0, 0, m_Overlay.getWidth(), m_Overlay.getHeight());
+	juce::Path textPath;
+	juce::GlyphArrangement glyphs;
+	juce::PathStrokeType strokeHaloType(2.5f);
 
 	for (uint32_t i = 0; i < m_GeoBase->NbSelection(); i++) {
 		m_Path.clear();
@@ -639,6 +642,11 @@ void MapThread::DrawSelection()
 				if ((W < 100) && (H < 100))
 					needText = false;
 				float last_text_X = 0., last_text_Y = 0.;
+				double* Z = nullptr;
+				if ((needText) && (V->Is3D())) {
+					V->LoadGeom();
+					Z = V->Z();
+				}
 				while (iter.next()) {
 					numPoint++;
 					if (!clipR.contains((int)iter.x1, (int)iter.y1))
@@ -651,17 +659,28 @@ void MapThread::DrawSelection()
 						if ((fabs(last_text_X - iter.x1) < 10) && (fabs(last_text_Y - iter.y1) < 10))
 							continue;
 						if ((!m_bFill) || (iter.elementType != juce::Path::Iterator::startNewSubPath)) {
+							if (Z != nullptr)
+								glyphs.addLineOfText(g.getCurrentFont(), juce::String(Z[numPoint - 1], 2), iter.x1 + 5.f, iter.y1);
+							else
+								glyphs.addLineOfText(g.getCurrentFont(), juce::String(numPoint), iter.x1 + 5.f, iter.y1);
+							glyphs.createPath(textPath);
+							g.setOpacity(1.f);
+							g.strokePath(textPath, strokeHaloType);
+							g.setColour(juce::Colours::black);
+							g.fillPath(textPath);
+							/*
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 4, (int)iter.y1);
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 6, (int)iter.y1);
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1 + 1);
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1 - 1);
 							g.setColour(juce::Colours::black);
-							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1);
+							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 5, (int)iter.y1);*/
 							last_text_X = iter.x1;
 							last_text_Y = iter.y1;
 						}
 					}
 				}
+				V->Unload();
 			}
 		}
 

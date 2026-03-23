@@ -158,7 +158,19 @@ void ClassViewerModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 		sendActionMessage("UpdateSort");
 		return;
 	}
-	std::multimap<std::string, XGeoVector*> map;
+
+	struct ModCmp
+	{
+		bool operator()(const std::string& A, const std::string& B) const
+		{
+			juce::String Astr = A, Bstr = B;
+			if (Astr.compareNatural(Bstr) < 0)
+				return true;
+			return false;
+		}
+	};
+
+	std::multimap<std::string, XGeoVector*, ModCmp> map;
 	std::vector<std::string> Att;
 	XGeoVector* V;
 	if (m_Proxy.size() > 1000)
@@ -169,7 +181,7 @@ void ClassViewerModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 		V->ReadAttributes(Att);
 		map.emplace(Att[2 * (newSortColumnId - ClassViewerModel::Column::Attribut) + 1], V);
 	}
-	std::multimap<std::string, XGeoVector*>::iterator iter;
+	std::multimap<std::string, XGeoVector*, ModCmp>::iterator iter;
 	m_Proxy.clear();
 	for (iter = map.begin(); iter != map.end(); iter++) 
 		m_Proxy.push_back(iter->second);

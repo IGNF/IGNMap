@@ -447,6 +447,9 @@
       <FILE id="Ysux8W" name="DtmShader.h" compile="0" resource="0" file="Source/DtmShader.h"/>
       <FILE id="dwqtwl" name="DtmTmsLayer.cpp" compile="1" resource="0" file="Source/DtmTmsLayer.cpp"/>
       <FILE id="qkxe1N" name="DtmTmsLayer.h" compile="0" resource="0" file="Source/DtmTmsLayer.h"/>
+      <FILE id="VxgmFP" name="ExportDtmDlg.cpp" compile="1" resource="0"
+            file="Source/ExportDtmDlg.cpp"/>
+      <FILE id="bXNpD4" name="ExportDtmDlg.h" compile="0" resource="0" file="Source/ExportDtmDlg.h"/>
       <FILE id="IUCQEA" name="ExportImageDlg.cpp" compile="1" resource="0"
             file="Source/ExportImageDlg.cpp"/>
       <FILE id="bJ7a4v" name="ExportImageDlg.h" compile="0" resource="0"
@@ -603,6 +606,8 @@
       <FILE id="V8CXLc" name="XStereoModel.cpp" compile="1" resource="0"
             file="../XToolAlgo/XStereoModel.cpp"/>
       <FILE id="jAjGmy" name="XStereoModel.h" compile="0" resource="0" file="../XToolAlgo/XStereoModel.h"/>
+      <FILE id="c6KcwM" name="XStlWriter.cpp" compile="1" resource="0" file="../XToolAlgo/XStlWriter.cpp"/>
+      <FILE id="UHW6iB" name="XStlWriter.h" compile="0" resource="0" file="../XToolAlgo/XStlWriter.h"/>
       <FILE id="QpqOKx" name="XTime.cpp" compile="1" resource="0" file="../XToolAlgo/XTime.cpp"/>
       <FILE id="PRYRGz" name="XTime.h" compile="0" resource="0" file="../XToolAlgo/XTime.h"/>
       <FILE id="rmvQEQ" name="XToneMapper.cpp" compile="1" resource="0" file="../XToolAlgo/XToneMapper.cpp"/>

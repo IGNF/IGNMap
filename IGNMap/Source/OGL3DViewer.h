@@ -71,6 +71,7 @@ protected:
   void DrawDtm();
   void DrawPolyVector(XGeoVector* V);
   void DrawLineVector(XGeoVector* V);
+  void DrawPointVector(XGeoVector* V);
   void Select(int u, int v);
   void DrawTarget();
 
@@ -98,11 +99,13 @@ private:
   MapThread     m_MapThread;
 
   uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
-  uint32_t  m_nMaxPolyPt;        // Nombre maximum de points polygone
-  uint32_t  m_nMaxLinePt;        // Nombre maximum de points polyligne
+  uint32_t  m_nMaxPolyPt;       // Nombre maximum de points polygone
+  uint32_t  m_nMaxLinePt;       // Nombre maximum de points polyligne
+  uint32_t  m_nMaxVecPointPt;   // Nombre maximum de points vectoriels
   uint32_t  m_nNbLasVertex;     // Nombre de points LAS
   uint32_t  m_nNbPolyVertex;    // Nombre de points polygone
   uint32_t  m_nNbLineVertex;    // Nombre de points polyligne
+  uint32_t  m_nNbVecPointVertex;// Nombre de points vectoriels
   uint32_t  m_nNbDtmVertex;     // Nombre de points DTM
   uint32_t  m_nNbPoly;          // Nombre de polygones
   uint32_t  m_nNbLine;          // Nombre de polylignes
@@ -117,6 +120,7 @@ private:
   GLuint    m_LineBufferID;     // Points des polylignes
   GLuint    m_LineVertexArrayID;
   GLuint    m_LineElementID;
+  GLuint    m_VecPointBufferID;  // Points des ponctuels vectoriels
   GLuint    m_RepereID;         // Points du repere
   GLuint    m_PtBufferID;       // Points selectionnes
   GLuint    m_TargetID;         // Point cible

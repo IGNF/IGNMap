@@ -254,6 +254,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
   $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
   $(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o \
+  $(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o \
   $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
   $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
   $(JUCE_OBJDIR)/GeoBase_343e9923.o \
@@ -311,6 +312,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XOrthoModel_aa1c1383.o \
   $(JUCE_OBJDIR)/XSentinelScene_b6bda160.o \
   $(JUCE_OBJDIR)/XStereoModel_40b428e9.o \
+  $(JUCE_OBJDIR)/XStlWriter_8f030b96.o \
   $(JUCE_OBJDIR)/XTime_636b2fbf.o \
   $(JUCE_OBJDIR)/XToneMapper_61a81e85.o \
   $(JUCE_OBJDIR)/XWmts_7b5ed8c7.o \
@@ -1307,6 +1309,11 @@ $(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o: ../../Source/DtmTmsLayer.cpp
 	@echo "Compiling DtmTmsLayer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o: ../../Source/ExportDtmDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ExportDtmDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o: ../../Source/ExportImageDlg.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ExportImageDlg.cpp"
@@ -1590,6 +1597,11 @@ $(JUCE_OBJDIR)/XSentinelScene_b6bda160.o: ../../../XToolAlgo/XSentinelScene.cpp
 $(JUCE_OBJDIR)/XStereoModel_40b428e9.o: ../../../XToolAlgo/XStereoModel.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XStereoModel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XStlWriter_8f030b96.o: ../../../XToolAlgo/XStlWriter.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XStlWriter.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XTime_636b2fbf.o: ../../../XToolAlgo/XTime.cpp
