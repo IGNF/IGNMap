@@ -348,6 +348,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XWebPImage_4b8ccc71.o \
   $(JUCE_OBJDIR)/XZlibCodec_7db0ce3d.o \
   $(JUCE_OBJDIR)/XAnnotation_f349c011.o \
+  $(JUCE_OBJDIR)/XCsv_cb1cb8ae.o \
   $(JUCE_OBJDIR)/XDBase_47d5afbd.o \
   $(JUCE_OBJDIR)/XDxf_7a9b6fa.o \
   $(JUCE_OBJDIR)/XGeoJson_9a8e4381.o \
@@ -1777,6 +1778,11 @@ $(JUCE_OBJDIR)/XZlibCodec_7db0ce3d.o: ../../../XToolImage/XZlibCodec.cpp
 $(JUCE_OBJDIR)/XAnnotation_f349c011.o: ../../../XToolVector/XAnnotation.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XAnnotation.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XCsv_cb1cb8ae.o: ../../../XToolVector/XCsv.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XCsv.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XDBase_47d5afbd.o: ../../../XToolVector/XDBase.cpp

@@ -181,6 +181,7 @@ namespace GeoTools {
   XGeoClass* ImportMifMid(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   XGeoClass* ImportGeoJson(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   XGeoClass* ImportTA(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
+  XGeoClass* ImportCsv(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);
   XGeoClass* ImportDataFolder(juce::String folderName, XGeoBase* base, XGeoVector::eTypeVector type);
   bool ImportVectorFolder(juce::String folderName, XGeoBase* base, int& nb_total, int& nb_imported);
   bool ImportGeoPackage(juce::String fileName, XGeoBase* base, XGeoMap* map = nullptr);

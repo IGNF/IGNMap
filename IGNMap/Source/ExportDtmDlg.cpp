@@ -206,8 +206,8 @@ bool ExportDtmDlg::Export()
     F = layer->Frame();
   double gsd = m_Gsd.DoubleValue();
 
-  double W = F.Width() / gsd;
-  double H = F.Height() / gsd;
+  uint32_t W = (uint32_t)XRint(F.Width() / gsd);
+  uint32_t H = (uint32_t)XRint(F.Height() / gsd);
 
   float* T = new(std::nothrow) float[W * H];
   if (T == nullptr) {

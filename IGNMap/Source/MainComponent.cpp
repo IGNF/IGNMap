@@ -1104,7 +1104,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.1.6";
+	juce::String version = "0.1.7";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
@@ -1153,7 +1153,7 @@ void MainComponent::ImportImageFolder()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json;*.xml");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json;*.xml,*.csv");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -1172,6 +1172,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoTools::ImportGeoJson(filename, &m_GeoBase);
 	if (extension == ".xml")
 		flag = GeoTools::ImportTA(filename, &m_GeoBase);
+	if (extension == ".csv")
+		flag = GeoTools::ImportCsv(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");
@@ -2033,12 +2035,13 @@ void MainComponent::filesDropped(const juce::StringArray& filenames, int /*x*/, 
 		juce::String filename = filenames[i];
 		juce::File file(filename);
 		juce::String ext = file.getFileExtension();
-		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog") || ext.equalsIgnoreCase(".webp") || ext.equalsIgnoreCase(".jpg"))
+		if (ext.equalsIgnoreCase(".jp2") || ext.equalsIgnoreCase(".tif") || ext.equalsIgnoreCase(".cog") || ext.equalsIgnoreCase(".webp") 
+			|| ext.equalsIgnoreCase(".jpg") || ext.equalsIgnoreCase(".png"))
 			ImportImageFile(filename);
 		if (ext.equalsIgnoreCase(".las") || ext.equalsIgnoreCase(".laz") || ext.equalsIgnoreCase(".copc"))
 			ImportLasFile(filename);
 		if (ext.equalsIgnoreCase(".shp") || ext.equalsIgnoreCase(".mif") || ext.equalsIgnoreCase(".gpkg") || ext.equalsIgnoreCase(".json")
-			|| ext.equalsIgnoreCase(".xml"))
+			|| ext.equalsIgnoreCase(".xml") || ext.equalsIgnoreCase(".csv"))
 			ImportVectorFile(filename);
 		if (ext.equalsIgnoreCase(".asc"))
 			ImportDtmFile(filename);

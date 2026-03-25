@@ -171,6 +171,7 @@ countries: fr be mc ch lu
 "Algorithm" = "Algorithme"
 "This tool allows to compute a DTM or a DSM for each LAS file" = "Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS"
 "This tool allows to find the delta Z between successive nodes" = "Cet outil permet de calculer la différence altimétrique entre nœuds successifs"
+"This tool allows to find the delta Z between nodes and vectorial data" = "Cet outil permet de calculer la différence altimétrique entre les nœuds du MNT et les données vectorielles 3D visibles" 
 "Compute DTM/DSM" = "Calcul de MNT / MNS"
 "Compute Delta Vector" = "Différence Vecteur / MNT"
 "Fill NOZ Hole" = "Remplissage des cellules sans valeur"

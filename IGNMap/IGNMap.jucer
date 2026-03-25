@@ -703,6 +703,8 @@
     <GROUP id="{3CC8B6C1-C4FA-5C61-06D1-6CC641737184}" name="XToolVector">
       <FILE id="RVnSNP" name="XAnnotation.cpp" compile="1" resource="0" file="../XToolVector/XAnnotation.cpp"/>
       <FILE id="DSzMgR" name="XAnnotation.h" compile="0" resource="0" file="../XToolVector/XAnnotation.h"/>
+      <FILE id="Jx5MDR" name="XCsv.cpp" compile="1" resource="0" file="../XToolVector/XCsv.cpp"/>
+      <FILE id="q1eWhv" name="XCsv.h" compile="0" resource="0" file="../XToolVector/XCsv.h"/>
       <FILE id="mGDbLH" name="XDBase.cpp" compile="1" resource="0" file="../XToolVector/XDBase.cpp"/>
       <FILE id="xPl9PU" name="XDBase.h" compile="0" resource="0" file="../XToolVector/XDBase.h"/>
       <FILE id="tRKqHO" name="XDxf.cpp" compile="1" resource="0" file="../XToolVector/XDxf.cpp"/>

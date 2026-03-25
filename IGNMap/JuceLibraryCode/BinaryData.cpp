@@ -4641,6 +4641,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"Algorithm\" = \"Algorithme\"\r\n"
 "\"This tool allows to compute a DTM or a DSM for each LAS file\" = \"Cet outil permet de calculer un MNT / MNS pour chaque fichier LAS\"\r\n"
 "\"This tool allows to find the delta Z between successive nodes\" = \"Cet outil permet de calculer la diff\xc3\xa9rence altim\xc3\xa9trique entre n\xc5\x93uds successifs\"\r\n"
+"\"This tool allows to find the delta Z between nodes and vectorial data\" = \"Cet outil permet de calculer la diff\xc3\xa9rence altim\xc3\xa9trique entre les n\xc5\x93uds du MNT et les donn\xc3\xa9""es vectorielles 3D visibles\" \r\n"
 "\"Compute DTM/DSM\" = \"Calcul de MNT / MNS\"\r\n"
 "\"Compute Delta Vector\" = \"Diff\xc3\xa9rence Vecteur / MNT\"\r\n"
 "\"Fill NOZ Hole\" = \"Remplissage des cellules sans valeur\"\r\n"
@@ -4700,7 +4701,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 7755; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 7956; return Translation_fr_txt;
         default: break;
     }
 
