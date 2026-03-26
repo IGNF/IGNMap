@@ -6,6 +6,7 @@ countries: fr be mc ch lu
 "Value" = "Valeur"
 "Quit" = "Quitter"
 "Undo" = "Annuler"
+"Clear" = "Effacer"
 "Yes" = "Oui"
 "No" = "Non"
 "About IGNMap" = "A propos de IGNMap"

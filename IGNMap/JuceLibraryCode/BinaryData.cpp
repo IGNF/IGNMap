@@ -4476,6 +4476,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"Value\" = \"Valeur\"\r\n"
 "\"Quit\" = \"Quitter\"\r\n"
 "\"Undo\" = \"Annuler\"\r\n"
+"\"Clear\" = \"Effacer\"\r\n"
 "\"Yes\" = \"Oui\"\r\n"
 "\"No\" = \"Non\"\r\n"
 "\"About IGNMap\" = \"A propos de IGNMap\"\r\n"
@@ -4701,7 +4702,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 7956; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 7977; return Translation_fr_txt;
         default: break;
     }
 
