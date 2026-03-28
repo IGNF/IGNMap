@@ -36,10 +36,16 @@ int AnnotViewerModel::getNumRows()
 //==============================================================================
 // Dessin du fond
 //==============================================================================
-void AnnotViewerModel::paintRowBackground(juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+void AnnotViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
+	if (m_Annot == nullptr)
+		return;
+	if (rowNumber >= m_Annot->size())
+		return;
+
 	g.setColour(juce::Colours::lightblue);
-	if (rowIsSelected)
+	//if (rowIsSelected)
+	if ((*m_Annot)[rowNumber].Selected())
 		g.drawRect(g.getClipBounds());
 	g.setColour(juce::Colours::white);
 }

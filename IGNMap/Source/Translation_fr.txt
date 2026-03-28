@@ -194,5 +194,5 @@ countries: fr be mc ch lu
 "Export" = "Exporter"
 "Unable to allocate memory ! The DTM is too big !" = "Impossible d'allouer la mémoire ! La zone est trop grande !"
 "The Zmin field is higher than the Zmin of the DTM !" = "Attention le ZMin choisi est supérieur au Zmin du MNT"
-
+"Altimeter Profile" = "Profil altimétrique"
 

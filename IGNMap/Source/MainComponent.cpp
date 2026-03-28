@@ -25,6 +25,7 @@
 #include "ZoomViewer.h"
 #include "StacViewer.h"
 #include "StereoViewer.h"
+#include "ProfilViewer.h"
 #include "AffineImage.h"
 #include "DtmTmsLayer.h"
 #include "../../XToolGeod/XGeoPref.h"
@@ -251,6 +252,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolPanoramax);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolProfil);
 #ifdef DEBUG
 		menu.addItem(1000, "Test");
 #endif // DEBUG
@@ -314,6 +316,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuAddDtmServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
 		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolPanoramax, CommandIDs::menuToolStereo,
+		CommandIDs::menuToolProfil,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -502,6 +505,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolStereo:
 		result.setInfo(juce::translate("Stereoscopic View"), juce::translate("Stereoscopic View"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolProfil:
+		result.setInfo(juce::translate("Altimeter Profile"), juce::translate("Altimeter Profile"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -680,6 +686,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 	case CommandIDs::menuToolStereo:
 		OpenTool("Stereo");
 		break;
+	case CommandIDs::menuToolProfil:
+		OpenTool("Profil");
+		break;
 	default:
 		return false;
 	}
@@ -729,6 +738,14 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		XGeoVector* V = nullptr;
 		if (m_GeoBase.NbSelection() > 0)
 			V = m_GeoBase.Selection(0);
+		for (size_t i = 0; i < m_ToolWindows.size(); i++)
+			m_ToolWindows[i]->SetSelection(V);
+		return;
+	}
+	if (message == "UpdateSelectAnnotation") {
+		m_AnnotViewer.get()->Update();
+		m_MapView.get()->RenderMap(true, false, false, false, false);
+		XGeoVector* V = m_MapView.get()->GetSelectedAnnotation();
 		for (size_t i = 0; i < m_ToolWindows.size(); i++)
 			m_ToolWindows[i]->SetSelection(V);
 		return;
@@ -2128,6 +2145,8 @@ ToolWindow* MainComponent::OpenTool(juce::String toolName)
 		tool = new StacViewer("Panoramax", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	if (toolName == "Stereo")
 		tool = new StereoViewer("Stereo", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Profil")
+		tool = new ProfilViewer("Profil", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 
 	if (tool != nullptr) {
 		tool->setVisible(true);

@@ -160,6 +160,7 @@ public:
   virtual inline double* ZRange() { return m_ZRange; }
   virtual inline double Zmin() const { return m_ZRange[0]; }
   virtual inline double Zmax() const { return m_ZRange[1]; }
+  virtual bool ZPos(const XPt2D&, double&, double&);
 
 protected:
   double m_ZRange[2];

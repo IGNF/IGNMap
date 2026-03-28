@@ -641,6 +641,21 @@ void MapView::DrawFrames(juce::Graphics& g, int deltaX, int deltaY)
 //==============================================================================
 void MapView::SelectFeatures(juce::Point<int> P)
 {
+	// Recherche dans les annotations
+	if (m_Annot.size() > 0) {
+		for (int i = 0; i < m_Annot.size(); i++)
+			m_Annot[i].Selected(false);
+		XPt2D M(P.x, P.y);
+		Pixel2Ground(M.X, M.Y);
+		for (int i = 0; i < m_Annot.size(); i++) {
+			if (!m_Annot[i].IsNear2D(M, 5. * m_dScale)) continue;
+			m_Annot[i].Selected(true);
+			sendActionMessage("UpdateSelectAnnotation");
+			return;
+		}
+	}
+
+	// Recherche dans la base
 	if (m_GeoBase == nullptr)
 		return;
 	XFrame F = Pixel2Ground(P.x, P.y, 1);
@@ -731,7 +746,8 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 	Ground2Pixel(P0.X, P0.Y);
 	P0 += XPt2D(deltaX, deltaY);
 	g.setColour(juce::Colour(annot->Repres()->Color()));
-	g.drawEllipse((float)P0.X - 3.f, (float)P0.Y - 3.f, 6.f, 6.f, 2.f);
+	if (annot->NbPt() == 1)
+		g.drawEllipse((float)P0.X - 3.f, (float)P0.Y - 3.f, 6.f, 6.f, 2.f);
 
 	if (annot->Primitive() == XAnnotation::pText) {
 		g.drawSingleLineText(juce::String(annot->Text()), (int)P0.X + 5, (int)P0.Y);
@@ -755,6 +771,8 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 		Ground2Pixel(Pi.X, Pi.Y);
 		Pi += XPt2D(deltaX, deltaY);
 		path.lineTo((float)Pi.X, (float)Pi.Y);
+		if (annot->Selected())
+			g.drawEllipse((float)Pi.X - 3.f, (float)Pi.Y - 3.f, 6.f, 6.f, 1.f);
 	}
 	g.strokePath(path, juce::PathStrokeType(annot->Repres()->Size(), juce::PathStrokeType::beveled));
 	if (annot->Primitive() == XAnnotation::pPolygon) {

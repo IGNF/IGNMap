@@ -93,6 +93,7 @@ public:
 	int IntValue() { return m_Editor.getText().getIntValue(); }
 	uint32_t UintValue() { return (uint32_t)m_Editor.getText().getIntValue(); }
 	void SetReadOnly(bool shouldBeReadOnly) { m_Editor.setReadOnly(shouldBeReadOnly); }
+	void SetValue(juce::String text) { m_Editor.setText(text); }
 
 private:
 	juce::Label m_Label;

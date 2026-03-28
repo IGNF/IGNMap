@@ -126,38 +126,38 @@ bool operator!=(XPt3D A, XPt3D B)
 //-----------------------------------------------------------------------------
 // Fonctions de calcul de distances
 //-----------------------------------------------------------------------------
-double dist(XPt3D A, XPt3D B)			// Distance
+double dist(const XPt3D& A, const XPt3D& B)			// Distance
 {
 	return sqrt(dist2(A, B));
 }
 
-double dist2(XPt3D A, XPt3D B)		// Distance au carre
+double dist2(const XPt3D& A, const XPt3D& B)		// Distance au carre
 {
 	XPt3D C = A - B;
 	return prodScal(C, C);
 }
 
-double dist_plani(XPt3D A, XPt3D B)	// Distance planimetrique
+double dist_plani(const XPt3D& A, const XPt3D& B)	// Distance planimetrique
 {
 	return sqrt(dist_plani2(A, B));
 }
 
-double dist_plani2(XPt3D A, XPt3D B)	// Distance planimetrique au carre
+double dist_plani2(const XPt3D& A, const XPt3D& B)	// Distance planimetrique au carre
 {
 	return (A.X-B.X)*(A.X-B.X) + ((A.Y-B.Y)*(A.Y-B.Y));
 }
 
-double dist_alti(XPt3D A, XPt3D B)	// Distance altimetrique
+double dist_alti(const XPt3D& A, const XPt3D& B)	// Distance altimetrique
 {
 	return fabs(A.Z - B.Z);
 }
 
-double dist_polar(XPt3D A)			// Distance polaire en plani
+double dist_polar(const XPt3D& A)			// Distance polaire en plani
 {
 	return sqrt(dist_polar2(A));
 }
 
-double dist_polar2(XPt3D A)			// Distance polaire carre en plani
+double dist_polar2(const XPt3D& A)			// Distance polaire carre en plani
 {
 	return A.X*A.X + A.Y*A.Y;
 }
@@ -165,12 +165,12 @@ double dist_polar2(XPt3D A)			// Distance polaire carre en plani
 //-----------------------------------------------------------------------------
 // Fonctions vectorielles
 //-----------------------------------------------------------------------------
-double prodScal(XPt3D A, XPt3D B)	// Produit Scalaire
+double prodScal(const XPt3D& A, const XPt3D& B)	// Produit Scalaire
 {
 	return A.X*B.X + A.Y*B.Y + A.Z*B.Z;
 }
 
-XPt3D prodVect(XPt3D A, XPt3D B)	// Produit Vectoriel
+XPt3D prodVect(const XPt3D& A, const XPt3D& B)	// Produit Vectoriel
 {
 	double x = A.Y*B.Z - B.Y*A.Z;
 	double y = B.X*A.Z - A.X*B.Z;
@@ -178,7 +178,7 @@ XPt3D prodVect(XPt3D A, XPt3D B)	// Produit Vectoriel
 	return XPt3D(x, y, z);
 }
 
-double prodMixt(XPt3D A, XPt3D B, XPt3D C)		// Produit Mixte
+double prodMixt(const XPt3D& A, const XPt3D& B, const XPt3D& C)		// Produit Mixte
 {
 	return prodScal(A, prodVect(B, C));
 }

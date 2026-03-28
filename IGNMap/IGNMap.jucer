@@ -498,6 +498,9 @@
       <FILE id="WFzJQU" name="OsmLayer.h" compile="0" resource="0" file="Source/OsmLayer.h"/>
       <FILE id="QycN8W" name="PrefDlg.cpp" compile="1" resource="0" file="Source/PrefDlg.cpp"/>
       <FILE id="LUoO4M" name="PrefDlg.h" compile="0" resource="0" file="Source/PrefDlg.h"/>
+      <FILE id="LkilrW" name="ProfilViewer.cpp" compile="1" resource="0"
+            file="Source/ProfilViewer.cpp"/>
+      <FILE id="nMOSPr" name="ProfilViewer.h" compile="0" resource="0" file="Source/ProfilViewer.h"/>
       <FILE id="lvSmQO" name="SelTreeViewer.cpp" compile="1" resource="0"
             file="Source/SelTreeViewer.cpp"/>
       <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>

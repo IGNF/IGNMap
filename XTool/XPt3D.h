@@ -23,7 +23,7 @@ public:
 	double	Z;
 
 	// Constructeurs
-	XPt3D(double x=0,double y=0,double z=0): X(x), Y(y), Z(z) {}
+	XPt3D(double x=0.,double y=0.,double z=0.): X(x), Y(y), Z(z) {}
   XPt3D(const XPt3& A) : X(A.X), Y(A.Y), Z(A.Z) {;}
 
 	// Operations
@@ -62,18 +62,18 @@ bool operator==(XPt3D, XPt3D);
 bool operator!=(XPt3D, XPt3D);
 
 // Fonctions de calcul de distances
-double dist(XPt3D, XPt3D);			// Distance
-double dist2(XPt3D, XPt3D);			// Distance au carre
-double dist_plani(XPt3D, XPt3D);	// Distance planimetrique
-double dist_plani2(XPt3D, XPt3D);	// Distance planimetrique au carre
-double dist_alti(XPt3D, XPt3D);		// Distance altimetrique
-double dist_polar(XPt3D);			// Distance polaire en plani
-double dist_polar2(XPt3D);			// Distance polaire carre en plani
+double dist(const XPt3D&, const XPt3D&);			// Distance
+double dist2(const XPt3D&, const XPt3D&);			// Distance au carre
+double dist_plani(const XPt3D&, const XPt3D&);	// Distance planimetrique
+double dist_plani2(const XPt3D&, const XPt3D&);	// Distance planimetrique au carre
+double dist_alti(const XPt3D&, const XPt3D&);		// Distance altimetrique
+double dist_polar(const XPt3D&);			// Distance polaire en plani
+double dist_polar2(const XPt3D&);			// Distance polaire carre en plani
 
 // Fonctions vectorielles
-double prodScal(XPt3D, XPt3D);		// Produit Scalaire
-XPt3D prodVect(XPt3D, XPt3D);			// Produit Vectoriel
-double prodMixt(XPt3D, XPt3D, XPt3D);	// Produit Mixte
+double prodScal(const XPt3D&, const XPt3D&);		// Produit Scalaire
+XPt3D prodVect(const XPt3D&, const XPt3D&);			// Produit Vectoriel
+double prodMixt(const XPt3D&, const XPt3D&, const XPt3D&);	// Produit Mixte
 
 // Fonctions d'entree / sortie
 std::istream& operator>>(std::istream&, XPt3D&);	// entree

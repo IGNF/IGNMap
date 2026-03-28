@@ -4664,7 +4664,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"Export\" = \"Exporter\"\r\n"
 "\"Unable to allocate memory ! The DTM is too big !\" = \"Impossible d'allouer la m\xc3\xa9moire ! La zone est trop grande !\"\r\n"
 "\"The Zmin field is higher than the Zmin of the DTM !\" = \"Attention le ZMin choisi est sup\xc3\xa9rieur au Zmin du MNT\"\r\n"
-"\r\n"
+"\"Altimeter Profile\" = \"Profil altim\xc3\xa9trique\"\r\n"
 "\r\n";
 
 const char* Translation_fr_txt = (const char*) temp_binary_data_21;
@@ -4702,7 +4702,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 7977; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 8021; return Translation_fr_txt;
         default: break;
     }
 

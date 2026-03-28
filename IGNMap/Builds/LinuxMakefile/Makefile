@@ -273,6 +273,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
   $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o \
   $(JUCE_OBJDIR)/PrefDlg_9f17261d.o \
+  $(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o \
   $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
   $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o \
   $(JUCE_OBJDIR)/StacViewer_e5b1993e.o \
@@ -1403,6 +1404,11 @@ $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o: ../../Source/OsmLayer.cpp
 $(JUCE_OBJDIR)/PrefDlg_9f17261d.o: ../../Source/PrefDlg.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PrefDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o: ../../Source/ProfilViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ProfilViewer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o: ../../Source/SelTreeViewer.cpp

@@ -668,6 +668,7 @@ void MapThread::DrawSelection()
 							g.strokePath(textPath, strokeHaloType);
 							g.setColour(juce::Colours::black);
 							g.fillPath(textPath);
+							glyphs.clear();
 							/*
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 4, (int)iter.y1);
 							g.drawSingleLineText(juce::String(numPoint), (int)iter.x1 + 6, (int)iter.y1);

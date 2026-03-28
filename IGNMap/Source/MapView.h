@@ -62,6 +62,9 @@ public:
   juce::Image GetSelImage() const { return m_SelImage; }
   juce::Image GetTargetImage() const { return m_TargetImage; }
   std::vector<XAnnotation>* GetAnnot() { return &m_Annot; }
+  XAnnotation* GetSelectedAnnotation() {
+    for (int i = 0; i < m_Annot.size(); i++) if (m_Annot[i].Selected()) return &m_Annot[i]; return nullptr;
+  }
   void SetSelectionFrame(const XFrame& F) { m_SelectionFrame = F; }
   void Set3DFrame(const XFrame& F) { m_3DFrame = F; }
 

@@ -26,6 +26,7 @@
 #include "../../XTool/XTransfo.h"
 #include "../../XToolGeod/XGeoPref.h"
 #include "AffineImage.h"
+#include "LasShader.h"
 
 //-----------------------------------------------------------------------------
 // Points du cadre de l'image
@@ -441,6 +442,41 @@ bool GeoLAS::ReadAttributes(std::vector<std::string>& Att)
 	}
 	
 	CloseIfNeeded();
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Trouve le Z d'un point 2D et indique la distance au point
+//-----------------------------------------------------------------------------
+bool GeoLAS::ZPos(const XPt2D& P, double& Z0, double& d)
+{
+	if (!m_Frame.IsIn(P))
+		return false;
+	if (!ReOpen())
+		return false;
+	double radius = 2.;
+	XFrame F(P.X - radius, P.Y - radius, P.X + radius, P.Y + radius);
+	if (!SetWorld(F, LasShader::Zmin(), LasShader::Zmax()))
+		return false;
+	laszip_point* point = GetPoint();
+
+	double X, Y, Z, d2, dmin = std::numeric_limits<double>::max();
+	uint8_t classification;
+	bool classif_newtype = IsNewClassification();
+
+	while (GetNextPoint(&X, &Y, &Z)) {
+		if (classif_newtype)
+			classification = point->extended_classification;
+		else
+			classification = point->classification;
+		if (!LasShader::ClassificationVisibility(classification)) continue;
+		d2 = dist2(P, XPt2D(X, Y));
+		if (d2 < dmin) {
+			dmin = d2;
+			Z0 = Z;
+		}
+	}
+	d = sqrt(dmin);
 	return true;
 }
 
