@@ -122,12 +122,12 @@ bool operator!=(XPt2D A, XPt2D B)
 //-----------------------------------------------------------------------------
 // Fonctions de calcul de distances
 //-----------------------------------------------------------------------------
-double dist(XPt2D A, XPt2D B)			// Distance
+double dist(const XPt2D& A, const XPt2D& B)			// Distance
 {
 	return sqrt(dist2(A, B));
 }
 
-double dist2(XPt2D A, XPt2D B)		// Distance au carre
+double dist2(const XPt2D& A, const XPt2D& B)		// Distance au carre
 {
 	return (B.X - A.X) * (B.X - A.X) + (B.Y - A.Y) * (B.Y - A.Y);
 }
@@ -135,22 +135,22 @@ double dist2(XPt2D A, XPt2D B)		// Distance au carre
 //-----------------------------------------------------------------------------
 // Fonctions vectorielles
 //-----------------------------------------------------------------------------
-double prodScal(XPt2D A, XPt2D B)	// Produit Scalaire
+double prodScal(const XPt2D& A, const XPt2D& B)	// Produit Scalaire
 {
 	return A.X*B.X + A.Y*B.Y;
 }
 
-double prodCross(XPt2D A, XPt2D B, XPt2D C)	// Produit en croix
+double prodCross(const XPt2D& A, const XPt2D& B, const XPt2D& C)	// Produit en croix
 {
 	return (B.X - A.X)*(C.Y - A.Y) - (C.X - A.X)*(B.Y - A.Y);
 }
 
-double area(XPt2D A, XPt2D B, XPt2D C) // Aire du triangle
+double area(const XPt2D& A, const XPt2D& B, const XPt2D& C) // Aire du triangle
 {
   return 0.5 * fabs(A.X*C.Y - A.X*B.Y + B.X*A.Y - B.X*C.Y + C.X*B.Y - C.X*A.Y);
 }
 
-double cap(XPt2D A, XPt2D B, XPt2D C) // Cap de la bissectrice
+double cap(const XPt2D& A, const XPt2D& B, const XPt2D& C) // Cap de la bissectrice
 {
   XPt2D bissec = (A-B)/dist(A,B) + (C-B)/dist(C,B);
   if (bissec.Y >= 0.)
@@ -161,7 +161,7 @@ double cap(XPt2D A, XPt2D B, XPt2D C) // Cap de la bissectrice
 //-----------------------------------------------------------------------------
 // Equation de la droite ax + by + c = 0 passant par deux points
 //-----------------------------------------------------------------------------
-void droite(XPt2D M, XPt2D P, double& a, double& b, double& c)
+void droite(const XPt2D& M, const XPt2D& P, double& a, double& b, double& c)
 {
   a = P.Y - M.Y;
   b = M.X - P.X;
@@ -171,7 +171,7 @@ void droite(XPt2D M, XPt2D P, double& a, double& b, double& c)
 //-----------------------------------------------------------------------------
 // Distance du point M a la droite AB
 //-----------------------------------------------------------------------------
-double dist_droite(XPt2D A, XPt2D B, XPt2D M)
+double dist_droite(const XPt2D& A, const XPt2D& B, const XPt2D& M)
 {
   double a, b, c;
   droite(A, B, a, b, c);
@@ -181,7 +181,7 @@ double dist_droite(XPt2D A, XPt2D B, XPt2D M)
 //-----------------------------------------------------------------------------
 // Indique si la projection de M sur le segment [AB] est dans le segment
 //-----------------------------------------------------------------------------
-bool proj_in_seg(XPt2D A, XPt2D B, XPt2D M)
+bool proj_in_seg(const XPt2D& A, const XPt2D& B, const XPt2D& M)
 {
   if (prodScal((B - A),(M - A)) < 0.)
     return false;
@@ -193,7 +193,7 @@ bool proj_in_seg(XPt2D A, XPt2D B, XPt2D M)
 //-----------------------------------------------------------------------------
 // Donne la projection de M sur le segment [AB]
 //-----------------------------------------------------------------------------
-XPt2D proj_seg(XPt2D A, XPt2D B, XPt2D M)
+XPt2D proj_seg(const XPt2D& A, const XPt2D& B, const XPt2D& M)
 {
   return A + (prodScal((B - A),(M - A)) / dist2(A, B)) * (B - A);
 }

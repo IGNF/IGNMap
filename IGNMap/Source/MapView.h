@@ -44,7 +44,7 @@ public:
   void SelectFeatures(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void Update3DView(const double& X0, const double& Y0, const double& X1, const double& Y1);
   void DrawDecoration(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
-  void DrawAnnotation(XAnnotation* annot, juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
+  void DrawAnnotation(XAnnotation* annot, juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f, bool current = false);
   void DrawAllAnnotations(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawCurrentAnnotation(juce::Graphics&);
   double ComputeCartoScale(double cartoscale = 0.);

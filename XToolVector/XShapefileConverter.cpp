@@ -95,13 +95,17 @@ bool XShapefileConverter::ConvertClass(XGeoClass* classe, const char* folder)
 				case XGeoAttribut::Int16 : dbase.AddField(schema->AttributShortName(i).c_str(), 'N', 8); break;
 				case XGeoAttribut::Int32 : dbase.AddField(schema->AttributShortName(i).c_str(), 'N', 12); break;
 				case XGeoAttribut::Double : dbase.AddField(schema->AttributShortName(i).c_str(), 'N', 20); break;
-				case XGeoAttribut::String : dbase.AddField(schema->AttributShortName(i).c_str(), 'C', schema->AttributLength(i)); break;
-				case XGeoAttribut::List : dbase.AddField(schema->AttributShortName(i).c_str(), 'C', schema->AttributLength(i)); break;
+				case XGeoAttribut::String : 
+					dbase.AddField(schema->AttributShortName(i).c_str(), 'C', (uint8_t)schema->AttributLength(i));
+					break;
+				case XGeoAttribut::List : 
+					dbase.AddField(schema->AttributShortName(i).c_str(), 'C', (uint8_t)schema->AttributLength(i));
+					break;
 				case XGeoAttribut::NumericN : 
-					dbase.AddField(schema->AttributShortName(i).c_str(), 'N', schema->AttributLength(i), schema->AttributDecCount(i));
+					dbase.AddField(schema->AttributShortName(i).c_str(), 'N', (uint8_t)schema->AttributLength(i), (uint8_t)schema->AttributDecCount(i));
 					break;
 				case XGeoAttribut::NumericF : 
-					dbase.AddField(schema->AttributShortName(i).c_str(), 'F', schema->AttributLength(i), schema->AttributDecCount(i));
+					dbase.AddField(schema->AttributShortName(i).c_str(), 'F', (uint8_t)schema->AttributLength(i), (uint8_t)schema->AttributDecCount(i));
 					break;
 			}
 		}

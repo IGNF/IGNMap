@@ -730,13 +730,13 @@ void MapView::DrawAllAnnotations(juce::Graphics& g, float deltaX, float deltaY)
 {
 	for (size_t i = 0; i < m_Annot.size(); i++)
 		DrawAnnotation(&m_Annot[i], g, deltaX, deltaY);
-	DrawAnnotation(&m_Annotation, g, deltaX, deltaY);
+	DrawAnnotation(&m_Annotation, g, deltaX, deltaY, true);
 }
 
 //==============================================================================
 // Dessin de l'annotation en cours
 //==============================================================================
-void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX, float deltaY)
+void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX, float deltaY, bool current)
 {
 	if (annot->NbPt() < 1)
 		return;
@@ -746,6 +746,8 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 	Ground2Pixel(P0.X, P0.Y);
 	P0 += XPt2D(deltaX, deltaY);
 	g.setColour(juce::Colour(annot->Repres()->Color()));
+	if (current)
+		g.setOpacity(0.5f + (m_nFrameCounter % 21) * 0.025f);
 	if (annot->NbPt() == 1)
 		g.drawEllipse((float)P0.X - 3.f, (float)P0.Y - 3.f, 6.f, 6.f, 2.f);
 
@@ -774,7 +776,10 @@ void MapView::DrawAnnotation(XAnnotation* annot, juce::Graphics& g, float deltaX
 		if (annot->Selected())
 			g.drawEllipse((float)Pi.X - 3.f, (float)Pi.Y - 3.f, 6.f, 6.f, 1.f);
 	}
-	g.strokePath(path, juce::PathStrokeType(annot->Repres()->Size(), juce::PathStrokeType::beveled));
+	float lineW = annot->Repres()->Size();
+	if (current)
+		lineW += ((m_nFrameCounter % 21) / 7.f);
+	g.strokePath(path, juce::PathStrokeType(lineW, juce::PathStrokeType::beveled));
 	if (annot->Primitive() == XAnnotation::pPolygon) {
 		g.setFillType(juce::FillType(juce::Colour(annot->Repres()->FillColor())));
 		g.fillPath(path);
@@ -802,5 +807,13 @@ void MapView::DrawCurrentAnnotation(juce::Graphics& g)
 			g.drawRect(R, 2);
 			return;
 		}
+	}
+	if ((m_Annotation.NbPt() >= 1) && (!m_MovePt.isOrigin())) {
+		XPt2D P0 = m_Annotation.Pt(m_Annotation.NbPt() - 1);
+		Ground2Pixel(P0.X, P0.Y);
+		g.setColour(juce::Colours::red);
+		juce::Point<float> P1 = m_MovePt;
+		g.drawLine((float)P0.X, (float)P0.Y, m_MovePt.x, m_MovePt.y);
+		return;
 	}
 }

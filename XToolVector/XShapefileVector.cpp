@@ -42,7 +42,7 @@ std::string XShapefileVector::FindDBFAttribute(std::string att_name, bool no_cas
 //-----------------------------------------------------------------------------
 // Point 2D
 //-----------------------------------------------------------------------------
-bool XShapefilePoint2D::Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error)
+bool XShapefilePoint2D::Read(std::ifstream* in, XShapefileRecordHeader* /*header*/, XError* /*error*/)
 {
 	int shapeType;
 
@@ -56,7 +56,7 @@ bool XShapefilePoint2D::Read(std::ifstream* in, XShapefileRecordHeader* header, 
 	return in->good();
 }
 	
-bool XShapefilePoint2D::Write(std::ofstream* out, XError* error)
+bool XShapefilePoint2D::Write(std::ofstream* /*out*/, XError* /*error*/)
 {
 	return false;
 }

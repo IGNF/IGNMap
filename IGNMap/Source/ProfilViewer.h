@@ -36,7 +36,8 @@ protected:
 		int m_nMouseX = -1;
 	};
 
-	class ProfilComponent : public juce::Component, public juce::ActionBroadcaster, public juce::Slider::Listener {
+	class ProfilComponent : public juce::Component, public juce::ActionBroadcaster, 
+													public juce::Slider::Listener, public juce::Button::Listener {
 	public:
 		ProfilComponent() {
 			addAndMakeVisible(m_fldX);
@@ -48,12 +49,13 @@ protected:
 			addAndMakeVisible(m_Drawer);
 			addAndMakeVisible(m_lblResol);
 			addAndMakeVisible(m_sldResol);
-			m_fldX.SetEditor("X :", "", FieldEditor::String, 30, 90);
-			m_fldY.SetEditor("Y :", "", FieldEditor::String, 30, 90);
-			m_fldZ.SetEditor("Z :", "", FieldEditor::String, 30, 90);
-			m_fldDist.SetEditor("Dist :", "", FieldEditor::String, 60, 60);
-			m_fldDenivPos.SetEditor("Deniv + :", "", FieldEditor::String, 60, 60);
-			m_fldDenivNeg.SetEditor("Deniv - :", "", FieldEditor::String, 60, 60);
+			addAndMakeVisible(m_btnOptions);
+			m_fldX.SetEditor("X :", "", FieldEditor::String, 30, 150);
+			m_fldY.SetEditor("Y :", "", FieldEditor::String, 30, 150);
+			m_fldZ.SetEditor("Z :", "", FieldEditor::String, 30, 150);
+			m_fldDist.SetEditor("Dist :", "", FieldEditor::String, 60, 120);
+			m_fldDenivPos.SetEditor("Deniv + :", "", FieldEditor::String, 60, 120);
+			m_fldDenivNeg.SetEditor("Deniv - :", "", FieldEditor::String, 60, 120);
 			m_fldX.SetReadOnly(true);
 			m_fldY.SetReadOnly(true);
 			m_fldZ.SetReadOnly(true);
@@ -63,9 +65,15 @@ protected:
 			m_lblResol.setText(juce::translate("Resolution :"), juce::NotificationType::dontSendNotification);
 			m_sldResol.setSliderStyle(juce::Slider::LinearHorizontal);
 			m_sldResol.setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
-			m_sldResol.setRange(1., 100., 1.);
+			m_sldResol.setRange(0.5, 100., 0.5);
+			m_sldResol.setSkewFactorFromMidPoint(10.);
+			m_sldResol.setChangeNotificationOnlyOnRelease(true);
 			m_sldResol.setValue(10, juce::NotificationType::dontSendNotification);
 			m_sldResol.addListener(this);
+			juce::Image image = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
+			m_btnOptions.setImages(true, true, true, image, 1.f, juce::Colours::green, juce::Image(), 1.f, juce::Colours::green,
+				juce::Image(), 1.f, juce::Colours::red);
+			m_btnOptions.addListener(this);
 		}
 		virtual ~ProfilComponent() { ; }
 		void paint(juce::Graphics& g) override
@@ -77,6 +85,7 @@ protected:
 			m_Drawer.setBounds(0, 0, b.getWidth(), b.getHeight() - 90);
 			m_lblResol.setBounds(b.getWidth() / 4, b.getHeight() - 90, 100, 24);
 			m_sldResol.setBounds(b.getWidth() / 4 + 100, b.getHeight() - 90, 200, 24);
+			m_btnOptions.setBounds(b.getWidth() -40, b.getHeight() - 90, 24, 24);
 			m_fldX.setBounds(0, b.getHeight() - 60, b.getWidth() / 3, 24);
 			m_fldY.setBounds(b.getWidth() / 3, b.getHeight() - 60, b.getWidth() / 3, 24);
 			m_fldZ.setBounds((2 * b.getWidth()) / 3, b.getHeight() - 60, b.getWidth() / 3, 24);
@@ -87,16 +96,26 @@ protected:
 		void sliderValueChanged(juce::Slider* slider) override {
 			if (slider == &m_sldResol) ComputeProfil(m_Sel, m_sldResol.getValue());
 		}
+		void buttonClicked(juce::Button* button) {
+			juce::PopupMenu menu;
+			std::function< void() > ExportImage = [=]() {	AppUtil::SaveComponent(&m_Drawer); };
+			menu.addItem(juce::translate("Export image"), true, false, ExportImage);
+			std::function< void() > ExportCsv = [=]() { ExportCsvFile(); };
+			menu.addItem(juce::translate("Export CSV"), true, false, ExportCsv);
+			menu.showMenuAsync(juce::PopupMenu::Options());
+		}
 
 		void SetBase(XGeoBase* base) { m_Base = base; }
 		bool ComputeProfil(XGeoObject* sel, double resol = 10.);
 		bool SetActiveIndex(int index);
+		bool ExportCsvFile();
 
 	protected:
 		FieldEditor m_fldX, m_fldY, m_fldZ, m_fldDist, m_fldDenivPos, m_fldDenivNeg;
 		ProfilDrawer m_Drawer;
 		juce::Label m_lblResol;
 		juce::Slider m_sldResol;
+		juce::ImageButton m_btnOptions;
 		XGeoBase* m_Base = nullptr;
 		std::vector<XPt3D> m_ProfilDtm;
 		std::vector<XPt3D> m_ProfilLas;
@@ -113,7 +132,7 @@ public:
 		setResizable(true, true);
 		setAlwaysOnTop(false);
 		setContentOwned(&m_Profil, true);
-		setResizeLimits(400, 450, 10000, 10000);
+		setResizeLimits(550, 450, 10000, 10000);
 		m_Profil.SetBase(base);
 		addActionListener(listener);
 		m_Profil.addActionListener(listener);
@@ -122,7 +141,7 @@ public:
 
 	virtual ~ProfilViewer() { ; }
 
-	void SetTarget(const double& X, const double& Y, const double& Z) override { ; }
+	void SetTarget(const double& /*X*/, const double& /*Y*/, const double& /*Z*/) override { ; }
 	void SetSelection(void* Sel) override { m_Profil.ComputeProfil((XGeoObject*)Sel); }
 
 	void resized() override { ToolWindow::resized();  }

@@ -86,7 +86,7 @@ void ProfilViewer::ProfilDrawer::paint(juce::Graphics& g)
     delta = (double)(W - 2 * orig) / (double)m_ProfilDtm.size();
     zA = (m_ProfilDtm[0].Z - zmin) * H / fabs(zmax - zmin);
     juce::Point<float> M((float)orig, (float)(H - zA)), N;
-    for (uint32_t i = 0; i < m_ProfilLas.size() - 1; i++) {
+    for (uint32_t i = 0; i < m_ProfilDtm.size() - 1; i++) {
       zB = (m_ProfilDtm[i + 1].Z - zmin) * H / fabs(zmax - zmin);
       N = juce::Point<float>((float)(orig + (i + 1) * delta), (float)(H - zB));
       if (M.getDistanceSquaredFrom(N) >= 1) {
@@ -199,7 +199,7 @@ bool ProfilViewer::ProfilComponent::ComputeProfil(XGeoObject* sel, double resol)
 //==============================================================================
 bool ProfilViewer::ProfilComponent::SetActiveIndex(int index)
 {
-  if ((index < 0) || (index >= m_ProfilDtm.size())) {
+  if (index < 0) {
     m_fldX.SetValue("");
     m_fldY.SetValue("");
     m_fldZ.SetValue("");
@@ -208,21 +208,45 @@ bool ProfilViewer::ProfilComponent::SetActiveIndex(int index)
     m_fldDenivNeg.SetValue("");
     return false;
   }
-  double distance = 0., deniv_pos = 0., deniv_neg = 0., deniv;
-  for (int k = 0; k < index; k++) {
-    distance += dist((XPt2D)m_ProfilDtm[k + 1], (XPt2D)m_ProfilDtm[k]);
-    deniv = m_ProfilDtm[k + 1].Z - m_ProfilDtm[k].Z;
-    if (deniv > 0) deniv_pos += deniv; else deniv_neg += deniv;
+  juce::String strX, strY, strZ, strDist, strDenivPos, strDenivNeg;
+  double distance = 0., deniv_pos = 0., deniv_neg = 0., deniv = 0., Z0 = 0.;
+  if (index < m_ProfilDtm.size()) {
+    for (int k = 0; k < index; k++) {
+      distance += dist((XPt2D)m_ProfilDtm[k + 1], (XPt2D)m_ProfilDtm[k]);
+      deniv = m_ProfilDtm[k + 1].Z - m_ProfilDtm[k].Z;
+      if (deniv > 0) deniv_pos += deniv; else deniv_neg += deniv;
+    }
+    strX = juce::String(m_ProfilDtm[index].X, 2);
+    strY = juce::String(m_ProfilDtm[index].Y, 2);
+    strZ = juce::String(m_ProfilDtm[index].Z, 2) + " | ";
+    strDist = juce::String(distance, 2) + " | ";
+    strDenivPos = juce::String(deniv_pos, 2) + " | ";
+    strDenivNeg = juce::String(deniv_neg, 2) + " | ";
+    Z0 = m_ProfilDtm[index].Z;
   }
-  m_fldX.SetValue(juce::String(m_ProfilDtm[index].X, 2));
-  m_fldY.SetValue(juce::String(m_ProfilDtm[index].Y, 2));
-  m_fldZ.SetValue(juce::String(m_ProfilDtm[index].Z, 2));
-  m_fldDist.SetValue(juce::String(distance, 2));
-  m_fldDenivPos.SetValue(juce::String(deniv_pos, 2));
-  m_fldDenivNeg.SetValue(juce::String(deniv_neg, 2));
+  if (index < m_ProfilLas.size()) {
+    for (int k = 0; k < index; k++) {
+      distance += dist((XPt2D)m_ProfilLas[k + 1], (XPt2D)m_ProfilLas[k]);
+      deniv = m_ProfilLas[k + 1].Z - m_ProfilLas[k].Z;
+      if (deniv > 0) deniv_pos += deniv; else deniv_neg += deniv;
+    }
+    strX = juce::String(m_ProfilLas[index].X, 2);
+    strY = juce::String(m_ProfilLas[index].Y, 2);
+    strZ += juce::String(m_ProfilLas[index].Z, 2);
+    strDist += juce::String(distance, 2);
+    strDenivPos += juce::String(deniv_pos, 2);
+    strDenivNeg += juce::String(deniv_neg, 2);
+    Z0 = m_ProfilLas[index].Z;
+  }
 
-  sendActionMessage("UpdateTargetPos:" + juce::String(m_ProfilDtm[index].X, 2) + ":" + juce::String(m_ProfilDtm[index].Y, 2)
-    + ":" + juce::String(m_ProfilDtm[index].Z, 2));
+  m_fldX.SetValue(strX);
+  m_fldY.SetValue(strY);
+  m_fldZ.SetValue(strZ);
+  m_fldDist.SetValue(strDist);
+  m_fldDenivPos.SetValue(strDenivPos);
+  m_fldDenivNeg.SetValue(strDenivNeg);
+
+  sendActionMessage("UpdateTargetPos:" + strX + ":" + strY + ":" + juce::String(Z0, 2));
 
   return true;
 }
@@ -278,5 +302,43 @@ bool ProfilViewer::ProfilComponent::ComputeLasProfil(const XFrame& F)
       las->CloseIfNeeded(1);
     } //endfor j
   } // ednfor i
+  return true;
+}
+
+//==============================================================================
+// Export des profils en CSV
+//==============================================================================
+bool ProfilViewer::ProfilComponent::ExportCsvFile()
+{
+  if ((m_ProfilDtm.size() < 1) && (m_ProfilLas.size() < 1))
+    return false;
+  juce::String filename = AppUtil::SaveFile("CSVProfil", juce::translate("Save Profile"), "*.csv");
+  if (filename.isEmpty())
+    return false;
+  std::ofstream out;
+  out.open(filename.toStdString(), std::ios::out);
+  out.setf(std::ios::fixed); out.precision(2);
+  bool dtm_mode = true, las_mode = true;
+  int nb_point = m_ProfilDtm.size();
+  if (nb_point < 1)
+    nb_point = m_ProfilLas.size();
+  if (m_ProfilDtm.size() < 1) dtm_mode = false;
+  if (m_ProfilLas.size() < 1) las_mode = false;
+
+  out << "X;Y";
+  if (dtm_mode) out << ";ZDTM";
+  if (las_mode) out << ";ZLAS";
+  out << std::endl;
+  for (int i = 0; i < nb_point; i++) {
+    if (dtm_mode)
+      out << m_ProfilDtm[i].X << ";" << m_ProfilDtm[i].Y;
+    else
+      out << m_ProfilLas[i].X << ";" << m_ProfilLas[i].Y;
+    if (dtm_mode)
+      out << ";" << m_ProfilDtm[i].Z;
+    if (las_mode)
+      out << ";" << m_ProfilLas[i].Z;
+    out << std::endl;
+  }
   return true;
 }

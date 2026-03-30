@@ -304,8 +304,8 @@ void OGLWidget::paint(juce::Graphics& g)
   // Point clique
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
   g.drawText(lastPt, 5, info_origin + 90, 300, 30, juce::Justification::left);
-  g.drawLine(0, info_origin + 30, 150, info_origin + 30);
-  g.drawLine(0, info_origin + 120, 150, info_origin + 120);
+  g.drawLine(0.f, info_origin + 30.f, 150.f, info_origin + 30.f);
+  g.drawLine(0.f, info_origin + 120.f, 150.f, info_origin + 120.f);
 
   if (!m_bShowF1Help)
     return;
@@ -973,6 +973,7 @@ void OGLWidget::DrawDtm()
 
   juce::Colour colour;
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
+  opacity = 1.f;  // La transparence du MNT n'est pas forcement appropriee
  
   m_RawDtm = juce::Image(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true, juce::SoftwareImageType());
   { // Necessaire pour que bitmap soit detruit avant l'appel a ConvertImage

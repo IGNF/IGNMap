@@ -200,7 +200,7 @@ bool XShapefileRecord::Read(std::ifstream* in, XShapefileRecordHeader* header, X
 //-----------------------------------------------------------------------------
 // Lecture des points 2D
 //-----------------------------------------------------------------------------
-bool XShapefileRecord::ReadPoint2D(std::ifstream* in, XEndian* endian, XError* error)
+bool XShapefileRecord::ReadPoint2D(std::ifstream* in, XEndian* endian, XError* /*error*/)
 {
 	endian->Read(in, true, &m_Frame.Xmin, 8);
 	endian->Read(in, true, &m_Frame.Ymin, 8);
