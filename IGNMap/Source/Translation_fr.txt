@@ -68,6 +68,7 @@ countries: fr be mc ch lu
 "Cancel"="Annuler"
 "OK"="OK"
 "Apply" = "Appliquer"
+"Analyze" = "Analyser"
 "Add a WMTS server"="Ajouter un flux WMTS"
 "URL of the WMTS server"="URL du flux WMTS"
 "Scale"="Echelle"

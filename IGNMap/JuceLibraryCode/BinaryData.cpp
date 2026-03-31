@@ -4538,6 +4538,7 @@ static const unsigned char temp_binary_data_21[] =
 "\"Cancel\"=\"Annuler\"\r\n"
 "\"OK\"=\"OK\"\r\n"
 "\"Apply\" = \"Appliquer\"\r\n"
+"\"Analyze\" = \"Analyser\"\r\n"
 "\"Add a WMTS server\"=\"Ajouter un flux WMTS\"\r\n"
 "\"URL of the WMTS server\"=\"URL du flux WMTS\"\r\n"
 "\"Scale\"=\"Echelle\"\r\n"
@@ -4702,7 +4703,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xc80d2c37:  numBytes = 612; return Text_png;
         case 0x4b26a5af:  numBytes = 1279; return View_png;
         case 0x389447dd:  numBytes = 6752; return Zoom_png;
-        case 0x6c6745eb:  numBytes = 8021; return Translation_fr_txt;
+        case 0x6c6745eb:  numBytes = 8045; return Translation_fr_txt;
         default: break;
     }
 

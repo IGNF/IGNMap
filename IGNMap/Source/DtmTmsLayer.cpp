@@ -275,6 +275,50 @@ bool DtmTmsLayer::ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F)
 }
 
 //-----------------------------------------------------------------------------
+// Altitude d'un point
+//-----------------------------------------------------------------------------
+double DtmTmsLayer::Z(const XPt2D& P)
+{
+  uint32_t zoom_level = m_nMaxZoom;
+  double gsd = Resol(zoom_level);
+
+  XFrame F(P.X - gsd, P.Y - gsd, P.X + gsd, P.Y + gsd);
+  double Z;
+  // Si on est en WebMercator
+  XGeoPref pref;
+  if (pref.Projection() == WebMercator) {
+    LoadFrame(F, zoom_level);
+    Z = m_SourceGrid[(m_SourceH / 2) * m_SourceW + m_SourceW / 2];
+    delete[] m_SourceGrid;
+    m_SourceGrid = nullptr;
+    m_SourceW = m_SourceH = 0;
+    return Z;
+  }
+
+  // Reprojection sinon
+  // Calcul de l'emprise en WebMercator
+  XWebMercator geod;
+  double x0, y0, x1, y1, x2, y2, x3, y3;
+  geod.SetDefaultProjection(pref.Projection(), WebMercator);
+  geod.Convert(F.Xmin, F.Ymin, x0, y0);
+  geod.Convert(F.Xmin, F.Ymax, x1, y1);
+  geod.Convert(F.Xmax, F.Ymax, x2, y2);
+  geod.Convert(F.Xmax, F.Ymin, x3, y3);
+
+  XFrame FwebMerc;
+  FwebMerc.Xmin = XMin(x0, x1);
+  FwebMerc.Xmax = XMax(x2, x3);
+  FwebMerc.Ymin = XMin(y0, y3);
+  FwebMerc.Ymax = XMax(y1, y2);
+  LoadFrame(FwebMerc, zoom_level);
+  Z = m_SourceGrid[(m_SourceH / 2) * m_SourceW + m_SourceW / 2];
+  delete[] m_SourceGrid;
+  m_SourceGrid = nullptr;
+  m_SourceW = m_SourceH = 0;
+  return Z;
+}
+
+//-----------------------------------------------------------------------------
 // DtmTmsComponent : constructeur
 //-----------------------------------------------------------------------------
 DtmTmsComponent::DtmTmsComponent(XGeoBase* base)

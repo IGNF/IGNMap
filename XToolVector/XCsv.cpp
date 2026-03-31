@@ -35,7 +35,8 @@ XGeoClass* XCsvFile::ImportCsv(XGeoBase* base, const char* path, XGeoMap* /*map*
         xpos = col;
       if ((csv.m_Column[col] == "Y") || (csv.m_Column[col] == "y") || (csv.m_Column[col] == "@Y") || (csv.m_Column[col] == "@y"))
         ypos = col;
-      if ((csv.m_Column[col] == "Z") || (csv.m_Column[col] == "z"))
+      if ((csv.m_Column[col] == "Z") || (csv.m_Column[col] == "z") || (csv.m_Column[col] == "@Z") || (csv.m_Column[col] == "@z") ||
+          (csv.m_Column[col] == "ZLAS") || (csv.m_Column[col] == "ZDTM"))
         zpos = col;
       if ((csv.m_Column[col] == "latitude") || (csv.m_Column[col] == "lat") || (csv.m_Column[col] == "@lat") ||
           (csv.m_Column[col] == "Lat") || (csv.m_Column[col] == "Latitude"))

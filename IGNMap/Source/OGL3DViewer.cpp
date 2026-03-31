@@ -775,9 +775,8 @@ void OGLWidget::UpdateBase()
     ChangeDtmColor();
     return;
   }
-  m_nNbLasVertex = 0;
-  m_nNbDtmVertex = 0;
-  m_nNbPolyVertex = m_nNbLineVertex = 0;
+  m_nNbLasVertex = m_nNbDtmVertex = 0;
+  m_nNbPolyVertex = m_nNbLineVertex = m_nNbVecPointVertex = 0;
   m_nNbPoly = m_nNbLine = 0;
   ReinitDtm();
   if (m_Base == nullptr)
@@ -1115,6 +1114,14 @@ void OGLWidget::MoveZ(float dZ)
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LineBufferID);
   ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
   for (uint32_t i = 0; i < m_nNbLineVertex; i++) {
+    ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points vectoriels
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbVecPointVertex; i++) {
     ptr_vertex->position[2] += dZ;
     ptr_vertex++;
   }

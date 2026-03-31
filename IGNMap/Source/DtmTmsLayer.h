@@ -52,6 +52,7 @@ public:
 
 	bool LoadFrame(const XFrame& F, int zoomlevel);
 	virtual bool ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F);
+	virtual double Z(const XPt2D& P);
 };
 
 //-----------------------------------------------------------------------------
