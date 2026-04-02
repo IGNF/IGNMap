@@ -80,6 +80,7 @@ class LasLayersViewer : public juce::Component,
 	public juce::DragAndDropContainer {
 public:
 	LasLayersViewer();
+	virtual ~LasLayersViewer() { m_Cache.deleteRecursively(); }
 
 	void SetBase(XGeoBase* base);
 	void Translate();
@@ -102,9 +103,11 @@ public:
 	// Algorithmes
 	void ComputeDtm(std::vector< XGeoClass*>);
 	void ComputeStat(std::vector<XGeoClass*>);
+	void ComputeDeltaLasVector(std::vector< XGeoClass*>);
 
 private:
 	XGeoBase* m_Base;
+	juce::File m_Cache;
 	juce::TableListBox	m_TableLas;
 	LasViewerModel			m_ModelLas;
 	juce::ComboBox			m_Mode;

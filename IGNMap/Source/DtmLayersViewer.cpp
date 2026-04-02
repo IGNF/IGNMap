@@ -819,6 +819,7 @@ void DtmLayersViewer::ComputeDeltaVector(std::vector< XGeoClass*> T)
 							mif << "POINT " << P.X << " " << P.Y << std::endl;
 							mid << (zmnt - z) << "\t" << classe->Name() << "\t" << id << std::endl;
 						}
+						vector->Unload();
 					}
 				}
 			}

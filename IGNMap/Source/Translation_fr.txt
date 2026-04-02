@@ -176,6 +176,7 @@ countries: fr be mc ch lu
 "This tool allows to find the delta Z between nodes and vectorial data" = "Cet outil permet de calculer la différence altimétrique entre les nœuds du MNT et les données vectorielles 3D visibles" 
 "Compute DTM/DSM" = "Calcul de MNT / MNS"
 "Compute Delta Vector" = "Différence Vecteur / MNT"
+"Compute Delta LAS Vector" = "Différence Vecteur / LAS"
 "Fill NOZ Hole" = "Remplissage des cellules sans valeur"
 "Scale of the view" = "Echelle de la vue"
 "Stereoscopic View" = "Vue Stéréoscopique"
@@ -195,5 +196,5 @@ countries: fr be mc ch lu
 "Export" = "Exporter"
 "Unable to allocate memory ! The DTM is too big !" = "Impossible d'allouer la mémoire ! La zone est trop grande !"
 "The Zmin field is higher than the Zmin of the DTM !" = "Attention le ZMin choisi est supérieur au Zmin du MNT"
-"Altimeter Profile" = "Profil altimétrique"
+"Altimeter Profile" = "Profil Altimétrique"
 

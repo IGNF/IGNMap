@@ -155,7 +155,8 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
 			gClassViewerMgr.AddClassViewer(lasClass->Name(), lasClass, this);
 			};
-
+		std::function< void() > ComputeDeltaLasVector = [=]() { // Calcul des delta entre noeuds et vecteurs
+			sendActionMessage("ComputeDeltaLasVector"); };
 
 		juce::PopupMenu menu;
 		menu.addItem(juce::translate("Layer Center"), LayerCenter);
@@ -164,6 +165,7 @@ void LasViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseE
 		menu.addSeparator();
 		menu.addItem(juce::translate("Compute DTM"), ComputeDtm);
 		menu.addItem(juce::translate("Statistics"), ComputeStat);
+		menu.addItem(juce::translate("Compute Delta LAS Vector"), ComputeDeltaLasVector);
 		menu.addSeparator();
 		menu.addItem(juce::translate("Remove"), LayerRemove);
 		menu.showMenuAsync(juce::PopupMenu::Options());
@@ -338,6 +340,7 @@ void ClassifModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
 LasLayersViewer::LasLayersViewer()
 {
 	m_Base = nullptr;
+	m_Cache = GeoTools::CreateCacheDir("LAS");
 	m_nLasGradient = 0;
 
 	setName("LAS Layers");
@@ -654,6 +657,10 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		ComputeStat(T);
 		return;
 	}
+	if (message == "ComputeDeltaLasVector") {
+		ComputeDeltaLasVector(T);
+		return;
+	}
 	sendActionMessage(message);	// On transmet les messages que l'on ne traite pas
 }
 
@@ -916,6 +923,148 @@ void LasLayersViewer::ComputeStat(std::vector<XGeoClass*> T)
 
 	M.CreateMifMidFile(foldername, juce::String("StatLAS"), Att);
 	M.runThread();
+	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	GeoTools::ColorizeClasses(m_Base);
+	sendActionMessage("UpdateVector");
+}
+
+//==============================================================================
+// Calcul des delta Z entre noeuds et vecteurs
+//==============================================================================
+void LasLayersViewer::ComputeDeltaLasVector(std::vector< XGeoClass*> T)
+{
+	std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
+	asyncAlertWindow = std::make_unique<juce::AlertWindow>(juce::translate("Compute Delta Las Vector"),
+		juce::translate("This tool allows to find the delta Z between nodes and cloud points"),
+		juce::MessageBoxIconType::QuestionIcon);
+
+	asyncAlertWindow->addTextEditor("Radius", "5.0", juce::translate("Search radius :"));
+	juce::TextEditor* radius_editor = asyncAlertWindow->getTextEditor("Radius");
+	radius_editor->setInputRestrictions(5, "0123456789.");
+	asyncAlertWindow->addTextEditor("ID", "", juce::translate("ID :"));
+	asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+	asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
+
+	if (asyncAlertWindow->runModalLoop() == 0)
+		return;
+	double radius = asyncAlertWindow->getTextEditorContents("Radius").getDoubleValue();
+	juce::String idStr = asyncAlertWindow->getTextEditorContents("ID");
+
+	// Thread de traitement
+	class MyTask : public ThreadClassProcessor {
+	public:
+		struct VLPoint {
+			std::string Id;
+			uint8_t Classification = 0;
+			XPt3D VecPt;
+			XPt3D LasPt;
+			double Dmin = std::numeric_limits<double>::max();
+		};
+		double m_Radius = 5.;
+		juce::String idStr;
+		XFrame m_Frame;
+		std::vector<VLPoint> m_P;
+
+		MyTask() : ThreadClassProcessor(juce::translate("Compute Delta LAS Vector..."), true) { ; }
+
+		virtual bool Process(XGeoVector* V)
+		{
+			if (V->TypeVector() != XGeoVector::LAS)
+				return false;
+			GeoLAS* las = dynamic_cast<GeoLAS*>(V);
+			if (las == nullptr)
+				return false;
+
+			if (!m_Frame.Intersect(las->Frame()))
+				return false;
+			if (!las->ReOpen())
+				return false;
+			if (!las->SetWorld(m_Frame, LasShader::Zmin(), LasShader::Zmax()))
+				return false;
+			laszip_point* point = las->GetPoint();
+
+			double d2, radius2 = m_Radius * m_Radius;
+			uint8_t classification;
+			bool classif_newtype = las->IsNewClassification();
+			XPt3D Plas;
+
+			while (las->GetNextPoint(&Plas.X, &Plas.Y, &Plas.Z)) {
+				if (classif_newtype)
+					classification = point->extended_classification;
+				else
+					classification = point->classification;
+				if (!LasShader::ClassificationVisibility(classification)) continue;
+
+				for (size_t i = 0; i < m_P.size(); i++) {
+					d2 = dist2(m_P[i].VecPt, Plas);
+					if (d2 > radius2)
+						continue;
+					if (d2 > m_P[i].Dmin)
+						continue;
+					m_P[i].Dmin = d2;
+					m_P[i].Classification = classification;
+					m_P[i].LasPt = Plas;
+				}
+			}
+			return true;
+			las->CloseIfNeeded(1);
+		}
+	};
+
+	// Creation de la liste de points vectoriels a traiter
+	std::vector<MyTask::VLPoint> Points;
+	XFrame F;
+	for (uint32_t i = 0; i < m_Base->NbLayer(); i++) {
+		XGeoLayer* layer = m_Base->Layer(i);
+		if (!layer->Visible()) continue;
+		for (uint32_t p = 0; p < layer->NbClass(); p++) {
+			XGeoClass* classe = layer->Class(p);
+			if (!classe->Visible()) continue;
+			for (uint32_t j = 0; j < classe->NbVector(); j++) {
+				XGeoVector* vector = classe->Vector(j);
+				if (!vector->Visible()) continue;
+				if (!vector->Is3D()) continue;
+				if (!vector->LoadGeom()) continue;
+				MyTask::VLPoint vlPt;
+				vlPt.Id = vector->FindAttribute(idStr.toStdString());
+				for (uint32_t k = 0; k < vector->NbPt(); k++) {
+					F += vector->Pt(k);
+					vlPt.VecPt = vector->Pt(k);
+					vlPt.VecPt.Z = vector->Z(k);
+					Points.push_back(vlPt);
+				}
+				vector->Unload();
+			}
+		}
+	}
+	F += radius;
+
+	MyTask M;
+	M.m_Radius = radius;
+	M.idStr = idStr;
+	M.m_T = T;
+	M.m_P = Points;
+	M.m_Frame = F;
+	juce::StringArray Att;
+	Att.add("DeltaZ decimal (10,2)");
+	Att.add("Classification integer");
+	Att.add("ID char (64)");
+	M.CreateMifMidFile(m_Cache, juce::String("DeltaLasVector_") + juce::String(radius, 2), Att);
+	M.runThread();
+
+	// Ecriture des donnees
+	std::ofstream mif, mid;
+	mif.open(M.m_strMifFile.toStdString(), std::ios::out | std::ios::app);
+	mid.open(M.m_strMidFile.toStdString(), std::ios::out | std::ios::app);
+	mif.setf(std::ios::fixed); mif.precision(2);
+	mid.setf(std::ios::fixed); mid.precision(2);
+	for (size_t i = 0; i < M.m_P.size(); i++) {
+		if (M.m_P[i].Dmin > radius * radius)
+			continue;
+		mif << "POINT " << M.m_P[i].VecPt.X << " " << M.m_P[i].VecPt.Y << std::endl;
+		mid << (M.m_P[i].VecPt.Z - M.m_P[i].LasPt.Z) << "\t" << (int)M.m_P[i].Classification << "\t" << M.m_P[i].Id << std::endl;
+	}
+
 	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVector");
