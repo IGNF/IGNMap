@@ -131,7 +131,7 @@ void MapThread::PrepareImages(bool totalUpdate, int dX, int dY)
 			g.drawImageAt(m_Vector, dX, dY);
 			m_Vector = tmpImage;
 			m_ClipVector = juce::Rectangle<int>(dX, dY, m_Vector.getWidth(), m_Vector.getHeight());
-			if (!m_bVectorCompleted) m_ClipVector = juce::Rectangle<int>();
+			//if (!m_bVectorCompleted) m_ClipVector = juce::Rectangle<int>();
 		}
 	}
 }

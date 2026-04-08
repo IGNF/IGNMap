@@ -98,7 +98,7 @@ private:
   juce::String  m_strFileSave;
   MapThread     m_MapThread;
 
-  uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
+  static uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
   uint32_t  m_nMaxPolyPt;       // Nombre maximum de points polygone
   uint32_t  m_nMaxLinePt;       // Nombre maximum de points polyligne
   uint32_t  m_nMaxVecPointPt;   // Nombre maximum de points vectoriels
@@ -153,7 +153,6 @@ private:
   bool      m_bDtmTextured;     // Indique que l'on represente les MNT par une texture
   bool      m_bShowF1Help;      // Affiche l'aide F1
   
-
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
   XPt3D               m_Target;   // Point cible de la vue principale
@@ -171,6 +170,7 @@ private:
     juce::Slider        m_sldZFactor;
     juce::Slider        m_sldDtmPointSize;
     juce::Slider        m_sldLasPointSize;
+    juce::Slider        m_sldMaxNbLasPoint;
     juce::Slider        m_sldVectorWidth;
 
     Control3D() {
@@ -217,12 +217,21 @@ private:
       m_sldLasPointSize.setBounds(10, 180, 110, 30);
       addAndMakeVisible(m_sldLasPointSize);
 
+      m_sldMaxNbLasPoint.setSliderStyle(juce::Slider::LinearHorizontal);
+      m_sldMaxNbLasPoint.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+      m_sldMaxNbLasPoint.setTextValueSuffix(juce::translate(" : Max LAS points"));
+      m_sldMaxNbLasPoint.setRange(2., 40., 1.);
+      m_sldMaxNbLasPoint.setValue(2., juce::dontSendNotification);
+      m_sldMaxNbLasPoint.setChangeNotificationOnlyOnRelease(true);
+      m_sldMaxNbLasPoint.setBounds(130, 180, 110, 30);
+      addAndMakeVisible(m_sldMaxNbLasPoint);
+
       m_sldDtmPointSize.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldDtmPointSize.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
       m_sldDtmPointSize.setTextValueSuffix(juce::translate(" : DTM point size"));
       m_sldDtmPointSize.setRange(1., 10., 1.);
       m_sldDtmPointSize.setValue(1., juce::dontSendNotification);
-      m_sldDtmPointSize.setBounds(130, 180, 110, 30);
+      m_sldDtmPointSize.setBounds(130, 210, 110, 30);
       addAndMakeVisible(m_sldDtmPointSize);
 
       m_sldVectorWidth.setSliderStyle(juce::Slider::LinearHorizontal);
@@ -248,6 +257,7 @@ private:
       m_btnRasterLas.addListener(widget);
       m_sldZFactor.addListener(widget);
       m_sldLasPointSize.addListener(widget);
+      m_sldMaxNbLasPoint.addListener(widget);
       m_sldDtmPointSize.addListener(widget);
       m_sldVectorWidth.addListener(widget);
     }

@@ -820,6 +820,17 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 	if (message == "RenderMapTerminated") {
 		return;
 	}
+	if (message == "Reset3DView") {
+		Create3DView();
+		XFrame F = m_MapView.get()->Get3DFrame();
+		if (m_OGL3DViewer.get() != nullptr) {
+			m_OGL3DViewer.get()->setVisible(true);
+			m_OGL3DViewer.get()->toFront(true);
+			m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
+			m_OGL3DViewer.get()->SetTarget(m_MapView.get()->GetTarget());
+		}
+		return;
+	}
 
 	juce::StringArray T;
 	T.addTokens(message, ":", "");
@@ -1017,6 +1028,7 @@ void MainComponent::Clear()
 	for (size_t i = 0; i < m_ToolWindows.size(); i++)
 		delete m_ToolWindows[i];
 	m_ToolWindows.clear();
+	m_OGL3DViewer.reset();
 }
 
 void MainComponent::ClearSearch()

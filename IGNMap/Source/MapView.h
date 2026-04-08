@@ -55,6 +55,7 @@ public:
   void DrawTargetPoly(juce::Graphics&, float deltaX = 0.f, float deltaY = 0.f);
   void DrawFrames(juce::Graphics&, int deltaX = 0, int deltaY = 0);
   XFrame GetFrame() const { return m_Frame; }
+  XFrame Get3DFrame() const { return m_3DFrame; }
   XFrame GetSelectionFrame() const { return m_SelectionFrame; }
   XFrame GetViewFrame() const { return m_MapThread.Frame();}
   double GetGsd() const { return m_dScale; }

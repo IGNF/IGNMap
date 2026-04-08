@@ -18,6 +18,8 @@
 #include "DtmShader.h"
 #include "AppUtil.h"
 
+uint32_t OGLWidget::m_nMaxLasPt = 2000000;
+
 //==============================================================================
 // OGL3DViewer
 //==============================================================================
@@ -48,7 +50,7 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_DtmBufferID = m_DtmVertexArrayID = m_DtmElementID = 0;
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
-  m_nMaxLasPt = 2000000;
+  //m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 10000;
   m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
   m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
@@ -281,12 +283,7 @@ void OGLWidget::paint(juce::Graphics& g)
   auto b = getLocalBounds();
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
   g.setFont(12);
-  /*
-  juce::String angles = "Angles : (" + juce::String(m_R.X) + " ; " + juce::String(m_R.Y) + " ; " + juce::String(m_R.Z) + ")";
-  g.drawText(angles, 25, 20, 300, 30, juce::Justification::left);
-  juce::String translation = "Translations : (" + juce::String(m_T.X) + " ; " + juce::String(m_T.Y) + " ; " + juce::String(m_T.Z) + ")";
-  g.drawText(translation, 25, 40, 300, 30, juce::Justification::left);
-  */
+
   int info_origin = b.getBottom() - 125;
   juce::String help = juce::translate("Help : F1");
   g.drawText(help, 5, info_origin + 30, 300, 30, juce::Justification::left);
@@ -499,15 +496,6 @@ void OGLWidget::render()
 }
 
 //==============================================================================
-// Fermeture du contexte OpenGL
-//==============================================================================
-/*
-void OGLWidget::openGLContextClosing()
-{
-
-}*/
-
-//==============================================================================
 // Redimensionnement
 //==============================================================================
 void OGLWidget::resized()
@@ -701,6 +689,10 @@ void OGLWidget::sliderValueChanged(juce::Slider* slider)
     m_DtmLineWidth = (float)std::clamp(slider->getValue(), 1., 10.);
   if (slider == &m_Control3D.m_sldVectorWidth)
     m_VectorWidth = (float)std::clamp(slider->getValue(), 1., 10.);
+  if (slider == &m_Control3D.m_sldMaxNbLasPoint) {
+    m_nMaxLasPt = (int)(slider->getValue() * 1000000.);
+    sendActionMessage("Reset3DView");
+  }
 
   repaint();
 }
@@ -722,6 +714,7 @@ void OGLWidget::SyncControl3D()
   m_Control3D.m_sldLasPointSize.setValue((double)m_LasPointSize, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldDtmPointSize.setValue((double)m_DtmLineWidth, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldVectorWidth.setValue((double)m_VectorWidth, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_sldMaxNbLasPoint.setValue((double)m_nMaxLasPt/1000000., juce::NotificationType::dontSendNotification);
 }
 
 //==============================================================================
