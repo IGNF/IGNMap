@@ -85,9 +85,9 @@ uint32_t XAnnotation::NbPt() const
 //-----------------------------------------------------------------------------
 bool XAnnotation::LoadGeom()
 {
-  if (m_T != NULL) delete[] m_T;
-  m_T = new XPt[NbPt()];
-  if (m_T == NULL) return false;
+  if (m_T != nullptr) delete[] m_T;
+  m_T = new(std::nothrow) XPt[NbPt()];
+  if (m_T == nullptr) return false;
   if ((m_Primitive >= pPolyline) && (m_Primitive <= pPolygon)) {
     for (uint32_t i = 0; i < m_Pt.size(); i++) {
       m_T[i].X = m_Pt[i].X;

@@ -280,6 +280,7 @@ uint32_t XGeoBase::SelectFeatures(XFrame* F, bool only_visible)
 	XGeoClass* classe;
 	XGeoVector* vector;
 	m_Selection.clear();
+	std::vector<XGeoVector*> selGrid;
 	for (uint32_t i = 0; i < m_Layer.size(); i++) {
 		layer = m_Layer[i];
 		if (!layer->Selectable())
@@ -301,7 +302,7 @@ uint32_t XGeoBase::SelectFeatures(XFrame* F, bool only_visible)
 				if (vector->Frame().Intersect(*F)) {
 					if ( (vector->TypeVector() == XGeoVector::DTM) || (vector->TypeVector() == XGeoVector::Raster) || 
 							 (vector->TypeVector() == XGeoVector::LAS) ) {
-						m_Selection.push_back(vector);
+						selGrid.push_back(vector);
 						continue;
 					}
 					if (vector->Intersect(*F))
@@ -310,6 +311,7 @@ uint32_t XGeoBase::SelectFeatures(XFrame* F, bool only_visible)
 			}
 		}
 	}
+	m_Selection.insert(m_Selection.end(), selGrid.begin(), selGrid.end());
 	return (uint32_t)m_Selection.size();
 }
 
@@ -857,7 +859,7 @@ bool XGeoBase::Z(const XPt2D& TL, float* T, double delta, uint32_t w, uint32_t h
     P.Y = TL.Y - i * delta;
     for (uint32_t j = 0; j < w; j ++) {
       P.X = TL.X + j * delta;
-      *ptr = Z(P);
+      *ptr = (float)Z(P);
       ptr++;
     }
   }

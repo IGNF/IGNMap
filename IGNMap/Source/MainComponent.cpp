@@ -831,6 +831,11 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		}
 		return;
 	}
+	if (message == "GetFlyPath") {
+		if (m_OGL3DViewer.get() != nullptr)
+			m_OGL3DViewer.get()->CreateFlyPath(m_MapView.get()->GetSelectedAnnotation());
+		return;
+	}
 
 	juce::StringArray T;
 	T.addTokens(message, ":", "");

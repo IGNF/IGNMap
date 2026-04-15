@@ -24,7 +24,7 @@ class GeoLAS;
 class GeoDTM;
 
 class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster, public juce::Thread::Listener,
-  juce::Button::Listener, juce::Slider::Listener {
+  juce::Button::Listener, juce::Slider::Listener, juce::Timer {
 public:
   OGLWidget();
   ~OGLWidget() { shutdownOpenGL(); }
@@ -34,9 +34,10 @@ public:
   void CreateShaders();
 
   juce::Matrix3D<float> getProjectionMatrix() const;
-  juce::Matrix3D<float> getViewMatrix() const;
+  juce::Matrix3D<float> getViewMatrix();
 
   void render() override;
+  void 	timerCallback() override;
 
   void paint(juce::Graphics& g) override;
   void resized() override;
@@ -57,6 +58,7 @@ public:
   void SetTarget(const XPt3D& P);
   void TranslateView();
   void UpdateQuickLook();
+  void CreateFlyPath(XGeoVector*);
 
 protected:
   void LoadLasClass(XGeoClass* C);
@@ -126,7 +128,8 @@ private:
   GLuint    m_TargetID;         // Point cible
   bool      m_bNeedUpdate;
   bool      m_bAutoRotation;    // Rotation automatique de la scene 3D
-  bool      m_bNeedLasPoint;    // Indique que l'on veut recuperer la position du point double-clique
+  bool      m_bAutoFly;         // Mode deplacement automatique sur un chemin
+  bool      m_bNeedLastPoint;   // Indique que l'on veut recuperer la position du point double-clique
   bool      m_bNeedTarget;      // Indique que l'on veut recuperer la position du point cible
   bool      m_bUpdateTarget;    // Indique que l'on modifie la position du point cible
   bool      m_bTranslateView;   // Indique que l'on translate la vue
@@ -156,6 +159,8 @@ private:
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
   XPt3D               m_Target;   // Point cible de la vue principale
+  std::vector<XPt3D>  m_FlyPath;  // Chemin en vol automatique
+  size_t              m_FlyPos;   // Position dans le vol
 
   class Control3D : public juce::Component {
   public:
@@ -220,7 +225,7 @@ private:
       m_sldMaxNbLasPoint.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldMaxNbLasPoint.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
       m_sldMaxNbLasPoint.setTextValueSuffix(juce::translate(" : Max LAS points"));
-      m_sldMaxNbLasPoint.setRange(2., 40., 1.);
+      m_sldMaxNbLasPoint.setRange(2., 100., 1.);
       m_sldMaxNbLasPoint.setValue(2., juce::dontSendNotification);
       m_sldMaxNbLasPoint.setChangeNotificationOnlyOnRelease(true);
       m_sldMaxNbLasPoint.setBounds(130, 180, 110, 30);
@@ -374,6 +379,7 @@ public:
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetTarget(const XPt3D& P) { m_OGLWidget.SetTarget(P); }
   void SetListener(juce::ActionListener* listener) { m_OGLWidget.addActionListener(listener); }
+  void CreateFlyPath(XGeoVector* V) { m_OGLWidget.CreateFlyPath(V); }
 
 private:
   OGLWidget   m_OGLWidget;

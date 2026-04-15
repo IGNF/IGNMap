@@ -56,7 +56,7 @@ public:
   // Chargement de la geometrie
   virtual bool LoadGeom();
   virtual void Unload();
-  virtual bool IsLoaded() { if (m_T == NULL) return false; return true;}
+  virtual bool IsLoaded() { if (m_T == nullptr) return false; return true;}
   virtual eTypeVector TypeVector() const;
   virtual inline XPt* Pt() { return m_T;}
   virtual bool IsClosed() const;

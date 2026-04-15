@@ -52,8 +52,8 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   //m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 10000;
-  m_bNeedUpdate = m_bNeedLasPoint = m_bAutoRotation = m_bSaveImage = m_bNeedTarget = m_bUpdateTarget = false;
-  m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
+  m_bNeedUpdate = m_bNeedLastPoint = m_bAutoRotation = m_bAutoFly = m_bSaveImage = m_bNeedTarget = false;
+  m_bUpdateTarget = m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
   m_bDtmTriangle = m_bDtmFill = true;
   m_Base = nullptr;
   m_dX0 = m_dY0 = m_dGsd = m_dZ0 = 0.;
@@ -67,6 +67,7 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
   m_bUpdateDtmColor = m_bDtmTextured = false;
   m_bShowF1Help = false;
+  m_FlyPos = 0;
   m_QuickLook = juce::Image(juce::Image::ARGB, 100, 100, true);
   juce::Image image = juce::ImageCache::getFromMemory(BinaryData::Options_png, BinaryData::Options_pngSize);
   m_btnOptions.setImages(true, true, true, image, 1.f, juce::Colours::green, juce::Image(), 1.f, juce::Colours::green, 
@@ -120,7 +121,7 @@ void OGLWidget::initialise()
       ptr_index++;
     }
   }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
+  juce::gl::glUnmapBuffer(GL_ARRAY_BUFFER);
 
   // Creation du buffer des points des polygones
   openGLContext.extensions.glGenBuffers(1, &m_PolyVertexArrayID);
@@ -207,11 +208,14 @@ juce::Matrix3D<float> OGLWidget::getProjectionMatrix() const
 //==============================================================================
 // Matrice Vue
 //==============================================================================
-juce::Matrix3D<float> OGLWidget::getViewMatrix() const
+juce::Matrix3D<float> OGLWidget::getViewMatrix()
 {
   float autoRot = 0.0;
-  if (m_bAutoRotation)
-    autoRot = ((float)getFrameCounter() * 0.01f);
+  if (m_bAutoRotation) {
+    //autoRot = ((float)getFrameCounter() * 0.01f);
+    m_R.Z += 0.01;
+  }
+
   auto viewMatrix = juce::Matrix3D<float>::fromTranslation({ (float)m_T.X, (float)m_T.Y, -10.0f + (float)m_T.Z});
   auto rotationMatrix = juce::Matrix3D<float>::rotation({ (float)m_R.X, (float)m_R.Y, (float)m_R.Z + autoRot });
  
@@ -459,7 +463,7 @@ void OGLWidget::render()
   }
 
   // Gestion des selections de points
-  if (m_bNeedLasPoint)
+  if (m_bNeedLastPoint)
     Select((int)m_LastPos.x, (int)m_LastPos.y);
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
   m_Attributes->enable();
@@ -514,7 +518,7 @@ void OGLWidget::mouseDown(const juce::MouseEvent& event)
 
 void OGLWidget::mouseUp(const juce::MouseEvent& event)
 {
-  m_bNeedLasPoint = true;
+  m_bNeedLastPoint = true;
   if (event.mods.isShiftDown()) {
     m_bTranslateView = true;
     repaint();
@@ -536,7 +540,7 @@ void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
 void OGLWidget::mouseDrag(const juce::MouseEvent& event)
 {
   if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
-    m_bNeedLasPoint = true;
+    m_bNeedLastPoint = true;
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
   }
@@ -566,7 +570,7 @@ void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseW
 
 void OGLWidget::mouseDoubleClick(const juce::MouseEvent& event)
 {
-  m_bNeedLasPoint = true;
+  m_bNeedLastPoint = true;
   if (event.mods.isAltDown()) {
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
@@ -601,11 +605,17 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_LasPointSize = 4;
   }
   if ((key.getTextCharacter() == 'A') || (key.getTextCharacter() == 'a')) {
-    if (m_bAutoRotation)
-      m_R.Z += ((float)getFrameCounter() * 0.01f);
+    //if (m_bAutoRotation)
+    //  m_R.Z += ((float)getFrameCounter() * 0.01f);
     m_bAutoRotation = (!m_bAutoRotation);
   }
- 
+  if ((key.getTextCharacter() == 'Z') || (key.getTextCharacter() == 'z')) {
+    m_bAutoFly = (!m_bAutoFly);
+    if (m_bAutoFly) startTimerHz(60); else stopTimer();
+  }
+  if ((key.getTextCharacter() == 'E') || (key.getTextCharacter() == 'e'))
+    sendActionMessage("GetFlyPath");
+
   if ((key.getTextCharacter() == 'Y') || (key.getTextCharacter() == 'y')) {
     m_dDeltaZ = 1.;
     m_bNeedUpdate = true;
@@ -1602,7 +1612,7 @@ void OGLWidget::Select(int u, int v)
   XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
   A *= m_dGsd;
   A += XPt3D(m_dX0, m_dY0, m_dZ0);
-  m_bNeedLasPoint = false;
+  m_bNeedLastPoint = false;
   if (m_bUpdateTarget) {  // Mise a jour de la cible
     m_Target = A;
     m_bUpdateTarget = false;
@@ -1672,6 +1682,57 @@ void OGLWidget::exitSignalSent()
   m_bNeedUpdate = true;
   m_QuickLook = m_MapThread.GetRaster();
   //repaint();
+}
+
+//==============================================================================
+// Creation d'une ligne de vol
+//==============================================================================
+void OGLWidget::CreateFlyPath(XGeoVector* V)
+{
+  m_FlyPath.clear();
+  if (V == nullptr)
+    return;
+  if (V->NbPt() < 2)
+    return;
+  if (!V->LoadGeom())
+    return;
+  for (uint32_t i = 0; i < V->NbPt() - 1; i++) {
+    XPt2D A = V->Pt(i), B = V->Pt(i + 1);
+    double zA = V->Z(i), zB = V->Z(i + 1);
+    if (zA < LasShader::Zmin()) zA = m_Base->Z(A);
+    if (zB < LasShader::Zmin()) zB = m_Base->Z(B);
+    int distance = XRint(dist(A, B));
+    if (distance < 1) distance = 1;
+    for (int j = 0; j < distance; j++) {
+      XPt3D P; 
+      P.X = (A.X * (distance - j) + B.X * j) / distance;
+      P.Y = (A.Y * (distance - j) + B.Y * j) / distance;
+      P.Z = (zA * (distance - j) + zB * j) / distance;
+      m_FlyPath.push_back(P);
+    }
+  }
+  V->Unload();
+}
+
+//==============================================================================
+// Timer pour la ligne de vol
+//==============================================================================
+void OGLWidget::timerCallback()
+{
+   if (m_bAutoFly) {
+     if (m_FlyPos < m_FlyPath.size()) {
+       m_Target = m_FlyPath[m_FlyPos];
+       m_FlyPos++;
+       m_T.X = (m_Target.X - m_dX0) / m_dGsd;
+       m_T.Y = (m_Target.Y - m_dY0) / m_dGsd;
+       m_T.Z = (m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ;
+       sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
+         + ":" + juce::String(m_Target.Z, 2));
+       m_bNeedTarget = true;
+     }
+     else
+       m_FlyPos = 0;
+   }
 }
 
 //-----------------------------------------------------------------------------
