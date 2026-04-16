@@ -33,3 +33,5 @@ ONNX/*
 vtzero/*
 protozero/*
 stb/*
+TinyEXIF/*
+
