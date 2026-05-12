@@ -84,7 +84,7 @@ public:
 //==============================================================================
 class FieldEditor : public juce::Component {
 public:
-	enum FieldType { String = 0, Double = 1, Int = 2, Uint = 3};
+	enum FieldType { String = 0, Double = 1, Udouble = 2, Int = 3, Uint = 4};
 	FieldEditor() { ; }
 	void SetEditor(juce::String label, juce::String value, FieldType type, int labelW, int editorW);
 

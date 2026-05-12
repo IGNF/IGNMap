@@ -59,6 +59,9 @@ public:
   void TranslateView();
   void UpdateQuickLook();
   void CreateFlyPath(XGeoVector*);
+  void CaptureFrameBuffer();
+  void SaveSettings(const juce::String& filename);
+  void LoadSettings(const juce::String& filename);
 
 protected:
   void LoadLasClass(XGeoClass* C);
@@ -374,7 +377,7 @@ public:
   OGL3DViewer(const juce::String& name, juce::Colour backgroundColour, int requiredButtons);
   ~OGL3DViewer() { ; }
 
-  void closeButtonPressed() { setVisible(false); }
+  void closeButtonPressed() { setMinimised(true); }
   
   void LoadObjects(XGeoBase* base, XFrame* F) { m_OGLWidget.LoadObjects(base, F); }
   void SetTarget(const XPt3D& P) { m_OGLWidget.SetTarget(P); }

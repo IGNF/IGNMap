@@ -441,7 +441,7 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuShow3DViewer:
 		result.setInfo(juce::translate("View 3D Viewer"), juce::translate("View 3D Viewer"), "Menu", 0);
 		if (m_OGL3DViewer.get() != nullptr)
-			result.setTicked(m_OGL3DViewer.get()->isVisible());
+			result.setTicked(!m_OGL3DViewer.get()->isMinimised());
 		break;
 	case CommandIDs::menuShowVectorLayers:
 		result.setInfo(juce::translate("View Vector Layers Panel"), juce::translate("View Vector Layers Panel"), "Menu", 0);
@@ -636,7 +636,7 @@ bool MainComponent::perform(const InvocationInfo& info)
 		if (m_OGL3DViewer.get() == nullptr)
 			Create3DView();
 		else
-			m_OGL3DViewer.get()->setVisible(!m_OGL3DViewer.get()->isVisible());
+			m_OGL3DViewer.get()->setMinimised(!m_OGL3DViewer.get()->isMinimised());
 		break;
 	case CommandIDs::menuShowVectorLayers:
 		ShowHidePanel(m_VectorViewer.get());

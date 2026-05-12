@@ -44,11 +44,11 @@ ExportDtmDlg::ExportDtmDlg(XGeoBase* base, double xmin, double ymin, double xmax
   addChildComponent(m_StlScale);
   m_StlScale.setBounds(10, 190, 190, 24);
 
-  m_StlZFactor.SetEditor(juce::translate("Z factor :"), "1", FieldEditor::Uint, 130, 50);
+  m_StlZFactor.SetEditor(juce::translate("Z factor :"), "1", FieldEditor::Udouble, 130, 50);
   addChildComponent(m_StlZFactor);
   m_StlZFactor.setBounds(200, 190, 190, 24);
 
-  m_StlStep.SetEditor(juce::translate("Step (mm) :"), "1", FieldEditor::Uint, 130, 50);
+  m_StlStep.SetEditor(juce::translate("Step (mm) :"), "1", FieldEditor::Udouble, 130, 50);
   addChildComponent(m_StlStep);
   m_StlStep.setBounds(10, 220, 190, 24);
 

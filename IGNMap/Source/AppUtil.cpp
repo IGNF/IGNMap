@@ -216,6 +216,7 @@ void FieldEditor::SetEditor(juce::String label, juce::String value, FieldType ty
 	m_Editor.setText(value);
 	switch (type) {
 	case Double: m_Editor.setInputRestrictions(10, "0123456789.-"); break;
+	case Udouble: m_Editor.setInputRestrictions(10, "0123456789."); break;
 	case Int: m_Editor.setInputRestrictions(10, "0123456789-"); break;
 	case Uint: m_Editor.setInputRestrictions(10, "0123456789"); break;
 	default:;

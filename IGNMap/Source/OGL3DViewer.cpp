@@ -14,6 +14,7 @@
 #include "../../XTool/XGeoBase.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
+#include "../../XTool/XParserXml.h"
 #include "LasShader.h"
 #include "DtmShader.h"
 #include "AppUtil.h"
@@ -51,7 +52,7 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
   //m_nMaxLasPt = 2000000;
-  m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 10000;
+  m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 100000;
   m_bNeedUpdate = m_bNeedLastPoint = m_bAutoRotation = m_bAutoFly = m_bSaveImage = m_bNeedTarget = false;
   m_bUpdateTarget = m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
   m_bDtmTriangle = m_bDtmFill = true;
@@ -284,29 +285,43 @@ void OGLWidget::CreateShaders()
 //==============================================================================
 void OGLWidget::paint(juce::Graphics& g)
 {
+  // Sauvegarde de l'image
+  if (m_bSaveImage) {
+    CaptureFrameBuffer();
+    m_bSaveImage = false;
+    repaint();
+  }
+
   auto b = getLocalBounds();
+  int info_origin = b.getBottom() - 125;
+
+  g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.setOpacity(0.5f);
+  g.fillRect(0, info_origin + 30, 200, 90);
+  g.setOpacity(1.f);
+
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
   g.setFont(12);
 
-  int info_origin = b.getBottom() - 125;
   juce::String help = juce::translate("Help : F1");
   g.drawText(help, 5, info_origin + 30, 300, 30, juce::Justification::left);
-  juce::String nbPoint = "Points : " + juce::String(m_nNbLasVertex) + " Las";
-  nbPoint += " | " + juce::String(m_nNbPolyVertex) + " Polygon";
-  nbPoint += " | " + juce::String(m_nNbLineVertex) + " Line";
-  g.drawText(nbPoint, 5, info_origin + 50, 300, 30, juce::Justification::left);
+  uint32_t nbPoints = m_nNbLasVertex + m_nNbPolyVertex + m_nNbLineVertex + m_nNbVecPointVertex;
+  if (((double)m_nMaxLasPt - (double)m_nNbLasVertex) < 100000.)
+    g.setColour(juce::Colours::red);
+  juce::String nbPointStr = "Points : " + juce::String(nbPoints);
+  g.drawText(nbPointStr, 5, info_origin + 50, 300, 30, juce::Justification::left);
 
   // Cible
   juce::String target = "T = " + juce::String(m_Target.X, 2) + " ; " + juce::String(m_Target.Y, 2) + " ; " + juce::String(m_Target.Z, 2);
   g.setColour(juce::Colours::magenta);
   g.drawText(target, 5, info_origin + 70, 300, 30, juce::Justification::left);
-  g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
 
   // Point clique
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
+  g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
   g.drawText(lastPt, 5, info_origin + 90, 300, 30, juce::Justification::left);
-  g.drawLine(0.f, info_origin + 30.f, 150.f, info_origin + 30.f);
-  g.drawLine(0.f, info_origin + 120.f, 150.f, info_origin + 120.f);
+  //g.drawLine(0.f, info_origin + 30.f, 150.f, info_origin + 30.f);
+  //g.drawLine(0.f, info_origin + 120.f, 150.f, info_origin + 120.f);
 
   if (!m_bShowF1Help)
     return;
@@ -350,22 +365,13 @@ void OGLWidget::render()
   int W = juce::roundToInt(desktopScale * (float)m_Bounds.getWidth());
   int H = juce::roundToInt(desktopScale * (float)m_Bounds.getHeight());
 
-  juce::OpenGLFrameBuffer* buffer = nullptr;
-  juce::Image snapshotImage;
-  if (m_bSaveImage) {
-    snapshotImage = juce::Image(juce::OpenGLImageType().create(juce::Image::ARGB, W, H, true));
-    buffer = juce::OpenGLImageType::getFrameBufferFrom(snapshotImage);
-    if (buffer != nullptr)
-      buffer->makeCurrentRenderingTarget();
-  }
-
   //glEnable(GL_BLEND);
   //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //openGLContext.extensions.glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glEnable(GL_POLYGON_OFFSET_LINE);
   glEnable(GL_POLYGON_OFFSET_POINT);
   glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -480,20 +486,6 @@ void OGLWidget::render()
   glDrawArrays(GL_LINES, 0, 6);
   m_Attributes->disable();
 
-  // Sauvegarde de l'image
-  if (m_bSaveImage) {
-    if (buffer != nullptr)
-      buffer->releaseAsRenderingTarget();
-    juce::File imageFile(m_strFileSave);
-    if (imageFile.existsAsFile())
-      imageFile.deleteFile();
-
-    juce::FileOutputStream outputFileStream(imageFile);
-    juce::PNGImageFormat imageFormatter;
-    imageFormatter.writeImageToStream(snapshotImage, outputFileStream);
-    m_bSaveImage = false;
-  }
-
   // Reset the element buffers so child Components draw correctly
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
   openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -563,7 +555,7 @@ void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseW
     return;
   }
 
-  double scale = wheel.deltaY / 10.;
+  double scale = wheel.deltaY / 5.;
   m_S += XPt3D(scale, scale, scale);
   repaint();
 }
@@ -586,13 +578,13 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if (key.getKeyCode() == juce::KeyPress::F1Key) 
     m_bShowF1Help = !m_bShowF1Help;
   if (key.getKeyCode() == juce::KeyPress::upKey)
-    m_T.Y += 0.1;
-  if (key.getKeyCode() == juce::KeyPress::downKey)
     m_T.Y -= 0.1;
+  if (key.getKeyCode() == juce::KeyPress::downKey)
+    m_T.Y += 0.1;
   if (key.getKeyCode() == juce::KeyPress::leftKey)
-    m_T.X -= 0.1;
-  if (key.getKeyCode() == juce::KeyPress::rightKey)
     m_T.X += 0.1;
+  if (key.getKeyCode() == juce::KeyPress::rightKey)
+    m_T.X -= 0.1;
   if (key.getKeyCode() == juce::KeyPress::pageUpKey)
     m_S.Z = std::clamp(m_S.Z + 0.1, 0.1, 10.);
    if (key.getKeyCode() == juce::KeyPress::pageDownKey)
@@ -631,9 +623,24 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
 
   if (key.getKeyCode() == juce::KeyPress::F2Key) {
     m_strFileSave = AppUtil::SaveFile("Image3DPath", juce::translate("Save Image"), "*.png;");
-    if (!m_strFileSave.isEmpty())
+    if (!m_strFileSave.isEmpty()) {
       m_bSaveImage = true;
+      openGLContext.triggerRepaint();
+    }
   }
+  if (key.getKeyCode() == juce::KeyPress::F3Key) {
+    juce::String filename = AppUtil::SaveFile("Image3DPath", juce::translate("Save 3D settings"), "*.xml;");
+    if (!filename.isEmpty())
+      SaveSettings(filename);
+    return true;
+  }
+  if (key.getKeyCode() == juce::KeyPress::F4Key) {
+    juce::String filename = AppUtil::OpenFile("Image3DPath", juce::translate("Save 3D settings"), "*.xml;");
+    if (!filename.isEmpty())
+      LoadSettings(filename);
+     return true;
+  }
+
   SyncControl3D();
   repaint();
   return true;
@@ -1733,6 +1740,104 @@ void OGLWidget::timerCallback()
      else
        m_FlyPos = 0;
    }
+}
+
+//==============================================================================
+// Copie le Frame Buffer dans une image
+//==============================================================================
+void OGLWidget::CaptureFrameBuffer()
+{
+  // Unbind any custom FBO first
+  auto desktopScale = (float)openGLContext.getRenderingScale();
+  juce::OpenGLHelpers::clear(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  int width = juce::roundToInt(desktopScale * (float)m_Bounds.getWidth());
+  int height = juce::roundToInt(desktopScale * (float)m_Bounds.getHeight());
+
+  juce::gl::glBindFramebuffer(juce::gl::GL_FRAMEBUFFER, openGLContext.getFrameBufferID());
+
+  juce::HeapBlock<juce::uint8> pixels;
+  pixels.calloc(width * height * 4);
+
+  juce::gl::glReadPixels(0, 0, width, height, juce::gl::GL_RGBA, juce::gl::GL_UNSIGNED_BYTE, pixels.getData());
+
+  juce::Image image(juce::Image::ARGB, width, height, false);
+  juce::Image::BitmapData bitmapData(image, juce::Image::BitmapData::writeOnly);
+
+  for (int y = 0; y < height; ++y)
+  {
+    const int flippedY = height - 1 - y;
+    const auto* row = pixels.getData() + flippedY * width * 4;
+
+    for (int x = 0; x < width; ++x)
+    {
+      bitmapData.setPixelColour(x, y,
+        juce::Colour(row[x * 4], row[x * 4 + 1], row[x * 4 + 2], row[x * 4 + 3]));
+    }
+  }
+
+  juce::File imageFile(m_strFileSave);
+  if (imageFile.existsAsFile())
+    imageFile.deleteFile();
+
+  juce::FileOutputStream outputFileStream(imageFile);
+  juce::PNGImageFormat imageFormatter;
+  imageFormatter.writeImageToStream(image, outputFileStream);
+}
+
+//==============================================================================
+// Copie le Frame Buffer dans une image
+//==============================================================================
+void OGLWidget::SaveSettings(const juce::String& filename)
+{
+  std::ofstream out;
+  out.open(AppUtil::GetStringFilename(filename), std::ios::out);
+  out.setf(std::ios::fixed); out.precision(6);
+  out << "<ignmap_3dview>" << std::endl;
+  out << "<translation>" << std::endl;
+  m_T.XmlWrite(&out);
+  out << "</translation>" << std::endl;
+  out << "<rotation>" << std::endl;
+  m_R.XmlWrite(&out);
+  out << "</rotation>" << std::endl;
+  out << "<scale>" << std::endl;
+  m_S.XmlWrite(&out);
+  out << "</scale>" << std::endl;
+  out << "<frame2D>" << std::endl;
+  m_Frame.XmlWrite(&out);
+  out << "</frame2D>" << std::endl;
+  out << "<X0> " << m_dX0 << " </X0>" << std::endl;
+  out << "<Y0> " << m_dY0 << " </Y0>" << std::endl;
+  out << "<Z0> " << m_dZ0 << " </Z0>" << std::endl;
+  out << "<GSD> " << m_dGsd << " </GSD>" << std::endl;
+  out << "</ignmap_3dview>" << std::endl;
+}
+
+//==============================================================================
+// Copie le Frame Buffer dans une image
+//==============================================================================
+void OGLWidget::LoadSettings(const juce::String& filename)
+{
+  XParserXML parser;
+  if (!parser.Parse(AppUtil::GetStringFilename(filename)))
+    return;
+  XParserXML translation = parser.FindSubParser("/ignmap_3dview/translation/pt3d");
+  if (!translation.IsEmpty())
+    m_T.XmlRead(&translation);
+  XParserXML rotation = parser.FindSubParser("/ignmap_3dview/rotation/pt3d");
+  if (!rotation.IsEmpty())
+    m_R.XmlRead(&rotation);
+  XParserXML scale = parser.FindSubParser("/ignmap_3dview/scale/pt3d");
+  if (!scale.IsEmpty())
+    m_S.XmlRead(&scale);
+  XParserXML frame = parser.FindSubParser("/ignmap_3dview/frame2D/frame");
+  if (!frame.IsEmpty())
+    m_Frame.XmlRead(&frame);
+  m_dX0 = parser.ReadNodeAsDouble("/ignmap_3dview/X0");
+  m_dY0 = parser.ReadNodeAsDouble("/ignmap_3dview/Y0");
+  m_dZ0 = parser.ReadNodeAsDouble("/ignmap_3dview/Z0");
+  m_dGsd = parser.ReadNodeAsDouble("/ignmap_3dview/GSD");
+  LoadObjects(m_Base, &m_Frame);
+  openGLContext.triggerRepaint();
 }
 
 //-----------------------------------------------------------------------------

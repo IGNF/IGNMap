@@ -132,9 +132,12 @@ private:
   void Preferences();
   void ShowHidePanel(juce::Component* component);
   void Create3DView() {
-    m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, juce::DocumentWindow::allButtons));
+    m_OGL3DViewer.reset(new OGL3DViewer("3DViewer", juce::Colours::grey, 
+                            juce::DocumentWindow::minimiseButton | juce::DocumentWindow::maximiseButton));
     m_OGL3DViewer.get()->SetListener(this);
     m_OGL3DViewer.get()->setVisible(true);
+    XFrame F;
+    m_OGL3DViewer.get()->LoadObjects(&m_GeoBase, &F);
   }
 
   XGeoClass* ImportDataFolder(juce::String foldername, XGeoVector::eTypeVector type);

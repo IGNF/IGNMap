@@ -787,8 +787,8 @@ void DtmLayersViewer::ComputeDeltaVector(std::vector< XGeoClass*> T)
 				return false;
 
 			std::ofstream mif, mid;
-			mif.open(m_strMifFile.toStdString(), std::ios::out | std::ios::app);
-			mid.open(m_strMidFile.toStdString(), std::ios::out | std::ios::app);
+			mif.open(AppUtil::GetStringFilename(m_strMifFile), std::ios::out | std::ios::app);
+			mid.open(AppUtil::GetStringFilename(m_strMidFile), std::ios::out | std::ios::app);
 			mif.setf(std::ios::fixed); mif.precision(2);
 			mid.setf(std::ios::fixed); mid.precision(2);
 
