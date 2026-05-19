@@ -103,7 +103,7 @@ private:
   juce::String  m_strFileSave;
   MapThread     m_MapThread;
 
-  static uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
+  uint32_t  m_nMaxLasPt;        // Nombre maximum de points LAS
   uint32_t  m_nMaxPolyPt;       // Nombre maximum de points polygone
   uint32_t  m_nMaxLinePt;       // Nombre maximum de points polyligne
   uint32_t  m_nMaxVecPointPt;   // Nombre maximum de points vectoriels

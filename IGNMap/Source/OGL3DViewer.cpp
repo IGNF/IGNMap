@@ -19,7 +19,7 @@
 #include "DtmShader.h"
 #include "AppUtil.h"
 
-uint32_t OGLWidget::m_nMaxLasPt = 2000000;
+//uint32_t OGLWidget::m_nMaxLasPt = 2000000;
 
 //==============================================================================
 // OGL3DViewer
@@ -51,7 +51,9 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_DtmBufferID = m_DtmVertexArrayID = m_DtmElementID = 0;
   m_PolyBufferID = m_PolyVertexArrayID = m_PolyElementID = 0;
   m_LineBufferID = m_LineVertexArrayID = m_LineElementID = 0;
-  //m_nMaxLasPt = 2000000;
+  m_nMaxLasPt = (uint32_t)AppUtil::GetAppOption("MaxLasPt").getLargeIntValue();
+  if (m_nMaxLasPt < 2000000)
+    m_nMaxLasPt = 2000000;
   m_nMaxPolyPt = m_nMaxLinePt = m_nMaxVecPointPt = 100000;
   m_bNeedUpdate = m_bNeedLastPoint = m_bAutoRotation = m_bAutoFly = m_bSaveImage = m_bNeedTarget = false;
   m_bUpdateTarget = m_bTranslateView = m_bZoomInView = m_bZoomOutView = false;
@@ -708,6 +710,7 @@ void OGLWidget::sliderValueChanged(juce::Slider* slider)
     m_VectorWidth = (float)std::clamp(slider->getValue(), 1., 10.);
   if (slider == &m_Control3D.m_sldMaxNbLasPoint) {
     m_nMaxLasPt = (int)(slider->getValue() * 1000000.);
+    AppUtil::SaveAppOption("MaxLasPt", juce::String(m_nMaxLasPt));
     sendActionMessage("Reset3DView");
   }
 
