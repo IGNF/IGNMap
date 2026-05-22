@@ -72,6 +72,20 @@ bool XPt3D::egal(const XPt3D& M, const double& epsilon)
 }
 
 //-----------------------------------------------------------------------------
+// Nullite a un epsilon
+//-----------------------------------------------------------------------------
+bool XPt3D::isNull(const double& epsilon)
+{
+	if (fabs(X) > epsilon)
+		return false;
+	if (fabs(Y) > epsilon)
+		return false;
+	if (fabs(Z) > epsilon)
+		return false;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Operateurs de calcul
 //-----------------------------------------------------------------------------
 XPt3D operator+(XPt3D A, XPt3D B)

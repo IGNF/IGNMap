@@ -205,7 +205,8 @@ juce::Matrix3D<float> OGLWidget::getProjectionMatrix() const
   auto w = 1.0f / (0.5f + 0.1f);
   auto h = w * m_Bounds.toFloat().getAspectRatio(false);
 
-  return juce::Matrix3D<float>::fromFrustum(-w, w, -h, h, 4.0f, 30.0f);
+  //return juce::Matrix3D<float>::fromFrustum(-w, w, -h, h, 4.0f, 30.0f);
+  return juce::Matrix3D<float>::fromFrustum(-w, w, -h, h, 4.0f, 100.0f);
 }
 
 //==============================================================================
@@ -526,11 +527,6 @@ void OGLWidget::mouseUp(const juce::MouseEvent& event)
   }
 }
 
-void OGLWidget::mouseMove(const juce::MouseEvent& /*event*/)
-{
-  
-}
-
 void OGLWidget::mouseDrag(const juce::MouseEvent& event)
 {
   if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
@@ -557,7 +553,11 @@ void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseW
     return;
   }
 
-  double scale = wheel.deltaY / 5.;
+  double factor = 5.;
+  if (event.mods.isShiftDown())
+    factor = 1.;
+
+  double scale = wheel.deltaY / factor;
   m_S += XPt3D(scale, scale, scale);
   repaint();
 }
@@ -588,14 +588,17 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if (key.getKeyCode() == juce::KeyPress::rightKey)
     m_T.X -= 0.1;
   if (key.getKeyCode() == juce::KeyPress::pageUpKey)
-    m_S.Z = std::clamp(m_S.Z + 0.1, 0.1, 10.);
-   if (key.getKeyCode() == juce::KeyPress::pageDownKey)
-    m_S.Z = std::clamp(m_S.Z - 0.1, 0.1, 10.);
+    m_S.Z = std::clamp(m_S.Z + 0.1, 0.1, 25.);
+  if (key.getKeyCode() == juce::KeyPress::pageDownKey)
+    m_S.Z = std::clamp(m_S.Z - 0.1, 0.1, 25.);
  
-    if ((key.getTextCharacter() == 'R')||(key.getTextCharacter() == 'r')) {
+  if ((key.getTextCharacter() == 'R')||(key.getTextCharacter() == 'r')) {
     m_R = XPt3D();
     m_T = XPt3D();
     m_S = XPt3D(1., 1., 1.);
+    m_dDeltaZ = -m_dOffsetZ;
+    m_DeltaXY = m_OffsetXY * (-1.);
+    m_bNeedUpdate = true;
     m_LasPointSize = 4;
   }
   if ((key.getTextCharacter() == 'A') || (key.getTextCharacter() == 'a')) {
@@ -611,11 +614,19 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     sendActionMessage("GetFlyPath");
 
   if ((key.getTextCharacter() == 'Y') || (key.getTextCharacter() == 'y')) {
-    m_dDeltaZ = 1.;
+    m_dDeltaZ = -0.1;
     m_bNeedUpdate = true;
   }
   if ((key.getTextCharacter() == 'H') || (key.getTextCharacter() == 'h')) {
-    m_dDeltaZ = -1.;
+    m_dDeltaZ = 0.1;
+    m_bNeedUpdate = true;
+  }
+  if ((key.getTextCharacter() == 'N') || (key.getTextCharacter() == 'n')) {
+    double Xtarget = (m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X;
+    double Ytarget = (m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y;
+    double Ztarget = (m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ;
+    m_DeltaXY = XPt2D(-Xtarget, -Ytarget);
+    m_dDeltaZ = -Ztarget;
     m_bNeedUpdate = true;
   }
   if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
@@ -755,6 +766,7 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
     m_dGsd = F->Height() / 4.;
   m_dZ0 = base->Z(F->Center());
   m_dDeltaZ = m_dOffsetZ = 0.;
+  m_DeltaXY = m_OffsetXY = XPt2D();
   UpdateQuickLook();
 }
 
@@ -775,9 +787,15 @@ void OGLWidget::UpdateBase()
 {
   if (m_Base == nullptr)
     return;
-  if (m_dDeltaZ != 0.) {  // Juste un changement d'echelle altimetrique
-    MoveZ((float)m_dDeltaZ);
+  if ((m_dDeltaZ != 0.)|| (!m_DeltaXY.isNull())) {  // Juste un changement d'origine
+    if (m_dDeltaZ != 0.)
+      MoveZ((float)m_dDeltaZ);
+    if (!m_DeltaXY.isNull()) {
+      MoveXY((float)m_DeltaXY.X, (float)m_DeltaXY.Y);
+      m_T = XPt3D();
+    }
     m_dDeltaZ = 0.;
+    m_DeltaXY = XPt2D();
     return;
   }
   if (m_bUpdateLasColor) { // Juste un reetalement des couleurs des points LAS
@@ -807,7 +825,7 @@ void OGLWidget::UpdateBase()
       LoadVectorClass(C);
   }
   DrawDtm();
-  if (m_dDeltaZ != 0.)
+  if (m_dDeltaZ != 0.)  // FindZMinLas peut modifier le DeltaZ
     MoveZ((float)m_dDeltaZ);
   m_dDeltaZ = 0.;
   m_bNeedUpdate = false;
@@ -1152,6 +1170,84 @@ void OGLWidget::MoveZ(float dZ)
   ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
   for (uint32_t i = 0; i < 6; i++) {
     ptr_vertex->position[2] += dZ;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+
+  m_bNeedUpdate = false;
+  //openGLContext.setContinuousRepainting(true);
+  openGLContext.triggerRepaint();
+}
+
+//==============================================================================
+// Translation X;Y de tous les points
+//==============================================================================
+void OGLWidget::MoveXY(float dX, float dY)
+{
+  const juce::ScopedLock lock(m_Mutex);
+  //openGLContext.setContinuousRepainting(false);
+  using namespace ::juce::gl;
+  m_OffsetXY += XPt2D(dX, dY);
+  // Points LAS
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
+  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points MNT
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbDtmVertex; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points Polygones
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PolyBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbPolyVertex; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points Polylignes
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LineBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbLineVertex; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points vectoriels
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < m_nNbVecPointVertex; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Points selectionnes
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < 1; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
+    ptr_vertex++;
+  }
+  glUnmapBuffer(GL_ARRAY_BUFFER);
+  // Cible
+  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
+  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+  for (uint32_t i = 0; i < 6; i++) {
+    ptr_vertex->position[0] += dX;
+    ptr_vertex->position[1] += dY;
     ptr_vertex++;
   }
   glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -1559,8 +1655,8 @@ void OGLWidget::DrawTarget()
     M[i].colour[1] = 0.f;
   }
 
-  float X = (float)((m_Target.X - m_dX0) / m_dGsd);
-  float Y = (float)((m_Target.Y - m_dY0) / m_dGsd);
+  float X = (float)((m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X);
+  float Y = (float)((m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y);
   float Z = (float)((m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ);
   // Axe Z
   M[0].position[0] = X;
@@ -1619,7 +1715,7 @@ void OGLWidget::Select(int u, int v)
   M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
   M.colour[1] = 0.f;
   glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
-  XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
+  XPt3D A(M.position[0] - m_OffsetXY.X, M.position[1] - m_OffsetXY.Y, M.position[2] - m_dOffsetZ);
   A *= m_dGsd;
   A += XPt3D(m_dX0, m_dY0, m_dZ0);
   m_bNeedLastPoint = false;
@@ -1733,8 +1829,8 @@ void OGLWidget::timerCallback()
      if (m_FlyPos < m_FlyPath.size()) {
        m_Target = m_FlyPath[m_FlyPos];
        m_FlyPos++;
-       m_T.X = (m_Target.X - m_dX0) / m_dGsd;
-       m_T.Y = (m_Target.Y - m_dY0) / m_dGsd;
+       m_T.X = (m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X;
+       m_T.Y = (m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y;
        m_T.Z = (m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ;
        sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
          + ":" + juce::String(m_Target.Z, 2));

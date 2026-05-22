@@ -25,6 +25,18 @@ bool XPt2D::egal(const XPt2D& M, const double& epsilon)
 }
 
 //-----------------------------------------------------------------------------
+// Nullite a un epsilon
+//-----------------------------------------------------------------------------
+bool XPt2D::isNull(const double& epsilon)
+{
+	if (fabs(X) > epsilon)
+		return false;
+	if (fabs(Y) > epsilon)
+		return false;
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Norme
 //-----------------------------------------------------------------------------
 double XPt2D::norm()
