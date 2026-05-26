@@ -551,11 +551,15 @@ void OGLWidget::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseW
     return;
   }
 
+  float dx = wheel.deltaX, dy = wheel.deltaY;
   double factor = 5.;
-  if (event.mods.isShiftDown())
+  if (event.mods.isShiftDown()) {
+    if (dy == 0. && dx != 0.) // Sur MacOS, la touche Shift peut inverser les axes pour les roues uni-directionnelles
+      std::swap(dx, dy);
     factor = 1.;
+  }
 
-  double scale = wheel.deltaY / factor;
+  double scale = dy / factor;
   m_S += XPt3D(scale, scale, scale);
   repaint();
 }
