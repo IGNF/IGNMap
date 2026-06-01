@@ -96,7 +96,7 @@ protected:
 		void sliderValueChanged(juce::Slider* slider) override {
 			if (slider == &m_sldResol) ComputeProfil(m_Sel, m_sldResol.getValue());
 		}
-		void buttonClicked(juce::Button* button) {
+		void buttonClicked(juce::Button*) {
 			juce::PopupMenu menu;
 			std::function< void() > ExportImage = [=]() {	AppUtil::SaveComponent(&m_Drawer); };
 			menu.addItem(juce::translate("Export image"), true, false, ExportImage);

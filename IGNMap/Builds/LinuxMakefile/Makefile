@@ -39,7 +39,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000d" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I../../../libwebp-1.3.2 -I../../../protozero/include -I../../../vtzero/include -I../../../LASzip/include/laszip $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000d" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I../../../libwebp -I../../../protozero/include -I../../../vtzero/include -I../../../LASzip/include/laszip $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000d" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I../../../libwebp-1.3.2 -I../../../protozero/include -I../../../vtzero/include -I../../../LASzip/include/laszip $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_PROJUCER_VERSION=0x8000d" "-DJUCE_MODULE_AVAILABLE_juce_core=1" "-DJUCE_MODULE_AVAILABLE_juce_data_structures=1" "-DJUCE_MODULE_AVAILABLE_juce_events=1" "-DJUCE_MODULE_AVAILABLE_juce_graphics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_basics=1" "-DJUCE_MODULE_AVAILABLE_juce_gui_extra=1" "-DJUCE_MODULE_AVAILABLE_juce_opengl=1" "-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1" "-DJUCE_STRICT_REFCOUNTEDPOINTER=1" "-DJUCE_STANDALONE_APPLICATION=1" "-DJUCE_MODAL_LOOPS_PERMITTED=1" "-DTINYEXIF_NO_XMP_SUPPORT=1" "-DOPJ_STATIC=1" "-DLASZIPDLL_EXPORTS=1" "-DJUCE_WEB_BROWSER=0" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags $(shell ($(PKG_CONFIG) --exists webkit2gtk-4.1 && echo webkit2gtk-4.1) || echo webkit2gtk-4.0) freetype2 fontconfig gl libcurl gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../JUCE/modules -I../../../libwebp -I../../../protozero/include -I../../../vtzero/include -I../../../LASzip/include/laszip $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := IGNMap
 
@@ -72,6 +72,42 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS_APP := \
+  $(JUCE_OBJDIR)/AffineImage_f63fb19d.o \
+  $(JUCE_OBJDIR)/AnnotViewer_a719b399.o \
+  $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o \
+  $(JUCE_OBJDIR)/ClassViewer_44f830b.o \
+  $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
+  $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
+  $(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o \
+  $(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o \
+  $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
+  $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
+  $(JUCE_OBJDIR)/GeoBase_343e9923.o \
+  $(JUCE_OBJDIR)/GeoSearch_6564213a.o \
+  $(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o \
+  $(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o \
+  $(JUCE_OBJDIR)/LasLayersViewer_53432e13.o \
+  $(JUCE_OBJDIR)/LasShader_1eec2304.o \
+  $(JUCE_OBJDIR)/Main_90ebc5c2.o \
+  $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
+  $(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o \
+  $(JUCE_OBJDIR)/MapThread_564c0ce7.o \
+  $(JUCE_OBJDIR)/MapView_229c9e02.o \
+  $(JUCE_OBJDIR)/MvtLayer_36152faf.o \
+  $(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o \
+  $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
+  $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o \
+  $(JUCE_OBJDIR)/PrefDlg_9f17261d.o \
+  $(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o \
+  $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
+  $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o \
+  $(JUCE_OBJDIR)/StacViewer_e5b1993e.o \
+  $(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o \
+  $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o \
+  $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
+  $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
+  $(JUCE_OBJDIR)/WmtsTmsViewer_a3a54f58.o \
+  $(JUCE_OBJDIR)/ZoomViewer_a6d902ce.o \
   $(JUCE_OBJDIR)/jaricom_71e13aae.o \
   $(JUCE_OBJDIR)/jcapimin_89469a80.o \
   $(JUCE_OBJDIR)/jcapistd_89a00211.o \
@@ -139,92 +175,92 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/laszip_f8e72c40.o \
   $(JUCE_OBJDIR)/laszip_dll_ad018865.o \
   $(JUCE_OBJDIR)/mydefs_619244b7.o \
-  $(JUCE_OBJDIR)/alpha_dec_b566e8ee.o \
-  $(JUCE_OBJDIR)/buffer_dec_bd14a20.o \
-  $(JUCE_OBJDIR)/frame_dec_829359bd.o \
-  $(JUCE_OBJDIR)/idec_dec_acfd8019.o \
-  $(JUCE_OBJDIR)/io_dec_d955f286.o \
-  $(JUCE_OBJDIR)/quant_dec_46a20113.o \
-  $(JUCE_OBJDIR)/tree_dec_b1afe4fe.o \
-  $(JUCE_OBJDIR)/vp8_dec_291b7e4e.o \
-  $(JUCE_OBJDIR)/vp8l_dec_a170a4ce.o \
-  $(JUCE_OBJDIR)/webp_dec_15539a7c.o \
-  $(JUCE_OBJDIR)/alpha_processing_1265b0d2.o \
-  $(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_15a920b1.o \
-  $(JUCE_OBJDIR)/alpha_processing_neon_989c06ad.o \
-  $(JUCE_OBJDIR)/alpha_processing_sse2_a1e41de4.o \
-  $(JUCE_OBJDIR)/alpha_processing_sse41_9aa08c95.o \
-  $(JUCE_OBJDIR)/cost_e0536f4b.o \
-  $(JUCE_OBJDIR)/cost_mips_dsp_r2_62d7f1aa.o \
-  $(JUCE_OBJDIR)/cost_mips32_a59868fc.o \
-  $(JUCE_OBJDIR)/cost_neon_7e0f6bd4.o \
-  $(JUCE_OBJDIR)/cost_sse2_8757830b.o \
-  $(JUCE_OBJDIR)/cpu_518f87b4.o \
-  $(JUCE_OBJDIR)/dec_51985b8e.o \
-  $(JUCE_OBJDIR)/dec_clip_tables_c9f01143.o \
-  $(JUCE_OBJDIR)/dec_mips_dsp_r2_4465916d.o \
-  $(JUCE_OBJDIR)/dec_mips32_c520bb59.o \
-  $(JUCE_OBJDIR)/dec_msa_2423feca.o \
-  $(JUCE_OBJDIR)/dec_neon_6152b171.o \
-  $(JUCE_OBJDIR)/dec_sse2_6a9ac8a8.o \
-  $(JUCE_OBJDIR)/dec_sse41_e8bf3a51.o \
-  $(JUCE_OBJDIR)/enc_51aa8a66.o \
-  $(JUCE_OBJDIR)/enc_mips_dsp_r2_83303c45.o \
-  $(JUCE_OBJDIR)/enc_mips32_8dca981.o \
-  $(JUCE_OBJDIR)/enc_msa_5f5301a2.o \
-  $(JUCE_OBJDIR)/enc_neon_8c040999.o \
-  $(JUCE_OBJDIR)/enc_sse2_954c20d0.o \
-  $(JUCE_OBJDIR)/enc_sse41_1438e729.o \
-  $(JUCE_OBJDIR)/filters_ebae7dc7.o \
-  $(JUCE_OBJDIR)/filters_mips_dsp_r2_ef852626.o \
-  $(JUCE_OBJDIR)/filters_msa_a57c5c83.o \
-  $(JUCE_OBJDIR)/filters_neon_b060ad8.o \
-  $(JUCE_OBJDIR)/filters_sse2_144e220f.o \
-  $(JUCE_OBJDIR)/lossless_6af2327a.o \
-  $(JUCE_OBJDIR)/lossless_enc_bd2d8555.o \
-  $(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_5c5f48b4.o \
-  $(JUCE_OBJDIR)/lossless_enc_mips32_e82553b2.o \
-  $(JUCE_OBJDIR)/lossless_enc_msa_9f0ed11.o \
-  $(JUCE_OBJDIR)/lossless_enc_neon_35238c0a.o \
-  $(JUCE_OBJDIR)/lossless_enc_sse2_3e6ba341.o \
-  $(JUCE_OBJDIR)/lossless_enc_sse41_8f09b2d8.o \
-  $(JUCE_OBJDIR)/lossless_mips_dsp_r2_88786659.o \
-  $(JUCE_OBJDIR)/lossless_msa_bda07fb6.o \
-  $(JUCE_OBJDIR)/lossless_neon_f7664e05.o \
-  $(JUCE_OBJDIR)/lossless_sse2_ae653c.o \
-  $(JUCE_OBJDIR)/lossless_sse41_151f303d.o \
-  $(JUCE_OBJDIR)/rescaler_f931c3d9.o \
-  $(JUCE_OBJDIR)/rescaler_mips_dsp_r2_6985e138.o \
-  $(JUCE_OBJDIR)/rescaler_mips32_f89a78ae.o \
-  $(JUCE_OBJDIR)/rescaler_msa_14ea4995.o \
-  $(JUCE_OBJDIR)/rescaler_neon_8955c006.o \
-  $(JUCE_OBJDIR)/rescaler_sse2_929dd73d.o \
-  $(JUCE_OBJDIR)/ssim_fbd4b142.o \
-  $(JUCE_OBJDIR)/ssim_sse2_4f3e374.o \
-  $(JUCE_OBJDIR)/upsampling_85e73f00.o \
-  $(JUCE_OBJDIR)/upsampling_mips_dsp_r2_d8d0d9df.o \
-  $(JUCE_OBJDIR)/upsampling_msa_68fd93c.o \
-  $(JUCE_OBJDIR)/upsampling_neon_cc62253f.o \
-  $(JUCE_OBJDIR)/upsampling_sse2_d5aa3c76.o \
-  $(JUCE_OBJDIR)/upsampling_sse41_df9e4043.o \
-  $(JUCE_OBJDIR)/yuv_52c7d666.o \
-  $(JUCE_OBJDIR)/yuv_mips_dsp_r2_a6bb8845.o \
-  $(JUCE_OBJDIR)/yuv_mips32_d671dd81.o \
-  $(JUCE_OBJDIR)/yuv_neon_65563d99.o \
-  $(JUCE_OBJDIR)/yuv_sse2_6e9e54d0.o \
-  $(JUCE_OBJDIR)/yuv_sse41_652d3329.o \
-  $(JUCE_OBJDIR)/bit_reader_utils_a2c46ff5.o \
-  $(JUCE_OBJDIR)/bit_writer_utils_b4990ba5.o \
-  $(JUCE_OBJDIR)/color_cache_utils_4c848e54.o \
-  $(JUCE_OBJDIR)/filters_utils_49d4fd29.o \
-  $(JUCE_OBJDIR)/huffman_encode_utils_439d328.o \
-  $(JUCE_OBJDIR)/huffman_utils_1a16fadb.o \
-  $(JUCE_OBJDIR)/quant_levels_dec_utils_a31fbdae.o \
-  $(JUCE_OBJDIR)/quant_levels_utils_dcf3bf6b.o \
-  $(JUCE_OBJDIR)/random_utils_c5a61b03.o \
-  $(JUCE_OBJDIR)/rescaler_utils_d5a2f85b.o \
-  $(JUCE_OBJDIR)/thread_utils_30360d4a.o \
-  $(JUCE_OBJDIR)/utils_c815d46d.o \
+  $(JUCE_OBJDIR)/alpha_dec_65935d01.o \
+  $(JUCE_OBJDIR)/buffer_dec_6133586d.o \
+  $(JUCE_OBJDIR)/frame_dec_32bfcdd0.o \
+  $(JUCE_OBJDIR)/idec_dec_e438bda6.o \
+  $(JUCE_OBJDIR)/io_dec_b96d2f53.o \
+  $(JUCE_OBJDIR)/quant_dec_f6ce7526.o \
+  $(JUCE_OBJDIR)/tree_dec_e8eb228b.o \
+  $(JUCE_OBJDIR)/vp8_dec_4bebdb21.o \
+  $(JUCE_OBJDIR)/vp8l_dec_d8abe25b.o \
+  $(JUCE_OBJDIR)/webp_dec_4c8ed809.o \
+  $(JUCE_OBJDIR)/alpha_processing_d6c5115f.o \
+  $(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_c42315be.o \
+  $(JUCE_OBJDIR)/alpha_processing_neon_7973f640.o \
+  $(JUCE_OBJDIR)/alpha_processing_sse2_82bc0d77.o \
+  $(JUCE_OBJDIR)/alpha_processing_sse41_d4c68f62.o \
+  $(JUCE_OBJDIR)/cost_b2bd7b58.o \
+  $(JUCE_OBJDIR)/cost_mips_dsp_r2_27375237.o \
+  $(JUCE_OBJDIR)/cost_mips32_fc78244f.o \
+  $(JUCE_OBJDIR)/cost_neon_2e3bdfe7.o \
+  $(JUCE_OBJDIR)/cost_sse2_3783f71e.o \
+  $(JUCE_OBJDIR)/cpu_68dd4607.o \
+  $(JUCE_OBJDIR)/dec_68e619e1.o \
+  $(JUCE_OBJDIR)/dec_clip_tables_e90beb16.o \
+  $(JUCE_OBJDIR)/dec_mips_dsp_r2_63816b40.o \
+  $(JUCE_OBJDIR)/dec_mips32_1a82c9a6.o \
+  $(JUCE_OBJDIR)/dec_msa_46f45b9d.o \
+  $(JUCE_OBJDIR)/dec_neon_988deefe.o \
+  $(JUCE_OBJDIR)/dec_sse2_a1d60635.o \
+  $(JUCE_OBJDIR)/dec_sse41_98ebae64.o \
+  $(JUCE_OBJDIR)/enc_68f848b9.o \
+  $(JUCE_OBJDIR)/enc_mips_dsp_r2_a24c1618.o \
+  $(JUCE_OBJDIR)/enc_mips32_5e3eb7ce.o \
+  $(JUCE_OBJDIR)/enc_msa_82235e75.o \
+  $(JUCE_OBJDIR)/enc_neon_c33f4726.o \
+  $(JUCE_OBJDIR)/enc_sse2_cc875e5d.o \
+  $(JUCE_OBJDIR)/enc_sse41_c4655b3c.o \
+  $(JUCE_OBJDIR)/filters_e7eda9a.o \
+  $(JUCE_OBJDIR)/filters_mips_dsp_r2_6a9de79.o \
+  $(JUCE_OBJDIR)/filters_msa_fc5c17d6.o \
+  $(JUCE_OBJDIR)/filters_neon_901db9e5.o \
+  $(JUCE_OBJDIR)/filters_sse2_9965d11c.o \
+  $(JUCE_OBJDIR)/lossless_a22d7007.o \
+  $(JUCE_OBJDIR)/lossless_enc_42453462.o \
+  $(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_a50fcc41.o \
+  $(JUCE_OBJDIR)/lossless_enc_mips32_ff4a0c05.o \
+  $(JUCE_OBJDIR)/lossless_enc_msa_ce504d9e.o \
+  $(JUCE_OBJDIR)/lossless_enc_neon_fcb03d1d.o \
+  $(JUCE_OBJDIR)/lossless_enc_sse2_5f85454.o \
+  $(JUCE_OBJDIR)/lossless_enc_sse41_b9132425.o \
+  $(JUCE_OBJDIR)/lossless_mips_dsp_r2_55eab866.o \
+  $(JUCE_OBJDIR)/lossless_msa_42b82ec3.o \
+  $(JUCE_OBJDIR)/lossless_neon_15448098.o \
+  $(JUCE_OBJDIR)/lossless_sse2_1e8c97cf.o \
+  $(JUCE_OBJDIR)/lossless_sse41_b307500a.o \
+  $(JUCE_OBJDIR)/rescaler_306d0166.o \
+  $(JUCE_OBJDIR)/rescaler_mips_dsp_r2_36f83345.o \
+  $(JUCE_OBJDIR)/rescaler_mips32_17b65281.o \
+  $(JUCE_OBJDIR)/rescaler_msa_9a01f8a2.o \
+  $(JUCE_OBJDIR)/rescaler_neon_a733f299.o \
+  $(JUCE_OBJDIR)/rescaler_sse2_b07c09d0.o \
+  $(JUCE_OBJDIR)/ssim_ce3ebd4f.o \
+  $(JUCE_OBJDIR)/ssim_sse2_b5205787.o \
+  $(JUCE_OBJDIR)/upsampling_db494d4d.o \
+  $(JUCE_OBJDIR)/upsampling_mips_dsp_r2_12f6dcac.o \
+  $(JUCE_OBJDIR)/upsampling_msa_a477f909.o \
+  $(JUCE_OBJDIR)/upsampling_neon_eb7dff12.o \
+  $(JUCE_OBJDIR)/upsampling_sse2_f4c61649.o \
+  $(JUCE_OBJDIR)/upsampling_sse41_a3fda0d0.o \
+  $(JUCE_OBJDIR)/yuv_6a1594b9.o \
+  $(JUCE_OBJDIR)/yuv_mips_dsp_r2_c5d76218.o \
+  $(JUCE_OBJDIR)/yuv_mips32_2bd3ebce.o \
+  $(JUCE_OBJDIR)/yuv_neon_9c917b26.o \
+  $(JUCE_OBJDIR)/yuv_sse2_a5d9925d.o \
+  $(JUCE_OBJDIR)/yuv_sse41_1559a73c.o \
+  $(JUCE_OBJDIR)/bit_reader_utils_cccde142.o \
+  $(JUCE_OBJDIR)/bit_writer_utils_dea27cf2.o \
+  $(JUCE_OBJDIR)/color_cache_utils_63a946a7.o \
+  $(JUCE_OBJDIR)/filters_utils_68f0d6fc.o \
+  $(JUCE_OBJDIR)/huffman_encode_utils_3e5fd5f5.o \
+  $(JUCE_OBJDIR)/huffman_utils_3932d4ae.o \
+  $(JUCE_OBJDIR)/quant_levels_dec_utils_ebd0413b.o \
+  $(JUCE_OBJDIR)/quant_levels_utils_aa661178.o \
+  $(JUCE_OBJDIR)/random_utils_638e3ad0.o \
+  $(JUCE_OBJDIR)/rescaler_utils_9a0258e8.o \
+  $(JUCE_OBJDIR)/thread_utils_ce1e2d17.o \
+  $(JUCE_OBJDIR)/utils_eae63140.o \
   $(JUCE_OBJDIR)/bio_2615f04d.o \
   $(JUCE_OBJDIR)/cio_262407ce.o \
   $(JUCE_OBJDIR)/dwt_26388f46.o \
@@ -247,42 +283,6 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/tcd_2710b3da.o \
   $(JUCE_OBJDIR)/tgt_2712c166.o \
   $(JUCE_OBJDIR)/thread_341c282f.o \
-  $(JUCE_OBJDIR)/AffineImage_f63fb19d.o \
-  $(JUCE_OBJDIR)/AnnotViewer_a719b399.o \
-  $(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o \
-  $(JUCE_OBJDIR)/ClassViewer_44f830b.o \
-  $(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o \
-  $(JUCE_OBJDIR)/DtmShader_bfa70483.o \
-  $(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o \
-  $(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o \
-  $(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o \
-  $(JUCE_OBJDIR)/ExportLasDlg_f653953e.o \
-  $(JUCE_OBJDIR)/GeoBase_343e9923.o \
-  $(JUCE_OBJDIR)/GeoSearch_6564213a.o \
-  $(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o \
-  $(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o \
-  $(JUCE_OBJDIR)/LasLayersViewer_53432e13.o \
-  $(JUCE_OBJDIR)/LasShader_1eec2304.o \
-  $(JUCE_OBJDIR)/Main_90ebc5c2.o \
-  $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
-  $(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o \
-  $(JUCE_OBJDIR)/MapThread_564c0ce7.o \
-  $(JUCE_OBJDIR)/MapView_229c9e02.o \
-  $(JUCE_OBJDIR)/MvtLayer_36152faf.o \
-  $(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o \
-  $(JUCE_OBJDIR)/OGL3DViewer_c264a858.o \
-  $(JUCE_OBJDIR)/OsmLayer_d8c84a51.o \
-  $(JUCE_OBJDIR)/PrefDlg_9f17261d.o \
-  $(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o \
-  $(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o \
-  $(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o \
-  $(JUCE_OBJDIR)/StacViewer_e5b1993e.o \
-  $(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o \
-  $(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o \
-  $(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o \
-  $(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o \
-  $(JUCE_OBJDIR)/WmtsTmsViewer_a3a54f58.o \
-  $(JUCE_OBJDIR)/ZoomViewer_a6d902ce.o \
   $(JUCE_OBJDIR)/sqlite3_31f93e88.o \
   $(JUCE_OBJDIR)/TinyEXIF_2b40a0f5.o \
   $(JUCE_OBJDIR)/XEndian_2fd684da.o \
@@ -361,21 +361,21 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XShapefileVector_d626568.o \
   $(JUCE_OBJDIR)/XTAChantier_c1ce0d83.o \
   $(JUCE_OBJDIR)/XWKBGeom_ed139392.o \
-  $(JUCE_OBJDIR)/adler32_7f36c161.o \
-  $(JUCE_OBJDIR)/compress_5fc9eb00.o \
-  $(JUCE_OBJDIR)/crc32_776076df.o \
-  $(JUCE_OBJDIR)/deflate_71a08017.o \
-  $(JUCE_OBJDIR)/gzclose_15f89e51.o \
-  $(JUCE_OBJDIR)/gzlib_59383c9e.o \
-  $(JUCE_OBJDIR)/gzread_d7d45d27.o \
-  $(JUCE_OBJDIR)/gzwrite_41de3a78.o \
-  $(JUCE_OBJDIR)/infback_ecc924f4.o \
-  $(JUCE_OBJDIR)/inffast_f3a3ef29.o \
-  $(JUCE_OBJDIR)/inflate_fde13ef3.o \
-  $(JUCE_OBJDIR)/inftrees_81a87872.o \
-  $(JUCE_OBJDIR)/trees_fade43c1.o \
-  $(JUCE_OBJDIR)/uncompr_5829c476.o \
-  $(JUCE_OBJDIR)/zutil_3e3748e8.o \
+  $(JUCE_OBJDIR)/adler32_b1f51f5.o \
+  $(JUCE_OBJDIR)/compress_50f36cec.o \
+  $(JUCE_OBJDIR)/crc32_239c1c73.o \
+  $(JUCE_OBJDIR)/deflate_fd8910ab.o \
+  $(JUCE_OBJDIR)/gzclose_a1e12ee5.o \
+  $(JUCE_OBJDIR)/gzlib_573e232.o \
+  $(JUCE_OBJDIR)/gzread_b30d6a13.o \
+  $(JUCE_OBJDIR)/gzwrite_cdc6cb0c.o \
+  $(JUCE_OBJDIR)/infback_78b1b588.o \
+  $(JUCE_OBJDIR)/inffast_7f8c7fbd.o \
+  $(JUCE_OBJDIR)/inflate_89c9cf87.o \
+  $(JUCE_OBJDIR)/inftrees_72d1fa5e.o \
+  $(JUCE_OBJDIR)/trees_a719e955.o \
+  $(JUCE_OBJDIR)/uncompr_e412550a.o \
+  $(JUCE_OBJDIR)/zutil_ea72ee7c.o \
   $(JUCE_OBJDIR)/BinaryData_ce4232d4.o \
   $(JUCE_OBJDIR)/include_juce_core_f26d17db.o \
   $(JUCE_OBJDIR)/include_juce_core_CompilationTime_9257742c.o \
@@ -404,6 +404,186 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(JUCE_OBJDIR)/execinfo.cmd $
 	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
 	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
 	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(OBJECTS_APP) $(JUCE_LDFLAGS) $(shell cat $(JUCE_OBJDIR)/execinfo.cmd) $(JUCE_LDFLAGS_APP) $(RESOURCES) $(TARGET_ARCH)
+
+$(JUCE_OBJDIR)/AffineImage_f63fb19d.o: ../../Source/AffineImage.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AffineImage.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AnnotViewer_a719b399.o: ../../Source/AnnotViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AnnotViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o: ../../Source/AppUtil.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AppUtil.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ClassViewer_44f830b.o: ../../Source/ClassViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ClassViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o: ../../Source/DtmLayersViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DtmLayersViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DtmShader_bfa70483.o: ../../Source/DtmShader.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DtmShader.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o: ../../Source/DtmTmsLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DtmTmsLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o: ../../Source/ExportDtmDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ExportDtmDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o: ../../Source/ExportImageDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ExportImageDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ExportLasDlg_f653953e.o: ../../Source/ExportLasDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ExportLasDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/GeoBase_343e9923.o: ../../Source/GeoBase.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GeoBase.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/GeoSearch_6564213a.o: ../../Source/GeoSearch.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GeoSearch.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o: ../../Source/ImageLayersViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ImageLayersViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o: ../../Source/ImageOptionsViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ImageOptionsViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/LasLayersViewer_53432e13.o: ../../Source/LasLayersViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling LasLayersViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/LasShader_1eec2304.o: ../../Source/LasShader.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling LasShader.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling Main.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MainComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o: ../../Source/MainComponentToolbarFactory.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MainComponentToolbarFactory.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MapThread_564c0ce7.o: ../../Source/MapThread.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MapThread.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MapView_229c9e02.o: ../../Source/MapView.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MapView.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MvtLayer_36152faf.o: ../../Source/MvtLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MvtLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o: ../../Source/ObjectViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ObjectViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OGL3DViewer_c264a858.o: ../../Source/OGL3DViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OGL3DViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OsmLayer_d8c84a51.o: ../../Source/OsmLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OsmLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/PrefDlg_9f17261d.o: ../../Source/PrefDlg.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling PrefDlg.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o: ../../Source/ProfilViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ProfilViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o: ../../Source/SelTreeViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SelTreeViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o: ../../Source/SentinelViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SentinelViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/StacViewer_e5b1993e.o: ../../Source/StacViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling StacViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o: ../../Source/StereoViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling StereoViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o: ../../Source/TmsLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling TmsLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o: ../../Source/VectorLayersViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling VectorLayersViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o: ../../Source/WmtsLayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WmtsLayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WmtsTmsViewer_a3a54f58.o: ../../Source/WmtsTmsViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WmtsTmsViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ZoomViewer_a6d902ce.o: ../../Source/ZoomViewer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ZoomViewer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/jaricom_71e13aae.o: ../../../jpeg-10/jaricom.c
 	-$(V_AT)mkdir -p $(@D)
@@ -740,432 +920,432 @@ $(JUCE_OBJDIR)/mydefs_619244b7.o: ../../../LASzip/src/mydefs.cpp
 	@echo "Compiling mydefs.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_dec_b566e8ee.o: ../../../libwebp-1.3.2/src/dec/alpha_dec.c
+$(JUCE_OBJDIR)/alpha_dec_65935d01.o: ../../../libwebp/src/dec/alpha_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/buffer_dec_bd14a20.o: ../../../libwebp-1.3.2/src/dec/buffer_dec.c
+$(JUCE_OBJDIR)/buffer_dec_6133586d.o: ../../../libwebp/src/dec/buffer_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling buffer_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/frame_dec_829359bd.o: ../../../libwebp-1.3.2/src/dec/frame_dec.c
+$(JUCE_OBJDIR)/frame_dec_32bfcdd0.o: ../../../libwebp/src/dec/frame_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling frame_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/idec_dec_acfd8019.o: ../../../libwebp-1.3.2/src/dec/idec_dec.c
+$(JUCE_OBJDIR)/idec_dec_e438bda6.o: ../../../libwebp/src/dec/idec_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling idec_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/io_dec_d955f286.o: ../../../libwebp-1.3.2/src/dec/io_dec.c
+$(JUCE_OBJDIR)/io_dec_b96d2f53.o: ../../../libwebp/src/dec/io_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling io_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_dec_46a20113.o: ../../../libwebp-1.3.2/src/dec/quant_dec.c
+$(JUCE_OBJDIR)/quant_dec_f6ce7526.o: ../../../libwebp/src/dec/quant_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/tree_dec_b1afe4fe.o: ../../../libwebp-1.3.2/src/dec/tree_dec.c
+$(JUCE_OBJDIR)/tree_dec_e8eb228b.o: ../../../libwebp/src/dec/tree_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling tree_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/vp8_dec_291b7e4e.o: ../../../libwebp-1.3.2/src/dec/vp8_dec.c
+$(JUCE_OBJDIR)/vp8_dec_4bebdb21.o: ../../../libwebp/src/dec/vp8_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling vp8_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/vp8l_dec_a170a4ce.o: ../../../libwebp-1.3.2/src/dec/vp8l_dec.c
+$(JUCE_OBJDIR)/vp8l_dec_d8abe25b.o: ../../../libwebp/src/dec/vp8l_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling vp8l_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/webp_dec_15539a7c.o: ../../../libwebp-1.3.2/src/dec/webp_dec.c
+$(JUCE_OBJDIR)/webp_dec_4c8ed809.o: ../../../libwebp/src/dec/webp_dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling webp_dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_1265b0d2.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing.c
+$(JUCE_OBJDIR)/alpha_processing_d6c5115f.o: ../../../libwebp/src/dsp/alpha_processing.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_15a920b1.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_mips_dsp_r2.c
+$(JUCE_OBJDIR)/alpha_processing_mips_dsp_r2_c42315be.o: ../../../libwebp/src/dsp/alpha_processing_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_neon_989c06ad.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_neon.c
+$(JUCE_OBJDIR)/alpha_processing_neon_7973f640.o: ../../../libwebp/src/dsp/alpha_processing_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_sse2_a1e41de4.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_sse2.c
+$(JUCE_OBJDIR)/alpha_processing_sse2_82bc0d77.o: ../../../libwebp/src/dsp/alpha_processing_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/alpha_processing_sse41_9aa08c95.o: ../../../libwebp-1.3.2/src/dsp/alpha_processing_sse41.c
+$(JUCE_OBJDIR)/alpha_processing_sse41_d4c68f62.o: ../../../libwebp/src/dsp/alpha_processing_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling alpha_processing_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_e0536f4b.o: ../../../libwebp-1.3.2/src/dsp/cost.c
+$(JUCE_OBJDIR)/cost_b2bd7b58.o: ../../../libwebp/src/dsp/cost.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_mips_dsp_r2_62d7f1aa.o: ../../../libwebp-1.3.2/src/dsp/cost_mips_dsp_r2.c
+$(JUCE_OBJDIR)/cost_mips_dsp_r2_27375237.o: ../../../libwebp/src/dsp/cost_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_mips32_a59868fc.o: ../../../libwebp-1.3.2/src/dsp/cost_mips32.c
+$(JUCE_OBJDIR)/cost_mips32_fc78244f.o: ../../../libwebp/src/dsp/cost_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_neon_7e0f6bd4.o: ../../../libwebp-1.3.2/src/dsp/cost_neon.c
+$(JUCE_OBJDIR)/cost_neon_2e3bdfe7.o: ../../../libwebp/src/dsp/cost_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cost_sse2_8757830b.o: ../../../libwebp-1.3.2/src/dsp/cost_sse2.c
+$(JUCE_OBJDIR)/cost_sse2_3783f71e.o: ../../../libwebp/src/dsp/cost_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cost_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/cpu_518f87b4.o: ../../../libwebp-1.3.2/src/dsp/cpu.c
+$(JUCE_OBJDIR)/cpu_68dd4607.o: ../../../libwebp/src/dsp/cpu.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling cpu.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_51985b8e.o: ../../../libwebp-1.3.2/src/dsp/dec.c
+$(JUCE_OBJDIR)/dec_68e619e1.o: ../../../libwebp/src/dsp/dec.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_clip_tables_c9f01143.o: ../../../libwebp-1.3.2/src/dsp/dec_clip_tables.c
+$(JUCE_OBJDIR)/dec_clip_tables_e90beb16.o: ../../../libwebp/src/dsp/dec_clip_tables.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_clip_tables.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_mips_dsp_r2_4465916d.o: ../../../libwebp-1.3.2/src/dsp/dec_mips_dsp_r2.c
+$(JUCE_OBJDIR)/dec_mips_dsp_r2_63816b40.o: ../../../libwebp/src/dsp/dec_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_mips32_c520bb59.o: ../../../libwebp-1.3.2/src/dsp/dec_mips32.c
+$(JUCE_OBJDIR)/dec_mips32_1a82c9a6.o: ../../../libwebp/src/dsp/dec_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_msa_2423feca.o: ../../../libwebp-1.3.2/src/dsp/dec_msa.c
+$(JUCE_OBJDIR)/dec_msa_46f45b9d.o: ../../../libwebp/src/dsp/dec_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_neon_6152b171.o: ../../../libwebp-1.3.2/src/dsp/dec_neon.c
+$(JUCE_OBJDIR)/dec_neon_988deefe.o: ../../../libwebp/src/dsp/dec_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_sse2_6a9ac8a8.o: ../../../libwebp-1.3.2/src/dsp/dec_sse2.c
+$(JUCE_OBJDIR)/dec_sse2_a1d60635.o: ../../../libwebp/src/dsp/dec_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/dec_sse41_e8bf3a51.o: ../../../libwebp-1.3.2/src/dsp/dec_sse41.c
+$(JUCE_OBJDIR)/dec_sse41_98ebae64.o: ../../../libwebp/src/dsp/dec_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling dec_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_51aa8a66.o: ../../../libwebp-1.3.2/src/dsp/enc.c
+$(JUCE_OBJDIR)/enc_68f848b9.o: ../../../libwebp/src/dsp/enc.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_mips_dsp_r2_83303c45.o: ../../../libwebp-1.3.2/src/dsp/enc_mips_dsp_r2.c
+$(JUCE_OBJDIR)/enc_mips_dsp_r2_a24c1618.o: ../../../libwebp/src/dsp/enc_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_mips32_8dca981.o: ../../../libwebp-1.3.2/src/dsp/enc_mips32.c
+$(JUCE_OBJDIR)/enc_mips32_5e3eb7ce.o: ../../../libwebp/src/dsp/enc_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_msa_5f5301a2.o: ../../../libwebp-1.3.2/src/dsp/enc_msa.c
+$(JUCE_OBJDIR)/enc_msa_82235e75.o: ../../../libwebp/src/dsp/enc_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_neon_8c040999.o: ../../../libwebp-1.3.2/src/dsp/enc_neon.c
+$(JUCE_OBJDIR)/enc_neon_c33f4726.o: ../../../libwebp/src/dsp/enc_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_sse2_954c20d0.o: ../../../libwebp-1.3.2/src/dsp/enc_sse2.c
+$(JUCE_OBJDIR)/enc_sse2_cc875e5d.o: ../../../libwebp/src/dsp/enc_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/enc_sse41_1438e729.o: ../../../libwebp-1.3.2/src/dsp/enc_sse41.c
+$(JUCE_OBJDIR)/enc_sse41_c4655b3c.o: ../../../libwebp/src/dsp/enc_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling enc_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_ebae7dc7.o: ../../../libwebp-1.3.2/src/dsp/filters.c
+$(JUCE_OBJDIR)/filters_e7eda9a.o: ../../../libwebp/src/dsp/filters.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_mips_dsp_r2_ef852626.o: ../../../libwebp-1.3.2/src/dsp/filters_mips_dsp_r2.c
+$(JUCE_OBJDIR)/filters_mips_dsp_r2_6a9de79.o: ../../../libwebp/src/dsp/filters_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_msa_a57c5c83.o: ../../../libwebp-1.3.2/src/dsp/filters_msa.c
+$(JUCE_OBJDIR)/filters_msa_fc5c17d6.o: ../../../libwebp/src/dsp/filters_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_neon_b060ad8.o: ../../../libwebp-1.3.2/src/dsp/filters_neon.c
+$(JUCE_OBJDIR)/filters_neon_901db9e5.o: ../../../libwebp/src/dsp/filters_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_sse2_144e220f.o: ../../../libwebp-1.3.2/src/dsp/filters_sse2.c
+$(JUCE_OBJDIR)/filters_sse2_9965d11c.o: ../../../libwebp/src/dsp/filters_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_6af2327a.o: ../../../libwebp-1.3.2/src/dsp/lossless.c
+$(JUCE_OBJDIR)/lossless_a22d7007.o: ../../../libwebp/src/dsp/lossless.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_bd2d8555.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc.c
+$(JUCE_OBJDIR)/lossless_enc_42453462.o: ../../../libwebp/src/dsp/lossless_enc.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_5c5f48b4.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_mips_dsp_r2.c
+$(JUCE_OBJDIR)/lossless_enc_mips_dsp_r2_a50fcc41.o: ../../../libwebp/src/dsp/lossless_enc_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_mips32_e82553b2.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_mips32.c
+$(JUCE_OBJDIR)/lossless_enc_mips32_ff4a0c05.o: ../../../libwebp/src/dsp/lossless_enc_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_msa_9f0ed11.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_msa.c
+$(JUCE_OBJDIR)/lossless_enc_msa_ce504d9e.o: ../../../libwebp/src/dsp/lossless_enc_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_neon_35238c0a.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_neon.c
+$(JUCE_OBJDIR)/lossless_enc_neon_fcb03d1d.o: ../../../libwebp/src/dsp/lossless_enc_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_sse2_3e6ba341.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_sse2.c
+$(JUCE_OBJDIR)/lossless_enc_sse2_5f85454.o: ../../../libwebp/src/dsp/lossless_enc_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_enc_sse41_8f09b2d8.o: ../../../libwebp-1.3.2/src/dsp/lossless_enc_sse41.c
+$(JUCE_OBJDIR)/lossless_enc_sse41_b9132425.o: ../../../libwebp/src/dsp/lossless_enc_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_enc_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_mips_dsp_r2_88786659.o: ../../../libwebp-1.3.2/src/dsp/lossless_mips_dsp_r2.c
+$(JUCE_OBJDIR)/lossless_mips_dsp_r2_55eab866.o: ../../../libwebp/src/dsp/lossless_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_msa_bda07fb6.o: ../../../libwebp-1.3.2/src/dsp/lossless_msa.c
+$(JUCE_OBJDIR)/lossless_msa_42b82ec3.o: ../../../libwebp/src/dsp/lossless_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_neon_f7664e05.o: ../../../libwebp-1.3.2/src/dsp/lossless_neon.c
+$(JUCE_OBJDIR)/lossless_neon_15448098.o: ../../../libwebp/src/dsp/lossless_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_sse2_ae653c.o: ../../../libwebp-1.3.2/src/dsp/lossless_sse2.c
+$(JUCE_OBJDIR)/lossless_sse2_1e8c97cf.o: ../../../libwebp/src/dsp/lossless_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/lossless_sse41_151f303d.o: ../../../libwebp-1.3.2/src/dsp/lossless_sse41.c
+$(JUCE_OBJDIR)/lossless_sse41_b307500a.o: ../../../libwebp/src/dsp/lossless_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling lossless_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_f931c3d9.o: ../../../libwebp-1.3.2/src/dsp/rescaler.c
+$(JUCE_OBJDIR)/rescaler_306d0166.o: ../../../libwebp/src/dsp/rescaler.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_mips_dsp_r2_6985e138.o: ../../../libwebp-1.3.2/src/dsp/rescaler_mips_dsp_r2.c
+$(JUCE_OBJDIR)/rescaler_mips_dsp_r2_36f83345.o: ../../../libwebp/src/dsp/rescaler_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_mips32_f89a78ae.o: ../../../libwebp-1.3.2/src/dsp/rescaler_mips32.c
+$(JUCE_OBJDIR)/rescaler_mips32_17b65281.o: ../../../libwebp/src/dsp/rescaler_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_msa_14ea4995.o: ../../../libwebp-1.3.2/src/dsp/rescaler_msa.c
+$(JUCE_OBJDIR)/rescaler_msa_9a01f8a2.o: ../../../libwebp/src/dsp/rescaler_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_neon_8955c006.o: ../../../libwebp-1.3.2/src/dsp/rescaler_neon.c
+$(JUCE_OBJDIR)/rescaler_neon_a733f299.o: ../../../libwebp/src/dsp/rescaler_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_sse2_929dd73d.o: ../../../libwebp-1.3.2/src/dsp/rescaler_sse2.c
+$(JUCE_OBJDIR)/rescaler_sse2_b07c09d0.o: ../../../libwebp/src/dsp/rescaler_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ssim_fbd4b142.o: ../../../libwebp-1.3.2/src/dsp/ssim.c
+$(JUCE_OBJDIR)/ssim_ce3ebd4f.o: ../../../libwebp/src/dsp/ssim.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ssim.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/ssim_sse2_4f3e374.o: ../../../libwebp-1.3.2/src/dsp/ssim_sse2.c
+$(JUCE_OBJDIR)/ssim_sse2_b5205787.o: ../../../libwebp/src/dsp/ssim_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ssim_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_85e73f00.o: ../../../libwebp-1.3.2/src/dsp/upsampling.c
+$(JUCE_OBJDIR)/upsampling_db494d4d.o: ../../../libwebp/src/dsp/upsampling.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_mips_dsp_r2_d8d0d9df.o: ../../../libwebp-1.3.2/src/dsp/upsampling_mips_dsp_r2.c
+$(JUCE_OBJDIR)/upsampling_mips_dsp_r2_12f6dcac.o: ../../../libwebp/src/dsp/upsampling_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_msa_68fd93c.o: ../../../libwebp-1.3.2/src/dsp/upsampling_msa.c
+$(JUCE_OBJDIR)/upsampling_msa_a477f909.o: ../../../libwebp/src/dsp/upsampling_msa.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_msa.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_neon_cc62253f.o: ../../../libwebp-1.3.2/src/dsp/upsampling_neon.c
+$(JUCE_OBJDIR)/upsampling_neon_eb7dff12.o: ../../../libwebp/src/dsp/upsampling_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_sse2_d5aa3c76.o: ../../../libwebp-1.3.2/src/dsp/upsampling_sse2.c
+$(JUCE_OBJDIR)/upsampling_sse2_f4c61649.o: ../../../libwebp/src/dsp/upsampling_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/upsampling_sse41_df9e4043.o: ../../../libwebp-1.3.2/src/dsp/upsampling_sse41.c
+$(JUCE_OBJDIR)/upsampling_sse41_a3fda0d0.o: ../../../libwebp/src/dsp/upsampling_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling upsampling_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_52c7d666.o: ../../../libwebp-1.3.2/src/dsp/yuv.c
+$(JUCE_OBJDIR)/yuv_6a1594b9.o: ../../../libwebp/src/dsp/yuv.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_mips_dsp_r2_a6bb8845.o: ../../../libwebp-1.3.2/src/dsp/yuv_mips_dsp_r2.c
+$(JUCE_OBJDIR)/yuv_mips_dsp_r2_c5d76218.o: ../../../libwebp/src/dsp/yuv_mips_dsp_r2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_mips_dsp_r2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_mips32_d671dd81.o: ../../../libwebp-1.3.2/src/dsp/yuv_mips32.c
+$(JUCE_OBJDIR)/yuv_mips32_2bd3ebce.o: ../../../libwebp/src/dsp/yuv_mips32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_mips32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_neon_65563d99.o: ../../../libwebp-1.3.2/src/dsp/yuv_neon.c
+$(JUCE_OBJDIR)/yuv_neon_9c917b26.o: ../../../libwebp/src/dsp/yuv_neon.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_neon.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_sse2_6e9e54d0.o: ../../../libwebp-1.3.2/src/dsp/yuv_sse2.c
+$(JUCE_OBJDIR)/yuv_sse2_a5d9925d.o: ../../../libwebp/src/dsp/yuv_sse2.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_sse2.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/yuv_sse41_652d3329.o: ../../../libwebp-1.3.2/src/dsp/yuv_sse41.c
+$(JUCE_OBJDIR)/yuv_sse41_1559a73c.o: ../../../libwebp/src/dsp/yuv_sse41.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling yuv_sse41.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/bit_reader_utils_a2c46ff5.o: ../../../libwebp-1.3.2/src/utils/bit_reader_utils.c
+$(JUCE_OBJDIR)/bit_reader_utils_cccde142.o: ../../../libwebp/src/utils/bit_reader_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling bit_reader_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/bit_writer_utils_b4990ba5.o: ../../../libwebp-1.3.2/src/utils/bit_writer_utils.c
+$(JUCE_OBJDIR)/bit_writer_utils_dea27cf2.o: ../../../libwebp/src/utils/bit_writer_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling bit_writer_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/color_cache_utils_4c848e54.o: ../../../libwebp-1.3.2/src/utils/color_cache_utils.c
+$(JUCE_OBJDIR)/color_cache_utils_63a946a7.o: ../../../libwebp/src/utils/color_cache_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling color_cache_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/filters_utils_49d4fd29.o: ../../../libwebp-1.3.2/src/utils/filters_utils.c
+$(JUCE_OBJDIR)/filters_utils_68f0d6fc.o: ../../../libwebp/src/utils/filters_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling filters_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/huffman_encode_utils_439d328.o: ../../../libwebp-1.3.2/src/utils/huffman_encode_utils.c
+$(JUCE_OBJDIR)/huffman_encode_utils_3e5fd5f5.o: ../../../libwebp/src/utils/huffman_encode_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling huffman_encode_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/huffman_utils_1a16fadb.o: ../../../libwebp-1.3.2/src/utils/huffman_utils.c
+$(JUCE_OBJDIR)/huffman_utils_3932d4ae.o: ../../../libwebp/src/utils/huffman_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling huffman_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_levels_dec_utils_a31fbdae.o: ../../../libwebp-1.3.2/src/utils/quant_levels_dec_utils.c
+$(JUCE_OBJDIR)/quant_levels_dec_utils_ebd0413b.o: ../../../libwebp/src/utils/quant_levels_dec_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_levels_dec_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/quant_levels_utils_dcf3bf6b.o: ../../../libwebp-1.3.2/src/utils/quant_levels_utils.c
+$(JUCE_OBJDIR)/quant_levels_utils_aa661178.o: ../../../libwebp/src/utils/quant_levels_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling quant_levels_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/random_utils_c5a61b03.o: ../../../libwebp-1.3.2/src/utils/random_utils.c
+$(JUCE_OBJDIR)/random_utils_638e3ad0.o: ../../../libwebp/src/utils/random_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling random_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/rescaler_utils_d5a2f85b.o: ../../../libwebp-1.3.2/src/utils/rescaler_utils.c
+$(JUCE_OBJDIR)/rescaler_utils_9a0258e8.o: ../../../libwebp/src/utils/rescaler_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling rescaler_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/thread_utils_30360d4a.o: ../../../libwebp-1.3.2/src/utils/thread_utils.c
+$(JUCE_OBJDIR)/thread_utils_ce1e2d17.o: ../../../libwebp/src/utils/thread_utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling thread_utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/utils_c815d46d.o: ../../../libwebp-1.3.2/src/utils/utils.c
+$(JUCE_OBJDIR)/utils_eae63140.o: ../../../libwebp/src/utils/utils.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling utils.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
@@ -1279,186 +1459,6 @@ $(JUCE_OBJDIR)/thread_341c282f.o: ../../../openjpeg/src/lib/openjp2/thread.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling thread.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/AffineImage_f63fb19d.o: ../../Source/AffineImage.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling AffineImage.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/AnnotViewer_a719b399.o: ../../Source/AnnotViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling AnnotViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/AppUtil_5c6d9ca4.o: ../../Source/AppUtil.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling AppUtil.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ClassViewer_44f830b.o: ../../Source/ClassViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ClassViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/DtmLayersViewer_98c8b452.o: ../../Source/DtmLayersViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling DtmLayersViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/DtmShader_bfa70483.o: ../../Source/DtmShader.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling DtmShader.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/DtmTmsLayer_da3751b5.o: ../../Source/DtmTmsLayer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling DtmTmsLayer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ExportDtmDlg_e5d53c1f.o: ../../Source/ExportDtmDlg.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ExportDtmDlg.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ExportImageDlg_2dc44e1.o: ../../Source/ExportImageDlg.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ExportImageDlg.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ExportLasDlg_f653953e.o: ../../Source/ExportLasDlg.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ExportLasDlg.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/GeoBase_343e9923.o: ../../Source/GeoBase.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling GeoBase.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/GeoSearch_6564213a.o: ../../Source/GeoSearch.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling GeoSearch.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ImageLayersViewer_843f60d0.o: ../../Source/ImageLayersViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ImageLayersViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ImageOptionsViewer_66bba7be.o: ../../Source/ImageOptionsViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ImageOptionsViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/LasLayersViewer_53432e13.o: ../../Source/LasLayersViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling LasLayersViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/LasShader_1eec2304.o: ../../Source/LasShader.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling LasShader.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling Main.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling MainComponent.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/MainComponentToolbarFactory_861e9a54.o: ../../Source/MainComponentToolbarFactory.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling MainComponentToolbarFactory.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/MapThread_564c0ce7.o: ../../Source/MapThread.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling MapThread.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/MapView_229c9e02.o: ../../Source/MapView.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling MapView.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/MvtLayer_36152faf.o: ../../Source/MvtLayer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling MvtLayer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ObjectViewer_faa9c63a.o: ../../Source/ObjectViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ObjectViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/OGL3DViewer_c264a858.o: ../../Source/OGL3DViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling OGL3DViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/OsmLayer_d8c84a51.o: ../../Source/OsmLayer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling OsmLayer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/PrefDlg_9f17261d.o: ../../Source/PrefDlg.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling PrefDlg.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ProfilViewer_58ce88f7.o: ../../Source/ProfilViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ProfilViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/SelTreeViewer_bd03fdab.o: ../../Source/SelTreeViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling SelTreeViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/SentinelViewer_a6f38bdf.o: ../../Source/SentinelViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling SentinelViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/StacViewer_e5b1993e.o: ../../Source/StacViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling StacViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/StereoViewer_ac9ce7b3.o: ../../Source/StereoViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling StereoViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/TmsLayer_3b9cfb60.o: ../../Source/TmsLayer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling TmsLayer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/VectorLayersViewer_544e20e0.o: ../../Source/VectorLayersViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling VectorLayersViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/WmtsLayer_f85ab9dd.o: ../../Source/WmtsLayer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling WmtsLayer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/WmtsTmsViewer_a3a54f58.o: ../../Source/WmtsTmsViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling WmtsTmsViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/ZoomViewer_a6d902ce.o: ../../Source/ZoomViewer.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling ZoomViewer.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/sqlite3_31f93e88.o: ../../../Sqlite/sqlite3.c
 	-$(V_AT)mkdir -p $(@D)
@@ -1850,77 +1850,77 @@ $(JUCE_OBJDIR)/XWKBGeom_ed139392.o: ../../../XToolVector/XWKBGeom.cpp
 	@echo "Compiling XWKBGeom.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/adler32_7f36c161.o: ../../../zlib-1.3.1/adler32.c
+$(JUCE_OBJDIR)/adler32_b1f51f5.o: ../../../zlib/adler32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling adler32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/compress_5fc9eb00.o: ../../../zlib-1.3.1/compress.c
+$(JUCE_OBJDIR)/compress_50f36cec.o: ../../../zlib/compress.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling compress.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/crc32_776076df.o: ../../../zlib-1.3.1/crc32.c
+$(JUCE_OBJDIR)/crc32_239c1c73.o: ../../../zlib/crc32.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling crc32.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/deflate_71a08017.o: ../../../zlib-1.3.1/deflate.c
+$(JUCE_OBJDIR)/deflate_fd8910ab.o: ../../../zlib/deflate.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling deflate.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzclose_15f89e51.o: ../../../zlib-1.3.1/gzclose.c
+$(JUCE_OBJDIR)/gzclose_a1e12ee5.o: ../../../zlib/gzclose.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzclose.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzlib_59383c9e.o: ../../../zlib-1.3.1/gzlib.c
+$(JUCE_OBJDIR)/gzlib_573e232.o: ../../../zlib/gzlib.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzlib.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzread_d7d45d27.o: ../../../zlib-1.3.1/gzread.c
+$(JUCE_OBJDIR)/gzread_b30d6a13.o: ../../../zlib/gzread.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzread.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/gzwrite_41de3a78.o: ../../../zlib-1.3.1/gzwrite.c
+$(JUCE_OBJDIR)/gzwrite_cdc6cb0c.o: ../../../zlib/gzwrite.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling gzwrite.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/infback_ecc924f4.o: ../../../zlib-1.3.1/infback.c
+$(JUCE_OBJDIR)/infback_78b1b588.o: ../../../zlib/infback.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling infback.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inffast_f3a3ef29.o: ../../../zlib-1.3.1/inffast.c
+$(JUCE_OBJDIR)/inffast_7f8c7fbd.o: ../../../zlib/inffast.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inffast.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inflate_fde13ef3.o: ../../../zlib-1.3.1/inflate.c
+$(JUCE_OBJDIR)/inflate_89c9cf87.o: ../../../zlib/inflate.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inflate.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/inftrees_81a87872.o: ../../../zlib-1.3.1/inftrees.c
+$(JUCE_OBJDIR)/inftrees_72d1fa5e.o: ../../../zlib/inftrees.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling inftrees.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/trees_fade43c1.o: ../../../zlib-1.3.1/trees.c
+$(JUCE_OBJDIR)/trees_a719e955.o: ../../../zlib/trees.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling trees.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/uncompr_5829c476.o: ../../../zlib-1.3.1/uncompr.c
+$(JUCE_OBJDIR)/uncompr_e412550a.o: ../../../zlib/uncompr.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling uncompr.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/zutil_3e3748e8.o: ../../../zlib-1.3.1/zutil.c
+$(JUCE_OBJDIR)/zutil_ea72ee7c.o: ../../../zlib/zutil.c
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling zutil.c"
 	$(V_AT)$(CC) $(JUCE_CFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"

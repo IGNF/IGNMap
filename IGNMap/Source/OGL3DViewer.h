@@ -217,6 +217,7 @@ private:
       m_sldZFactor.setRange(0.1, 25., 0.1);
       m_sldZFactor.setValue(1., juce::dontSendNotification);
       m_sldZFactor.setBounds(10, 150, 230, 30);
+      m_sldZFactor.setTooltip(juce::translate("Scale of the Z axis"));
       addAndMakeVisible(m_sldZFactor);
 
       m_sldLasPointSize.setSliderStyle(juce::Slider::LinearHorizontal);
@@ -230,10 +231,12 @@ private:
       m_sldMaxNbLasPoint.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldMaxNbLasPoint.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
       m_sldMaxNbLasPoint.setTextValueSuffix(juce::translate(" : Max LAS points"));
-      m_sldMaxNbLasPoint.setRange(2., 100., 1.);
+      m_sldMaxNbLasPoint.setRange(2., 500., 1.);
+      m_sldMaxNbLasPoint.setSkewFactorFromMidPoint(100.);
       m_sldMaxNbLasPoint.setValue(2., juce::dontSendNotification);
       m_sldMaxNbLasPoint.setChangeNotificationOnlyOnRelease(true);
       m_sldMaxNbLasPoint.setBounds(130, 180, 110, 30);
+      m_sldMaxNbLasPoint.setTooltip(juce::translate("Max number of LAS points loaded in memory"));
       addAndMakeVisible(m_sldMaxNbLasPoint);
 
       m_sldDtmPointSize.setSliderStyle(juce::Slider::LinearHorizontal);

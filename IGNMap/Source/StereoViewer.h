@@ -144,7 +144,7 @@ public:
     setResizeLimits(400, 450, 10000, 10000);
   }
 
-  void SetTarget(const double& X, const double& Y, const double& Z) override { /*m_Stereo.SetTarget(X, Y, Z);*/ }
+  void SetTarget(const double& , const double& , const double& ) override { /*m_Stereo.SetTarget(X, Y, Z);*/ }
   void SetSelection(void*) override { ; }
   bool OpenImage(std::string filename, bool left, int rot = 1) { return m_Stereo.OpenImage(filename, left, rot); }
   void SetPseudoOrientation(XPt3D SL, XPt3D SR, XPt3D Ori, double gsd) { m_Stereo.SetPseudoOrientation(SL, SR, Ori, gsd); }

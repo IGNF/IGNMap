@@ -14,7 +14,7 @@
 #include <iostream>
 
 extern "C" {
-#include "../libwebp-1.3.2/src/webp/decode.h"
+#include "../libwebp/src/webp/decode.h"
 }
 
 #include "../XTool/XBase.h"

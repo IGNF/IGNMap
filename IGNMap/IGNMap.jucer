@@ -5,7 +5,7 @@
               companyWebsite="www.ign.fr" companyName="IGN" companyCopyright="Institut National de l'Information G&#233;ographique et Foresti&#232;re"
               defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1&#10;OPJ_STATIC=1&#10;LASZIPDLL_EXPORTS=1&#10;"
               userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h&#10;"
-              headerPath="../../../libwebp-1.3.2&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip/include/laszip">
+              headerPath="../../../libwebp&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip/include/laszip&#10;&#10;">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
       <FILE id="ILbuJM" name="Carto.png" compile="0" resource="1" file="Images/Carto.png"/>
@@ -31,6 +31,108 @@
       <FILE id="p7VaYp" name="Text.png" compile="0" resource="1" file="Images/Text.png"/>
       <FILE id="QwTqKW" name="View.png" compile="0" resource="1" file="Images/View.png"/>
       <FILE id="g44xDI" name="Zoom.png" compile="0" resource="1" file="Images/Zoom.png"/>
+    </GROUP>
+    <GROUP id="{2D72BBF7-CC90-ABF2-5F2C-BDC1866D3222}" name="Source">
+      <FILE id="KhenFV" name="AffineImage.cpp" compile="1" resource="0" file="Source/AffineImage.cpp"/>
+      <FILE id="WNOnos" name="AffineImage.h" compile="0" resource="0" file="Source/AffineImage.h"/>
+      <FILE id="MyjDjo" name="AnnotViewer.cpp" compile="1" resource="0" file="Source/AnnotViewer.cpp"/>
+      <FILE id="S73SJQ" name="AnnotViewer.h" compile="0" resource="0" file="Source/AnnotViewer.h"/>
+      <FILE id="bIpneZ" name="AppUtil.cpp" compile="1" resource="0" file="Source/AppUtil.cpp"/>
+      <FILE id="RrGnm4" name="AppUtil.h" compile="0" resource="0" file="Source/AppUtil.h"/>
+      <FILE id="N3W7za" name="ClassViewer.cpp" compile="1" resource="0" file="Source/ClassViewer.cpp"/>
+      <FILE id="UHK4lN" name="ClassViewer.h" compile="0" resource="0" file="Source/ClassViewer.h"/>
+      <FILE id="ll5KQm" name="DtmLayersViewer.cpp" compile="1" resource="0"
+            file="Source/DtmLayersViewer.cpp"/>
+      <FILE id="xyifwE" name="DtmLayersViewer.h" compile="0" resource="0"
+            file="Source/DtmLayersViewer.h"/>
+      <FILE id="wv4RK7" name="DtmShader.cpp" compile="1" resource="0" file="Source/DtmShader.cpp"/>
+      <FILE id="Ysux8W" name="DtmShader.h" compile="0" resource="0" file="Source/DtmShader.h"/>
+      <FILE id="dwqtwl" name="DtmTmsLayer.cpp" compile="1" resource="0" file="Source/DtmTmsLayer.cpp"/>
+      <FILE id="qkxe1N" name="DtmTmsLayer.h" compile="0" resource="0" file="Source/DtmTmsLayer.h"/>
+      <FILE id="VxgmFP" name="ExportDtmDlg.cpp" compile="1" resource="0"
+            file="Source/ExportDtmDlg.cpp"/>
+      <FILE id="bXNpD4" name="ExportDtmDlg.h" compile="0" resource="0" file="Source/ExportDtmDlg.h"/>
+      <FILE id="IUCQEA" name="ExportImageDlg.cpp" compile="1" resource="0"
+            file="Source/ExportImageDlg.cpp"/>
+      <FILE id="bJ7a4v" name="ExportImageDlg.h" compile="0" resource="0"
+            file="Source/ExportImageDlg.h"/>
+      <FILE id="WZYtOP" name="ExportLasDlg.cpp" compile="1" resource="0"
+            file="Source/ExportLasDlg.cpp"/>
+      <FILE id="M0CWGn" name="ExportLasDlg.h" compile="0" resource="0" file="Source/ExportLasDlg.h"/>
+      <FILE id="MWj6Zn" name="GeoBase.cpp" compile="1" resource="0" file="Source/GeoBase.cpp"/>
+      <FILE id="nrp2RE" name="GeoBase.h" compile="0" resource="0" file="Source/GeoBase.h"/>
+      <FILE id="tN8zbc" name="GeoSearch.cpp" compile="1" resource="0" file="Source/GeoSearch.cpp"/>
+      <FILE id="WzGlUq" name="GeoSearch.h" compile="0" resource="0" file="Source/GeoSearch.h"/>
+      <FILE id="LKaR73" name="ImageLayersViewer.cpp" compile="1" resource="0"
+            file="Source/ImageLayersViewer.cpp"/>
+      <FILE id="Mx59QQ" name="ImageLayersViewer.h" compile="0" resource="0"
+            file="Source/ImageLayersViewer.h"/>
+      <FILE id="dBwwI3" name="ImageOptionsViewer.cpp" compile="1" resource="0"
+            file="Source/ImageOptionsViewer.cpp"/>
+      <FILE id="wDUBzV" name="ImageOptionsViewer.h" compile="0" resource="0"
+            file="Source/ImageOptionsViewer.h"/>
+      <FILE id="DhY02A" name="LasLayersViewer.cpp" compile="1" resource="0"
+            file="Source/LasLayersViewer.cpp"/>
+      <FILE id="cw9NCH" name="LasLayersViewer.h" compile="0" resource="0"
+            file="Source/LasLayersViewer.h"/>
+      <FILE id="IVAxy1" name="LasShader.cpp" compile="1" resource="0" file="Source/LasShader.cpp"/>
+      <FILE id="ycXypH" name="LasShader.h" compile="0" resource="0" file="Source/LasShader.h"/>
+      <FILE id="DsyKAk" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="HDKe0t" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="LBPoZX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="LvESbM" name="MainComponentToolbarFactory.cpp" compile="1"
+            resource="0" file="Source/MainComponentToolbarFactory.cpp"/>
+      <FILE id="LHCs29" name="MainComponentToolbarFactory.h" compile="0"
+            resource="0" file="Source/MainComponentToolbarFactory.h"/>
+      <FILE id="zNPjlm" name="MapThread.cpp" compile="1" resource="0" file="Source/MapThread.cpp"/>
+      <FILE id="GQfsNH" name="MapThread.h" compile="0" resource="0" file="Source/MapThread.h"/>
+      <FILE id="Q3bCs3" name="MapView.cpp" compile="1" resource="0" file="Source/MapView.cpp"/>
+      <FILE id="VoOZK7" name="MapView.h" compile="0" resource="0" file="Source/MapView.h"/>
+      <FILE id="IFWsWi" name="MvtLayer.cpp" compile="1" resource="0" file="Source/MvtLayer.cpp"/>
+      <FILE id="FZaRN0" name="MvtLayer.h" compile="0" resource="0" file="Source/MvtLayer.h"/>
+      <FILE id="Oktkma" name="ObjectViewer.cpp" compile="1" resource="0"
+            file="Source/ObjectViewer.cpp"/>
+      <FILE id="KeTIbU" name="ObjectViewer.h" compile="0" resource="0" file="Source/ObjectViewer.h"/>
+      <FILE id="xd5aA4" name="OGL3DViewer.cpp" compile="1" resource="0" file="Source/OGL3DViewer.cpp"/>
+      <FILE id="B2RtuV" name="OGL3DViewer.h" compile="0" resource="0" file="Source/OGL3DViewer.h"/>
+      <FILE id="NiHs5i" name="OsmLayer.cpp" compile="1" resource="0" file="Source/OsmLayer.cpp"/>
+      <FILE id="WFzJQU" name="OsmLayer.h" compile="0" resource="0" file="Source/OsmLayer.h"/>
+      <FILE id="QycN8W" name="PrefDlg.cpp" compile="1" resource="0" file="Source/PrefDlg.cpp"/>
+      <FILE id="LUoO4M" name="PrefDlg.h" compile="0" resource="0" file="Source/PrefDlg.h"/>
+      <FILE id="LkilrW" name="ProfilViewer.cpp" compile="1" resource="0"
+            file="Source/ProfilViewer.cpp"/>
+      <FILE id="nMOSPr" name="ProfilViewer.h" compile="0" resource="0" file="Source/ProfilViewer.h"/>
+      <FILE id="lvSmQO" name="SelTreeViewer.cpp" compile="1" resource="0"
+            file="Source/SelTreeViewer.cpp"/>
+      <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>
+      <FILE id="ULyULt" name="SentinelViewer.cpp" compile="1" resource="0"
+            file="Source/SentinelViewer.cpp"/>
+      <FILE id="z2IfmW" name="SentinelViewer.h" compile="0" resource="0"
+            file="Source/SentinelViewer.h"/>
+      <FILE id="NX1BFn" name="StacViewer.cpp" compile="1" resource="0" file="Source/StacViewer.cpp"/>
+      <FILE id="cbgSbm" name="StacViewer.h" compile="0" resource="0" file="Source/StacViewer.h"/>
+      <FILE id="YT52fn" name="StereoViewer.cpp" compile="1" resource="0"
+            file="Source/StereoViewer.cpp"/>
+      <FILE id="uqj1qT" name="StereoViewer.h" compile="0" resource="0" file="Source/StereoViewer.h"/>
+      <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
+            file="Source/ThreadClassProcessor.h"/>
+      <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>
+      <FILE id="s4tT9M" name="TmsLayer.h" compile="0" resource="0" file="Source/TmsLayer.h"/>
+      <FILE id="sAzanD" name="Translation_fr.txt" compile="0" resource="1"
+            file="Source/Translation_fr.txt"/>
+      <FILE id="lv0bzz" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
+      <FILE id="PexFxV" name="VectorLayersViewer.cpp" compile="1" resource="0"
+            file="Source/VectorLayersViewer.cpp"/>
+      <FILE id="jVhnD5" name="VectorLayersViewer.h" compile="0" resource="0"
+            file="Source/VectorLayersViewer.h"/>
+      <FILE id="TZTRTs" name="WmtsLayer.cpp" compile="1" resource="0" file="Source/WmtsLayer.cpp"/>
+      <FILE id="pc4VuE" name="WmtsLayer.h" compile="0" resource="0" file="Source/WmtsLayer.h"/>
+      <FILE id="emxELT" name="WmtsTmsViewer.cpp" compile="1" resource="0"
+            file="Source/WmtsTmsViewer.cpp"/>
+      <FILE id="dG5dic" name="WmtsTmsViewer.h" compile="0" resource="0" file="Source/WmtsTmsViewer.h"/>
+      <FILE id="ZeanHP" name="ZoomViewer.cpp" compile="1" resource="0" file="Source/ZoomViewer.cpp"/>
+      <FILE id="lk6JQ4" name="ZoomViewer.h" compile="0" resource="0" file="Source/ZoomViewer.h"/>
     </GROUP>
     <GROUP id="{7FB695EE-758D-98D5-CDC3-20CD7DEF086E}" name="jpeg-10">
       <GROUP id="{F39B650A-2A44-7CB1-AAEB-E7FEA7B804A9}" name="Header">
@@ -208,178 +310,178 @@
       <FILE id="Snqn3a" name="mydefs.cpp" compile="1" resource="0" file="../LASzip/src/mydefs.cpp"/>
       <FILE id="edugUj" name="mydefs.hpp" compile="0" resource="0" file="../LASzip/src/mydefs.hpp"/>
     </GROUP>
-    <GROUP id="{B5244094-3984-16A1-BD64-D72BF56AC2D3}" name="libwebp-1.3.2">
+    <GROUP id="{B5244094-3984-16A1-BD64-D72BF56AC2D3}" name="libwebp">
       <GROUP id="{E9FEE2AE-624D-2CCF-0774-E131B36B66AC}" name="dec">
-        <FILE id="thCk4N" name="alpha_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/alpha_dec.c"/>
-        <FILE id="ELpgKL" name="alphai_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/alphai_dec.h"/>
-        <FILE id="Ml0Sib" name="buffer_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/buffer_dec.c"/>
-        <FILE id="y55xYO" name="common_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/common_dec.h"/>
-        <FILE id="HgwwWt" name="frame_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/frame_dec.c"/>
-        <FILE id="TaclzP" name="idec_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/idec_dec.c"/>
-        <FILE id="wi8mZo" name="io_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/io_dec.c"/>
-        <FILE id="HBSFqL" name="quant_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/quant_dec.c"/>
-        <FILE id="yoQPPI" name="tree_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/tree_dec.c"/>
-        <FILE id="wqL6TH" name="vp8_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/vp8_dec.c"/>
-        <FILE id="pNXqSU" name="vp8_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8_dec.h"/>
-        <FILE id="IW8qln" name="vp8i_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8i_dec.h"/>
-        <FILE id="XeFqN3" name="vp8l_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/vp8l_dec.c"/>
-        <FILE id="uEiF5f" name="vp8li_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/vp8li_dec.h"/>
-        <FILE id="vg5MhJ" name="webp_dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dec/webp_dec.c"/>
-        <FILE id="E2eqJ1" name="webpi_dec.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dec/webpi_dec.h"/>
+        <FILE id="thCk4N" name="alpha_dec.c" compile="1" resource="0" file="../libwebp/src/dec/alpha_dec.c"/>
+        <FILE id="ELpgKL" name="alphai_dec.h" compile="0" resource="0" file="../libwebp/src/dec/alphai_dec.h"/>
+        <FILE id="Ml0Sib" name="buffer_dec.c" compile="1" resource="0" file="../libwebp/src/dec/buffer_dec.c"/>
+        <FILE id="y55xYO" name="common_dec.h" compile="0" resource="0" file="../libwebp/src/dec/common_dec.h"/>
+        <FILE id="HgwwWt" name="frame_dec.c" compile="1" resource="0" file="../libwebp/src/dec/frame_dec.c"/>
+        <FILE id="TaclzP" name="idec_dec.c" compile="1" resource="0" file="../libwebp/src/dec/idec_dec.c"/>
+        <FILE id="wi8mZo" name="io_dec.c" compile="1" resource="0" file="../libwebp/src/dec/io_dec.c"/>
+        <FILE id="HBSFqL" name="quant_dec.c" compile="1" resource="0" file="../libwebp/src/dec/quant_dec.c"/>
+        <FILE id="yoQPPI" name="tree_dec.c" compile="1" resource="0" file="../libwebp/src/dec/tree_dec.c"/>
+        <FILE id="wqL6TH" name="vp8_dec.c" compile="1" resource="0" file="../libwebp/src/dec/vp8_dec.c"/>
+        <FILE id="pNXqSU" name="vp8_dec.h" compile="0" resource="0" file="../libwebp/src/dec/vp8_dec.h"/>
+        <FILE id="IW8qln" name="vp8i_dec.h" compile="0" resource="0" file="../libwebp/src/dec/vp8i_dec.h"/>
+        <FILE id="XeFqN3" name="vp8l_dec.c" compile="1" resource="0" file="../libwebp/src/dec/vp8l_dec.c"/>
+        <FILE id="uEiF5f" name="vp8li_dec.h" compile="0" resource="0" file="../libwebp/src/dec/vp8li_dec.h"/>
+        <FILE id="vg5MhJ" name="webp_dec.c" compile="1" resource="0" file="../libwebp/src/dec/webp_dec.c"/>
+        <FILE id="E2eqJ1" name="webpi_dec.h" compile="0" resource="0" file="../libwebp/src/dec/webpi_dec.h"/>
       </GROUP>
       <GROUP id="{C2E418AB-274E-737F-5853-40DAE2652FF9}" name="dsp">
         <FILE id="LzpVPE" name="alpha_processing.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/alpha_processing.c"/>
+              file="../libwebp/src/dsp/alpha_processing.c"/>
         <FILE id="pGG71W" name="alpha_processing_mips_dsp_r2.c" compile="1"
-              resource="0" file="../libwebp-1.3.2/src/dsp/alpha_processing_mips_dsp_r2.c"/>
+              resource="0" file="../libwebp/src/dsp/alpha_processing_mips_dsp_r2.c"/>
         <FILE id="M3rIFu" name="alpha_processing_neon.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/alpha_processing_neon.c"/>
+              file="../libwebp/src/dsp/alpha_processing_neon.c"/>
         <FILE id="odYPpk" name="alpha_processing_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/alpha_processing_sse2.c"/>
+              file="../libwebp/src/dsp/alpha_processing_sse2.c"/>
         <FILE id="vapeA5" name="alpha_processing_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/alpha_processing_sse41.c"/>
-        <FILE id="kpH9wa" name="common_sse2.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/common_sse2.h"/>
-        <FILE id="UUuAht" name="common_sse41.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/common_sse41.h"/>
-        <FILE id="XVT1RN" name="cost.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost.c"/>
+              file="../libwebp/src/dsp/alpha_processing_sse41.c"/>
+        <FILE id="kpH9wa" name="common_sse2.h" compile="0" resource="0" file="../libwebp/src/dsp/common_sse2.h"/>
+        <FILE id="UUuAht" name="common_sse41.h" compile="0" resource="0" file="../libwebp/src/dsp/common_sse41.h"/>
+        <FILE id="XVT1RN" name="cost.c" compile="1" resource="0" file="../libwebp/src/dsp/cost.c"/>
         <FILE id="lzu9SZ" name="cost_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/cost_mips_dsp_r2.c"/>
-        <FILE id="wWiG8j" name="cost_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_mips32.c"/>
-        <FILE id="yOYl3C" name="cost_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_neon.c"/>
-        <FILE id="X55AQd" name="cost_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cost_sse2.c"/>
-        <FILE id="PgUPme" name="cpu.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/cpu.c"/>
-        <FILE id="ppA6B1" name="cpu.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/cpu.h"/>
-        <FILE id="NF8uc0" name="dec.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec.c"/>
+              file="../libwebp/src/dsp/cost_mips_dsp_r2.c"/>
+        <FILE id="wWiG8j" name="cost_mips32.c" compile="1" resource="0" file="../libwebp/src/dsp/cost_mips32.c"/>
+        <FILE id="yOYl3C" name="cost_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/cost_neon.c"/>
+        <FILE id="X55AQd" name="cost_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/cost_sse2.c"/>
+        <FILE id="PgUPme" name="cpu.c" compile="1" resource="0" file="../libwebp/src/dsp/cpu.c"/>
+        <FILE id="ppA6B1" name="cpu.h" compile="0" resource="0" file="../libwebp/src/dsp/cpu.h"/>
+        <FILE id="NF8uc0" name="dec.c" compile="1" resource="0" file="../libwebp/src/dsp/dec.c"/>
         <FILE id="Z3LZij" name="dec_clip_tables.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/dec_clip_tables.c"/>
+              file="../libwebp/src/dsp/dec_clip_tables.c"/>
         <FILE id="MIOMEu" name="dec_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/dec_mips_dsp_r2.c"/>
-        <FILE id="cPJzRR" name="dec_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_mips32.c"/>
-        <FILE id="WJJ0CM" name="dec_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_msa.c"/>
-        <FILE id="Pco445" name="dec_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_neon.c"/>
-        <FILE id="zB2iD0" name="dec_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_sse2.c"/>
-        <FILE id="Xmp8D9" name="dec_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/dec_sse41.c"/>
-        <FILE id="Ymhh00" name="dsp.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/dsp.h"/>
-        <FILE id="XIFyyJ" name="enc.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc.c"/>
+              file="../libwebp/src/dsp/dec_mips_dsp_r2.c"/>
+        <FILE id="cPJzRR" name="dec_mips32.c" compile="1" resource="0" file="../libwebp/src/dsp/dec_mips32.c"/>
+        <FILE id="WJJ0CM" name="dec_msa.c" compile="1" resource="0" file="../libwebp/src/dsp/dec_msa.c"/>
+        <FILE id="Pco445" name="dec_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/dec_neon.c"/>
+        <FILE id="zB2iD0" name="dec_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/dec_sse2.c"/>
+        <FILE id="Xmp8D9" name="dec_sse41.c" compile="1" resource="0" file="../libwebp/src/dsp/dec_sse41.c"/>
+        <FILE id="Ymhh00" name="dsp.h" compile="0" resource="0" file="../libwebp/src/dsp/dsp.h"/>
+        <FILE id="XIFyyJ" name="enc.c" compile="1" resource="0" file="../libwebp/src/dsp/enc.c"/>
         <FILE id="ot3b0e" name="enc_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/enc_mips_dsp_r2.c"/>
-        <FILE id="pS3vVA" name="enc_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_mips32.c"/>
-        <FILE id="nfb8Le" name="enc_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_msa.c"/>
-        <FILE id="Q75ilD" name="enc_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_neon.c"/>
-        <FILE id="QU1vQH" name="enc_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_sse2.c"/>
-        <FILE id="yqa1XS" name="enc_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/enc_sse41.c"/>
-        <FILE id="p70NMD" name="filters.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters.c"/>
+              file="../libwebp/src/dsp/enc_mips_dsp_r2.c"/>
+        <FILE id="pS3vVA" name="enc_mips32.c" compile="1" resource="0" file="../libwebp/src/dsp/enc_mips32.c"/>
+        <FILE id="nfb8Le" name="enc_msa.c" compile="1" resource="0" file="../libwebp/src/dsp/enc_msa.c"/>
+        <FILE id="Q75ilD" name="enc_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/enc_neon.c"/>
+        <FILE id="QU1vQH" name="enc_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/enc_sse2.c"/>
+        <FILE id="yqa1XS" name="enc_sse41.c" compile="1" resource="0" file="../libwebp/src/dsp/enc_sse41.c"/>
+        <FILE id="p70NMD" name="filters.c" compile="1" resource="0" file="../libwebp/src/dsp/filters.c"/>
         <FILE id="o7bzca" name="filters_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/filters_mips_dsp_r2.c"/>
-        <FILE id="q1WE79" name="filters_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_msa.c"/>
-        <FILE id="bOqywn" name="filters_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_neon.c"/>
-        <FILE id="skQ0Oa" name="filters_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/filters_sse2.c"/>
-        <FILE id="kb8qng" name="lossless.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless.c"/>
-        <FILE id="YpVaBZ" name="lossless.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/lossless.h"/>
+              file="../libwebp/src/dsp/filters_mips_dsp_r2.c"/>
+        <FILE id="q1WE79" name="filters_msa.c" compile="1" resource="0" file="../libwebp/src/dsp/filters_msa.c"/>
+        <FILE id="bOqywn" name="filters_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/filters_neon.c"/>
+        <FILE id="skQ0Oa" name="filters_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/filters_sse2.c"/>
+        <FILE id="kb8qng" name="lossless.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless.c"/>
+        <FILE id="YpVaBZ" name="lossless.h" compile="0" resource="0" file="../libwebp/src/dsp/lossless.h"/>
         <FILE id="jwjd7F" name="lossless_common.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_common.h"/>
-        <FILE id="M2cb7l" name="lossless_enc.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_enc.c"/>
+              file="../libwebp/src/dsp/lossless_common.h"/>
+        <FILE id="M2cb7l" name="lossless_enc.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_enc.c"/>
         <FILE id="tZdJ1C" name="lossless_enc_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_mips_dsp_r2.c"/>
+              file="../libwebp/src/dsp/lossless_enc_mips_dsp_r2.c"/>
         <FILE id="ptNRaU" name="lossless_enc_mips32.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_mips32.c"/>
+              file="../libwebp/src/dsp/lossless_enc_mips32.c"/>
         <FILE id="wvTQ5U" name="lossless_enc_msa.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_msa.c"/>
+              file="../libwebp/src/dsp/lossless_enc_msa.c"/>
         <FILE id="omTmHB" name="lossless_enc_neon.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_neon.c"/>
+              file="../libwebp/src/dsp/lossless_enc_neon.c"/>
         <FILE id="yT4qpi" name="lossless_enc_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_sse2.c"/>
+              file="../libwebp/src/dsp/lossless_enc_sse2.c"/>
         <FILE id="S0qPBI" name="lossless_enc_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_enc_sse41.c"/>
+              file="../libwebp/src/dsp/lossless_enc_sse41.c"/>
         <FILE id="OWuTIC" name="lossless_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_mips_dsp_r2.c"/>
-        <FILE id="A8JLuC" name="lossless_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_msa.c"/>
-        <FILE id="IsQ7O4" name="lossless_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_neon.c"/>
-        <FILE id="FqoPMp" name="lossless_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/lossless_sse2.c"/>
+              file="../libwebp/src/dsp/lossless_mips_dsp_r2.c"/>
+        <FILE id="A8JLuC" name="lossless_msa.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_msa.c"/>
+        <FILE id="IsQ7O4" name="lossless_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_neon.c"/>
+        <FILE id="FqoPMp" name="lossless_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_sse2.c"/>
         <FILE id="CvsOaV" name="lossless_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/lossless_sse41.c"/>
-        <FILE id="IMw5UP" name="mips_macro.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/mips_macro.h"/>
-        <FILE id="vs1sPb" name="msa_macro.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/msa_macro.h"/>
-        <FILE id="m1VVgX" name="neon.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/neon.h"/>
-        <FILE id="NHepOP" name="quant.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/quant.h"/>
-        <FILE id="sjugnz" name="rescaler.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler.c"/>
+              file="../libwebp/src/dsp/lossless_sse41.c"/>
+        <FILE id="IMw5UP" name="mips_macro.h" compile="0" resource="0" file="../libwebp/src/dsp/mips_macro.h"/>
+        <FILE id="vs1sPb" name="msa_macro.h" compile="0" resource="0" file="../libwebp/src/dsp/msa_macro.h"/>
+        <FILE id="m1VVgX" name="neon.h" compile="0" resource="0" file="../libwebp/src/dsp/neon.h"/>
+        <FILE id="NHepOP" name="quant.h" compile="0" resource="0" file="../libwebp/src/dsp/quant.h"/>
+        <FILE id="sjugnz" name="rescaler.c" compile="1" resource="0" file="../libwebp/src/dsp/rescaler.c"/>
         <FILE id="YXMxvB" name="rescaler_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/rescaler_mips_dsp_r2.c"/>
+              file="../libwebp/src/dsp/rescaler_mips_dsp_r2.c"/>
         <FILE id="D2mT78" name="rescaler_mips32.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/rescaler_mips32.c"/>
-        <FILE id="YZOB08" name="rescaler_msa.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_msa.c"/>
-        <FILE id="gpIrhw" name="rescaler_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_neon.c"/>
-        <FILE id="c5xvWE" name="rescaler_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/rescaler_sse2.c"/>
-        <FILE id="SRAOkv" name="ssim.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/ssim.c"/>
-        <FILE id="FjOssJ" name="ssim_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/ssim_sse2.c"/>
-        <FILE id="iNb0HO" name="upsampling.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/upsampling.c"/>
+              file="../libwebp/src/dsp/rescaler_mips32.c"/>
+        <FILE id="YZOB08" name="rescaler_msa.c" compile="1" resource="0" file="../libwebp/src/dsp/rescaler_msa.c"/>
+        <FILE id="gpIrhw" name="rescaler_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/rescaler_neon.c"/>
+        <FILE id="c5xvWE" name="rescaler_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/rescaler_sse2.c"/>
+        <FILE id="SRAOkv" name="ssim.c" compile="1" resource="0" file="../libwebp/src/dsp/ssim.c"/>
+        <FILE id="FjOssJ" name="ssim_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/ssim_sse2.c"/>
+        <FILE id="iNb0HO" name="upsampling.c" compile="1" resource="0" file="../libwebp/src/dsp/upsampling.c"/>
         <FILE id="ZQKhdP" name="upsampling_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/upsampling_mips_dsp_r2.c"/>
+              file="../libwebp/src/dsp/upsampling_mips_dsp_r2.c"/>
         <FILE id="X6rNVB" name="upsampling_msa.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/upsampling_msa.c"/>
+              file="../libwebp/src/dsp/upsampling_msa.c"/>
         <FILE id="AqwDxd" name="upsampling_neon.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/upsampling_neon.c"/>
+              file="../libwebp/src/dsp/upsampling_neon.c"/>
         <FILE id="Fhhw7a" name="upsampling_sse2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/upsampling_sse2.c"/>
+              file="../libwebp/src/dsp/upsampling_sse2.c"/>
         <FILE id="F6Gwl8" name="upsampling_sse41.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/upsampling_sse41.c"/>
-        <FILE id="zNotlD" name="yuv.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv.c"/>
-        <FILE id="aQUJh0" name="yuv.h" compile="0" resource="0" file="../libwebp-1.3.2/src/dsp/yuv.h"/>
+              file="../libwebp/src/dsp/upsampling_sse41.c"/>
+        <FILE id="zNotlD" name="yuv.c" compile="1" resource="0" file="../libwebp/src/dsp/yuv.c"/>
+        <FILE id="aQUJh0" name="yuv.h" compile="0" resource="0" file="../libwebp/src/dsp/yuv.h"/>
         <FILE id="Hwgmer" name="yuv_mips_dsp_r2.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/dsp/yuv_mips_dsp_r2.c"/>
-        <FILE id="NB3Cq9" name="yuv_mips32.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_mips32.c"/>
-        <FILE id="zcj8Rq" name="yuv_neon.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_neon.c"/>
-        <FILE id="zXzzKm" name="yuv_sse2.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_sse2.c"/>
-        <FILE id="ihjOod" name="yuv_sse41.c" compile="1" resource="0" file="../libwebp-1.3.2/src/dsp/yuv_sse41.c"/>
+              file="../libwebp/src/dsp/yuv_mips_dsp_r2.c"/>
+        <FILE id="NB3Cq9" name="yuv_mips32.c" compile="1" resource="0" file="../libwebp/src/dsp/yuv_mips32.c"/>
+        <FILE id="zcj8Rq" name="yuv_neon.c" compile="1" resource="0" file="../libwebp/src/dsp/yuv_neon.c"/>
+        <FILE id="zXzzKm" name="yuv_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/yuv_sse2.c"/>
+        <FILE id="ihjOod" name="yuv_sse41.c" compile="1" resource="0" file="../libwebp/src/dsp/yuv_sse41.c"/>
       </GROUP>
       <GROUP id="{D2DA6C12-EF61-8D22-975F-913E3E68F25A}" name="utils">
         <FILE id="F0wucg" name="bit_reader_inl_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/bit_reader_inl_utils.h"/>
+              file="../libwebp/src/utils/bit_reader_inl_utils.h"/>
         <FILE id="Zc5Gce" name="bit_reader_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/bit_reader_utils.c"/>
+              file="../libwebp/src/utils/bit_reader_utils.c"/>
         <FILE id="DLacgI" name="bit_reader_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/bit_reader_utils.h"/>
+              file="../libwebp/src/utils/bit_reader_utils.h"/>
         <FILE id="ex5n1c" name="bit_writer_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/bit_writer_utils.c"/>
+              file="../libwebp/src/utils/bit_writer_utils.c"/>
         <FILE id="O1iH5H" name="bit_writer_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/bit_writer_utils.h"/>
+              file="../libwebp/src/utils/bit_writer_utils.h"/>
         <FILE id="PbKVQ6" name="color_cache_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/color_cache_utils.c"/>
+              file="../libwebp/src/utils/color_cache_utils.c"/>
         <FILE id="OZlc2D" name="color_cache_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/color_cache_utils.h"/>
+              file="../libwebp/src/utils/color_cache_utils.h"/>
         <FILE id="TyXpuZ" name="endian_inl_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/endian_inl_utils.h"/>
-        <FILE id="ipeOQg" name="filters_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/filters_utils.c"/>
-        <FILE id="BfWTck" name="filters_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/filters_utils.h"/>
+              file="../libwebp/src/utils/endian_inl_utils.h"/>
+        <FILE id="ipeOQg" name="filters_utils.c" compile="1" resource="0" file="../libwebp/src/utils/filters_utils.c"/>
+        <FILE id="BfWTck" name="filters_utils.h" compile="0" resource="0" file="../libwebp/src/utils/filters_utils.h"/>
         <FILE id="gqZVDA" name="huffman_encode_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/huffman_encode_utils.c"/>
+              file="../libwebp/src/utils/huffman_encode_utils.c"/>
         <FILE id="sNNlNh" name="huffman_encode_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/huffman_encode_utils.h"/>
-        <FILE id="Kq01qB" name="huffman_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/huffman_utils.c"/>
-        <FILE id="ZAwRte" name="huffman_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/huffman_utils.h"/>
+              file="../libwebp/src/utils/huffman_encode_utils.h"/>
+        <FILE id="Kq01qB" name="huffman_utils.c" compile="1" resource="0" file="../libwebp/src/utils/huffman_utils.c"/>
+        <FILE id="ZAwRte" name="huffman_utils.h" compile="0" resource="0" file="../libwebp/src/utils/huffman_utils.h"/>
         <FILE id="o91VnE" name="quant_levels_dec_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/quant_levels_dec_utils.c"/>
+              file="../libwebp/src/utils/quant_levels_dec_utils.c"/>
         <FILE id="BDfDvZ" name="quant_levels_dec_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/quant_levels_dec_utils.h"/>
+              file="../libwebp/src/utils/quant_levels_dec_utils.h"/>
         <FILE id="xusy7t" name="quant_levels_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/quant_levels_utils.c"/>
+              file="../libwebp/src/utils/quant_levels_utils.c"/>
         <FILE id="VZiBqn" name="quant_levels_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/quant_levels_utils.h"/>
-        <FILE id="ymeYYC" name="random_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/random_utils.c"/>
-        <FILE id="WosVOH" name="random_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/random_utils.h"/>
+              file="../libwebp/src/utils/quant_levels_utils.h"/>
+        <FILE id="ymeYYC" name="random_utils.c" compile="1" resource="0" file="../libwebp/src/utils/random_utils.c"/>
+        <FILE id="WosVOH" name="random_utils.h" compile="0" resource="0" file="../libwebp/src/utils/random_utils.h"/>
         <FILE id="vrou3S" name="rescaler_utils.c" compile="1" resource="0"
-              file="../libwebp-1.3.2/src/utils/rescaler_utils.c"/>
+              file="../libwebp/src/utils/rescaler_utils.c"/>
         <FILE id="sCJ5iQ" name="rescaler_utils.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/utils/rescaler_utils.h"/>
-        <FILE id="aP1FFU" name="thread_utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/thread_utils.c"/>
-        <FILE id="OyfZro" name="thread_utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/thread_utils.h"/>
-        <FILE id="OgxU25" name="utils.c" compile="1" resource="0" file="../libwebp-1.3.2/src/utils/utils.c"/>
-        <FILE id="S7I4xo" name="utils.h" compile="0" resource="0" file="../libwebp-1.3.2/src/utils/utils.h"/>
+              file="../libwebp/src/utils/rescaler_utils.h"/>
+        <FILE id="aP1FFU" name="thread_utils.c" compile="1" resource="0" file="../libwebp/src/utils/thread_utils.c"/>
+        <FILE id="OyfZro" name="thread_utils.h" compile="0" resource="0" file="../libwebp/src/utils/thread_utils.h"/>
+        <FILE id="OgxU25" name="utils.c" compile="1" resource="0" file="../libwebp/src/utils/utils.c"/>
+        <FILE id="S7I4xo" name="utils.h" compile="0" resource="0" file="../libwebp/src/utils/utils.h"/>
       </GROUP>
       <GROUP id="{103016F7-032A-19F9-394F-DC4120CA9432}" name="webp">
-        <FILE id="dGjt4Y" name="decode.h" compile="0" resource="0" file="../libwebp-1.3.2/src/webp/decode.h"/>
+        <FILE id="dGjt4Y" name="decode.h" compile="0" resource="0" file="../libwebp/src/webp/decode.h"/>
         <FILE id="z1wFd0" name="format_constants.h" compile="0" resource="0"
-              file="../libwebp-1.3.2/src/webp/format_constants.h"/>
-        <FILE id="fYmuKi" name="types.h" compile="0" resource="0" file="../libwebp-1.3.2/src/webp/types.h"/>
+              file="../libwebp/src/webp/format_constants.h"/>
+        <FILE id="fYmuKi" name="types.h" compile="0" resource="0" file="../libwebp/src/webp/types.h"/>
       </GROUP>
     </GROUP>
     <GROUP id="{05F38623-6988-2488-0672-48CAD8E99FCC}" name="openjpeg">
@@ -430,108 +532,6 @@
       <FILE id="SkkjwB" name="tgt.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/tgt.h"/>
       <FILE id="n0O0a2" name="thread.c" compile="1" resource="0" file="../openjpeg/src/lib/openjp2/thread.c"/>
       <FILE id="YOMU5q" name="thread.h" compile="0" resource="0" file="../openjpeg/src/lib/openjp2/thread.h"/>
-    </GROUP>
-    <GROUP id="{2D72BBF7-CC90-ABF2-5F2C-BDC1866D3222}" name="Source">
-      <FILE id="KhenFV" name="AffineImage.cpp" compile="1" resource="0" file="Source/AffineImage.cpp"/>
-      <FILE id="WNOnos" name="AffineImage.h" compile="0" resource="0" file="Source/AffineImage.h"/>
-      <FILE id="MyjDjo" name="AnnotViewer.cpp" compile="1" resource="0" file="Source/AnnotViewer.cpp"/>
-      <FILE id="S73SJQ" name="AnnotViewer.h" compile="0" resource="0" file="Source/AnnotViewer.h"/>
-      <FILE id="bIpneZ" name="AppUtil.cpp" compile="1" resource="0" file="Source/AppUtil.cpp"/>
-      <FILE id="RrGnm4" name="AppUtil.h" compile="0" resource="0" file="Source/AppUtil.h"/>
-      <FILE id="N3W7za" name="ClassViewer.cpp" compile="1" resource="0" file="Source/ClassViewer.cpp"/>
-      <FILE id="UHK4lN" name="ClassViewer.h" compile="0" resource="0" file="Source/ClassViewer.h"/>
-      <FILE id="ll5KQm" name="DtmLayersViewer.cpp" compile="1" resource="0"
-            file="Source/DtmLayersViewer.cpp"/>
-      <FILE id="xyifwE" name="DtmLayersViewer.h" compile="0" resource="0"
-            file="Source/DtmLayersViewer.h"/>
-      <FILE id="wv4RK7" name="DtmShader.cpp" compile="1" resource="0" file="Source/DtmShader.cpp"/>
-      <FILE id="Ysux8W" name="DtmShader.h" compile="0" resource="0" file="Source/DtmShader.h"/>
-      <FILE id="dwqtwl" name="DtmTmsLayer.cpp" compile="1" resource="0" file="Source/DtmTmsLayer.cpp"/>
-      <FILE id="qkxe1N" name="DtmTmsLayer.h" compile="0" resource="0" file="Source/DtmTmsLayer.h"/>
-      <FILE id="VxgmFP" name="ExportDtmDlg.cpp" compile="1" resource="0"
-            file="Source/ExportDtmDlg.cpp"/>
-      <FILE id="bXNpD4" name="ExportDtmDlg.h" compile="0" resource="0" file="Source/ExportDtmDlg.h"/>
-      <FILE id="IUCQEA" name="ExportImageDlg.cpp" compile="1" resource="0"
-            file="Source/ExportImageDlg.cpp"/>
-      <FILE id="bJ7a4v" name="ExportImageDlg.h" compile="0" resource="0"
-            file="Source/ExportImageDlg.h"/>
-      <FILE id="WZYtOP" name="ExportLasDlg.cpp" compile="1" resource="0"
-            file="Source/ExportLasDlg.cpp"/>
-      <FILE id="M0CWGn" name="ExportLasDlg.h" compile="0" resource="0" file="Source/ExportLasDlg.h"/>
-      <FILE id="MWj6Zn" name="GeoBase.cpp" compile="1" resource="0" file="Source/GeoBase.cpp"/>
-      <FILE id="nrp2RE" name="GeoBase.h" compile="0" resource="0" file="Source/GeoBase.h"/>
-      <FILE id="tN8zbc" name="GeoSearch.cpp" compile="1" resource="0" file="Source/GeoSearch.cpp"/>
-      <FILE id="WzGlUq" name="GeoSearch.h" compile="0" resource="0" file="Source/GeoSearch.h"/>
-      <FILE id="LKaR73" name="ImageLayersViewer.cpp" compile="1" resource="0"
-            file="Source/ImageLayersViewer.cpp"/>
-      <FILE id="Mx59QQ" name="ImageLayersViewer.h" compile="0" resource="0"
-            file="Source/ImageLayersViewer.h"/>
-      <FILE id="dBwwI3" name="ImageOptionsViewer.cpp" compile="1" resource="0"
-            file="Source/ImageOptionsViewer.cpp"/>
-      <FILE id="wDUBzV" name="ImageOptionsViewer.h" compile="0" resource="0"
-            file="Source/ImageOptionsViewer.h"/>
-      <FILE id="DhY02A" name="LasLayersViewer.cpp" compile="1" resource="0"
-            file="Source/LasLayersViewer.cpp"/>
-      <FILE id="cw9NCH" name="LasLayersViewer.h" compile="0" resource="0"
-            file="Source/LasLayersViewer.h"/>
-      <FILE id="IVAxy1" name="LasShader.cpp" compile="1" resource="0" file="Source/LasShader.cpp"/>
-      <FILE id="ycXypH" name="LasShader.h" compile="0" resource="0" file="Source/LasShader.h"/>
-      <FILE id="DsyKAk" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="HDKe0t" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
-      <FILE id="LBPoZX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="LvESbM" name="MainComponentToolbarFactory.cpp" compile="1"
-            resource="0" file="Source/MainComponentToolbarFactory.cpp"/>
-      <FILE id="LHCs29" name="MainComponentToolbarFactory.h" compile="0"
-            resource="0" file="Source/MainComponentToolbarFactory.h"/>
-      <FILE id="zNPjlm" name="MapThread.cpp" compile="1" resource="0" file="Source/MapThread.cpp"/>
-      <FILE id="GQfsNH" name="MapThread.h" compile="0" resource="0" file="Source/MapThread.h"/>
-      <FILE id="Q3bCs3" name="MapView.cpp" compile="1" resource="0" file="Source/MapView.cpp"/>
-      <FILE id="VoOZK7" name="MapView.h" compile="0" resource="0" file="Source/MapView.h"/>
-      <FILE id="IFWsWi" name="MvtLayer.cpp" compile="1" resource="0" file="Source/MvtLayer.cpp"/>
-      <FILE id="FZaRN0" name="MvtLayer.h" compile="0" resource="0" file="Source/MvtLayer.h"/>
-      <FILE id="Oktkma" name="ObjectViewer.cpp" compile="1" resource="0"
-            file="Source/ObjectViewer.cpp"/>
-      <FILE id="KeTIbU" name="ObjectViewer.h" compile="0" resource="0" file="Source/ObjectViewer.h"/>
-      <FILE id="xd5aA4" name="OGL3DViewer.cpp" compile="1" resource="0" file="Source/OGL3DViewer.cpp"/>
-      <FILE id="B2RtuV" name="OGL3DViewer.h" compile="0" resource="0" file="Source/OGL3DViewer.h"/>
-      <FILE id="NiHs5i" name="OsmLayer.cpp" compile="1" resource="0" file="Source/OsmLayer.cpp"/>
-      <FILE id="WFzJQU" name="OsmLayer.h" compile="0" resource="0" file="Source/OsmLayer.h"/>
-      <FILE id="QycN8W" name="PrefDlg.cpp" compile="1" resource="0" file="Source/PrefDlg.cpp"/>
-      <FILE id="LUoO4M" name="PrefDlg.h" compile="0" resource="0" file="Source/PrefDlg.h"/>
-      <FILE id="LkilrW" name="ProfilViewer.cpp" compile="1" resource="0"
-            file="Source/ProfilViewer.cpp"/>
-      <FILE id="nMOSPr" name="ProfilViewer.h" compile="0" resource="0" file="Source/ProfilViewer.h"/>
-      <FILE id="lvSmQO" name="SelTreeViewer.cpp" compile="1" resource="0"
-            file="Source/SelTreeViewer.cpp"/>
-      <FILE id="tnkHZX" name="SelTreeViewer.h" compile="0" resource="0" file="Source/SelTreeViewer.h"/>
-      <FILE id="ULyULt" name="SentinelViewer.cpp" compile="1" resource="0"
-            file="Source/SentinelViewer.cpp"/>
-      <FILE id="z2IfmW" name="SentinelViewer.h" compile="0" resource="0"
-            file="Source/SentinelViewer.h"/>
-      <FILE id="NX1BFn" name="StacViewer.cpp" compile="1" resource="0" file="Source/StacViewer.cpp"/>
-      <FILE id="cbgSbm" name="StacViewer.h" compile="0" resource="0" file="Source/StacViewer.h"/>
-      <FILE id="YT52fn" name="StereoViewer.cpp" compile="1" resource="0"
-            file="Source/StereoViewer.cpp"/>
-      <FILE id="uqj1qT" name="StereoViewer.h" compile="0" resource="0" file="Source/StereoViewer.h"/>
-      <FILE id="eWoSgj" name="ThreadClassProcessor.h" compile="0" resource="0"
-            file="Source/ThreadClassProcessor.h"/>
-      <FILE id="ratGXr" name="TmsLayer.cpp" compile="1" resource="0" file="Source/TmsLayer.cpp"/>
-      <FILE id="s4tT9M" name="TmsLayer.h" compile="0" resource="0" file="Source/TmsLayer.h"/>
-      <FILE id="sAzanD" name="Translation_fr.txt" compile="0" resource="1"
-            file="Source/Translation_fr.txt"/>
-      <FILE id="lv0bzz" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
-      <FILE id="PexFxV" name="VectorLayersViewer.cpp" compile="1" resource="0"
-            file="Source/VectorLayersViewer.cpp"/>
-      <FILE id="jVhnD5" name="VectorLayersViewer.h" compile="0" resource="0"
-            file="Source/VectorLayersViewer.h"/>
-      <FILE id="TZTRTs" name="WmtsLayer.cpp" compile="1" resource="0" file="Source/WmtsLayer.cpp"/>
-      <FILE id="pc4VuE" name="WmtsLayer.h" compile="0" resource="0" file="Source/WmtsLayer.h"/>
-      <FILE id="emxELT" name="WmtsTmsViewer.cpp" compile="1" resource="0"
-            file="Source/WmtsTmsViewer.cpp"/>
-      <FILE id="dG5dic" name="WmtsTmsViewer.h" compile="0" resource="0" file="Source/WmtsTmsViewer.h"/>
-      <FILE id="ZeanHP" name="ZoomViewer.cpp" compile="1" resource="0" file="Source/ZoomViewer.cpp"/>
-      <FILE id="lk6JQ4" name="ZoomViewer.h" compile="0" resource="0" file="Source/ZoomViewer.h"/>
     </GROUP>
     <GROUP id="{2D33714D-DC90-50C2-4B12-9E71B8D130C6}" name="Sqlite">
       <FILE id="PeYnjI" name="sqlite3.c" compile="1" resource="0" file="../Sqlite/sqlite3.c"/>
@@ -738,36 +738,36 @@
       <FILE id="DmsLuA" name="XWKBGeom.cpp" compile="1" resource="0" file="../XToolVector/XWKBGeom.cpp"/>
       <FILE id="lKnwuw" name="XWKBGeom.h" compile="0" resource="0" file="../XToolVector/XWKBGeom.h"/>
     </GROUP>
-    <GROUP id="{A273CE02-EFD1-8AFF-D671-CA5CD6195B4C}" name="zlib-1.3.1">
+    <GROUP id="{A273CE02-EFD1-8AFF-D671-CA5CD6195B4C}" name="zlib">
       <GROUP id="{607F6CAE-E104-22C2-BE86-D0938DC2F23E}" name="Header">
-        <FILE id="xBwc32" name="crc32.h" compile="0" resource="0" file="../zlib-1.3.1/crc32.h"/>
-        <FILE id="ug1CSi" name="deflate.h" compile="0" resource="0" file="../zlib-1.3.1/deflate.h"/>
-        <FILE id="oIk5TY" name="gzguts.h" compile="0" resource="0" file="../zlib-1.3.1/gzguts.h"/>
-        <FILE id="Rzasrl" name="inffast.h" compile="0" resource="0" file="../zlib-1.3.1/inffast.h"/>
-        <FILE id="sQAEb6" name="inffixed.h" compile="0" resource="0" file="../zlib-1.3.1/inffixed.h"/>
-        <FILE id="qlXuFZ" name="inflate.h" compile="0" resource="0" file="../zlib-1.3.1/inflate.h"/>
-        <FILE id="cqpJDA" name="inftrees.h" compile="0" resource="0" file="../zlib-1.3.1/inftrees.h"/>
-        <FILE id="yDGgB3" name="trees.h" compile="0" resource="0" file="../zlib-1.3.1/trees.h"/>
-        <FILE id="JgYlgq" name="zconf.h" compile="0" resource="0" file="../zlib-1.3.1/zconf.h"/>
-        <FILE id="rEgr6c" name="zlib.h" compile="0" resource="0" file="../zlib-1.3.1/zlib.h"/>
-        <FILE id="baZD2Q" name="zutil.h" compile="0" resource="0" file="../zlib-1.3.1/zutil.h"/>
+        <FILE id="xBwc32" name="crc32.h" compile="0" resource="0" file="../zlib/crc32.h"/>
+        <FILE id="ug1CSi" name="deflate.h" compile="0" resource="0" file="../zlib/deflate.h"/>
+        <FILE id="oIk5TY" name="gzguts.h" compile="0" resource="0" file="../zlib/gzguts.h"/>
+        <FILE id="Rzasrl" name="inffast.h" compile="0" resource="0" file="../zlib/inffast.h"/>
+        <FILE id="sQAEb6" name="inffixed.h" compile="0" resource="0" file="../zlib/inffixed.h"/>
+        <FILE id="qlXuFZ" name="inflate.h" compile="0" resource="0" file="../zlib/inflate.h"/>
+        <FILE id="cqpJDA" name="inftrees.h" compile="0" resource="0" file="../zlib/inftrees.h"/>
+        <FILE id="yDGgB3" name="trees.h" compile="0" resource="0" file="../zlib/trees.h"/>
+        <FILE id="JgYlgq" name="zconf.h" compile="0" resource="0" file="../zlib/zconf.h"/>
+        <FILE id="rEgr6c" name="zlib.h" compile="0" resource="0" file="../zlib/zlib.h"/>
+        <FILE id="baZD2Q" name="zutil.h" compile="0" resource="0" file="../zlib/zutil.h"/>
       </GROUP>
       <GROUP id="{40B1CBAB-6280-B76D-2AFD-23878AFBA0AA}" name="Source">
-        <FILE id="XltgNG" name="adler32.c" compile="1" resource="0" file="../zlib-1.3.1/adler32.c"/>
-        <FILE id="ZRk6QU" name="compress.c" compile="1" resource="0" file="../zlib-1.3.1/compress.c"/>
-        <FILE id="WGtHll" name="crc32.c" compile="1" resource="0" file="../zlib-1.3.1/crc32.c"/>
-        <FILE id="CRIjA0" name="deflate.c" compile="1" resource="0" file="../zlib-1.3.1/deflate.c"/>
-        <FILE id="TknJFf" name="gzclose.c" compile="1" resource="0" file="../zlib-1.3.1/gzclose.c"/>
-        <FILE id="J0lJcP" name="gzlib.c" compile="1" resource="0" file="../zlib-1.3.1/gzlib.c"/>
-        <FILE id="pShJY1" name="gzread.c" compile="1" resource="0" file="../zlib-1.3.1/gzread.c"/>
-        <FILE id="gkGQaJ" name="gzwrite.c" compile="1" resource="0" file="../zlib-1.3.1/gzwrite.c"/>
-        <FILE id="wJi704" name="infback.c" compile="1" resource="0" file="../zlib-1.3.1/infback.c"/>
-        <FILE id="qvLNdI" name="inffast.c" compile="1" resource="0" file="../zlib-1.3.1/inffast.c"/>
-        <FILE id="Orz7jf" name="inflate.c" compile="1" resource="0" file="../zlib-1.3.1/inflate.c"/>
-        <FILE id="vBqQUZ" name="inftrees.c" compile="1" resource="0" file="../zlib-1.3.1/inftrees.c"/>
-        <FILE id="JvmScD" name="trees.c" compile="1" resource="0" file="../zlib-1.3.1/trees.c"/>
-        <FILE id="peWeJD" name="uncompr.c" compile="1" resource="0" file="../zlib-1.3.1/uncompr.c"/>
-        <FILE id="DAMhmu" name="zutil.c" compile="1" resource="0" file="../zlib-1.3.1/zutil.c"/>
+        <FILE id="XltgNG" name="adler32.c" compile="1" resource="0" file="../zlib/adler32.c"/>
+        <FILE id="ZRk6QU" name="compress.c" compile="1" resource="0" file="../zlib/compress.c"/>
+        <FILE id="WGtHll" name="crc32.c" compile="1" resource="0" file="../zlib/crc32.c"/>
+        <FILE id="CRIjA0" name="deflate.c" compile="1" resource="0" file="../zlib/deflate.c"/>
+        <FILE id="TknJFf" name="gzclose.c" compile="1" resource="0" file="../zlib/gzclose.c"/>
+        <FILE id="J0lJcP" name="gzlib.c" compile="1" resource="0" file="../zlib/gzlib.c"/>
+        <FILE id="pShJY1" name="gzread.c" compile="1" resource="0" file="../zlib/gzread.c"/>
+        <FILE id="gkGQaJ" name="gzwrite.c" compile="1" resource="0" file="../zlib/gzwrite.c"/>
+        <FILE id="wJi704" name="infback.c" compile="1" resource="0" file="../zlib/infback.c"/>
+        <FILE id="qvLNdI" name="inffast.c" compile="1" resource="0" file="../zlib/inffast.c"/>
+        <FILE id="Orz7jf" name="inflate.c" compile="1" resource="0" file="../zlib/inflate.c"/>
+        <FILE id="vBqQUZ" name="inftrees.c" compile="1" resource="0" file="../zlib/inftrees.c"/>
+        <FILE id="JvmScD" name="trees.c" compile="1" resource="0" file="../zlib/trees.c"/>
+        <FILE id="peWeJD" name="uncompr.c" compile="1" resource="0" file="../zlib/uncompr.c"/>
+        <FILE id="DAMhmu" name="zutil.c" compile="1" resource="0" file="../zlib/zutil.c"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

@@ -120,7 +120,7 @@ MainComponent::MainComponent()
 
 	const juce::Displays::Display* display = juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
 	if (display != nullptr) {
-		juce::Rectangle< int > R = display->userArea;
+		juce::Rectangle< float > R = display->userBounds;
 		setSize((int)(R.getWidth() * 0.8), (int)(R.getHeight() * 0.8));
 	}
 

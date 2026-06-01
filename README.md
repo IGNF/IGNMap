@@ -68,11 +68,11 @@ Pour pouvoir compiler le projet, il est nécessaire de récupérer les biblioth�
 un même répertoire :
 
 * `IGNMap/` : dossier contenant les sources du projet ;
-* `jpeg-9f/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
-* `zlib-1.3.1/` : dossier contenant la bibliothèque [ZLib](https://www.zlib.net/) ;
+* `jpeg-10/` : dossier contenant la bibliothèque [LibJPEG](https://www.ijg.org/) ;
+* `zlib/` : dossier contenant la bibliothèque [ZLib](https://www.zlib.net/) ;
 * `JUCE/` : dossier contenant [JUCE](https://juce.com/) ;
 * `LASzip/` : dossier contenant la bibliothèque [LASzip](https://github.com/LASzip/LASzip) ;
-* `libwebp-1.3.2/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
+* `libwebp/` : dossier contenant la bibliothèque [LibWebP](https://chromium.googlesource.com/webm/libwebp) ;
 * `openjpeg/` : dossier contenant la bibliothèque [OpenJPEG](https://github.com/uclouvain/openjpeg/) ;
 * `Sqlite/` : dossier contenant la bibliothèque [SQLite](https://www.sqlite.org/index.html) ;
 * `TinyEXIF/` : dossier contenant la bibliothèque [TinyEXIF](https://github.com/cdcseacave/TinyEXIF) ;
