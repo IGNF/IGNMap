@@ -14,7 +14,7 @@
 #include "../../XTool/XGeoBase.h"
 #include "../../XTool/XGeoClass.h"
 #include "../../XTool/XGeoVector.h"
-#include "../../XTool/XParserXml.h"
+#include "../../XTool/XParserXML.h"
 #include "LasShader.h"
 #include "DtmShader.h"
 #include "AppUtil.h"
@@ -217,7 +217,24 @@ juce::Matrix3D<float> OGLWidget::getViewMatrix()
     //autoRot = ((float)getFrameCounter() * 0.01f);
     m_R.Z += 0.01;
   }
+  float tX = 0.f, tY = 0.f, tZ = 0.f;
+  if (m_bAutoFly) {
+    if (m_FlyPos < m_FlyPath.size()) {
+      XPt3D P = m_FlyPath[m_FlyPos];
+      tX = (float)((P.X - m_dX0) / m_dGsd);
+      tY = (float)((P.Y - m_dY0) / m_dGsd);
+      tZ = (float)((P.Z - m_dZ0) / m_dGsd + m_dOffsetZ);
+    }
+  }
+  else {
+    if (!m_RotCenter.isNull()) {
+      tX = (float)((m_RotCenter.X - m_dX0) / m_dGsd);
+      tY = (float)((m_RotCenter.Y - m_dY0) / m_dGsd);
+      tZ = (float)((m_RotCenter.Z - m_dZ0) / m_dGsd + m_dOffsetZ);
+    }
+  }
 
+  auto targetMatrix = juce::Matrix3D<float>::fromTranslation({ -tX, -tY, -tZ });
   auto viewMatrix = juce::Matrix3D<float>::fromTranslation({ (float)m_T.X, (float)m_T.Y, -10.0f + (float)m_T.Z});
   auto rotationMatrix = juce::Matrix3D<float>::rotation({ (float)m_R.X, (float)m_R.Y, (float)m_R.Z + autoRot });
  
@@ -226,7 +243,7 @@ juce::Matrix3D<float> OGLWidget::getViewMatrix()
   scaleMatrix.mat[5] = (float)m_S.Y;
   scaleMatrix.mat[10] = (float)m_S.Z;
 
-  return viewMatrix * rotationMatrix * scaleMatrix;
+  return viewMatrix * rotationMatrix * scaleMatrix * targetMatrix;
 }
 
 //==============================================================================
@@ -525,18 +542,24 @@ void OGLWidget::mouseUp(const juce::MouseEvent& event)
   }
 }
 
-void OGLWidget::mouseDrag(const juce::MouseEvent& event)
+void OGLWidget::mouseMove(const juce::MouseEvent& event)
 {
   if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
     m_bNeedLastPoint = true;
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
+    m_LastPos = event.position;
+    repaint();  // Pour l'affichage des informations
   }
-  else { // Changement de rotation de la vue 3D
-    juce::Point<float> delta = event.position - m_LastPos;
-    m_R.Z += (delta.getX() * 0.01);
-    m_R.X += ((delta.getY() * 0.01));
-  }
+
+}
+
+void OGLWidget::mouseDrag(const juce::MouseEvent& event)
+{
+ // Changement de rotation de la vue 3D
+ juce::Point<float> delta = event.position - m_LastPos;
+ m_R.Z += (delta.getX() * 0.01);
+ m_R.X += ((delta.getY() * 0.01));
   
   m_LastPos = event.position;
   repaint();  // Pour l'affichage des informations
@@ -598,8 +621,9 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_R = XPt3D();
     m_T = XPt3D();
     m_S = XPt3D(1., 1., 1.);
+    m_RotCenter = XPt3D();
+
     m_dDeltaZ = -m_dOffsetZ;
-    m_DeltaXY = m_OffsetXY * (-1.);
     m_bNeedUpdate = true;
     m_LasPointSize = 4;
   }
@@ -623,14 +647,9 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     m_dDeltaZ = 0.1;
     m_bNeedUpdate = true;
   }
-  if ((key.getTextCharacter() == 'N') || (key.getTextCharacter() == 'n')) {
-    double Xtarget = (m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X;
-    double Ytarget = (m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y;
-    double Ztarget = (m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ;
-    m_DeltaXY = XPt2D(-Xtarget, -Ytarget);
-    m_dDeltaZ = -Ztarget;
-    m_bNeedUpdate = true;
-  }
+  if ((key.getTextCharacter() == 'N') || (key.getTextCharacter() == 'n'))
+    m_RotCenter = m_Target;
+
   if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
     m_bUpdateLasColor = true;
     m_bNeedUpdate = true;
@@ -714,7 +733,7 @@ void OGLWidget::buttonClicked(juce::Button* button)
 void OGLWidget::sliderValueChanged(juce::Slider* slider)
 {
   if (slider == &m_Control3D.m_sldZFactor)
-    m_S.Z = slider->getValue();
+    m_S.Z = m_S.X * slider->getValue(); // C'est un facteur d'exageration par rapport aux autres axes
   if (slider == &m_Control3D.m_sldLasPointSize)
     m_LasPointSize = (float)std::clamp(slider->getValue(), 1., 10.);
   if (slider == &m_Control3D.m_sldDtmPointSize)
@@ -743,7 +762,7 @@ void OGLWidget::SyncControl3D()
   m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
   m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
   m_Control3D.m_btnFillDtm.setToggleState(m_bDtmFill, juce::NotificationType::dontSendNotification);
-  m_Control3D.m_sldZFactor.setValue(m_S.Z, juce::NotificationType::dontSendNotification);
+  m_Control3D.m_sldZFactor.setValue(m_S.Z / m_S.X, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldLasPointSize.setValue((double)m_LasPointSize, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldDtmPointSize.setValue((double)m_DtmLineWidth, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldVectorWidth.setValue((double)m_VectorWidth, juce::NotificationType::dontSendNotification);
@@ -768,7 +787,6 @@ void OGLWidget::LoadObjects(XGeoBase* base, XFrame* F)
     m_dGsd = F->Height() / 4.;
   m_dZ0 = base->Z(F->Center());
   m_dDeltaZ = m_dOffsetZ = 0.;
-  m_DeltaXY = m_OffsetXY = XPt2D();
   UpdateQuickLook();
 }
 
@@ -789,15 +807,10 @@ void OGLWidget::UpdateBase()
 {
   if (m_Base == nullptr)
     return;
-  if ((m_dDeltaZ != 0.)|| (!m_DeltaXY.isNull())) {  // Juste un changement d'origine
-    if (m_dDeltaZ != 0.)
-      MoveZ((float)m_dDeltaZ);
-    if (!m_DeltaXY.isNull()) {
-      MoveXY((float)m_DeltaXY.X, (float)m_DeltaXY.Y);
-      m_T = XPt3D();
-    }
+
+  if (m_dDeltaZ != 0.) {  // Juste un changement d'origine
+    MoveZ((float)m_dDeltaZ);
     m_dDeltaZ = 0.;
-    m_DeltaXY = XPt2D();
     return;
   }
   if (m_bUpdateLasColor) { // Juste un reetalement des couleurs des points LAS
@@ -1172,84 +1185,6 @@ void OGLWidget::MoveZ(float dZ)
   ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
   for (uint32_t i = 0; i < 6; i++) {
     ptr_vertex->position[2] += dZ;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-
-  m_bNeedUpdate = false;
-  //openGLContext.setContinuousRepainting(true);
-  openGLContext.triggerRepaint();
-}
-
-//==============================================================================
-// Translation X;Y de tous les points
-//==============================================================================
-void OGLWidget::MoveXY(float dX, float dY)
-{
-  const juce::ScopedLock lock(m_Mutex);
-  //openGLContext.setContinuousRepainting(false);
-  using namespace ::juce::gl;
-  m_OffsetXY += XPt2D(dX, dY);
-  // Points LAS
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LasBufferID);
-  Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Points MNT
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_DtmBufferID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < m_nNbDtmVertex; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Points Polygones
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PolyBufferID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < m_nNbPolyVertex; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Points Polylignes
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_LineBufferID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < m_nNbLineVertex; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Points vectoriels
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_VecPointBufferID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < m_nNbVecPointVertex; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Points selectionnes
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_PtBufferID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < 1; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
-    ptr_vertex++;
-  }
-  glUnmapBuffer(GL_ARRAY_BUFFER);
-  // Cible
-  openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, m_TargetID);
-  ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-  for (uint32_t i = 0; i < 6; i++) {
-    ptr_vertex->position[0] += dX;
-    ptr_vertex->position[1] += dY;
     ptr_vertex++;
   }
   glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -1657,8 +1592,8 @@ void OGLWidget::DrawTarget()
     M[i].colour[1] = 0.f;
   }
 
-  float X = (float)((m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X);
-  float Y = (float)((m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y);
+  float X = (float)((m_Target.X - m_dX0) / m_dGsd);
+  float Y = (float)((m_Target.Y - m_dY0) / m_dGsd);
   float Z = (float)((m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ);
   // Axe Z
   M[0].position[0] = X;
@@ -1717,7 +1652,7 @@ void OGLWidget::Select(int u, int v)
   M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
   M.colour[1] = 0.f;
   glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
-  XPt3D A(M.position[0] - m_OffsetXY.X, M.position[1] - m_OffsetXY.Y, M.position[2] - m_dOffsetZ);
+  XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
   A *= m_dGsd;
   A += XPt3D(m_dX0, m_dY0, m_dZ0);
   m_bNeedLastPoint = false;
@@ -1804,14 +1739,18 @@ void OGLWidget::CreateFlyPath(XGeoVector* V)
     return;
   if (!V->LoadGeom())
     return;
+  double total_dist = V->Length();
+  int step = XRint(total_dist / (60. * 20));  // 60 Hz, duree du film 20s
   for (uint32_t i = 0; i < V->NbPt() - 1; i++) {
     XPt2D A = V->Pt(i), B = V->Pt(i + 1);
     double zA = V->Z(i), zB = V->Z(i + 1);
     if (zA < LasShader::Zmin()) zA = m_Base->Z(A);
+    if (zA <= XGEO_NO_DATA) zA = (LasShader::Zmin() + LasShader::Zmax()) * 0.5;
     if (zB < LasShader::Zmin()) zB = m_Base->Z(B);
+    if (zB <= XGEO_NO_DATA) zB = (LasShader::Zmin() + LasShader::Zmax()) * 0.5;
     int distance = XRint(dist(A, B));
     if (distance < 1) distance = 1;
-    for (int j = 0; j < distance; j++) {
+    for (int j = 0; j < distance; j+=step) {
       XPt3D P; 
       P.X = (A.X * (distance - j) + B.X * j) / distance;
       P.Y = (A.Y * (distance - j) + B.Y * j) / distance;
@@ -1831,8 +1770,8 @@ void OGLWidget::timerCallback()
      if (m_FlyPos < m_FlyPath.size()) {
        m_Target = m_FlyPath[m_FlyPos];
        m_FlyPos++;
-       m_T.X = (m_Target.X - m_dX0) / m_dGsd + m_OffsetXY.X;
-       m_T.Y = (m_Target.Y - m_dY0) / m_dGsd + m_OffsetXY.Y;
+       m_T.X = (m_Target.X - m_dX0) / m_dGsd;
+       m_T.Y = (m_Target.Y - m_dY0) / m_dGsd;
        m_T.Z = (m_Target.Z - m_dZ0) / m_dGsd + m_dOffsetZ;
        sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
          + ":" + juce::String(m_Target.Z, 2));

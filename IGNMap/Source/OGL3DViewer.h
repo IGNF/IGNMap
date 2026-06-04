@@ -43,6 +43,7 @@ public:
   void resized() override;
   void mouseDown(const juce::MouseEvent& event) override;
   void mouseUp(const juce::MouseEvent& event) override;
+  void mouseMove(const juce::MouseEvent& event) override;
   void mouseDrag(const juce::MouseEvent& event) override;
   void mouseDoubleClick(const juce::MouseEvent& event) override;
   void mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
@@ -69,7 +70,6 @@ protected:
   void UpdateBase();
   void ReinitDtm();
   void MoveZ(float dZ);
-  void MoveXY(float dX, float dY);
   void ChangeLasColor();
   void ChangeDtmColor();
   void DrawLas(GeoLAS* las);
@@ -151,9 +151,7 @@ private:
   uint32_t  m_nDtmW;            // Dimensions du MNT
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
-  XPt2D     m_DeltaXY;
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
-  XPt2D     m_OffsetXY;         // Valeur pour retrouver les (X ; Y) terrains
   bool      m_bUpdateLasColor;  // Indique que l'on veut changer les couleurs des points LAS
   bool      m_bZLocalRange;     // Indique que l'on colorise le LAS en prenant les Zmin / Zmax locaux
   bool      m_bRasterLas;       // Indique que l'on colorise le LAS en prenant le fond Raster de la vue principale
@@ -164,6 +162,7 @@ private:
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
   XPt3D               m_Target;   // Point cible de la vue principale
+  XPt3D               m_RotCenter;// Centre de la rotation
   std::vector<XPt3D>  m_FlyPath;  // Chemin en vol automatique
   size_t              m_FlyPos;   // Position dans le vol
 
