@@ -63,10 +63,11 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
   m_VectorWidth = 2.f;
   m_DtmLineWidth = 1.f;
   m_nDtmW = m_nDtmH = 600;
+  m_dDtmMin = XGEO_NO_DATA;
   m_bViewLas = m_bViewDtm = m_bViewVector = m_bViewRepere = true;
-  m_dDeltaZ = m_dOffsetZ = 0.;
-  m_bUpdateLasColor = m_bZLocalRange = m_bRasterLas = false;
-  m_bUpdateDtmColor = m_bDtmTextured = false;
+  m_dDeltaZ = m_dOffsetZ = m_dHMax = 0.;
+  m_LasViewMode = LASstandard;
+  m_bUpdateLasColor = m_bUpdateDtmColor = m_bDtmTextured = false;
   m_bShowF1Help = false;
   m_FlyPos = 0;
   m_QuickLook = juce::Image(juce::Image::ARGB, 100, 100, true);
@@ -319,25 +320,34 @@ void OGLWidget::paint(juce::Graphics& g)
   g.setOpacity(1.f);
 
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
-  g.setFont(12);
+  g.setFont(13);
 
   juce::String help = juce::translate("Help : F1");
-  g.drawText(help, 5, info_origin + 30, 300, 30, juce::Justification::left);
+  g.drawText(help, 5, info_origin + 30, 60, 30, juce::Justification::left);
   uint32_t nbPoints = m_nNbLasVertex + m_nNbPolyVertex + m_nNbLineVertex + m_nNbVecPointVertex;
   if (((double)m_nMaxLasPt - (double)m_nNbLasVertex) < 100000.)
     g.setColour(juce::Colours::red);
-  juce::String nbPointStr = "Points : " + juce::String(nbPoints);
-  g.drawText(nbPointStr, 5, info_origin + 50, 300, 30, juce::Justification::left);
+  juce::String nbPointStr = "| Points : " + juce::String(nbPoints);
+  g.drawText(nbPointStr, 65, info_origin + 30, 300, 30, juce::Justification::left);
 
   // Cible
   juce::String target = "T = " + juce::String(m_Target.X, 2) + " ; " + juce::String(m_Target.Y, 2) + " ; " + juce::String(m_Target.Z, 2);
+  if (fabs(m_LastTarget.Z - m_Target.Z) > 0.1)
+    target += (" | DZ = " + juce::String((m_Target.Z - m_LastTarget.Z), 2));
   g.setColour(juce::Colours::magenta);
-  g.drawText(target, 5, info_origin + 70, 300, 30, juce::Justification::left);
+  g.drawText(target, 5, info_origin + 50, 300, 30, juce::Justification::left);
 
   // Point clique
   juce::String lastPt = "P = " + juce::String(m_LastPt.X, 2) + " ; " + juce::String(m_LastPt.Y, 2) + " ; " + juce::String(m_LastPt.Z, 2);
   g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
-  g.drawText(lastPt, 5, info_origin + 90, 300, 30, juce::Justification::left);
+  g.drawText(lastPt, 5, info_origin + 70, 300, 30, juce::Justification::left);
+
+  // Difference Cible / Point clique
+  juce::String deltaPt = "T - P = " + juce::String(m_Target.X - m_LastPt.X, 2) + " ; " + juce::String(m_Target.Y - m_LastPt.Y, 2) + 
+                        " ; " + juce::String(m_Target.Z - m_LastPt.Z, 2);
+  g.setColour(getLookAndFeel().findColour(juce::Label::textColourId));
+  g.drawText(deltaPt, 5, info_origin + 90, 300, 30, juce::Justification::left);
+
   //g.drawLine(0.f, info_origin + 30.f, 150.f, info_origin + 30.f);
   //g.drawLine(0.f, info_origin + 120.f, 150.f, info_origin + 120.f);
 
@@ -528,7 +538,7 @@ void OGLWidget::mouseDown(const juce::MouseEvent& event)
 
 void OGLWidget::mouseUp(const juce::MouseEvent& event)
 {
-  m_bNeedLastPoint = true;
+  //m_bNeedLastPoint = true;
   if (event.mods.isShiftDown()) {
     m_bTranslateView = true;
     repaint();
@@ -545,6 +555,8 @@ void OGLWidget::mouseUp(const juce::MouseEvent& event)
 void OGLWidget::mouseMove(const juce::MouseEvent& event)
 {
   if (event.mods.isAltDown()) { // Changement de X ; Y du point cible
+    if (m_LastPos.getDistanceSquaredFrom(event.position) < 2)
+      return;
     m_bNeedLastPoint = true;
     m_bUpdateTarget = true;
     m_bNeedTarget = true;
@@ -650,11 +662,6 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   if ((key.getTextCharacter() == 'N') || (key.getTextCharacter() == 'n'))
     m_RotCenter = m_Target;
 
-  if ((key.getTextCharacter() == 'P') || (key.getTextCharacter() == 'p')) {
-    m_bUpdateLasColor = true;
-    m_bNeedUpdate = true;
-  }
-
   if (key.getKeyCode() == juce::KeyPress::F2Key) {
     m_strFileSave = AppUtil::SaveFile("Image3DPath", juce::translate("Save Image"), "*.png;");
     if (!m_strFileSave.isEmpty()) {
@@ -663,13 +670,13 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
     }
   }
   if (key.getKeyCode() == juce::KeyPress::F3Key) {
-    juce::String filename = AppUtil::SaveFile("Image3DPath", juce::translate("Save 3D settings"), "*.xml;");
+    juce::String filename = AppUtil::SaveFile("3DSettings", juce::translate("Save 3D settings"), "*.xml;");
     if (!filename.isEmpty())
       SaveSettings(filename);
     return true;
   }
   if (key.getKeyCode() == juce::KeyPress::F4Key) {
-    juce::String filename = AppUtil::OpenFile("Image3DPath", juce::translate("Save 3D settings"), "*.xml;");
+    juce::String filename = AppUtil::OpenFile("3DSettings", juce::translate("Load 3D settings"), "*.xml;");
     if (!filename.isEmpty())
       LoadSettings(filename);
      return true;
@@ -713,17 +720,6 @@ void OGLWidget::buttonClicked(juce::Button* button)
   if (button == &m_Control3D.m_btnFillDtm)
     m_bDtmFill = (!m_bDtmFill);
 
-  if (button == &m_Control3D.m_btnRasterLas) {
-    m_bRasterLas = !m_bRasterLas;
-    if (m_bRasterLas) {
-      UpdateQuickLook();
-      m_bUpdateLasColor = true;
-    }
-    else {
-      m_bUpdateLasColor = true;
-      m_bNeedUpdate = true;
-    }
-  }
   repaint();
 }
 
@@ -750,6 +746,25 @@ void OGLWidget::sliderValueChanged(juce::Slider* slider)
 }
 
 //==============================================================================
+// Reponses aux combo box
+//==============================================================================
+void OGLWidget::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
+{
+  if (comboBoxThatHasChanged != &m_Control3D.m_cbxLas)
+    return;
+  m_LasViewMode = (LASViewMode)m_Control3D.m_cbxLas.getSelectedId();
+  if ((m_LasViewMode == LASheightPalette) && (m_dDtmMin <= XGEO_NO_DATA))
+    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, juce::translate("About IGNMap"),
+      juce::translate("A DTM must be loaded in order to compute the height values !"), "OK");
+  if (m_LasViewMode == LASrasterOverlay)
+    UpdateQuickLook();
+  else
+    m_bNeedUpdate = true;
+  m_bUpdateLasColor = true;
+  repaint();
+}
+
+//==============================================================================
 // Synchronisation des contrôles
 //==============================================================================
 void OGLWidget::SyncControl3D()
@@ -760,13 +775,14 @@ void OGLWidget::SyncControl3D()
   m_Control3D.m_btnViewRepere.setToggleState(m_bViewRepere, juce::NotificationType::dontSendNotification);
 
   m_Control3D.m_btnRasterDtm.setToggleState(m_bDtmTextured, juce::NotificationType::dontSendNotification);
-  m_Control3D.m_btnRasterLas.setToggleState(m_bRasterLas, juce::NotificationType::dontSendNotification);
   m_Control3D.m_btnFillDtm.setToggleState(m_bDtmFill, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldZFactor.setValue(m_S.Z / m_S.X, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldLasPointSize.setValue((double)m_LasPointSize, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldDtmPointSize.setValue((double)m_DtmLineWidth, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldVectorWidth.setValue((double)m_VectorWidth, juce::NotificationType::dontSendNotification);
   m_Control3D.m_sldMaxNbLasPoint.setValue((double)m_nMaxLasPt/1000000., juce::NotificationType::dontSendNotification);
+
+  m_Control3D.m_cbxLas.setSelectedId((int)m_LasViewMode, juce::NotificationType::dontSendNotification);
 }
 
 //==============================================================================
@@ -870,6 +886,7 @@ void OGLWidget::FindZminLas()
         m_dZ0 = las->Zmin();
       else
         m_dZ0 = XMin(m_dZ0, las->Zmin());
+      m_dHMax = XMax(m_dHMax, las->Zmax() - las->Zmin());
     }
   }
 }
@@ -936,7 +953,7 @@ void OGLWidget::DrawLas(GeoLAS* las)
     ptr_vertex->position[2] = (float) ((Z - m_dZ0) / m_dGsd);
     m_dDeltaZ += ptr_vertex->position[2];
 
-    if (m_bRasterLas) { // Affichage avec le raster
+    if (m_LasViewMode == LASrasterOverlay) { // Affichage avec le raster
       x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
       y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
       *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
@@ -1014,7 +1031,7 @@ void OGLWidget::DrawDtm()
   double deltaX = m_Frame.Width() / m_nDtmW;
   double deltaY = m_Frame.Height() / m_nDtmH;
   XPt3D P;
-  double Zmin = m_Base->ZMin();
+  m_dDtmMin = m_Base->ZMin();
 
   juce::Colour colour;
   float opacity = (float)(DtmShader::m_dOpacity * 0.01);
@@ -1024,24 +1041,38 @@ void OGLWidget::DrawDtm()
   { // Necessaire pour que bitmap soit detruit avant l'appel a ConvertImage
     juce::Image::BitmapData bitmap(m_RawDtm, juce::Image::BitmapData::writeOnly);
     double minGsd = XMin(deltaX, deltaY);
-    uint32_t gridW = (uint32_t)(m_Frame.Width() / minGsd), gridH = (uint32_t)(m_Frame.Height() / minGsd);
+    uint32_t gridW = (uint32_t)round(m_Frame.Width() / minGsd), gridH = (uint32_t)round(m_Frame.Height() / minGsd);
     float* grid = new float[gridW * gridH];
     if (grid == nullptr)
       return;
     for (uint32_t i = 0; i < gridW * gridH; i++)
       grid[i] = (float)XGEO_NO_DATA;
     GeoTools::ComputeZGrid(m_Base, grid, gridW, gridH, &m_Frame);
-    Zmin = XGEO_NO_DATA;
+    m_dDtmMin = XGEO_NO_DATA;
     for (uint32_t i = 0; i < gridW * gridH; i++) {
       if (grid[i] > (float)XGEO_NO_DATA) {
-        if (Zmin <= XGEO_NO_DATA) Zmin = grid[i]; else Zmin = XMin(Zmin, (double)grid[i]);
+        if (m_dDtmMin <= XGEO_NO_DATA) m_dDtmMin = grid[i]; else m_dDtmMin = XMin(m_dDtmMin, (double)grid[i]);
       }
     }
+    // Nettoyage des bords
+    for (uint32_t i = 0; i < gridW; i++)
+      if ((grid[i] <= (float)XGEO_NO_DATA) && (grid[i + gridW] > (float)XGEO_NO_DATA))
+        grid[i] = grid[i + gridW];
+    for (uint32_t i = 1; i < gridH - 1; i++) {
+      if ((grid[gridW * i] <= (float)XGEO_NO_DATA) && (grid[gridW * i + 1] > (float)XGEO_NO_DATA))
+        grid[gridW * i] = grid[gridW * i + 1];
+      if ((grid[gridW * i + gridW - 1] <= (float)XGEO_NO_DATA) && (grid[gridW * i + gridW - 2] > (float)XGEO_NO_DATA))
+        grid[gridW * i + gridW - 1] = grid[gridW * i + gridW - 2];
+    }
+    for (uint32_t i = 0; i < gridW; i++)
+      if ((grid[i + (gridH - 1) * gridW] <= (float)XGEO_NO_DATA) && (grid[i + (gridH - 2) * gridW] > (float)XGEO_NO_DATA))
+        grid[i + (gridH - 1) * gridW] = grid[i + (gridH - 2) * gridW];
+
     XBaseImage::FastZoomBil(grid, gridW, gridH, (float*)bitmap.data, bitmap.width, bitmap.height);
     delete[] grid;
   }
   if (m_dZ0 <= XGEO_NO_DATA)
-    m_dZ0 = Zmin;
+    m_dZ0 = m_dDtmMin;
  
   juce::Image rgbImage(juce::Image::PixelFormat::ARGB, m_nDtmW, m_nDtmH, true);
   if (m_bDtmTextured)
@@ -1064,7 +1095,7 @@ void OGLWidget::DrawDtm()
       ptr_Z++;
       colour = juce::Colour(*ptr_colour);
       ptr_colour++;
-      if (P.Z >= Zmin) {
+      if (P.Z >= m_dDtmMin) {
         ptr_vertex->position[0] = (float)((P.X - m_dX0) / m_dGsd);
         ptr_vertex->position[1] = (float)((P.Y - m_dY0) / m_dGsd);
         ptr_vertex->position[2] = (float)((P.Z - m_dZ0) / m_dGsd);
@@ -1077,7 +1108,7 @@ void OGLWidget::DrawDtm()
       else {
         ptr_vertex->position[0] = (float)((P.X - m_dX0) / m_dGsd);
         ptr_vertex->position[1] = (float)((P.Y - m_dY0) / m_dGsd);
-        ptr_vertex->position[2] = (float)((Zmin - m_dZ0) / m_dGsd);
+        ptr_vertex->position[2] = (float)((m_dDtmMin - m_dZ0) / m_dGsd);
         ptr_vertex->colour[0] = 0.f; 
         ptr_vertex->colour[1] = 0.f;
         ptr_vertex->colour[2] = 0.f;
@@ -1115,7 +1146,7 @@ void OGLWidget::ReinitDtm()
       ptr_vertex->colour[0] = 0.f;
       ptr_vertex->colour[1] = 0.f;
       ptr_vertex->colour[2] = 0.f;
-      ptr_vertex->colour[3] = (float)-1.f; // NoData -> completement transparent
+      ptr_vertex->colour[3] = -1.f; // NoData -> completement transparent
       ptr_vertex++;
     }
   }
@@ -1204,7 +1235,7 @@ void OGLWidget::ChangeLasColor()
   if (m_nNbLasVertex < 1)
     return;
   LasShader shader;
-  if ((shader.Mode() != LasShader::ShaderMode::Altitude)&&(!m_bRasterLas))
+  if ((shader.Mode() != LasShader::ShaderMode::Altitude)&&(m_LasViewMode != LASrasterOverlay))
     return;
   const juce::ScopedLock lock(m_Mutex);
   using namespace ::juce::gl;
@@ -1212,16 +1243,14 @@ void OGLWidget::ChangeLasColor()
   Vertex* ptr_vertex = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
   if (ptr_vertex == nullptr)
     return;
-  m_bZLocalRange = !m_bZLocalRange;
+
   float zmin = (float)LasShader::Zmin(), zmax = (float)LasShader::Zmax();
-  if (!m_bRasterLas) {  // Si on n'utilise pas le fond raster, on utilise une palette
-    if (m_bZLocalRange) { // Recherche du Zmin et du Zmax local des points LAS charges
-			zmin = ptr_vertex[0].position[2];
-			zmax = ptr_vertex[0].position[2];
-      for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
-        zmin = XMin(zmin, ptr_vertex[i].position[2]);
-        zmax = XMax(zmax, ptr_vertex[i].position[2]);
-      }
+  if (m_LasViewMode == LASlocalPalette) { // Recherche du Zmin et du Zmax local des points LAS charges
+	  zmin = ptr_vertex[0].position[2];
+		zmax = ptr_vertex[0].position[2];
+    for (uint32_t i = 1; i < m_nNbLasVertex; i++) {
+      zmin = XMin(zmin, ptr_vertex[i].position[2]);
+      zmax = XMax(zmax, ptr_vertex[i].position[2]);
     }
   }
   float deltaZ = zmax - zmin;
@@ -1230,17 +1259,26 @@ void OGLWidget::ChangeLasColor()
   juce::Colour col = juce::Colours::orchid;
   uint8_t data[4] = { 0, 0, 0, 255 };
   uint32_t* data_ptr = (uint32_t*)&data;
-  juce::Image::BitmapData bitmap(m_QuickLook, juce::Image::BitmapData::readOnly);
+  juce::Image image = m_QuickLook;
+  if (m_LasViewMode == LASheightPalette) image = m_RawDtm;
+  juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readOnly);
+
   int x, y;
   for (uint32_t i = 0; i < m_nNbLasVertex; i++) {
-    if (m_bRasterLas) { // Affichage avec le raster
+    if ((m_LasViewMode == LASrasterOverlay)||(m_LasViewMode == LASheightPalette)){ // Affichage avec le raster ou en hauteur
       x = (int)(bitmap.width * 0.5 + ptr_vertex->position[0] / 2. * (bitmap.width * 0.5));
       y = (int)(bitmap.height * 0.5 - ptr_vertex->position[1] / 2. * (bitmap.height * 0.5));
-      *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
+      if (m_LasViewMode == LASheightPalette) {
+        float* zdtm = (float*)bitmap.getPixelPointer(x, y);
+        double hauteur = std::clamp<double>(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - *zdtm) * 255. / (m_dHMax*0.5 + 0.1), 0., 255.);
+        col = shader.AltiColor((uint8_t)hauteur);
+        *data_ptr = (uint32_t)col.getARGB();
+      } else
+        *data_ptr = (uint32_t)bitmap.getPixelColour(x, y).getARGB();
     }
     else // Affichage avec une palette
     {
-      if (m_bZLocalRange)
+      if (m_LasViewMode == LASlocalPalette)
         col = shader.AltiColor((uint8_t)((ptr_vertex->position[2] - zmin) * 255 / deltaZ));
       else
         col = shader.AltiColor((uint8_t)(((ptr_vertex->position[2] - m_dOffsetZ) * m_dGsd + m_dZ0 - zmin) * 255 / deltaZ));
@@ -1650,14 +1688,14 @@ void OGLWidget::Select(int u, int v)
   // Passage en coordonnees normalisees
   Vertex M;
   M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
-  M.colour[1] = 0.f;
+  M.colour[1] = 1.f;
   glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
   XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
   A *= m_dGsd;
   A += XPt3D(m_dX0, m_dY0, m_dZ0);
   m_bNeedLastPoint = false;
   if (m_bUpdateTarget) {  // Mise a jour de la cible
-    m_Target = A;
+    m_Target = m_LastTarget = A;
     m_bUpdateTarget = false;
     sendActionMessage("UpdateTargetPos:" + juce::String(m_Target.X, 2) + ":" + juce::String(m_Target.Y, 2)
       + ":" + juce::String(m_Target.Z, 2));
@@ -1702,7 +1740,7 @@ void OGLWidget::UpdateQuickLook()
 {
   if (m_Frame.IsEmpty())
     return;
-  if (m_bRasterLas || m_bDtmTextured) {
+  if ((m_LasViewMode == LASrasterOverlay) || m_bDtmTextured) {
     juce::MouseCursor::showWaitCursor();
     m_MapThread.SetGeoBase(m_Base);
     double gsd = m_Frame.Width() / 1000.;

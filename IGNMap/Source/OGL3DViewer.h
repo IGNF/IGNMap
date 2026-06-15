@@ -24,7 +24,7 @@ class GeoLAS;
 class GeoDTM;
 
 class OGLWidget : public juce::OpenGLAppComponent, public juce::ActionBroadcaster, public juce::Thread::Listener,
-  juce::Button::Listener, juce::Slider::Listener, juce::Timer {
+  juce::Button::Listener, juce::Slider::Listener, juce::ComboBox::Listener, juce::Timer {
 public:
   OGLWidget();
   ~OGLWidget() { shutdownOpenGL(); }
@@ -52,6 +52,7 @@ public:
 
   virtual void buttonClicked(juce::Button*) override;
   virtual void sliderValueChanged(juce::Slider*) override;
+  virtual void comboBoxChanged(juce::ComboBox*) override;
   void SyncControl3D();
 
   void LoadObjects(XGeoBase* base, XFrame* F);
@@ -152,16 +153,20 @@ private:
   uint32_t  m_nDtmH;
   double    m_dDeltaZ;          // Delta Z a ajouter aux donnees pour les recentrer
   double    m_dOffsetZ;         // Valeur pour retrouver les Z terrains
+  double    m_dHMax;            // Hauteur maximale issue des LAS
+  double    m_dDtmMin;          // Altitude minimal du MNT charge
   bool      m_bUpdateLasColor;  // Indique que l'on veut changer les couleurs des points LAS
-  bool      m_bZLocalRange;     // Indique que l'on colorise le LAS en prenant les Zmin / Zmax locaux
-  bool      m_bRasterLas;       // Indique que l'on colorise le LAS en prenant le fond Raster de la vue principale
   bool      m_bUpdateDtmColor;  // Indique que l'on veut changer la representation des MNT
   bool      m_bDtmTextured;     // Indique que l'on represente les MNT par une texture
   bool      m_bShowF1Help;      // Affiche l'aide F1
+
+  typedef enum { LASstandard = 1, LASlocalPalette = 2, LASrasterOverlay = 3, LASheightPalette = 4 } LASViewMode;
+  LASViewMode m_LasViewMode;
   
   juce::Point<float>  m_LastPos;  // Position souris pour les drags
   XPt3D               m_LastPt;   // Point clique
   XPt3D               m_Target;   // Point cible de la vue principale
+  XPt3D               m_LastTarget; // Dernier point cible clique par l'utilisateur
   XPt3D               m_RotCenter;// Centre de la rotation
   std::vector<XPt3D>  m_FlyPath;  // Chemin en vol automatique
   size_t              m_FlyPos;   // Position dans le vol
@@ -175,7 +180,7 @@ private:
     juce::ToggleButton  m_btnRasterDtm;
     juce::ToggleButton  m_btnMeshDtm;
     juce::ToggleButton  m_btnFillDtm;
-    juce::ToggleButton  m_btnRasterLas;
+    juce::ComboBox      m_cbxLas;
     juce::Slider        m_sldZFactor;
     juce::Slider        m_sldDtmPointSize;
     juce::Slider        m_sldLasPointSize;
@@ -206,9 +211,12 @@ private:
       m_btnFillDtm.setBounds(125, 90, 200, 24);
       addAndMakeVisible(m_btnFillDtm);
 
-      m_btnRasterLas.setButtonText(juce::translate("LAS with raster overlay"));
-      m_btnRasterLas.setBounds(0, 120, 200, 24);
-      addAndMakeVisible(m_btnRasterLas);
+      m_cbxLas.addItem(juce::translate("Standard LAS"), LASstandard);
+      m_cbxLas.addItem(juce::translate("LAS with local palette"), LASlocalPalette);
+      m_cbxLas.addItem(juce::translate("LAS with raster overlay"), LASrasterOverlay);
+      m_cbxLas.addItem(juce::translate("LAS with height palette"), LASheightPalette);
+      m_cbxLas.setBounds(20, 120, 210, 24);
+      addAndMakeVisible(m_cbxLas);
 
       m_sldZFactor.setSliderStyle(juce::Slider::LinearHorizontal);
       m_sldZFactor.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
@@ -266,7 +274,7 @@ private:
       m_btnRasterDtm.addListener(widget);
       m_btnMeshDtm.addListener(widget);
       m_btnFillDtm.addListener(widget);
-      m_btnRasterLas.addListener(widget);
+      m_cbxLas.addListener(widget);
       m_sldZFactor.addListener(widget);
       m_sldLasPointSize.addListener(widget);
       m_sldMaxNbLasPoint.addListener(widget);

@@ -901,6 +901,7 @@ void GeoTools::UpdateProjection(XGeoBase* base)
 //-----------------------------------------------------------------------------
 bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h, XFrame* F)
 {
+	bool flag = false;
 	for (uint32_t i = 0; i < base->NbClass(); i++) {
 		XGeoClass* C = base->Class(i);
 		if (C == nullptr)
@@ -911,10 +912,10 @@ bool GeoTools::ComputeZGrid(XGeoBase* base, float* grid, uint32_t w, uint32_t h,
 			GeoDTM* dtm = dynamic_cast<GeoDTM*>(C->Vector(j));
 			if (dtm == nullptr)
 				continue;
-			dtm->ComputeZGrid(grid, w, h, F);
+			flag &= dtm->ComputeZGrid(grid, w, h, F);
 		}
 	}
-	return true;
+	return flag;
 }
 
 //-----------------------------------------------------------------------------

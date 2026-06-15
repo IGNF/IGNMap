@@ -199,4 +199,6 @@ countries: fr be mc ch lu
 "Unable to allocate memory ! The DTM is too big !" = "Impossible d'allouer la mémoire ! La zone est trop grande !"
 "The Zmin field is higher than the Zmin of the DTM !" = "Attention le ZMin choisi est supérieur au Zmin du MNT"
 "Altimeter Profile" = "Profil Altimétrique"
-
+"Load 3D settings" = "Chargement des réglages 3D"
+"Save 3D settings" = "Sauvegarde des réglages 3D"
+"A DTM must be loaded in order to compute the height values !" = "Un MNT doit être chargé pour permettre le calcul des hauteurs !"
