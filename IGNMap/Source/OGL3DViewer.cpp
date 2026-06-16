@@ -1877,6 +1877,9 @@ void OGLWidget::SaveSettings(const juce::String& filename)
   out << "<rotation>" << std::endl;
   m_R.XmlWrite(&out);
   out << "</rotation>" << std::endl;
+  out << "<rotation_center>" << std::endl;
+  m_RotCenter.XmlWrite(&out);
+  out << "</rotation_center>" << std::endl;
   out << "<scale>" << std::endl;
   m_S.XmlWrite(&out);
   out << "</scale>" << std::endl;
@@ -1904,6 +1907,9 @@ void OGLWidget::LoadSettings(const juce::String& filename)
   XParserXML rotation = parser.FindSubParser("/ignmap_3dview/rotation/pt3d");
   if (!rotation.IsEmpty())
     m_R.XmlRead(&rotation);
+  XParserXML rotation_center = parser.FindSubParser("/ignmap_3dview/rotation_center/pt3d");
+  if (!rotation_center.IsEmpty())
+    m_RotCenter.XmlRead(&rotation_center);
   XParserXML scale = parser.FindSubParser("/ignmap_3dview/scale/pt3d");
   if (!scale.IsEmpty())
     m_S.XmlRead(&scale);
