@@ -496,6 +496,17 @@ void OGLWidget::render()
     m_Attributes->disable();
   }
 
+  // Gestion des points a convertir 2D -> 3D
+  if ((m_bNeedLastPoint) && (m_PtTab.size() > 0)) {
+    /*
+    for (size_t i = 0; i < m_PtTab.size(); i++) {
+      Select((int)m_PtTab[i].X, (int)m_PtTab[i].Y);
+      m_PtTab[i] = m_LastPt;
+    }
+    */
+    Select2DPoints(m_PtTab);
+  }
+
   // Gestion des selections de points
   if (m_bNeedLastPoint)
     Select((int)m_LastPos.x, (int)m_LastPos.y);
@@ -681,6 +692,21 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
       LoadSettings(filename);
      return true;
   }
+  if (key.getKeyCode() == juce::KeyPress::F5Key) {
+    juce::String filename = AppUtil::OpenFile("3DSegmentation", juce::translate("Load 3D segmentation"), "*.png;");
+    if (!filename.isEmpty())
+      LoadSegmentation(filename);
+    return true;
+  }
+
+  if (key.getKeyCode() == juce::KeyPress::F6Key) {
+   std::ofstream csv;
+   csv.open("C:\\Temp\\Seg3D.csv", std::ios::out);
+   csv.setf(std::ios::fixed); csv.precision(2);
+   csv << "X,Y,Z" << std::endl;
+   for (size_t i = 0; i < m_PtTab.size(); i++)
+     csv << m_PtTab[i].X << "," << m_PtTab[i].Y << "," << m_PtTab[i].Z << std::endl;
+ }
 
   SyncControl3D();
   repaint();
@@ -1712,6 +1738,44 @@ void OGLWidget::Select(int u, int v)
 }
 
 //==============================================================================
+// Selection d'un ensemble de points
+//==============================================================================
+void OGLWidget::Select2DPoints(std::vector<XPt3D>& T)
+{
+  const juce::ScopedLock lock(m_Mutex);
+  using namespace ::juce::gl;
+  juce::Matrix3D<float> V = getViewMatrix();
+  juce::Matrix3D<float> P = getProjectionMatrix();
+
+  GLfloat* modelview = V.mat;
+  GLfloat* projection = P.mat;
+  GLint viewport[4];
+  viewport[0] = viewport[1] = 0;
+  auto desktopScale = (float)openGLContext.getRenderingScale();
+  viewport[2] = juce::roundToInt(desktopScale * (float)getWidth());
+  viewport[3] = juce::roundToInt(desktopScale * (float)getHeight());
+
+  for (size_t i = 0; i < T.size(); i++) {
+    GLfloat winX = 0.0, winY = 0.0, winZ = 0.0;
+    winX = (GLfloat)T[i].X * desktopScale;
+    winY = (GLfloat)(viewport[3] - T[i].Y * desktopScale);
+
+    // Z du DEPTH buffer
+    glReadPixels((GLint)winX, (GLint)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+
+    // Passage en coordonnees normalisees
+    Vertex M;
+    M.colour[0] = M.colour[3] = M.colour[2] = 1.f;
+    M.colour[1] = 1.f;
+    glhUnProjectf(winX, winY, winZ, modelview, projection, viewport, M.position);
+    XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
+    A *= m_dGsd;
+    A += XPt3D(m_dX0, m_dY0, m_dZ0);
+    T[i] = A;
+  }
+}
+
+//==============================================================================
 // Translation de la vue
 //==============================================================================
 void OGLWidget::TranslateView()
@@ -1922,6 +1986,31 @@ void OGLWidget::LoadSettings(const juce::String& filename)
   m_dGsd = parser.ReadNodeAsDouble("/ignmap_3dview/GSD");
   LoadObjects(m_Base, &m_Frame);
   openGLContext.triggerRepaint();
+}
+
+//==============================================================================
+// Chargement d'une segmentation
+//==============================================================================
+void OGLWidget::LoadSegmentation(const juce::String& filename)
+{
+  juce::Image image = juce::ImageFileFormat::loadFrom(juce::File(filename));
+  if (image.isNull())
+    return;
+
+  m_PtTab.clear();
+  double desktopScale = openGLContext.getRenderingScale();
+  juce::Image::BitmapData bitmap(image, juce::Image::BitmapData::readOnly);
+  for (int i = 1; i < bitmap.height - 1; i++) {
+    for (int j = 1; j < bitmap.width - 1; j++) {
+      juce::Colour color = bitmap.getPixelColour(j, i);
+      if (color.isTransparent())
+        continue;
+      m_PtTab.push_back(XPt3D(j / desktopScale, i / desktopScale, 0.));
+    }
+  }
+
+  m_bNeedLastPoint = true;
+  repaint();
 }
 
 //-----------------------------------------------------------------------------

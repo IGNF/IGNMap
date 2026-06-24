@@ -63,6 +63,7 @@ public:
   void CaptureFrameBuffer();
   void SaveSettings(const juce::String& filename);
   void LoadSettings(const juce::String& filename);
+  void LoadSegmentation(const juce::String& filename);
 
 protected:
   void LoadLasClass(XGeoClass* C);
@@ -79,6 +80,7 @@ protected:
   void DrawLineVector(XGeoVector* V);
   void DrawPointVector(XGeoVector* V);
   void Select(int u, int v);
+  void Select2DPoints(std::vector<XPt3D>& T);
   void DrawTarget();
 
   void CreateRepere();
@@ -170,6 +172,7 @@ private:
   XPt3D               m_RotCenter;// Centre de la rotation
   std::vector<XPt3D>  m_FlyPath;  // Chemin en vol automatique
   size_t              m_FlyPos;   // Position dans le vol
+  std::vector<XPt3D>  m_PtTab;    // Points a convertir 2D -> 3D
 
   class Control3D : public juce::Component {
   public:
