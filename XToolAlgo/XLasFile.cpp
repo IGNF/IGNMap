@@ -618,3 +618,140 @@ bool CopcReader::ReadSubPages(std::ifstream* in, Entry* entries, int nb_entries)
   }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+// Export d'un tableau de points avec une classification unique
+//-----------------------------------------------------------------------------
+bool XLasFile::Export(std::string file_out, const std::vector<XPt3D> T, uint8_t classif, int projCode, bool compression,
+                      uint8_t red, uint8_t green, uint8_t blue)
+{
+  laszip_POINTER	las_Writer = nullptr;
+  laszip_header* las_Header = nullptr;
+  laszip_point* las_Point = nullptr;
+  laszip_I64			count = 0;
+
+  if (laszip_create(&las_Writer))  // Impossible de creer le Writer
+    return false;
+  if (laszip_get_header_pointer(las_Writer, &las_Header))  // Impossible de recuperer l'entete
+    return false;
+
+  // Donnees d'entete
+  las_Header->file_source_ID = 0;
+  las_Header->global_encoding = (1 << 0) | (1 << 4);     // see LAS specification for details
+  las_Header->version_major = 1;
+  las_Header->version_minor = 4;
+  strncpy(las_Header->system_identifier, "Export LAS IGNMap", 32);
+  strncpy(las_Header->generating_software, "IGNMap v3", 32);
+  las_Header->file_creation_day = (laszip_U16)1;
+  las_Header->file_creation_year = (laszip_U16)2026;
+  las_Header->header_size = 375;
+  las_Header->offset_to_point_data = 375;
+  las_Header->point_data_format = 7;
+  las_Header->point_data_record_length = 30;
+  las_Header->number_of_point_records = 0;           // legacy 32-bit counters should be zero for new point types > 5
+  for (int i = 0; i < 5; i++) {
+    las_Header->number_of_points_by_return[i] = 0;   // legacy 32-bit counters should be zero for new point types > 5
+  }
+  las_Header->extended_number_of_point_records = 0;  // a-priori unknown number of points
+  for (int i = 0; i < 15; i++) {
+    las_Header->extended_number_of_points_by_return[i] = 0;
+  }
+  las_Header->max_x = 0.0;                           // a-priori unknown bounding box
+  las_Header->min_x = 0.0;
+  las_Header->max_y = 0.0;
+  las_Header->min_y = 0.0;
+  las_Header->max_z = 0.0;
+  las_Header->min_z = 0.0;
+
+  // Ajout de la projection
+  laszip_geokey_struct key_entries[5];
+
+  // projected coordinates
+  key_entries[0].key_id = 1024; // GTModelTypeGeoKey
+  key_entries[0].tiff_tag_location = 0;
+  key_entries[0].count = 1;
+  key_entries[0].value_offset = 1; // ModelTypeProjected
+
+  // projection
+  key_entries[1].key_id = 3072; // ProjectedCSTypeGeoKey
+  key_entries[1].tiff_tag_location = 0;
+  key_entries[1].count = 1;
+  key_entries[1].value_offset = projCode; // Code EPSG
+
+  // horizontal units
+  key_entries[2].key_id = 3076; // ProjLinearUnitsGeoKey
+  key_entries[2].tiff_tag_location = 0;
+  key_entries[2].count = 1;
+  key_entries[2].value_offset = 9001; // meters
+
+  // vertical units
+  key_entries[3].key_id = 4099; // VerticalUnitsGeoKey
+  key_entries[3].tiff_tag_location = 0;
+  key_entries[3].count = 1;
+  key_entries[3].value_offset = 9001; // meters
+
+  // vertical datum
+  key_entries[4].key_id = 4096; // VerticalCSTypeGeoKey
+  key_entries[4].tiff_tag_location = 0;
+  key_entries[4].count = 1;
+  key_entries[4].value_offset = 5720; // IGN69
+
+  // add the geokeys (create or replace the appropriate VLR)
+  if (laszip_set_geokeys(las_Writer, 5, key_entries))
+    return false;
+
+  laszip_BOOL compress = 0;
+  if (compression) compress = 1;
+
+  laszip_preserve_generating_software(las_Writer, 1);
+  if (laszip_open_writer(las_Writer, file_out.c_str(), compress)) // Ouverture du Writer
+    return false;
+
+  // Pointeur pour ecrire les points
+  if (laszip_get_point_pointer(las_Writer, &las_Point))
+    return false;
+
+  // Ecriture des points
+  laszip_F64 coordinates[3];
+  for (size_t i = 0; i < T.size(); i++) {
+    if (T[i].isNull())
+      continue;
+    coordinates[0] = T[i].X;
+    coordinates[1] = T[i].Y;
+    coordinates[2] = T[i].Z;
+    if (laszip_set_coordinates(las_Writer, coordinates))
+      return false;
+
+    las_Point->intensity = 0;
+    las_Point->extended_return_number = 1;
+    las_Point->extended_number_of_returns = 1;
+    las_Point->classification = classif;                // it must be set because it "fits" in 5 bits
+    las_Point->extended_classification = classif;
+    las_Point->extended_scan_angle = 0;
+    las_Point->extended_scanner_channel = 0;
+    las_Point->extended_classification_flags = 1; // overflag flag is set
+    las_Point->gps_time = 0;
+    las_Point->synthetic_flag = 1;
+    las_Point->rgb[0] = red * 256;
+    las_Point->rgb[1] = green * 256;
+    las_Point->rgb[2] = blue * 256;
+
+    if (laszip_write_point(las_Writer))
+      return false;
+    if (laszip_update_inventory(las_Writer))
+      return false;
+    count++;
+  }
+
+  // Fermeture du Writer
+  if (laszip_get_point_count(las_Writer, &count))
+    return false;
+
+  if (laszip_close_writer(las_Writer))
+    return false;
+
+  if (laszip_destroy(las_Writer))
+    return false;
+
+  return true;
+}

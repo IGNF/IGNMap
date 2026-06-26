@@ -100,6 +100,9 @@ public:
 									bool fill_hole = false, uint16_t epsg = 0, XError* error = nullptr);
 	bool StatLas(std::string file_out, std::ofstream* mif = nullptr, std::ofstream* mid = nullptr);
 
+	static bool Export(std::string file_out, const std::vector<XPt3D> T, uint8_t classif, int projCode, bool compression,
+										 uint8_t red = 255, uint8_t green = 0, uint8_t blue = 0);
+
 protected:
 	std::string m_strFilename;
 	laszip_POINTER m_Reader;

@@ -40,8 +40,8 @@ public:
 	operator XPt2D() const;
 
   // Tests
-  bool egal(const XPt3D &M, const double &epsilon);
-	bool isNull(const double& epsilon = 0.000001);
+  bool egal(const XPt3D &M, const double &epsilon) const;
+	bool isNull(const double& epsilon = 0.000001) const;
 
 	bool XmlRead(XParserXML* parser, uint32_t num = 0, XError* error = NULL);
 	bool XmlWrite(std::ostream* out);

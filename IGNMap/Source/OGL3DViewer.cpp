@@ -497,14 +497,13 @@ void OGLWidget::render()
   }
 
   // Gestion des points a convertir 2D -> 3D
-  if ((m_bNeedLastPoint) && (m_PtTab.size() > 0)) {
-    /*
-    for (size_t i = 0; i < m_PtTab.size(); i++) {
-      Select((int)m_PtTab[i].X, (int)m_PtTab[i].Y);
-      m_PtTab[i] = m_LastPt;
-    }
-    */
+  if ( (m_bNeedLastPoint) && (m_PtTab.size() > 0) && (m_strFileSave.isNotEmpty())) {
     Select2DPoints(m_PtTab);
+    auto& random = juce::Random::getSystemRandom();
+    XLasFile::Export(m_strFileSave.toStdString(), m_PtTab, 6, 2152, false,
+      (uint8_t)random.nextInt(256), (uint8_t)random.nextInt(256), (uint8_t)random.nextInt(256));
+    m_PtTab.clear();
+    m_strFileSave = "";
   }
 
   // Gestion des selections de points
@@ -694,18 +693,24 @@ bool OGLWidget::keyPressed(const juce::KeyPress& key)
   }
   if (key.getKeyCode() == juce::KeyPress::F5Key) {
     juce::String filename = AppUtil::OpenFile("3DSegmentation", juce::translate("Load 3D segmentation"), "*.png;");
-    if (!filename.isEmpty())
+    if (!filename.isEmpty()) {
       LoadSegmentation(filename);
+      m_strFileSave = juce::File(filename).withFileExtension("las").getFullPathName();
+    }
     return true;
   }
 
   if (key.getKeyCode() == juce::KeyPress::F6Key) {
+    /*
    std::ofstream csv;
    csv.open("C:\\Temp\\Seg3D.csv", std::ios::out);
    csv.setf(std::ios::fixed); csv.precision(2);
    csv << "X,Y,Z" << std::endl;
    for (size_t i = 0; i < m_PtTab.size(); i++)
      csv << m_PtTab[i].X << "," << m_PtTab[i].Y << "," << m_PtTab[i].Z << std::endl;
+     */
+
+    XLasFile::Export("c:\\Temp\\Seg3D.las", m_PtTab, 6, 2152, false);
  }
 
   SyncControl3D();
@@ -926,6 +931,8 @@ void OGLWidget::LoadLasClass(XGeoClass* C)
     return;
   for (uint32_t i = 0; i < C->NbVector(); i++) {
     GeoLAS* las = dynamic_cast<GeoLAS*>(C->Vector(i));
+    if (!las->Visible())
+      continue;
     XFrame F = las->Frame();
     if (!m_Frame.Intersect(F))
       continue;
@@ -1771,7 +1778,10 @@ void OGLWidget::Select2DPoints(std::vector<XPt3D>& T)
     XPt3D A(M.position[0], M.position[1], M.position[2] - m_dOffsetZ);
     A *= m_dGsd;
     A += XPt3D(m_dX0, m_dY0, m_dZ0);
-    T[i] = A;
+    if (m_Frame.IsIn(A))
+      T[i] = A;
+    else
+      T[i] = XPt3D();
   }
 }
 

@@ -60,7 +60,7 @@ double XPt3D::norm()
 //-----------------------------------------------------------------------------
 // Egalite a un epsilon
 //-----------------------------------------------------------------------------
-bool XPt3D::egal(const XPt3D& M, const double& epsilon)
+bool XPt3D::egal(const XPt3D& M, const double& epsilon) const
 {
   if (fabs(X - M.X) > epsilon)
     return false;
@@ -74,7 +74,7 @@ bool XPt3D::egal(const XPt3D& M, const double& epsilon)
 //-----------------------------------------------------------------------------
 // Nullite a un epsilon
 //-----------------------------------------------------------------------------
-bool XPt3D::isNull(const double& epsilon)
+bool XPt3D::isNull(const double& epsilon) const
 {
 	if (fabs(X) > epsilon)
 		return false;

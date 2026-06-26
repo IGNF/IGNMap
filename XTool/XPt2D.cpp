@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 // Egalite a un epsilon
 //-----------------------------------------------------------------------------
-bool XPt2D::egal(const XPt2D& M, const double& epsilon)
+bool XPt2D::egal(const XPt2D& M, const double& epsilon) const
 {
   if (fabs(X - M.X) > epsilon)
     return false;
@@ -27,7 +27,7 @@ bool XPt2D::egal(const XPt2D& M, const double& epsilon)
 //-----------------------------------------------------------------------------
 // Nullite a un epsilon
 //-----------------------------------------------------------------------------
-bool XPt2D::isNull(const double& epsilon)
+bool XPt2D::isNull(const double& epsilon) const
 {
 	if (fabs(X) > epsilon)
 		return false;
