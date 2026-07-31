@@ -21,6 +21,7 @@
 #include "ExportDtmDlg.h"
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
+#include "AnalystViewer.h"
 #include "ObjectViewer.h"
 #include "ZoomViewer.h"
 #include "StacViewer.h"
@@ -253,6 +254,7 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolPanoramax);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolProfil);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolAnalyst);
 #ifdef DEBUG
 		menu.addItem(1000, "Test");
 #endif // DEBUG
@@ -316,7 +318,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuAddDtmServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
 		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolPanoramax, CommandIDs::menuToolStereo,
-		CommandIDs::menuToolProfil,
+		CommandIDs::menuToolProfil, CommandIDs::menuToolAnalyst,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -508,6 +510,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolProfil:
 		result.setInfo(juce::translate("Altimeter Profile"), juce::translate("Altimeter Profile"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolAnalyst:
+		result.setInfo(juce::translate("Data Analyst"), juce::translate("Data Analyst"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -688,6 +693,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuToolProfil:
 		OpenTool("Profil");
+		break;
+	case CommandIDs::menuToolAnalyst:
+		OpenTool("Analyst");
 		break;
 	default:
 		return false;
@@ -1187,7 +1195,8 @@ void MainComponent::ImportImageFolder()
 bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
-		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), "*.shp;*.mif;*.gpkg;*.dxf;*.json;*.xml,*.csv");
+		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), 
+																	"*.shp;*.mif;*.gpkg;*.dxf;*.json;*.geojson;*.xml,*.csv");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -1203,6 +1212,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 	if (extension == ".dxf")
 		flag = GeoTools::ImportDxf(filename, &m_GeoBase);
 	if (extension == ".json")
+		flag = GeoTools::ImportGeoJson(filename, &m_GeoBase);
+	if (extension == ".geojson")
 		flag = GeoTools::ImportGeoJson(filename, &m_GeoBase);
 	if (extension == ".xml")
 		flag = GeoTools::ImportTA(filename, &m_GeoBase);
@@ -1290,7 +1301,7 @@ bool MainComponent::ImportDtmFile(juce::String dtmfile)
 			filename + juce::translate(" : this file cannot be opened"), "OK");
 		return false;
 	}
-
+	dtm->OpenAsImage();
 	if (!GeoTools::RegisterObject(&m_GeoBase, dtm, name.toStdString().c_str(), "DTM", name.toStdString().c_str())) {
 		delete dtm;
 		return false;
@@ -1945,7 +1956,7 @@ void MainComponent::ShowProperties(uint32_t index, bool typeVector)
 		if (viewer != nullptr) {
 			m_ToolWindows[i]->setVisible(true);
 			m_ToolWindows[i]->toFront(true);
-			m_ToolWindows[i]->setTitle(title);
+			m_ToolWindows[i]->setName(title);
 			break;
 		}
 	}
@@ -2164,6 +2175,8 @@ ToolWindow* MainComponent::OpenTool(juce::String toolName)
 		tool = new StereoViewer("Stereo", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	if (toolName == "Profil")
 		tool = new ProfilViewer("Profil", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Analyst")
+		tool = new AnalystViewer("Analyst", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 
 	if (tool != nullptr) {
 		tool->setVisible(true);

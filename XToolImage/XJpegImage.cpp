@@ -10,6 +10,9 @@
 #include "XJpegImage.h"
 #include <setjmp.h>
 #include <cstring>
+extern "C" {
+#include "../jpeg-10/jpeglib.h"
+}
 #include "../TinyEXIF/TinyEXIF.h"
 #include "../XToolGeod/XGeoPref.h"
 

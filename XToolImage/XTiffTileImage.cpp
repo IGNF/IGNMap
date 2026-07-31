@@ -19,9 +19,9 @@
 
 // Gestion de la memoire partagee
 uint8_t*     XTiffTileImage::m_gBuffer = NULL;   // Buffer global de lecture
-uint32_t    XTiffTileImage::m_gBufSize = 0;     // Taille du buffer
+uint64_t    XTiffTileImage::m_gBufSize = 0;     // Taille du buffer
 uint8_t*     XTiffTileImage::m_gTile = NULL;     // Tile globale
-uint32_t    XTiffTileImage::m_gTileSize = 0;    // Taille de la tile globale
+uint64_t    XTiffTileImage::m_gTileSize = 0;    // Taille de la tile globale
 uint8_t*     XTiffTileImage::m_gPlaneTile = NULL;// Tile globale pour les images par plans de couleurs
 XTiffTileImage* XTiffTileImage::m_gLastImage = NULL; // Derniere image utilisee
 
@@ -101,7 +101,7 @@ bool XTiffTileImage::SetTiffReader(XBaseTiffReader* reader)
 	m_nNbBits = reader->NbBits();
 	m_nNbSample = reader->NbSample();
   m_nSampleFormat = reader->SampleFormat();
-  m_nPixSize = PixSize();
+  m_nPixSize = (uint16_t)PixSize();
 	if (m_nPixSize == 0)
 		return false;
 	m_nPhotInt = reader->PhotInt();
@@ -124,7 +124,7 @@ bool XTiffTileImage::AllocBuffer()
 {
 	if (m_nNbTile < 1)
 		return false;
-	uint32_t maxsize = 0;
+	uint64_t maxsize = 0;
 	for (uint32_t i = 0; i < m_nNbTile; i++)
 		if (m_TileCounts[i] > maxsize)
 			maxsize = m_TileCounts[i];
@@ -136,7 +136,7 @@ bool XTiffTileImage::AllocBuffer()
       return false;
     m_gBufSize = maxsize;
   }
-  uint32_t tileSize = m_nTileWidth * m_nTileHeight * m_nPixSize;
+  uint64_t tileSize = m_nTileWidth * m_nTileHeight * m_nPixSize;
   if (tileSize > m_gTileSize) {
     if (m_gTile != nullptr) {
       delete[] m_gTile;
@@ -175,8 +175,8 @@ bool XTiffTileImage::LoadTile(XFile* file, uint32_t x, uint32_t y)
 		return true;
   if (m_nPlanarConfig == 1) {
     file->Seek(m_TileOffsets[numTile]);
-    uint32_t nBytesRead = file->Read((char*)m_gBuffer, m_TileCounts[numTile]);
-    if (nBytesRead != m_TileCounts[numTile])
+		std::streamsize nBytesRead = file->Read((char*)m_gBuffer, (std::streamsize)m_TileCounts[numTile]);
+    if (nBytesRead != (std::streamsize)m_TileCounts[numTile])
       return false;
     m_nLastTile = numTile;
     if (!Decompress())
@@ -206,8 +206,8 @@ bool XTiffTileImage::LoadPlaneTile(XFile* file, uint32_t numTile)
         continue;
     uint32_t num = numTile + i * nbTileW * nbTileH;
     file->Seek(m_TileOffsets[num]);
-    uint32_t nBytesRead = file->Read((char*)m_gBuffer, m_TileCounts[num]);
-    if (nBytesRead != m_TileCounts[num])
+		std::streamsize nBytesRead = file->Read((char*)m_gBuffer, (std::streamsize)m_TileCounts[num]);
+    if (nBytesRead != (std::streamsize)m_TileCounts[num])
       return false;
     m_nLastTile = num;
     if (!Decompress())

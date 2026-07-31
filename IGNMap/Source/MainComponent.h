@@ -60,7 +60,7 @@ public:
     menuAddGeoportailCartes, menuAddGeoportailPlanIGN, menuAddGeoportailParcelExpress, menuAddGeoportailSCAN50Histo,
     menuMove, menuSelect, menuZoom,
     menuSynchronize, menuGoogle, menuBing,
-    menuToolSentinel, menuToolZoom, menuToolPanoramax, menuToolStereo, menuToolProfil,
+    menuToolSentinel, menuToolZoom, menuToolPanoramax, menuToolStereo, menuToolProfil, menuToolAnalyst,
     menuHelp, menuAbout
   };
 

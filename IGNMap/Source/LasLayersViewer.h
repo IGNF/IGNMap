@@ -115,7 +115,8 @@ private:
 	juce::Slider				m_MaxGsd;
 	juce::Slider				m_sldZRange;
 	juce::Label					m_lblZRange;
-	juce::DrawableRectangle m_drwZRect;
+	juce::DrawableRectangle m_drrZRect;
+	juce::DrawableComponent m_drwZRect;
 	juce::TableListBox	m_TableClassif;
 	juce::Slider				m_sldIntensity;
 	juce::Label					m_lblIntensity;

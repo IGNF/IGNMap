@@ -337,7 +337,7 @@ void ClassifModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
 //==============================================================================
 // LasLayersViewer : constructeur
 //==============================================================================
-LasLayersViewer::LasLayersViewer()
+LasLayersViewer::LasLayersViewer() : m_drwZRect(m_drrZRect)
 {
 	m_Base = nullptr;
 	m_Cache = GeoTools::CreateCacheDir("LAS");
@@ -408,6 +408,7 @@ LasLayersViewer::LasLayersViewer()
 	m_lblZRange.setText(juce::translate("Min / Max :"), juce::dontSendNotification);
 	addAndMakeVisible(m_lblZRange);
 	m_lblZRange.attachToComponent(&m_sldZRange, true);
+
 	m_drwZRect.setInterceptsMouseClicks(true, true);
 	m_drwZRect.addMouseListener(this, true);
 	addAndMakeVisible(m_drwZRect);
@@ -517,7 +518,7 @@ void LasLayersViewer::UpdateAltiColors()
 		LasShader::AltiColor((uint8_t)255), (float)b.getWidth());
 	for (int i = 1; i < 255; i++)
 		gradient.addColour((double)i / 255, LasShader::AltiColor((uint8_t)i));
-	m_drwZRect.setFill(juce::FillType(gradient));
+	m_drrZRect.setFill(juce::FillType(gradient));
 }
 
 //==============================================================================
@@ -542,7 +543,7 @@ void LasLayersViewer::resized()
 	m_sldIntensity.setSize(b.getWidth() - 100, 24);
 	// Palette coloree des altitudes
 	UpdateAltiColors();
-	m_drwZRect.setRectangle(juce::Parallelogram<float>(juce::Rectangle<float>(0.f, b.getHeight() / 2 + 120.f, (float)b.getWidth(), 24.f)));
+	m_drrZRect.setRectangle(juce::Parallelogram<float>(juce::Rectangle<float>(0.f, b.getHeight() / 2 + 120.f, (float)b.getWidth(), 24.f)));
 }
 
 //==============================================================================

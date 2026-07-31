@@ -422,7 +422,7 @@ bool MvtLayer::Draw(const XFrame& F, int zoomlevel)
 	int nb_tiley = lastY - firstY;
 
 	std::vector<MvtTile> T;
-	T.resize(nb_tiley * nb_tilex);
+	T.resize((size_t)nb_tiley * nb_tilex);
 
 	//if (zoomlevel < 7)
 		m_bTrueProjection = true;
@@ -481,7 +481,7 @@ bool MvtLayer::DrawWithStyle(const XFrame& F, int zoomlevel)
 	int nb_tiley = lastY - firstY;
 
 	std::vector<MvtTile> T;
-	T.resize(nb_tiley * nb_tilex);
+	T.resize((size_t)nb_tiley * nb_tilex);
 
 	// Lecture des styles dans l'ordre
 	for (int cmpt = 0; cmpt < m_Layer.size(); cmpt++) {
@@ -640,7 +640,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		geom_handler handler;
 		vtzero::decode_geometry(geom, handler);
 
-		double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0., d = 2.;
+		double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0.;
 		XPt2D PtV;
 
 		// Dessin des points et multi-points
@@ -663,20 +663,20 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 						g.setOpacity(1.f);
 						int wout = style->Icon().getWidth(), hout = style->Icon().getHeight();
 						if (fabs(iconSize - 1.) < 0.001)
-							g.drawImageAt(style->Icon(), (int)(Xter - wout / 2.), (int)(Yter - hout / 2.));
+							g.drawImageAt(style->Icon(), (int)(Xter - wout * 0.5), (int)(Yter - hout * 0.5));
 						else {
-							wout *= iconSize;
-							hout *= iconSize;
-							g.drawImageWithin(style->Icon(), Xter - wout / 2, Yter - hout / 2, wout, hout, juce::RectanglePlacement());
+							wout = (int)(wout * iconSize);
+							hout = (int)(hout * iconSize);
+							g.drawImageWithin(style->Icon(), (int)(Xter - wout * 0.5), (int)(Yter - hout * 0.5), wout, hout, juce::RectanglePlacement());
 						}
 					}
 				}
 
 				// Circle
 				if (style->Type() == MvtStyleLayer::circle) {
-					g.fillEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius);
+					g.fillEllipse((float)Xter - radius, (float)Yter - radius, 2.f * radius, 2.f * radius);
 					if (line_width > 0.5f)
-						g.drawEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius, line_width);
+						g.drawEllipse((float)Xter - radius, (float)Yter - radius, 2.f * radius, 2.f * radius, line_width);
 				}
 
 				// Text
@@ -686,7 +686,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 						if (property.key().to_string() == text_field) {
 							if (property.value().type() == vtzero::property_value_type::string_value) {
 								juce::String label = property.value().string_value().to_string();
-								glyphs.addLineOfText(g.getCurrentFont(), label, Xter, Yter);
+								glyphs.addLineOfText(g.getCurrentFont(), label, (float)Xter, (float)Yter);
 								glyphs.createPath(textPath);
 								if (!halo.isTransparent()) {
 									g.setOpacity(1.f);
@@ -697,7 +697,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 									else {
 										g.setFillType(juce::FillType(halo));
 										juce::Rectangle<float> R = juce::GlyphArrangement::getStringBounds(g.getCurrentFont(), label);
-										R.setPosition(Xter, Yter - R.getHeight() + 2);
+										R.setPosition((float)Xter, (float)Yter - R.getHeight() + 2.f);
 										g.fillRect(R);
 									}
 								}
@@ -715,7 +715,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 		}
 
 		path.clear();
-		path.preallocateSpace((handler.points.size() * 3) / 2);
+		path.preallocateSpace((int)(handler.points.size() * 3) / 2);
 		int index = 0;
 
 		// Dessin des polylignes et des polygones
@@ -730,7 +730,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 			else {
 				T->Tile2Ground(Xima, Yima, Xter, Yter);
 			}
-			path.startNewSubPath(Xter, Yter);
+			path.startNewSubPath((float)Xter, (float)Yter);
 			Xlast = Xter;
 			Ylast = Yter;
 			for (int i = 1; i < handler.parts[parts]; i++) {
@@ -747,7 +747,7 @@ bool MvtLayer::DrawMvt(MvtTile* T, MvtStyleLayer* style)
 				}
 				
 				if ((fabs(Xter - Xlast) >= 1.) || (fabs(Yter - Ylast) >= 1.)) {
-					path.lineTo(Xter, Yter);
+					path.lineTo((float)Xter, (float)Yter);
 					Xlast = Xter;
 					Ylast = Yter;
 				}
@@ -801,7 +801,7 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 		float factor = (float)layer.extent() / (float)m_nTileW, gsd_factor = (float)(m_LastGsd / T->GSD());
 		gsd_factor = 1.;
 
-		float line_width = 1.f, iconSize = 1.f, radius = 1.f, textSize = 10.f, opacity = 1.f;
+		float line_width = 1.f, radius = 1.f, textSize = 10.f, opacity = 1.f;
 		juce::String text_field = "name";
 		juce::Path path;
 
@@ -866,7 +866,7 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 				propStr += "\n";
 			}
 
-			double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0., d = 2.;
+			double Xima = 0., Yima = 0., Xter = 0., Yter = 0., Xlast = 0., Ylast = 0.;
 			XPt2D PtV;
 
 			// Dessin des points et multi-points
@@ -883,16 +883,16 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 						T->Tile2Ground(Xima, Yima, Xter, Yter);
 					}
 
-					g.drawEllipse(Xter - radius, Yter - radius, 2.f * radius, 2.f * radius, line_width);
+					g.drawEllipse((float)Xter - radius, (float)Yter - radius, 2.f * radius, 2.f * radius, line_width);
 
 					// Text
-					g.drawText(propStr, Xter, Yter, 100, 100, juce::Justification::topLeft);
+					g.drawText(propStr, (int)Xter, (int)Yter, 100, 100, juce::Justification::topLeft);
 				}
 				continue;
 			}
 
 			path.clear();
-			path.preallocateSpace((handler.points.size() * 3) / 2);
+			path.preallocateSpace((int)(handler.points.size() * 3) / 2);
 			int index = 0;
 
 			// Dessin des polylignes et des polygones
@@ -907,7 +907,7 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 				else {
 					T->Tile2Ground(Xima, Yima, Xter, Yter);
 				}
-				path.startNewSubPath(Xter, Yter);
+				path.startNewSubPath((float)Xter, (float)Yter);
 				Xlast = Xter;
 				Ylast = Yter;
 				for (int i = 1; i < handler.parts[parts]; i++) {
@@ -924,7 +924,7 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 					}
 
 					if ((fabs(Xter - Xlast) >= 1.) || (fabs(Yter - Ylast) >= 1.)) {
-						path.lineTo(Xter, Yter);
+						path.lineTo((float)Xter, (float)Yter);
 						Xlast = Xter;
 						Ylast = Yter;
 					}
@@ -933,7 +933,7 @@ bool MvtLayer::DrawMvt(MvtTile* T)
 					path.closeSubPath();
 				index++;
 			}
-			g.drawText(propStr, Xter, Yter, 400, 400, juce::Justification::topLeft);
+			g.drawText(propStr, (int)Xter, (int)Yter, 400, 400, juce::Justification::topLeft);
 
 			if (geom.type() == vtzero::GeomType::LINESTRING) {
 				g.strokePath(path, stroke);

@@ -137,6 +137,7 @@ public:
   virtual bool ReadNode(float* node, uint32_t x, uint32_t y);
   virtual bool ReadAll(float* area);
 
+  bool OpenAsImage();
   virtual bool ImportTif(std::string file_tif, std::string file_bin);
   virtual bool ComputeZGrid(float* grid, uint32_t w, uint32_t h, XFrame* F);
 

@@ -146,10 +146,21 @@ bool XFile::Seek(std::streampos pos)
 //-----------------------------------------------------------------------------
 unsigned int XFile::Read(char* data, unsigned int maxSize)
 { 
-  if (IStream() == NULL)
+  if (IStream() == nullptr)
     return 0;
   m_In->read(data, maxSize);
   return (unsigned int)m_In->gcount();
+}
+
+//-----------------------------------------------------------------------------
+// Acces au stream
+//-----------------------------------------------------------------------------
+std::streamsize XFile::Read(char* data, std::streamsize maxSize)
+{
+  if (IStream() == nullptr)
+    return 0;
+  m_In->read(data, maxSize);
+  return m_In->gcount();
 }
 
 //-----------------------------------------------------------------------------

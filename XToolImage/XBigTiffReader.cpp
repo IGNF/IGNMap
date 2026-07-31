@@ -46,7 +46,7 @@ bool XBigTiffReader::ReadIFD(std::istream* in, uint64_t offset, BigTiffIFD* ifd)
   XFile::Seek(in, offset);
   m_Endian.Read(in, m_bByteOrder, &nb_entries, sizeof(nb_entries));
  
-  for (uint16_t i = 0; i < nb_entries; i++) {
+  for (uint64_t i = 0; i < nb_entries; i++) {
     BigTiffTag tag;
     m_Endian.Read(in, m_bByteOrder, &tag.TagId, sizeof(tag.TagId));
     m_Endian.Read(in, m_bByteOrder, &tag.DataType, sizeof(tag.DataType));

@@ -98,7 +98,7 @@ bool XTiffStripImage::SetTiffReader(XBaseTiffReader* reader)
 	m_nNbBits = reader->NbBits();
 	m_nNbSample = reader->NbSample();
   m_nSampleFormat = reader->SampleFormat();
-	m_nPixSize = PixSize();
+	m_nPixSize = (uint16_t)PixSize();
 	if (m_nPixSize == 0)
 		return false;
 	m_nPhotInt = reader->PhotInt();
@@ -159,7 +159,7 @@ bool XTiffStripImage::LoadStrip(XFile* file, uint32_t num)
 		return true;
   if (m_nPlanarConfig == 1) {
     file->Seek(m_StripOffsets[num]);
-    uint64_t nBytesRead = file->Read((char*)m_Buffer, m_StripCounts[num]);
+    uint64_t nBytesRead = file->Read((char*)m_Buffer, (std::streamsize)m_StripCounts[num]);
     if (nBytesRead != m_StripCounts[num])
       return false;
     m_nLastStrip = num;
@@ -185,7 +185,7 @@ bool XTiffStripImage::LoadPlaneStrip(XFile* file, uint32_t numStrip)
         continue;
     uint32_t num = numStrip + i * (m_nNbStrip / m_nNbSample);
     file->Seek(m_StripOffsets[num]);
-    uint32_t nBytesRead = file->Read((char*)m_Buffer, m_StripCounts[num]);
+    std::streamsize nBytesRead = file->Read((char*)m_Buffer, (std::streamsize)m_StripCounts[num]);
     if (nBytesRead != m_StripCounts[num])
       return false;
     m_nLastStrip = num;
@@ -199,7 +199,7 @@ bool XTiffStripImage::LoadPlaneStrip(XFile* file, uint32_t numStrip)
       ptrPlane += m_nPixSize;
     }
   }
-  ::memcpy(m_Strip, m_PlaneStrip, m_nRowsPerStrip * m_nW * m_nPixSize * m_nNbSample);
+  ::memcpy(m_Strip, m_PlaneStrip, (size_t)m_nRowsPerStrip * m_nW * m_nPixSize * m_nNbSample);
   m_nPixSize = pixSize;
   return true;
 }
@@ -370,7 +370,7 @@ bool XTiffStripImage::GetLine(XFile* file, uint32_t num, uint8_t* area)
 	if (!LoadStrip(file, numStrip))
 		return false;
 	uint32_t numLine = num % m_nRowsPerStrip;
-	::memcpy(area, &m_Strip[numLine * m_nW * m_nPixSize], m_nW * m_nPixSize);
+	::memcpy(area, &m_Strip[numLine * m_nW * m_nPixSize], (size_t)m_nW * m_nPixSize);
 	return true;
 }
 

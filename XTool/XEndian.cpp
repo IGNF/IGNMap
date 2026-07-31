@@ -56,7 +56,7 @@ bool XEndian::Write(std::ostream* out, bool byteorder, void* data, int size)
 bool XEndian::ReadArray(std::istream* in, bool byteorder, void* data, int size, uint32_t nb_elt)
 {
 	if (byteorder == m_bByteOrder) {
-		in->read((char*)data, size * nb_elt);	
+		in->read((char*)data, (std::streamsize)(size * nb_elt));	
 		return in->good();
 	}
 	uint8_t *ptr = (uint8_t*)data;

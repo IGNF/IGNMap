@@ -11,9 +11,7 @@
 #define XJPEGIMAGE_H
 
 #include <cstdio>
-extern "C" {
-#include "../jpeg-10/jpeglib.h"
-}
+
 #include "XBaseImage.h"
 
 

@@ -1096,7 +1096,7 @@ XPt2D XGeoVector::Centroide2D()
 	C = m_Frame.Center();
 	XPt2D P;
 	double dx , dy;
-  uint16_t i;
+  uint32_t i;
   for (i = 0; i < 10; i++) {
     dx = FrameW() * 0.05 * i;
     dy = FrameH() * 0.05 * i;

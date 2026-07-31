@@ -296,6 +296,21 @@ bool GeoFileDTM::ReadAll(float* area)
 }
 
 //-----------------------------------------------------------------------------
+// Ouverture du MNT a partir de l'image TIFF temporaire
+//-----------------------------------------------------------------------------
+bool GeoFileDTM::OpenAsImage()
+{
+	if (m_Image.IsValid()) return true;
+	if (m_bTmpFile) {
+		if (m_Image.AnalyzeImage(m_strImageName)) {
+			m_Image.SetGeoref(m_Frame.Xmin, m_Frame.Ymax, m_dGSD);
+			return true;
+		}
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
 // Ouverture du MNT Tiff
 //-----------------------------------------------------------------------------
 bool GeoFileDTM::ImportTif(std::string file_tif, std::string /*file_bin*/)
@@ -595,6 +610,7 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 
 	// Format GEOJSON
 	T = folder.findChildFiles(juce::File::findFiles, false, "*.json");
+	T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.geojson"));
 	nb_total += T.size();
 	for (int i = 0; i < T.size(); i++)
 		ImportGeoJson(T[i].getFullPathName(), base);
@@ -723,6 +739,7 @@ XGeoClass* GeoTools::ImportDataFolder(juce::String folderName, XGeoBase* base, X
 	if (type == XGeoVector::DTM) {
 		T = folder.findChildFiles(juce::File::findFiles, false, "*.asc");
 		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.tif"));
+		T.addArray(folder.findChildFiles(juce::File::findFiles, false, "*.hdr"));
 	}
 	if (type == XGeoVector::Raster) {
 		T = folder.findChildFiles(juce::File::findFiles, false, "*.jp2");
@@ -760,8 +777,10 @@ XGeoClass* GeoTools::ImportDataFolder(juce::String folderName, XGeoBase* base, X
 					juce::File tmpFile = juce::File::createTempFile("tif");
 					if (!dtm->OpenDtm(AppUtil::GetStringFilename((*T)[i].getFullPathName()).c_str(), tmpFile.getFullPathName().toStdString().c_str())) {
 						delete dtm;
+						tmpFile.deleteFile();
 						continue;
 					}
+					dtm->OpenAsImage();
 					V = dtm;
 				}
 				if (type == XGeoVector::Raster) {

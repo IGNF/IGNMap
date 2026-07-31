@@ -57,9 +57,9 @@ protected:
 
   // Gestion de la memoire partagee
   static uint8_t*    m_gBuffer;   // Buffer global de lecture
-  static uint32_t    m_gBufSize;  // Taille du buffer
+  static uint64_t    m_gBufSize;  // Taille du buffer
   static uint8_t*    m_gTile;     // Tile globale
-  static uint32_t    m_gTileSize; // Taille de la tile globale
+  static uint64_t    m_gTileSize; // Taille de la tile globale
   static uint8_t*    m_gPlaneTile;// Tile globale pour les images par plans de couleurs
   static XTiffTileImage* m_gLastImage;  // Derniere image utilisee
 };

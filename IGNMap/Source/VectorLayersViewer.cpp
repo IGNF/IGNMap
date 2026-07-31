@@ -318,7 +318,7 @@ VectorLayersViewer::VectorLayersViewer()
 	// Ajout des colonnes
 	m_Table.getHeader().addColumn(juce::translate(" "), VectorViewerModel::Column::Visibility, 25);
 	m_Table.getHeader().addColumn(juce::translate(" "), VectorViewerModel::Column::Selectable, 25);
-	m_Table.getHeader().addColumn(juce::translate("Name"), VectorViewerModel::Column::Name, 200);
+	m_Table.getHeader().addColumn(juce::translate("Name"), VectorViewerModel::Column::Name, 190);
 	m_Table.getHeader().addColumn(juce::translate("Width"), VectorViewerModel::Column::PenWidth, 50);
 	m_Table.getHeader().addColumn(juce::translate("Pen"), VectorViewerModel::Column::PenColour, 50);
 	m_Table.getHeader().addColumn(juce::translate("Brush"), VectorViewerModel::Column::FillColour, 50);

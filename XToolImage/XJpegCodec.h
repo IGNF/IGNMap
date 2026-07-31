@@ -13,10 +13,6 @@
 #include <fstream>
 #include <iostream>
 
-extern "C" {
-#include "../jpeg-10/jpeglib.h"
-}
-
 #include "../XTool/XBase.h"
 
 class XJpegCodec {

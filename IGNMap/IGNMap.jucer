@@ -3,9 +3,9 @@
 <JUCERPROJECT id="d7wtcy" name="IGNMap" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               companyWebsite="www.ign.fr" companyName="IGN" companyCopyright="Institut National de l'Information G&#233;ographique et Foresti&#232;re"
-              defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1&#10;OPJ_STATIC=1&#10;LASZIPDLL_EXPORTS=1&#10;"
+              defines="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TINYEXIF_NO_XMP_SUPPORT=1&#10;OPJ_STATIC=1&#10;LASZIPDLL_EXPORTS=1&#10;JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_INCLUDE_JPEGLIB_CODE=0&#10;"
               userNotes="KAKADU_LIB=1 : compilation avec Kakadu pour le JPEG2000&#10;OPJ_STATIC=1 : compilation avec OpenJpeg pour le JPEG2000&#10;Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h&#10;"
-              headerPath="../../../libwebp&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip/include/laszip&#10;&#10;">
+              headerPath="../../../libwebp&#10;../../../protozero/include&#10;../../../vtzero/include&#10;../../../LASzip/include/laszip&#10;../../../zlib&#10;../../../jpeg-10&#10;">
   <MAINGROUP id="Q5WC5m" name="IGNMap">
     <GROUP id="{9A86AAA1-D00D-B665-F610-FBAAF5936AEC}" name="Images">
       <FILE id="ILbuJM" name="Carto.png" compile="0" resource="1" file="Images/Carto.png"/>
@@ -35,6 +35,9 @@
     <GROUP id="{2D72BBF7-CC90-ABF2-5F2C-BDC1866D3222}" name="Source">
       <FILE id="KhenFV" name="AffineImage.cpp" compile="1" resource="0" file="Source/AffineImage.cpp"/>
       <FILE id="WNOnos" name="AffineImage.h" compile="0" resource="0" file="Source/AffineImage.h"/>
+      <FILE id="il2W6q" name="AnalystViewer.cpp" compile="1" resource="0"
+            file="Source/AnalystViewer.cpp"/>
+      <FILE id="MiWXRA" name="AnalystViewer.h" compile="0" resource="0" file="Source/AnalystViewer.h"/>
       <FILE id="MyjDjo" name="AnnotViewer.cpp" compile="1" resource="0" file="Source/AnnotViewer.cpp"/>
       <FILE id="S73SJQ" name="AnnotViewer.h" compile="0" resource="0" file="Source/AnnotViewer.h"/>
       <FILE id="bIpneZ" name="AppUtil.cpp" compile="1" resource="0" file="Source/AppUtil.cpp"/>
@@ -377,9 +380,12 @@
         <FILE id="skQ0Oa" name="filters_sse2.c" compile="1" resource="0" file="../libwebp/src/dsp/filters_sse2.c"/>
         <FILE id="kb8qng" name="lossless.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless.c"/>
         <FILE id="YpVaBZ" name="lossless.h" compile="0" resource="0" file="../libwebp/src/dsp/lossless.h"/>
+        <FILE id="Lsnpqy" name="lossless_avx2.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_avx2.c"/>
         <FILE id="jwjd7F" name="lossless_common.h" compile="0" resource="0"
               file="../libwebp/src/dsp/lossless_common.h"/>
         <FILE id="M2cb7l" name="lossless_enc.c" compile="1" resource="0" file="../libwebp/src/dsp/lossless_enc.c"/>
+        <FILE id="HrCH0w" name="lossless_enc_avx2.c" compile="1" resource="0"
+              file="../libwebp/src/dsp/lossless_enc_avx2.c"/>
         <FILE id="tZdJ1C" name="lossless_enc_mips_dsp_r2.c" compile="1" resource="0"
               file="../libwebp/src/dsp/lossless_enc_mips_dsp_r2.c"/>
         <FILE id="ptNRaU" name="lossless_enc_mips32.c" compile="1" resource="0"
@@ -444,6 +450,7 @@
               file="../libwebp/src/utils/bit_writer_utils.c"/>
         <FILE id="O1iH5H" name="bit_writer_utils.h" compile="0" resource="0"
               file="../libwebp/src/utils/bit_writer_utils.h"/>
+        <FILE id="NiMhe5" name="bounds_safety.h" compile="0" resource="0" file="../libwebp/src/utils/bounds_safety.h"/>
         <FILE id="PbKVQ6" name="color_cache_utils.c" compile="1" resource="0"
               file="../libwebp/src/utils/color_cache_utils.c"/>
         <FILE id="OZlc2D" name="color_cache_utils.h" compile="0" resource="0"
@@ -458,6 +465,8 @@
               file="../libwebp/src/utils/huffman_encode_utils.h"/>
         <FILE id="Kq01qB" name="huffman_utils.c" compile="1" resource="0" file="../libwebp/src/utils/huffman_utils.c"/>
         <FILE id="ZAwRte" name="huffman_utils.h" compile="0" resource="0" file="../libwebp/src/utils/huffman_utils.h"/>
+        <FILE id="PpwL0e" name="palette.c" compile="1" resource="0" file="../libwebp/src/utils/palette.c"/>
+        <FILE id="zBMcsT" name="palette.h" compile="0" resource="0" file="../libwebp/src/utils/palette.h"/>
         <FILE id="o91VnE" name="quant_levels_dec_utils.c" compile="1" resource="0"
               file="../libwebp/src/utils/quant_levels_dec_utils.c"/>
         <FILE id="BDfDvZ" name="quant_levels_dec_utils.h" compile="0" resource="0"

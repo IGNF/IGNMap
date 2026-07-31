@@ -31,7 +31,8 @@ juce::String AppUtil::OpenFolder(juce::String optionName, juce::String mes)
 		if (!optionName.isEmpty())
 			SaveAppOption(optionName, name);
 #ifdef JUCE_WINDOWS
-		name = "\\\\?\\" + name;
+		if (name.length() > 240)
+			name = "\\\\?\\" + name;
 #endif // JUCE_WINDOWS
 		return name;
 	}

@@ -36,6 +36,7 @@ public:
 
   bool Seek(std::streampos pos);
   unsigned int Read(char* data, unsigned int maxSize);
+  std::streamsize Read(char* data, std::streamsize maxSize);
 
   static void Seek(std::istream* in, std::streampos pos);
 
