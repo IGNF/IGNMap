@@ -293,7 +293,6 @@ bool MapThread::DrawVectorClass(XGeoClass* C)
 			
 			g.setColour(juce::Colour(R->Color()));
 
-
 			juce::Rectangle<int> frame = juce::Rectangle<int>((int)round((F.Xmin - m_dX0) / m_dGsd), (int)round((m_dY0 - F.Ymax) / m_dGsd),
 				(int)round(F.Width() / m_dGsd), (int)round(F.Height() / m_dGsd));
 			if (!m_ClipVector.contains(frame)) {

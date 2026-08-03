@@ -104,7 +104,7 @@ void MapView::resized()
 void MapView::exitSignalSent()
 { 
 	//repaint();
-	sendActionMessage("RenderMapTerminated");
+	//sendActionMessage("RenderMapTerminated");
 }
 
 //==============================================================================

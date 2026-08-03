@@ -605,6 +605,8 @@
       <FILE id="XxcawA" name="XAffinity2D.cpp" compile="1" resource="0" file="../XToolAlgo/XAffinity2D.cpp"/>
       <FILE id="hYD9JS" name="XAffinity2D.h" compile="0" resource="0" file="../XToolAlgo/XAffinity2D.h"/>
       <FILE id="nQypig" name="XColor.h" compile="0" resource="0" file="../XToolAlgo/XColor.h"/>
+      <FILE id="AYDZYA" name="XGeoAnalyst.cpp" compile="1" resource="0" file="../XToolAlgo/XGeoAnalyst.cpp"/>
+      <FILE id="zHEM24" name="XGeoAnalyst.h" compile="0" resource="0" file="../XToolAlgo/XGeoAnalyst.h"/>
       <FILE id="k0Tuq4" name="XInternetMap.cpp" compile="1" resource="0"
             file="../XToolAlgo/XInternetMap.cpp"/>
       <FILE id="wfXTdH" name="XInternetMap.h" compile="0" resource="0" file="../XToolAlgo/XInternetMap.h"/>

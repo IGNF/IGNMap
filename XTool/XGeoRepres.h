@@ -59,6 +59,12 @@ public:
   static inline uint32_t DPBCSymbol(uint32_t d, uint32_t p, uint32_t b, uint32_t s)
           {uint32_t m = 255; return XMin(d,m)*256*256*256 + XMin(p,m)*256*256 + XMin(b,m)*256 + XMin(s, m);}
 
+	// JUCE
+	static inline uint32_t ARGBColor(uint32_t r, uint32_t g, uint32_t b, uint32_t alpha = 255)
+	{
+		return ((alpha << 24) | (r << 16) | (g << 8) | b);
+	}
+
   uint8_t Data() { uint8_t* ptr = (uint8_t*)&m_nSymbol; return ptr[3];}
   uint8_t Pen() { uint8_t* ptr = (uint8_t*)&m_nSymbol; return ptr[2];}
 	uint8_t Brush() { uint8_t* ptr = (uint8_t*)&m_nSymbol; return ptr[1];}
@@ -66,8 +72,10 @@ public:
 
 	void Color(uint32_t c) { m_nColor = c;}
 	void Color(uint32_t r, uint32_t g, uint32_t b) { m_nColor = RGBColor(r, g, b);}
+	void ColorARGB(uint32_t r, uint32_t g, uint32_t b, uint32_t alpha) { m_nColor = ARGBColor(r, g, b, alpha); }
 	void FillColor(uint32_t c) { m_nFillColor = c;}
 	void FillColor(uint32_t r, uint32_t g, uint32_t b) { m_nFillColor = RGBColor(r, g, b);}
+	void FillColorARGB(uint32_t r, uint32_t g, uint32_t b, uint32_t alpha) { m_nFillColor = ARGBColor(r, g, b, alpha); }
 	void Symbol(uint32_t s) { m_nSymbol = s;}
 	void Size(uint8_t s) { m_nSize = s;}
 	void FontSize(uint8_t s) { m_nFontSize = s;}

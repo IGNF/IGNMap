@@ -312,6 +312,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/XPt3D_5b2e8a34.o \
   $(JUCE_OBJDIR)/XXml_ba111f82.o \
   $(JUCE_OBJDIR)/XAffinity2D_9345022c.o \
+  $(JUCE_OBJDIR)/XGeoAnalyst_81da2123.o \
   $(JUCE_OBJDIR)/XInternetMap_ca70d833.o \
   $(JUCE_OBJDIR)/XLasFile_52021412.o \
   $(JUCE_OBJDIR)/XOrthoModel_aa1c1383.o \
@@ -1613,6 +1614,11 @@ $(JUCE_OBJDIR)/XXml_ba111f82.o: ../../../XTool/XXml.cpp
 $(JUCE_OBJDIR)/XAffinity2D_9345022c.o: ../../../XToolAlgo/XAffinity2D.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling XAffinity2D.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/XGeoAnalyst_81da2123.o: ../../../XToolAlgo/XGeoAnalyst.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling XGeoAnalyst.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/XInternetMap_ca70d833.o: ../../../XToolAlgo/XInternetMap.cpp

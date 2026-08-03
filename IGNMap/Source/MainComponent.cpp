@@ -711,6 +711,12 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 {
 	if (m_MapView == nullptr)
 		return;
+	for (size_t i = 0; i < m_ToolWindows.size(); i++)
+		m_ToolWindows[i]->SetMessage(message); // Transmission du message aux ToolWindows
+
+	if (message == "RenderMapTerminated") {
+		return;
+	}
 	if (message == "UpdateVector") {
 		m_MapView.get()->RenderMap(true, false, false, true, false, true);
 		return;
@@ -823,9 +829,6 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->SetFrame(m_GeoBase.Frame());
 		m_MapView.get()->RenderMap(false, false, true, false, false, true);
 		m_DtmViewer.get()->SetBase(&m_GeoBase);
-		return;
-	}
-	if (message == "RenderMapTerminated") {
 		return;
 	}
 	if (message == "Reset3DView") {

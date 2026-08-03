@@ -39,7 +39,7 @@ public:
 	// Gestion des actions
 	void actionListenerCallback(const juce::String& message) override { sendActionMessage(message); }
 
-	void SetBase(XGeoBase* base) { m_Base = base; }
+	void SetBase(XGeoBase* base) { m_Base = base; sendActionMessage("UpdateVector"); }
 	XGeoClass* FindVectorClass(int index);
 
 private:
