@@ -403,18 +403,18 @@ bool XFileImage::PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_
   if (m_Image->SampleFormat() == 1) { // Images non signees
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() == 1)) {  // Image 16 bits
       XBaseImage::Uint16To8bits(val, w, h);
-      ::memcpy(area, val, w * h);
+      ::memcpy(area, val, (size_t)w * h);
       return true;
     }
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() == 3)) {  // Image 3 x 16 bits
       XBaseImage::Uint16To8bits(val, w * 3L, h);
-      ::memcpy(area, val, w * h * 3L);
+      ::memcpy(area, val, (size_t)w * h * 3L);
       return true;
     }
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() > 3)) {  // Image N x 16 bits
       XBaseImage::Uint16To8bits(val, w * m_Image->NbSample(), h);
       XBaseImage::MultiSample2RGB(val, w, h, m_Image->NbSample(), m_RGBChannel[0], m_RGBChannel[1], m_RGBChannel[2]);
-      ::memcpy(area, val, w * h * 3L);
+      ::memcpy(area, val, (size_t)w * h * 3L);
       return true;
     }
   }
@@ -422,18 +422,18 @@ bool XFileImage::PostProcessRGB(uint8_t* area, uint8_t* val, uint32_t w, uint32_
   if (m_Image->SampleFormat() == 2) { // Images signees
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() == 1)) {  // Image 16 bits
       XBaseImage::Int16To8bits(val, w, h);
-      ::memcpy(area, val, w * h);
+      ::memcpy(area, val, (size_t)w * h);
       return true;
     }
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() == 3)) {  // Image 3 x 16 bits
       XBaseImage::Int16To8bits(val, w * 3L, h);
-      ::memcpy(area, val, w * h * 3L);
+      ::memcpy(area, val, (size_t)w * h * 3L);
       return true;
     }
     if ((m_Image->NbBits() == 16) && (m_Image->NbSample() > 3)) {  // Image N x 16 bits
       XBaseImage::Int16To8bits(val, w * m_Image->NbSample(), h);
       XBaseImage::MultiSample2RGB(val, w, h, m_Image->NbSample(), m_RGBChannel[0], m_RGBChannel[1], m_RGBChannel[2]);
-      ::memcpy(area, val, w * h * 3L);
+      ::memcpy(area, val, (size_t)w * h * 3L);
       return true;
     }
   }
@@ -628,7 +628,7 @@ bool XFileImage::Resample(std::string file_out, XTransfo* transfo, XInterpol* in
           out[nb_canal * col + canal] = 255;
       }
     }
-    fic_out.write((char*)out, W * nb_canal * sizeof(uint8_t));
+    fic_out.write((char*)out, (size_t)W * nb_canal * sizeof(uint8_t));
     if (wait != NULL) {
       wait->StepIt();
       if (wait->CheckCancel())

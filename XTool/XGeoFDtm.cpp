@@ -1233,7 +1233,7 @@ bool XGeoFDtm::ExportContour(std::string filename, double equi, double resol)
 
     }
 
-    out.write((char*)pix, m_nW * factor * factor * sizeof(uint8_t));
+    out.write((char*)pix, (size_t)m_nW * factor * factor * sizeof(uint8_t));
 
     float* swap = lineT;
     lineT = lineB;

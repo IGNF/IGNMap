@@ -136,7 +136,7 @@ bool XTiffTileImage::AllocBuffer()
       return false;
     m_gBufSize = maxsize;
   }
-  uint64_t tileSize = m_nTileWidth * m_nTileHeight * m_nPixSize;
+  uint64_t tileSize = (uint64_t)m_nTileWidth * m_nTileHeight * m_nPixSize;
   if (tileSize > m_gTileSize) {
     if (m_gTile != nullptr) {
       delete[] m_gTile;
@@ -220,7 +220,7 @@ bool XTiffTileImage::LoadPlaneTile(XFile* file, uint32_t numTile)
       ptrTile += m_nPixSize;
     }
   }
-  ::memcpy(m_Tile, m_gPlaneTile, m_nTileWidth * m_nTileHeight * m_nNbSample * m_nPixSize);
+  ::memcpy(m_Tile, m_gPlaneTile, (size_t)m_nTileWidth * m_nTileHeight * m_nNbSample * m_nPixSize);
   m_nPixSize = pixSize;
   return true;
 }
