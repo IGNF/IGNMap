@@ -133,7 +133,7 @@ bool XJpegImage::GetArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_t h
 		//	break;
 		(void)jpeg_read_scanlines(&cinfo, buffer, 1);
 		if ((line >= y)&&(line < y+h))
-			::memcpy(&area[(line - y) * w * m_nNbSample], buffer[0] + x * m_nNbSample, w * m_nNbSample);
+			::memcpy(&area[(line - y) * w * m_nNbSample], buffer[0] + x * m_nNbSample, w * (size_t)m_nNbSample);
 		line++;
 	}
 

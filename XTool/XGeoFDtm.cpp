@@ -108,7 +108,7 @@ bool XGeoFDtm::ReadNode(float* node, uint32_t x, uint32_t y)
 bool XGeoFDtm::ReadAll(float* area)
 {
   m_ActiveStream->seekg(m_nOffset, std::ios::beg);
-  m_ActiveStream->read((char*)area, m_nW * m_nH * sizeof(float));
+  m_ActiveStream->read((char*)area, (size_t)m_nW * m_nH * sizeof(float));
   return true;
 }
 
@@ -655,7 +655,7 @@ bool XGeoFDtm::ImportXyz(std::string file_asc, std::string file_bin)
 		area[j * m_nW + i] = z;
     m_nNbNoZ--;
 	}
-	out.write((char*)area, m_nW * m_nH * sizeof(float));
+	out.write((char*)area, (size_t)m_nW * m_nH * sizeof(float));
 	delete[] area;
 	out.close();
 	in.close();
@@ -1211,7 +1211,7 @@ bool XGeoFDtm::ExportContour(std::string filename, double equi, double resol)
   ReadLine(lineT, 0);
   for (uint32_t i = 1; i < m_nH; i++) {
     ReadLine(lineB, i);
-    ::memset(pix, 255, m_nW * factor * factor);
+    ::memset(pix, 255, (size_t)m_nW * factor * factor);
     for (uint32_t j = 0; j < m_nW - 1; j++) {
       N[0] = lineT[j];
       N[1] = lineT[j+1];
@@ -1302,7 +1302,7 @@ int XGeoFDtm::ExportFlood(std::string filename, double Z0, std::vector<XPt2D>& P
   uint8_t* T = new(std::nothrow) uint8_t[m_nW * m_nH];
   if (T == nullptr)
     return 0;
-  ::memset(T, 0, m_nW * m_nH * sizeof(uint8_t));
+  ::memset(T, 0, (size_t)m_nW * m_nH * sizeof(uint8_t));
 
   // Detection des noeuds sous le niveau Z0
   std::vector<int> line;
@@ -1857,7 +1857,7 @@ bool XGeoFDtm::FindThalweg(std::string filename)
   } // endwhile
 
 
-  out.write((char*)thal, m_nW * m_nH * sizeof(uint16_t));
+  out.write((char*)thal, (size_t)m_nW * m_nH * sizeof(uint16_t));
   out.close();
   delete[] mnt;
   delete[] thal;

@@ -1985,7 +1985,7 @@ bool XGeoVector::Rasterize(double gsd, double& Xmin, double& Ymax, uint32_t& W, 
   W = (uint32_t)ceil(F.Width() / gsd) + 1;
   H = (uint32_t)ceil(F.Height() / gsd) + 1;
   uint8_t* buf = new uint8_t[W * H];
-  ::memset(buf, 0, W*H);
+  ::memset(buf, 0, (size_t)W*H);
   for (uint32_t i = 0; i < H; i++) {
     uint8_t* line = &buf[W*i];
     for (int step = 0; step < 4; step++) {

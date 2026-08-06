@@ -394,7 +394,7 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 	}
 	if (message == "UpdateVectorRepres") {
 		m_Table.repaint();
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorRepres");
 		return;
 	}
 	if (message == "InvertVisibility") {
@@ -403,7 +403,7 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 			if (C->IsVector()) C->Visible(!C->Visible());
 		}
 		m_Table.repaint();
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorRepres");
 		return;
 	}
 	if (message == "InvertSelectable") {
@@ -436,7 +436,7 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorRepres");
 		return;
 	}
 	if (message == "UpdateVectorSelectability") {

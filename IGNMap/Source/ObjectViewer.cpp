@@ -222,7 +222,7 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 			R->Font(m_cbxFont.getText().toStdString().c_str());
 			V->Repres(R);
 		}
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorRepres");
 		return;
 	}
 	XGeoClass* C = dynamic_cast<XGeoClass*>(m_Object);
@@ -241,7 +241,7 @@ void ObjectViewerComponent::buttonClicked(juce::Button* button)
 			R->FontSize((uint8_t)m_sldFontSize.getValue());
 			R->Font(m_cbxFont.getText().toStdString().c_str());
 		}
-		sendActionMessage("UpdateVector");
+		sendActionMessage("UpdateVectorRepres");
 		return;
 	}
 }

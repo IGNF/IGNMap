@@ -218,13 +218,13 @@ bool XLasFile::ComputeDtm(std::string file_out, double gsd, AlgoDtm algo, bool c
 	float* area = new float[W * H];
 	if (area == nullptr)
 		return XErrorError(error, "TLasFile::ComputeDtm", XError::eAllocation);
-	::memset(area, 0, W * H * sizeof(float));
+	::memset(area, 0, (size_t)W * H * sizeof(float));
 	uint16_t* count = new uint16_t[W * H];
 	if (count == nullptr) {
 		delete[] area;
 		return XErrorError(error, "TLasFile::ComputeDtm", XError::eAllocation);
 	}
-	::memset(count, 0, W * H * sizeof(uint16_t));
+	::memset(count, 0, (size_t)W * H * sizeof(uint16_t));
   InlineStat* Stat = nullptr;
   if ((algo == StdDev)||(algo == Height)) {
     Stat = new InlineStat[W * H];

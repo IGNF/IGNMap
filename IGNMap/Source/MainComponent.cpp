@@ -721,6 +721,10 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(true, false, false, true, false, true);
 		return;
 	}
+	if (message == "UpdateVectorRepres") {
+		m_MapView.get()->RenderMap(false, false, false, true, false, true);
+		return;
+	}
 	if (message == "UpdateRaster") {
 		m_MapView.get()->RenderMap(false, true, false, false, false, true);
 		return;
@@ -1149,7 +1153,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.2.0";
+	juce::String version = "0.2.1";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."

@@ -26,6 +26,7 @@ XGeoAnalyst::XGeoAnalyst()
 	m_Type = Null;
 	m_strLayer = m_strClass = m_strAttrib = "Non defini";
 	m_nPlage = m_nFirst = m_nLast = 0;
+  m_Base = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -41,21 +42,53 @@ XGeoAnalyst::~XGeoAnalyst()
 //-----------------------------------------------------------------------------
 void XGeoAnalyst::DeleteRepres()
 {
-	if (m_Repres.size() < 1)
+	if ((m_Repres.size() < 1)||(m_Base == nullptr))
 		return;
+  for (uint32_t i = 0; i < m_Base->NbLayer(); i++) {
+    XGeoLayer* layer = m_Base->Layer(i);
+    for (uint32_t j = 0; j < layer->NbClass(); j++) {
+      XGeoClass* C = layer->Class(j);
+      for (uint32_t k = 0; k < C->NbVector(); k++) {
+        XGeoVector* V = C->Vector(k);
+        XGeoRepres* R = V->Repres();
+        for (uint32_t p = 0; p < m_Repres.size(); p++) {
+          if (R == m_Repres[p])
+            V->Repres(nullptr);
+        }
+      }
+    }
+  }
 
-	for (uint32_t i = 0; i < m_Vec.size(); i++) {
-		for (uint32_t j = 0; j < m_Repres.size(); j++) {
-			if (m_Vec[i]->Repres() == m_Repres[j]) {
-				m_Vec[i]->Repres(NULL);
-				break;
-			}
-		}
-	}
   for (uint32_t i = 0; i < m_Repres.size(); i++)
 		delete m_Repres[i];
 	m_Repres.clear();
 	m_nPlage = 0;
+  m_Visibility.clear();
+}
+
+//-----------------------------------------------------------------------------
+// Changement de la visibilite
+//-----------------------------------------------------------------------------
+void XGeoAnalyst::Visibility(uint32_t index, bool flag)
+{ 
+  if ((index >= m_Visibility.size()) || (index >= m_Repres.size()) || (m_Base == nullptr))
+    return;
+  if (Type() != All_Value)
+    return;
+  XGeoRepres* R = m_Repres[index];
+  m_Visibility[index] = flag;
+  for (uint32_t i = 0; i < m_Base->NbLayer(); i++) {
+    XGeoLayer* layer = m_Base->Layer(i);
+    for (uint32_t j = 0; j < layer->NbClass(); j++) {
+      XGeoClass* C = layer->Class(j);
+      for (uint32_t k = 0; k < C->NbVector(); k++) {
+        XGeoVector* V = C->Vector(k);
+        if (R == V->Repres())
+          V->Visible(flag);
+      }
+    }
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -96,22 +129,14 @@ bool XGeoAnalyst::SetFill(uint32_t plage, uint32_t first, uint32_t last)
 		return false;
 
 	DeleteRepres();
-	m_Vec.clear();
 
 	m_nPlage = plage;
 	m_nFirst = first;
 	m_nLast = last;
 
-  // Cas de l'affichage de toutes les valeurs
-  if (m_Type == All_Value) {
-    XGeoRepres* R = new XGeoRepres;
-    R->Color(first);
-    m_Repres.push_back(R);
-    R = new XGeoRepres;
-    R->Color(last);
-    m_Repres.push_back(R);
+  // Cas de l'affichage de toutes les valeurs : les representations seront creees a la volee
+  if (m_Type == All_Value)
     return true;
-  }
 
 	// Creation des representations
   char buf[80];
@@ -173,7 +198,7 @@ uint32_t XGeoAnalyst::RunFillLin(XGeoBase* base)
 	}
 	
 	// Affectation des representations
-	uint32_t index;
+	uint32_t index, nb_vec = 0;
   double delta = (max - min) / m_nPlage;
   for (uint32_t i = 0; i < C->NbVector(); i++) {
 		V = C->Vector(i);
@@ -186,7 +211,7 @@ uint32_t XGeoAnalyst::RunFillLin(XGeoBase* base)
     index = (uint32_t)floor((val - min) / delta);
     if (index > (m_nPlage - 1)) index = m_nPlage - 1;
 		V->Repres(m_Repres[index]);
-		m_Vec.push_back(V);
+    nb_vec++;
 	}
   // Nom des representations
   char buf[80];
@@ -201,7 +226,8 @@ uint32_t XGeoAnalyst::RunFillLin(XGeoBase* base)
     m_Borne.push_back(min + i * delta);
   m_Borne.push_back(max);
 
-	return (uint32_t)m_Vec.size();
+  if (nb_vec > 0) m_Base = base;
+	return nb_vec;
 }
 
 //-----------------------------------------------------------------------------
@@ -242,7 +268,7 @@ uint32_t XGeoAnalyst::RunFillLog(XGeoBase* base)
 	}
 	
 	// Affectation des representations
-	uint32_t index;
+	uint32_t index, nb_vec = 0;
   double delta = log(max - min + 1) / m_nPlage;
   for (uint32_t i = 0; i < C->NbVector(); i++) {
 		V = C->Vector(i);
@@ -256,7 +282,7 @@ uint32_t XGeoAnalyst::RunFillLog(XGeoBase* base)
     index = (uint32_t)floor(log(val - min + 1) / delta);
     if (index > (m_nPlage - 1)) index = (m_nPlage - 1);
 		V->Repres(m_Repres[index]);
-		m_Vec.push_back(V);
+    nb_vec++;
 	}
   // Nom des representations
   char buf[80];
@@ -271,7 +297,8 @@ uint32_t XGeoAnalyst::RunFillLog(XGeoBase* base)
     m_Borne.push_back(min + exp(i * delta) - 1);
   m_Borne.push_back(max);
 
-  return (uint32_t)m_Vec.size();
+  if (nb_vec > 0) m_Base = base;
+  return nb_vec;
 }
 
 //-----------------------------------------------------------------------------
@@ -309,14 +336,15 @@ uint32_t XGeoAnalyst::RunFillConst(XGeoBase* base)
 	}
 	
 	// Affectation des representations
-	uint32_t step = 0;
+	uint32_t step = 0, nb_vec = 0;
 	for (iter = M.begin(); iter != M.end(); iter++) {
 		V = C->Vector(iter->second);
 		V->Repres(m_Repres[(step * m_nPlage) / count]);
-		m_Vec.push_back(V);
+    nb_vec++;
 		step++;
 	}
-	return (uint32_t)m_Vec.size();
+  if (nb_vec > 0) m_Base = base;
+	return nb_vec;
 }
 
 //-----------------------------------------------------------------------------
@@ -331,20 +359,12 @@ uint32_t XGeoAnalyst::RunAllValue(XGeoBase* base)
   if (C == NULL)
     return 0;
 
-  uint32_t start_color = 0, end_color = 255;
-  bool needFill = true;
-  if(m_Repres.size()== 2) {
-    start_color = m_Repres[0]->Color();
-    end_color = m_Repres[1]->Color();
-    DeleteRepres();
-  } else
-    needFill = false;
-  //DeleteRepres();
+  DeleteRepres();
 
   bool exist;
   XGeoVector* V;
   std::string Att;
-  std::list<std::string> attL;
+  uint32_t nb_vec = 0;
   for (uint32_t i = 0; i < C->NbVector(); i++) {
     V = C->Vector(i);
     if (!V->Visible())
@@ -353,12 +373,11 @@ uint32_t XGeoAnalyst::RunAllValue(XGeoBase* base)
 //    if (Att.size() < 1)
 //      continue;
     if (Att == " ") Att = "";
-    attL.push_back(Att);
     exist = false;
     for(uint32_t j = 0; j < m_Repres.size(); j++) {
       if (m_Repres[j]->Name() == Att) {
         V->Repres(m_Repres[j]);
-        m_Vec.push_back(V);
+        nb_vec++;
         exist = true;
         break;
       }
@@ -368,17 +387,17 @@ uint32_t XGeoAnalyst::RunAllValue(XGeoBase* base)
       newR->Name(Att.c_str());
       m_Repres.push_back(newR);
       V->Repres(newR);
-      m_Vec.push_back(V);
+      m_Visibility.push_back(true);
+      nb_vec++;
     }
   }
-  //m_nPlage = m_Repres.size();
-  attL.sort();
-  attL.unique();
-  m_nPlage = (uint32_t)attL.size();
-  if (needFill)
-    FillRepres(start_color, end_color);
+  m_nPlage = (uint32_t)m_Repres.size();
+  struct { bool operator()(XGeoRepres* a, XGeoRepres* b) const { return *a < *b; } } customLess;
+  std::sort(m_Repres.begin(), m_Repres.end(), customLess);
+  FillRepres(m_nFirst, m_nLast);
 
-  return (uint32_t)m_Vec.size();
+  if (nb_vec > 0) m_Base = base;
+  return nb_vec;
 }
 
 //-----------------------------------------------------------------------------
@@ -388,7 +407,7 @@ uint32_t XGeoAnalyst::Run(XGeoBase* base)
 {
 	if ((m_strLayer.size() < 1) || (m_strClass.size() < 1) || (m_strAttrib.size() < 1))
 		return 0;
-
+  DeleteRepres();
 	if (m_Type == Fill_Lin)
 		return RunFillLin(base);
 	if (m_Type == Fill_Log)
@@ -412,7 +431,7 @@ bool XGeoAnalyst::UpdateBorne(XGeoBase *base, int num_plage, double new_max)
   m_Borne[num_plage+1] = new_max;
 
   XGeoClass* C = base->Class(m_strLayer.c_str(), m_strClass.c_str());
-  if (C == NULL)
+  if (C == nullptr)
     return false;
 
   // Recherche du min et du max
@@ -442,7 +461,6 @@ bool XGeoAnalyst::UpdateBorne(XGeoBase *base, int num_plage, double new_max)
     }
     if (index > (m_nPlage - 1)) index = m_nPlage - 1;
     V->Repres(m_Repres[index]);
-    m_Vec.push_back(V);
   }
   // Nom des representations
   char buf[80];

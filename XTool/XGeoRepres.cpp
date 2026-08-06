@@ -218,3 +218,8 @@ bool operator!=(XGeoRepres A, XGeoRepres B)
 {
 	return !(A==B);
 }
+
+bool XGeoRepres::operator<(const XGeoRepres& R)
+{
+	return (this->m_strName < R.m_strName);
+}

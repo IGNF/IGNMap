@@ -92,6 +92,7 @@ public:
 	// Operateurs logiques
 	friend bool operator==(XGeoRepres, XGeoRepres);
 	friend bool operator!=(XGeoRepres, XGeoRepres);
+	bool operator<(const XGeoRepres&);
 };
 
 extern XGeoRepres   gDefaultRepres;

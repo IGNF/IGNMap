@@ -210,7 +210,7 @@ bool XTiffWriter::Write(const char* filename, uint32_t w, uint32_t h, uint16_t n
 	}
 
 	if (buf != NULL)
-		m_Out.write((char*)buf, h * bytecount);
+		m_Out.write((char*)buf, (size_t)h * bytecount);
 	m_Out.close();
 	return true;
 }
@@ -376,7 +376,7 @@ bool XTiffWriter::WriteTiled(const char* filename, uint32_t w, uint32_t h, uint1
 	}
 
 	if (buf != NULL)
-		m_Out.write((char*)buf, nbTile * bytecount);
+		m_Out.write((char*)buf, (size_t)nbTile * bytecount);
 	m_Out.close();
 	return true;
 }

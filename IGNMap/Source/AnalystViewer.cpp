@@ -31,11 +31,19 @@ void AnalystViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnI
 	if (m_Analyse == nullptr)
 		return;
 	XGeoRepres* R = m_Analyse->Repres(rowNumber);
+	bool visibility = m_Analyse->Visibility(rowNumber);
 	if (R == nullptr)
 		return;
 	juce::Image icone;
 	switch (columnId) {
 	case Column::Visibility:
+		if (m_Analyse->Type() == XGeoAnalyst::All_Value) {
+			if (visibility)
+				icone = juce::ImageCache::getFromMemory(BinaryData::View_png, BinaryData::View_pngSize);
+			else
+				icone = juce::ImageCache::getFromMemory(BinaryData::NoView_png, BinaryData::NoView_pngSize);
+			g.drawImageAt(icone, (width - icone.getWidth()) / 2, (height - icone.getHeight()) / 2);
+		}
 		break;
 	case Column::Selectable:
 		break;
@@ -83,13 +91,10 @@ void AnalystViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mo
 
 	// Visibilite
 	if (columnId == Column::Visibility) {
-		//sendActionMessage("UpdateVectorVisibility");
-		return;
-	}
-
-	// Selectable
-	if (columnId == Column::Selectable) {
-		//sendActionMessage("UpdateVectorSelectability");
+		if (m_Analyse->Type() == XGeoAnalyst::All_Value) {
+			m_Analyse->Visibility(rowNumber, !m_Analyse->Visibility(rowNumber));
+			sendActionMessage("UpdateVectorVisibility");
+		}
 		return;
 	}
 
@@ -126,6 +131,20 @@ void AnalystViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mo
 		widthSelector->addListener(this);
 		juce::CallOutBox::launchAsynchronously(std::move(widthSelector), bounds, nullptr);
 		return;
+	}
+}
+
+//==============================================================================
+// Clic dans l'entete
+//==============================================================================
+void AnalystViewerModel::sortOrderChanged(int newSortColumnId, bool /*isForwards*/)
+{
+	if (m_Analyse == nullptr)
+		return;
+	if (newSortColumnId == Visibility) {
+		for (uint32_t i = 0; i < m_Analyse->NbRepres(); i++)
+			m_Analyse->Visibility(i, !m_Analyse->Visibility(i));
+		sendActionMessage("InvertVisibility");
 	}
 }
 
@@ -179,25 +198,29 @@ void AnalystViewerModel::sliderValueChanged(juce::Slider* slider)
 AnalystViewerComponent::AnalystViewerComponent()
 {
 	m_Base = nullptr;
-	m_lblLayer.setText(juce::translate("Layer :"), juce::dontSendNotification);
-	m_lblClass.setText(juce::translate("Class :"), juce::dontSendNotification);
-	m_lblAttribut.setText(juce::translate("Attribut :"), juce::dontSendNotification);
-	m_lblDistribution.setText(juce::translate("Distribution :"), juce::dontSendNotification);
+	m_lblLayer.setText(juce::translate("Folder") + " :", juce::dontSendNotification);
+	m_lblClass.setText(juce::translate("Layer") + " :", juce::dontSendNotification);
+	m_lblAttribut.setText(juce::translate("Attribut") + " :", juce::dontSendNotification);
+	m_lblDistribution.setText(juce::translate("Distribution") + " :", juce::dontSendNotification);
 	addAndMakeVisible(m_lblLayer);
 	addAndMakeVisible(m_lblClass);
 	addAndMakeVisible(m_lblAttribut);
 	addAndMakeVisible(m_lblDistribution);
 
+	m_cbxAnalyse.addListener(this);
+	addAndMakeVisible(m_cbxAnalyse);
 	m_cbxLayer.addListener(this);
 	addAndMakeVisible(m_cbxLayer);
 	m_cbxClass.addListener(this);
 	addAndMakeVisible(m_cbxClass);
 	m_cbxAttribut.addListener(this);
 	addAndMakeVisible(m_cbxAttribut);
+	m_cbxDistribution.addListener(this);
 	m_cbxDistribution.addItem(juce::translate("Linear distribution"), XGeoAnalyst::Fill_Lin);
 	m_cbxDistribution.addItem(juce::translate("Log distribution"), XGeoAnalyst::Fill_Log);
 	m_cbxDistribution.addItem(juce::translate("Constant distribution"), XGeoAnalyst::Fill_Const);
 	m_cbxDistribution.addItem(juce::translate("All values"), XGeoAnalyst::All_Value);
+	m_cbxDistribution.setSelectedId(XGeoAnalyst::All_Value, juce::dontSendNotification);
 	addAndMakeVisible(m_cbxDistribution);
 	addAndMakeVisible(m_sldPlage);
 	m_btnFirstColour.setButtonText(juce::translate("First value"));
@@ -211,9 +234,13 @@ AnalystViewerComponent::AnalystViewerComponent()
 	m_sldPlage.setSliderStyle(juce::Slider::LinearBar);
 	m_sldPlage.setTextValueSuffix(juce::translate(" intervals"));
 	addAndMakeVisible(m_sldPlage);
+	m_sldPlage.setVisible(false);
 	m_btnRun.setButtonText(juce::translate("Analyze"));
 	addAndMakeVisible(m_btnRun);
 	m_btnRun.addListener(this);
+	m_btnDelete.setButtonText(juce::translate("Delete"));
+	addAndMakeVisible(m_btnDelete);
+	m_btnDelete.addListener(this);
 
 	// Bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -221,7 +248,7 @@ AnalystViewerComponent::AnalystViewerComponent()
 	m_Table.setMultipleSelectionEnabled(true);
 	// Ajout des colonnes
 	m_Table.getHeader().addColumn(juce::translate(" "), AnalystViewerModel::Column::Visibility, 25);
-	m_Table.getHeader().addColumn(juce::translate(" "), AnalystViewerModel::Column::Selectable, 25);
+	//m_Table.getHeader().addColumn(juce::translate(" "), AnalystViewerModel::Column::Selectable, 25);
 	m_Table.getHeader().addColumn(juce::translate("Name"), AnalystViewerModel::Column::Name, 190);
 	m_Table.getHeader().addColumn(juce::translate("Width"), AnalystViewerModel::Column::PenWidth, 50);
 	m_Table.getHeader().addColumn(juce::translate("Pen"), AnalystViewerModel::Column::PenColour, 50);
@@ -229,6 +256,17 @@ AnalystViewerComponent::AnalystViewerComponent()
 	//m_Table.getHeader().addColumn(juce::translate(" "), AnalystViewerModel::Column::Options, 25);
 	m_Table.setModel(&m_Model);
 	addAndMakeVisible(m_Table);
+	m_Model.addActionListener(this);
+}
+
+//==============================================================================
+// AnalystViewerComponent : Destructeur
+//==============================================================================
+AnalystViewerComponent::~AnalystViewerComponent()
+{
+	for (size_t i = 0; i < m_Analyse.size(); i++)
+		delete m_Analyse[i];
+	m_Analyse.clear();
 }
 
 //==============================================================================
@@ -238,19 +276,21 @@ void AnalystViewerComponent::resized()
 {
 	auto w = getLocalBounds().getWidth();
 	auto h = getLocalBounds().getHeight();
+	m_cbxAnalyse.setBounds(5, 5, w - 10, 24);
 	m_lblLayer.setBounds(5, 40, 80, 24);
-	m_cbxLayer.setBounds(100, 40, w - 110, 24);
+	m_cbxLayer.setBounds(100, 40, w - 105, 24);
 	m_lblClass.setBounds(5, 70, 80, 24);
-	m_cbxClass.setBounds(100, 70, w - 110, 24);
+	m_cbxClass.setBounds(100, 70, w - 105, 24);
 	m_lblAttribut.setBounds(5, 100, 80, 24);
-	m_cbxAttribut.setBounds(100, 100, w - 110, 24);
+	m_cbxAttribut.setBounds(100, 100, w - 105, 24);
 	m_lblDistribution.setBounds(5, 130, 80, 24);
-	m_cbxDistribution.setBounds(100, 130, w - 110, 24);
+	m_cbxDistribution.setBounds(100, 130, w - 105, 24);
 
-	m_btnFirstColour.setBounds(5, 160, 80, 24);
+	m_btnFirstColour.setBounds(5, 160, 100, 24);
 	m_sldPlage.setBounds(w / 2 - 75, 160, 150, 24);
-	m_btnLastColour.setBounds(w - 90, 160, 80, 24);
+	m_btnLastColour.setBounds(w - 105, 160, 100, 24);
 	m_btnRun.setBounds(w / 2 - 50, 190, 100, 24);
+	m_btnDelete.setBounds(w - 75, 190, 70, 24);
 
 	m_Table.setBounds(5, 220, w - 10, h - 225);
 }
@@ -324,6 +364,22 @@ void AnalystViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChan
 		for (int p = 0; p < Att.size(); p+=2)
 			m_cbxAttribut.addItem(Att[p], p+1);
 	}
+	if (comboBoxThatHasChanged == &m_cbxDistribution) {
+		if (m_cbxDistribution.getSelectedId() == XGeoAnalyst::All_Value)
+			m_sldPlage.setVisible(false);
+		else
+			m_sldPlage.setVisible(true);
+	}
+	if (comboBoxThatHasChanged == &m_cbxAnalyse) {
+		int index = m_cbxAnalyse.getSelectedId() - 1;
+		if (index < m_Analyse.size()) {
+			m_Model.SetAnalyse(m_Analyse[index]);
+			m_Table.updateContent();
+			m_cbxLayer.setText(m_Analyse[index]->Layer(), juce::dontSendNotification);
+			m_cbxClass.setText(m_Analyse[index]->Class(), juce::dontSendNotification);
+			m_cbxAttribut.setText(m_Analyse[index]->Attribut(), juce::dontSendNotification);
+		}
+	}
 }
 
 //==============================================================================
@@ -331,25 +387,67 @@ void AnalystViewerComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChan
 //==============================================================================
 void AnalystViewerComponent::buttonClicked(juce::Button* button)
 {
-	if (button != &m_btnRun)
-		return;
-	XGeoAnalyst* A = new XGeoAnalyst;
-	A->Layer(m_cbxLayer.getText().toStdString());
-	A->Class(m_cbxClass.getText().toStdString());
-	A->Attribut(m_cbxAttribut.getText().toStdString());
-	A->Type((XGeoAnalyst::eType)m_cbxDistribution.getSelectedId());
-	juce::Colour first = m_btnFirstColour.GetColour();
-	juce::Colour last = m_btnLastColour.GetColour();
+	if (button == &m_btnRun) {
+		juce::String layer = m_cbxLayer.getText(), classe = m_cbxClass.getText(), attribut = m_cbxAttribut.getText();
+		if (layer.isEmpty() || classe.isEmpty() || attribut.isEmpty())
+			return;
+		XGeoAnalyst* A = new XGeoAnalyst;
+		A->Name((layer + "_" + classe + "_" + attribut).toStdString());
+		A->Layer(layer.toStdString());
+		A->Class(classe.toStdString());
+		A->Attribut(attribut.toStdString());
+		A->Type((XGeoAnalyst::eType)m_cbxDistribution.getSelectedId());
+		juce::Colour first = m_btnFirstColour.GetColour();
+		juce::Colour last = m_btnLastColour.GetColour();
 
-	uint32_t first_color = first.getARGB();
-	uint32_t last_color = last.getARGB();
+		uint32_t first_color = first.getARGB();
+		uint32_t last_color = last.getARGB();
 
-	A->SetFill((uint32_t)m_sldPlage.getValue(), first_color, last_color);
-	A->Run(m_Base);
+		A->SetFill((uint32_t)m_sldPlage.getValue(), first_color, last_color);
+		juce::MouseCursor::showWaitCursor();
+		A->Run(m_Base);
+		juce::MouseCursor::hideWaitCursor();
 
-	m_Analyse.push_back(A);
-	m_Model.SetAnalyse(A);
-	m_Table.repaint();
+		m_Analyse.push_back(A);
+		m_cbxAnalyse.addItem(A->Name(), m_Analyse.size());
+		m_cbxAnalyse.setSelectedId(m_Analyse.size(), juce::dontSendNotification);
+		m_Model.SetAnalyse(A);
+		m_Table.updateContent();
+		sendActionMessage("UpdateVectorRepres");
+	}
+	if (button == &m_btnDelete) {
+		int index = m_cbxAnalyse.getSelectedId();
+		if ((index < 1) || (index > m_Analyse.size()))
+			return;
+		index--;	// Les index commencent a 1 dans les combo-box
+		XGeoAnalyst* A = m_Analyse[index];
+		m_Model.SetAnalyse(nullptr);
+		m_Table.updateContent();
+		m_cbxAnalyse.clear(juce::dontSendNotification);
+		std::vector<XGeoAnalyst*> L;
+		for (size_t i = 0; i < m_Analyse.size(); i++) {
+			if (i == index) continue;
+			L.push_back(m_Analyse[i]);
+			m_cbxAnalyse.addItem(m_Analyse[i]->Name(), L.size());
+		}
+		m_Analyse.clear();
+		m_Analyse = L;
+		delete A;
+		sendActionMessage("UpdateVectorRepres");
+	}
+}
+
+//==============================================================================
+// Reponses aux actions
+//==============================================================================
+void AnalystViewerComponent::actionListenerCallback(const juce::String& message)
+{
+	if (message == "UpdateVectorRepres")
+		m_Table.repaint();
+	if ((message == "InvertVisibility") || (message == "UpdateVectorVisibility"))
+		m_Table.repaint();
+
+	sendActionMessage("UpdateVectorRepres");
 }
 
 //==============================================================================

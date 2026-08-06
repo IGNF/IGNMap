@@ -34,8 +34,9 @@ protected:
 	uint32_t					m_nLast;				// Derniere couleur
 
 	std::vector<XGeoRepres*>	m_Repres;	// Representations
-	std::vector<XGeoVector*>	m_Vec;		// Resultat de l'analyse
   std::vector<double>       m_Borne;  // Limites des plages
+	std::vector<bool>					m_Visibility;
+	XGeoBase* m_Base;
 
 	void DeleteRepres();
   void FillRepres(uint32_t first, uint32_t last);
@@ -63,9 +64,9 @@ public:
 	eType				Type() { return m_Type;}
 
 	uint32_t NbRepres() { return (uint32_t)m_Repres.size();}
-	XGeoRepres* Repres(uint32_t i) { if (i < m_Repres.size()) return m_Repres[i]; return NULL;}
-  uint32_t NbVector() { return (uint32_t)m_Vec.size();}
-  XGeoVector* Vector(uint32_t i) { if (i < m_Vec.size()) return m_Vec[i]; return NULL;}
+	XGeoRepres* Repres(uint32_t i) { if (i < m_Repres.size()) return m_Repres[i]; return nullptr;}
+	bool Visibility(uint32_t i) { if (i < m_Visibility.size()) return m_Visibility[i]; return true; }
+	void Visibility(uint32_t i, bool flag);
 
 	bool SetFill(uint32_t plage, uint32_t first, uint32_t last);
 

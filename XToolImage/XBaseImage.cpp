@@ -149,7 +149,7 @@ bool XBaseImage::GetRawArea(XFile* file, uint32_t x, uint32_t y, uint32_t w, uin
   }
 
   if (NbBits() == 32)
-    ::memcpy(pix, area, wout * hout * NbSample() * sizeof(float));
+    ::memcpy(pix, area, wout * (size_t)hout * (size_t)NbSample() * sizeof(float));
 
   delete[] area;
   return true;
@@ -803,7 +803,7 @@ void XBaseImage::OffsetArea(uint8_t* buf, uint32_t w, uint32_t h, uint32_t lineW
 bool XBaseImage::RotateArea(uint8_t* in, uint8_t* out, uint32_t win, uint32_t hin, uint32_t nbbyte, uint32_t rot)
 {
   if (rot == 0) {		// Pas de rotation
-    ::memcpy(out, in, win * hin * nbbyte);
+    ::memcpy(out, in, win * (size_t)hin * (size_t)nbbyte);
     return true;
   }
 	if (rot > 3)
@@ -1005,7 +1005,8 @@ bool XBaseImage::Resample(uint8_t* in, uint8_t* out, uint32_t w, uint32_t h, uin
      
       if ((u < w - win) && (v < h - win) && (u >= win) && (v >= win)) {
         for (int k = 0; k < win_size; k++)
-          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample);
+          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], 
+            (size_t)win_size * nbSample);
       }
       else {
         if (!noBorder)  // On ne traite par les bords d'image
@@ -1068,7 +1069,8 @@ bool XBaseImage::Resample(float* in, float* out, uint32_t w, uint32_t h, uint16_
 
       if ((u < w - win) && (v < h - win) && (u >= win) && (v >= win)) {
         for (int k = 0; k < win_size; k++)
-          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], win_size * nbSample * sizeof(float));
+          ::memcpy(&pix[k * win_size * nbSample], &in[(v - win + k) * (w * nbSample + offset) + (u - win) * nbSample], 
+            (size_t)win_size * nbSample * sizeof(float));
       }
       else {
         if (!noBorder)  // On ne traite par les bords d'image
