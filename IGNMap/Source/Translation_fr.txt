@@ -216,3 +216,8 @@ countries: fr be mc ch lu
 "Log distribution" = "Distribution logarithmique"
 "Constant distribution" = "Distribution à effectif constant"
 "All values" = "Toutes les valeurs"
+"Random colors" = "Couleurs aléatoires"
+"Label Creator" = "Création de labels"
+"Minimum Length" = "Longueur Minimum"
+"Minimum Area" = "Surface Minimum"
+"Duplicate" = "Doublon"

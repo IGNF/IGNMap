@@ -11,6 +11,7 @@
 
 #include "AnalystViewer.h"
 #include "../XTool/XGeoBase.h"
+#include "Utilities.h"
 
 //==============================================================================
 // Dessin du fond
@@ -241,6 +242,9 @@ AnalystViewerComponent::AnalystViewerComponent()
 	m_btnDelete.setButtonText(juce::translate("Delete"));
 	addAndMakeVisible(m_btnDelete);
 	m_btnDelete.addListener(this);
+	m_btnRandomColor.setButtonText(juce::translate("Random colors"));
+	addAndMakeVisible(m_btnRandomColor);
+	m_btnRandomColor.addListener(this);
 
 	// Bordure
 	m_Table.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -290,7 +294,8 @@ void AnalystViewerComponent::resized()
 	m_sldPlage.setBounds(w / 2 - 75, 160, 150, 24);
 	m_btnLastColour.setBounds(w - 105, 160, 100, 24);
 	m_btnRun.setBounds(w / 2 - 50, 190, 100, 24);
-	m_btnDelete.setBounds(w - 75, 190, 70, 24);
+	m_btnDelete.setBounds(w - 105, 190, 100, 24);
+	m_btnRandomColor.setBounds(5, 190, 100, 24);
 
 	m_Table.setBounds(5, 220, w - 10, h - 225);
 }
@@ -391,11 +396,25 @@ void AnalystViewerComponent::buttonClicked(juce::Button* button)
 		juce::String layer = m_cbxLayer.getText(), classe = m_cbxClass.getText(), attribut = m_cbxAttribut.getText();
 		if (layer.isEmpty() || classe.isEmpty() || attribut.isEmpty())
 			return;
-		XGeoAnalyst* A = new XGeoAnalyst;
-		A->Name((layer + "_" + classe + "_" + attribut).toStdString());
-		A->Layer(layer.toStdString());
-		A->Class(classe.toStdString());
-		A->Attribut(attribut.toStdString());
+		std::string name = (layer + "_" + classe + "_" + attribut).toStdString();
+		XGeoAnalyst* A = nullptr;
+		bool new_analyse = false;
+		for (size_t i = 0; i < m_Analyse.size(); i++) {
+			if (m_Analyse[i]->Name() == name) {
+				A = m_Analyse[i];
+				A->Clear();
+				m_cbxAnalyse.setSelectedItemIndex(i, juce::dontSendNotification);
+				break;
+			}
+		}
+		if (A == nullptr) {	// Nouvelle analyse
+			new_analyse = true;
+			A = new XGeoAnalyst;
+			A->Name(name);
+			A->Layer(layer.toStdString());
+			A->Class(classe.toStdString());
+			A->Attribut(attribut.toStdString());
+		}
 		A->Type((XGeoAnalyst::eType)m_cbxDistribution.getSelectedId());
 		juce::Colour first = m_btnFirstColour.GetColour();
 		juce::Colour last = m_btnLastColour.GetColour();
@@ -408,11 +427,14 @@ void AnalystViewerComponent::buttonClicked(juce::Button* button)
 		A->Run(m_Base);
 		juce::MouseCursor::hideWaitCursor();
 
-		m_Analyse.push_back(A);
-		m_cbxAnalyse.addItem(A->Name(), m_Analyse.size());
-		m_cbxAnalyse.setSelectedId(m_Analyse.size(), juce::dontSendNotification);
+		if (new_analyse) {
+			m_Analyse.push_back(A);
+			m_cbxAnalyse.addItem(A->Name(), m_Analyse.size());
+			m_cbxAnalyse.setSelectedId(m_Analyse.size(), juce::dontSendNotification);
+		}
 		m_Model.SetAnalyse(A);
 		m_Table.updateContent();
+		m_Table.repaint();
 		sendActionMessage("UpdateVectorRepres");
 	}
 	if (button == &m_btnDelete) {
@@ -433,6 +455,23 @@ void AnalystViewerComponent::buttonClicked(juce::Button* button)
 		m_Analyse.clear();
 		m_Analyse = L;
 		delete A;
+		sendActionMessage("UpdateVectorRepres");
+	}
+	if (button == &m_btnRandomColor) {
+		int index = m_cbxAnalyse.getSelectedId();
+		if ((index < 1) || (index > m_Analyse.size()))
+			return;
+		index--;	// Les index commencent a 1 dans les combo-box
+		XGeoAnalyst* A = m_Analyse[index];
+		for (uint32_t i = 0; i < A->NbRepres(); i++) {
+			XGeoRepres* R = A->Repres(i);
+			juce::Colour pen_color = getRandomColour(0.5f, 1.f);
+			juce::Colour fill_color = getRandomColour(1.f, 0.5f);
+			R->Color(pen_color.getARGB());
+			R->FillColor(fill_color.getARGB());
+		}
+		m_Table.updateContent();
+		m_Table.repaint();
 		sendActionMessage("UpdateVectorRepres");
 	}
 }

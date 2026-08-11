@@ -18,6 +18,10 @@ inline juce::Colour getRandomColour(float brightness) noexcept
 {
   return juce::Colour::fromHSV(juce::Random::getSystemRandom().nextFloat(), 0.5f, brightness, 1.0f);
 }
+inline juce::Colour getRandomColour(float saturation, float alpha) noexcept
+{
+  return juce::Colour::fromHSV(juce::Random::getSystemRandom().nextFloat(), saturation, juce::Random::getSystemRandom().nextFloat(), alpha);
+}
 
 inline juce::Colour getRandomBrightColour() noexcept { return getRandomColour(0.8f); }
 inline juce::Colour getRandomDarkColour() noexcept { return getRandomColour(0.3f); }

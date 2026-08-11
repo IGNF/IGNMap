@@ -407,7 +407,6 @@ uint32_t XGeoAnalyst::Run(XGeoBase* base)
 {
 	if ((m_strLayer.size() < 1) || (m_strClass.size() < 1) || (m_strAttrib.size() < 1))
 		return 0;
-  DeleteRepres();
 	if (m_Type == Fill_Lin)
 		return RunFillLin(base);
 	if (m_Type == Fill_Log)

@@ -73,6 +73,7 @@ private:
 	ColourChangeButton m_btnLastColour;
 	juce::TextButton m_btnRun;
 	juce::TextButton m_btnDelete;
+	juce::TextButton m_btnRandomColor;
 
 	void resized() override;
 

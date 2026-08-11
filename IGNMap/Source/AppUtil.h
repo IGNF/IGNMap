@@ -44,7 +44,7 @@ public:
 	virtual bool NeedTargetImage() { return false; };
 	virtual void SetTargetImage(const juce::Image& /*image*/) { ; }
 	virtual void SetSelection(void*) = 0;
-	virtual void SetMessage(const juce::String& message) {;}
+	virtual void SetMessage(const juce::String& /*message*/) { ; }
 
 private:
 

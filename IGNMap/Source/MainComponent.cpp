@@ -22,6 +22,7 @@
 #include "PrefDlg.h"
 #include "SentinelViewer.h"
 #include "AnalystViewer.h"
+#include "LabelViewer.h"
 #include "ObjectViewer.h"
 #include "ZoomViewer.h"
 #include "StacViewer.h"
@@ -249,12 +250,16 @@ juce::PopupMenu MainComponent::getMenuForIndex(int menuIndex, const juce::String
 	else if (menuIndex == 2) // Tools
 	{ 
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuSynchronize);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
+		menu.addSeparator();
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolLabel);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolAnalyst);
+		menu.addSeparator();
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolZoom);
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolProfil);
+		menu.addSeparator();
+		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolSentinel);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolPanoramax);
 		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolStereo);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolProfil);
-		menu.addCommandItem(&m_CommandManager, CommandIDs::menuToolAnalyst);
 #ifdef DEBUG
 		menu.addItem(1000, "Test");
 #endif // DEBUG
@@ -318,7 +323,7 @@ void MainComponent::getAllCommands(juce::Array<juce::CommandID>& c)
 		CommandIDs::menuAddWmtsServer, CommandIDs::menuAddTmsServer, CommandIDs::menuAddDtmServer, CommandIDs::menuSynchronize,
 		CommandIDs::menuGoogle, CommandIDs::menuBing,
 		CommandIDs::menuToolSentinel, CommandIDs::menuToolZoom, CommandIDs::menuToolPanoramax, CommandIDs::menuToolStereo,
-		CommandIDs::menuToolProfil, CommandIDs::menuToolAnalyst,
+		CommandIDs::menuToolProfil, CommandIDs::menuToolAnalyst, CommandIDs::menuToolLabel,
 		CommandIDs::menuHelp, CommandIDs::menuAbout };
 	c.addArray(commands);
 }
@@ -513,6 +518,9 @@ void MainComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationC
 	case CommandIDs::menuToolAnalyst:
 		result.setInfo(juce::translate("Data Analyst"), juce::translate("Data Analyst"), "Menu", 0);
 		break;
+	case CommandIDs::menuToolLabel:
+		result.setInfo(juce::translate("Label Creator"), juce::translate("Label Creator"), "Menu", 0);
+		break;
 	default:
 		result.setInfo("Test", "Test menu", "Menu", 0);
 		break;
@@ -696,6 +704,9 @@ bool MainComponent::perform(const InvocationInfo& info)
 		break;
 	case CommandIDs::menuToolAnalyst:
 		OpenTool("Analyst");
+		break;
+	case CommandIDs::menuToolLabel:
+		OpenTool("Label");
 		break;
 	default:
 		return false;
@@ -2184,6 +2195,8 @@ ToolWindow* MainComponent::OpenTool(juce::String toolName)
 		tool = new ProfilViewer("Profil", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 	if (toolName == "Analyst")
 		tool = new AnalystViewer("Analyst", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
+	if (toolName == "Label")
+		tool = new LabelViewer("Label", juce::Colours::grey, juce::DocumentWindow::allButtons, this, &m_GeoBase);
 
 	if (tool != nullptr) {
 		tool->setVisible(true);
