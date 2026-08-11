@@ -736,6 +736,11 @@ void MainComponent::actionListenerCallback(const juce::String& message)
 		m_MapView.get()->RenderMap(false, false, false, true, false, true);
 		return;
 	}
+	if (message == "UpdateVectorClass") {
+		m_MapView.get()->RenderMap(true, false, false, true, false, true);
+		m_VectorViewer.get()->SetBase(&m_GeoBase);
+		return;
+	}
 	if (message == "UpdateRaster") {
 		m_MapView.get()->RenderMap(false, true, false, false, false, true);
 		return;

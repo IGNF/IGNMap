@@ -19,7 +19,7 @@
 // AnalystViewerComponent : composant principal
 //==============================================================================
 class LabelViewerComponent : public juce::Component, public juce::ComboBox::Listener,
-	public juce::Button::Listener, public juce::ActionBroadcaster, public juce::ActionListener {
+	public juce::Button::Listener, public juce::ActionBroadcaster {
 public:
 	LabelViewerComponent();
 	void SetBase(XGeoBase* base);
@@ -27,7 +27,6 @@ public:
 
 	void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 	virtual void buttonClicked(juce::Button*) override;
-	void actionListenerCallback(const juce::String& message) override;
 
 private:
 	XGeoBase* m_Base;

@@ -744,7 +744,7 @@ void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
 	M.runThread();
 	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
-	sendActionMessage("UpdateVector");
+	sendActionMessage("UpdateVectorClass");
 }
 
 //==============================================================================

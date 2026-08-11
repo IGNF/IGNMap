@@ -45,14 +45,14 @@ LabelViewerComponent::LabelViewerComponent()
 	addAndMakeVisible(m_lblDoublon);
 
 	addAndMakeVisible(m_sldMinLength);
-	m_sldMinLength.setRange(0., 250., 1.);
+	m_sldMinLength.setRange(0., 1000., 1.);
 	m_sldMinLength.setValue(0., juce::NotificationType::dontSendNotification);
 	m_sldMinLength.setSliderStyle(juce::Slider::LinearBar);
 	m_sldMinLength.setTextValueSuffix(" m");
 	addAndMakeVisible(m_sldMinLength);
 
 	addAndMakeVisible(m_sldMinArea);
-	m_sldMinArea.setRange(0., 250., 1.);
+	m_sldMinArea.setRange(0., 1000., 1.);
 	m_sldMinArea.setValue(0., juce::NotificationType::dontSendNotification);
 	m_sldMinArea.setSliderStyle(juce::Slider::LinearBar);
 	m_sldMinArea.setTextValueSuffix(" m2");
@@ -65,7 +65,7 @@ LabelViewerComponent::LabelViewerComponent()
 	addAndMakeVisible(m_sldImportance);
 
 	addAndMakeVisible(m_sldDoublon);
-	m_sldDoublon.setRange(0., 250., 1.);
+	m_sldDoublon.setRange(0., 1000., 1.);
 	m_sldDoublon.setValue(0., juce::NotificationType::dontSendNotification);
 	m_sldDoublon.setSliderStyle(juce::Slider::LinearBar);
 	m_sldDoublon.setTextValueSuffix(" m");
@@ -190,15 +190,6 @@ void LabelViewerComponent::buttonClicked(juce::Button* button)
 }
 
 //==============================================================================
-// Reponses aux actions
-//==============================================================================
-void LabelViewerComponent::actionListenerCallback(const juce::String& message)
-{
-
-	sendActionMessage("UpdateVectorRepres");
-}
-
-//==============================================================================
 // Calcul des labels
 //==============================================================================
 void LabelViewerComponent::Compute()
@@ -310,7 +301,7 @@ void LabelViewerComponent::Compute()
 	if (M.m_dDistFiltrage > 0.) C->QuickSort();
 	M.runThread();
 
-	sendActionMessage("UpdateVector");
+	sendActionMessage("UpdateVectorClass");
 }
 
 //==============================================================================
