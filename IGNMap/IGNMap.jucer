@@ -849,7 +849,8 @@
             bigIcon="bOamUH" userNotes="Installation de la LibJpeg (jpeg-10) : copier jconfig.vc en jconfig.h">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0" alwaysGenerateDebugSymbols="0"
+                       optimisation="2"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>

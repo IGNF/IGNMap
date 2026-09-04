@@ -204,6 +204,11 @@ bool WmtsLayerTMS::FindProjection()
       m_ProjCode = (XGeoProjection::XProjCode)proj;
       break;
     }
+    code = numProj; // On cherche juste le code dans le fatras de la normalisation ...
+    if (m_TMS.Crs().find(code.toStdString()) != std::string::npos) {
+      m_ProjCode = (XGeoProjection::XProjCode)proj;
+      break;
+    }
   }
   if (m_ProjCode == XGeoProjection::Unknown)
     return false;

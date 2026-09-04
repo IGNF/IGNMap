@@ -31,12 +31,13 @@ public:
   void Clear();
 
   bool OpenImage(std::string filename, bool left, int rot = 1);
-  bool OpenOrientation(std::string filename);
-  bool OpenCamera(std::string filename);
+  bool OpenOrientation(std::string filename, bool center = true);
+  bool OpenCamera(std::string filename, bool center = true);
   bool OpenPseudoOrientation(std::string filename);
   bool OpenProject(std::string filename);
   bool SaveProject(std::string filename);
   void SetPseudoOrientation(const XPt3D& SL, const XPt3D& SR, const XPt3D& Ori, const double& gsd);
+  void SetTarget(const double& X, const double& Y, const double& Z);
 
   void resized() override;
   void paint(juce::Graphics&) override;
@@ -123,6 +124,7 @@ private:
   void SetOrthoPosition();
   void SetZBallonnet();
   void Correlation();
+  void AutoLevel();
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StereoView)
 };
@@ -144,7 +146,7 @@ public:
     setResizeLimits(400, 450, 10000, 10000);
   }
 
-  void SetTarget(const double& , const double& , const double& ) override { /*m_Stereo.SetTarget(X, Y, Z);*/ }
+  void SetTarget(const double& X, const double& Y, const double& Z) override { m_Stereo.SetTarget(X, Y, Z); }
   void SetSelection(void*) override { ; }
   bool OpenImage(std::string filename, bool left, int rot = 1) { return m_Stereo.OpenImage(filename, left, rot); }
   void SetPseudoOrientation(XPt3D SL, XPt3D SR, XPt3D Ori, double gsd) { m_Stereo.SetPseudoOrientation(SL, SR, Ori, gsd); }

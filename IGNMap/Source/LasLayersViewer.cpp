@@ -567,10 +567,6 @@ void LasLayersViewer::actionListenerCallback(const juce::String& message)
 		sendActionMessage("UpdateLas");
 		return;
 	}
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateLas");
-		return;
-	}
 	if (message == "InvertVisibility") {
 		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
 			XGeoClass* C = m_Base->Class(i);
@@ -924,9 +920,10 @@ void LasLayersViewer::ComputeStat(std::vector<XGeoClass*> T)
 
 	M.CreateMifMidFile(foldername, juce::String("StatLAS"), Att);
 	M.runThread();
-	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	XGeoClass* resultClass = GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVector");
+	gClassViewerMgr.AddClassViewer(resultClass->Name(), resultClass, this);
 }
 
 //==============================================================================
@@ -1066,7 +1063,8 @@ void LasLayersViewer::ComputeDeltaLasVector(std::vector< XGeoClass*> T)
 		mid << (M.m_P[i].VecPt.Z - M.m_P[i].LasPt.Z) << "\t" << (int)M.m_P[i].Classification << "\t" << M.m_P[i].Id << std::endl;
 	}
 
-	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	XGeoClass* resultClass = GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVector");
+	gClassViewerMgr.AddClassViewer(resultClass->Name(), resultClass, this);
 }

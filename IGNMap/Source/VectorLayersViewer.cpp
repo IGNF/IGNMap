@@ -388,10 +388,6 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 		m_Table.updateContent();
 		return;
 	}
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateVector");
-		return;
-	}
 	if (message == "UpdateVectorRepres") {
 		m_Table.repaint();
 		sendActionMessage("UpdateVectorRepres");
@@ -465,9 +461,9 @@ void VectorLayersViewer::actionListenerCallback(const juce::String& message)
 	}
 	if (message == "Properties") {
 		int index = -1;
-		for (int i = 0; i < m_Base->NbClass(); i++)
+		for (uint32_t i = 0; i < m_Base->NbClass(); i++)
 			if (m_Base->Class(i) == T[0])
-				index = i;
+				index = (int)i;
 		if (index >= 0)
 			sendActionMessage("Properties:Class:" + juce::String(index));
 	}

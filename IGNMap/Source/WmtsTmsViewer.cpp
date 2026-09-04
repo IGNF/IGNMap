@@ -27,7 +27,7 @@ void WmtsViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int /
 		g.setColour(juce::Colours::lightblue);
 		g.drawRect(g.getClipBounds());
 	}
-	if (m_Base != nullptr) {
+	if ((m_Base != nullptr)&&(rowNumber < m_Proxy.size())) {
 		XGeoClass* C = m_Base->Class("WMTS", m_Proxy[rowNumber].Id.c_str());
 		if (C != nullptr) {
 			g.setColour(juce::Colours::darkgreen);
@@ -287,7 +287,7 @@ void TmsViewerModel::paintRowBackground(juce::Graphics& g, int rowNumber, int /*
 		g.setColour(juce::Colours::lightblue);
 		g.drawRect(g.getClipBounds());
 	}
-	if (m_Base != nullptr) {
+	if ((m_Base != nullptr)&&(rowNumber < m_Proxy.size())) {
 		XGeoClass* C = m_Base->Class("TMS", m_Proxy[rowNumber].Id.toStdString().c_str());
 		if (C != nullptr) {
 			g.setColour(juce::Colours::darkgreen);

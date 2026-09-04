@@ -331,10 +331,6 @@ void ImageLayersViewer::actionListenerCallback(const juce::String& message)
 		m_Table.repaint();
 		return;
 	}
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateRaster");
-		return;
-	}
 	if (message == "InvertVisibility") {
 		for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
 			XGeoClass* C = m_Base->Class(i);

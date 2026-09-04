@@ -22,21 +22,21 @@
 //-----------------------------------------------------------------------------
 
 // sample error callback expecting a FILE* client object
-static void error_callback(const char* /*msg*/, void* client_data)
+static void error_callback(const char* /*msg*/, void* /*client_data*/)
 {
-  (void)client_data;
+  //(void)client_data;
   //fprintf(stdout, "[ERROR] %s", msg);
 }
 // sample warning callback expecting a FILE* client object
-static void warning_callback(const char* /*msg*/, void* client_data)
+static void warning_callback(const char* /*msg*/, void* /*client_data*/)
 {
-  (void)client_data;
+  //(void)client_data;
   //fprintf(stdout, "[WARNING] %s", msg);
 }
 // sample debug callback expecting no client object
-static void info_callback(const char* /*msg*/, void* client_data)
+static void info_callback(const char* /*msg*/, void* /*client_data*/)
 {
-  (void)client_data;
+  //(void)client_data;
   //fprintf(stdout, "[INFO] %s", msg);
 }
 
@@ -47,6 +47,11 @@ XOpenJp2Image::XOpenJp2Image(const char* filename)
 {
   m_bValid = false;
   m_strFilename = filename;
+  m_nLastTile = 0xFFFFFFFF;
+  m_Tile = nullptr;
+  m_Stream = nullptr;
+  m_Codec = nullptr;
+  m_Image = nullptr;
 
   if (!CreateCodec())
     return;
@@ -58,6 +63,7 @@ XOpenJp2Image::XOpenJp2Image(const char* filename)
   m_nNbBits = (uint16_t)m_Image->comps[0].prec;
   if ((m_nNbBits > 8) && (m_nNbBits <= 16))
     m_nNbBits = 16;
+  //m_Tile = new uint8_t[m_nTileW * m_nTileH * m_nNbSample * m_nNbBits / 8];
 
   m_bValid = true;
   ClearCodec();
@@ -72,6 +78,10 @@ XOpenJp2Image::XOpenJp2Image(const char* filename)
 XOpenJp2Image::~XOpenJp2Image()
 {
   ClearCodec();
+  if (m_Tile != nullptr)
+    delete[] m_Tile;
+  m_Tile = nullptr;
+  m_nLastTile = 0xFFFFFFFF;
 }
 
 //-----------------------------------------------------------------------------
@@ -79,14 +89,15 @@ XOpenJp2Image::~XOpenJp2Image()
 //-----------------------------------------------------------------------------
 void XOpenJp2Image::ClearCodec()
 {
-  if (m_bValid) {
-    opj_destroy_codec(m_Codec);
-    m_Codec = nullptr;
+  if (m_Stream != nullptr)
     opj_stream_destroy(m_Stream);
-    m_Stream = nullptr;
+  m_Stream = nullptr;
+  if (m_Codec != nullptr)
+    opj_destroy_codec(m_Codec);
+  m_Codec = nullptr;
+  if (m_Image != nullptr)
     opj_image_destroy(m_Image);
-    m_Image = nullptr;
-  }
+  m_Image = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -95,9 +106,11 @@ void XOpenJp2Image::ClearCodec()
 bool XOpenJp2Image::CreateCodec()
 {
   ClearCodec();
-  m_Stream = opj_stream_create_default_file_stream(m_strFilename.c_str(), OPJ_TRUE);
-  if (m_Stream == nullptr)
-    return false;
+  if (m_Stream == nullptr) {
+    m_Stream = opj_stream_create_default_file_stream(m_strFilename.c_str(), OPJ_TRUE);
+    if (m_Stream == nullptr)
+      return false;
+  }
 
   m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
   if (m_Codec == nullptr) {
@@ -106,9 +119,9 @@ bool XOpenJp2Image::CreateCodec()
     return false;
   }
   //register callbacks
-  opj_set_info_handler(m_Codec, info_callback, 00);
-  opj_set_warning_handler(m_Codec, warning_callback, 00);
-  opj_set_error_handler(m_Codec, error_callback, 00);
+  opj_set_info_handler(m_Codec, info_callback, nullptr);
+  opj_set_warning_handler(m_Codec, warning_callback, nullptr);
+  opj_set_error_handler(m_Codec, error_callback, nullptr);
 
   opj_dparameters_t parameters;
   opj_set_default_decoder_parameters(&parameters);
@@ -119,16 +132,23 @@ bool XOpenJp2Image::CreateCodec()
     m_Stream = nullptr;
     return false;
   }
-  opj_codec_set_threads(m_Codec, 4);
+  opj_codec_set_threads(m_Codec, 1);
   opj_decoder_set_strict_mode(m_Codec, OPJ_TRUE);
 
   if (!opj_read_header(m_Stream, m_Codec, &m_Image)) {
-    opj_destroy_codec(m_Codec);
-    m_Codec = nullptr;
     opj_stream_destroy(m_Stream);
     m_Stream = nullptr;
+    opj_destroy_codec(m_Codec);
+    m_Codec = nullptr;
     return false;
   }
+
+  /*
+  opj_codestream_info_v2_t* streamInfo = opj_get_cstr_info(m_Codec);
+  m_nTileW = streamInfo->tdx;
+  m_nTileH = streamInfo->tdy;
+  opj_destroy_cstr_info(&streamInfo);*/
+
   return true;
 }
 
@@ -139,29 +159,62 @@ bool XOpenJp2Image::GetArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uint32_
 {
   if (!m_bValid)
     return false;
-  //if (m_Image->comps[0].factor != 0) {  // Le codec est a reconstruire
-  //  ClearCodec();
-   if (!CreateCodec())
+  if (!CreateCodec()) {
+    ClearCodec();
     return false;
-  //}
-  opj_set_decoded_resolution_factor(m_Codec, 0);
-  opj_set_decode_area(m_Codec, m_Image, x, y, x+w, y+h);
-  if (!opj_decode(m_Codec, m_Stream, m_Image))
+  }
+  if (!opj_set_decoded_resolution_factor(m_Codec, 0)) {
+    ClearCodec();
     return false;
+  }
+  if (!opj_set_decode_area(m_Codec, m_Image, x, y, x + w, y + h)) {
+    ClearCodec();
+    return false;
+  }
+  if (!opj_decode(m_Codec, m_Stream, m_Image)) {
+    opj_end_decompress(m_Codec, m_Stream);
+    ClearCodec();
+    return false;
+  }
 
   int nb_byte = m_nNbBits / 8;
   uint8_t* ptr = area;
   for (uint32_t i = 0; i < w * h; i++) {
     for (uint32_t j = 0; j < m_Image->numcomps; j++) {
-      //*ptr = m_Image->comps[j].data[i];
       memcpy(ptr, &(m_Image->comps[j].data[i]), nb_byte);
       ptr += nb_byte;
     }
   }
   
-  //ClearCodec();
+  ClearCodec();
   return true;
 }
+
+/*
+bool XOpenJp2Image::GetArea(XFile*, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
+{
+  if (!m_bValid)
+    return false;
+  if ((x + w > m_nW) || (y + h > m_nH))
+    return false;
+
+  uint32_t startX = (uint32_t)floor((double)x / (double)m_nTileW);
+  uint32_t startY = (uint32_t)floor((double)y / (double)m_nTileH);
+  uint32_t endX = (uint32_t)floor((double)(x + w - 1) / (double)m_nTileW);
+  uint32_t endY = (uint32_t)floor((double)(y + h - 1) / (double)m_nTileH);
+
+  for (uint32_t line = startY; line <= endY; line++) {
+    for (uint32_t col = startX; col <= endX; col++) {
+      if (!LoadTile(col, line))
+        return false;
+      if (!CopyTile(col, line, x, y, w, h, area))
+        return false;
+    }
+  }
+
+  return true;
+}
+*/
 
 //-----------------------------------------------------------------------------
 // Recuperation d'une zone de pixels avec zoom arriere
@@ -195,10 +248,15 @@ bool XOpenJp2Image::GetZoomArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uin
   }
   if (!flag)
     return false;
-  if (!opj_set_decode_area(m_Codec, m_Image, x, y, x + maxW, y + maxH))
+  if (!opj_set_decode_area(m_Codec, m_Image, x, y, x + maxW, y + maxH)) {
+    ClearCodec();
     return false;
-  if (!opj_decode(m_Codec, m_Stream, m_Image))
+  }
+  if (!opj_decode(m_Codec, m_Stream, m_Image)) {
+    opj_end_decompress(m_Codec, m_Stream);
+    ClearCodec();
     return false;
+  }
 
   uint32_t* lut = new uint32_t[wout];
   for (uint32_t i = 0; i < wout; i++)
@@ -225,6 +283,93 @@ bool XOpenJp2Image::GetZoomArea(XFile* , uint32_t x, uint32_t y, uint32_t w, uin
 
   ClearCodec(); 
   
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Chargement d'une Tile
+//-----------------------------------------------------------------------------
+bool XOpenJp2Image::LoadTile(uint32_t x, uint32_t y)
+{
+  if (!m_bValid)
+    return false;
+  CreateCodec();
+  opj_set_decoded_resolution_factor(m_Codec, 0);
+
+  uint32_t tileNumber = y * (uint32_t)ceil((double)m_nW / (double)m_nTileW) + x;
+  if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image, tileNumber)) {
+    ClearCodec();
+    return false;
+  }
+
+  int nb_byte = m_nNbBits / 8;
+  ::memset(m_Tile, 0, m_nTileW * m_nTileH * m_nNbSample * m_nNbBits / 8);
+  uint32_t index = 0;
+  for (uint32_t line = 0; line < m_nTileH; line++) {
+    if (line >= m_Image->comps[0].h)
+      break;
+    uint8_t* ptr = &m_Tile[line * m_nTileW * m_nNbSample * m_nNbBits / 8];
+    for (uint32_t col = 0; col < m_nTileW; col++) {
+      if (col >= m_Image->comps[0].w)
+        break;
+      for (uint32_t comp = 0; comp < m_Image->numcomps; comp++) {
+        memcpy(ptr, &(m_Image->comps[comp].data[index]), nb_byte);
+        ptr += nb_byte;
+      }
+      index++;
+    }
+  }
+  ClearCodec();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+// Copie les pixels d'une tile dans une ROI
+//-----------------------------------------------------------------------------
+bool XOpenJp2Image::CopyTile(uint32_t tX, uint32_t tY, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area)
+{
+  // Intersection dans la tile en X
+  uint32_t startX = tX * m_nTileW;
+  if (startX >= x)
+    startX = 0;
+  else
+    startX = x - startX;
+  uint32_t endX = (tX + 1) * m_nTileW;
+  if (endX <= x + w)
+    endX = m_nTileW;
+  else
+    endX = m_nTileW - (endX - (x + w));
+  // Intersection dans la tile en Y
+  uint32_t startY = tY * m_nTileH;
+  if (startY >= y)
+    startY = 0;
+  else
+    startY = y - startY;
+  uint32_t endY = (tY + 1) * m_nTileH;
+  if (endY <= y + h)
+    endY = m_nTileH;
+  else
+    endY = m_nTileH - (endY - (y + h));
+
+  // Debut dans la ROI
+  uint32_t X0 = 0;
+  uint32_t Y0 = 0;
+  if (tX * m_nTileW > x)
+    X0 = tX * m_nTileW - x;
+  if (tY * m_nTileH > y)
+    Y0 = tY * m_nTileH - y;
+
+  // Copie dans la ROI
+  uint32_t lineSize = (endX - startX) * m_nNbSample;
+  uint32_t nbline = endY - startY;
+  for (uint32_t i = 0; i < nbline; i++) {
+    uint8_t* source = &m_Tile[((i + startY) * m_nTileW + startX) * m_nNbSample];
+    uint8_t* dest = &area[(Y0 * w + i * w + X0) * m_nNbSample];
+    if (((Y0 * w + i * w + X0) * m_nNbSample + lineSize) > (w * h * m_nNbSample))
+      return false;
+    ::memcpy(dest, source, lineSize);
+  }
+
   return true;
 }
 

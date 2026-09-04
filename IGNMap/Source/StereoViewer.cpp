@@ -73,15 +73,22 @@ bool StereoView::OpenProject(std::string filename)
 	m_ImageL.SetRotation(rot_left);
 	OpenImage(right_image, false);
 	m_ImageR.SetRotation(rot_right);
-	OpenOrientation(opk_file);
-	OpenCamera(camera_file);
+	OpenOrientation(opk_file, false);
+	OpenCamera(camera_file, false);
 	m_ViewX = parser.ReadNodeAsInt("/stereopair_project/viewX");
-	m_ViewY = parser.ReadNodeAsInt("/stereopair_project/viewX");
+	m_ViewY = parser.ReadNodeAsInt("/stereopair_project/viewY");
 	m_nFactor = parser.ReadNodeAsInt("/stereopair_project/factor");
 	if (m_nFactor < 1) m_nFactor = 1;
 	int x = parser.ReadNodeAsInt("/stereopair_project/right_ori_X");
 	int y = parser.ReadNodeAsInt("/stereopair_project/right_ori_Y");
 	m_ImageR.SetOrigin(x, y);
+	m_Bal.X = parser.ReadNodeAsDouble("/stereopair_project/bal_X");
+	m_Bal.Y = parser.ReadNodeAsDouble("/stereopair_project/bal_Y");
+	m_Bal.Z = parser.ReadNodeAsDouble("/stereopair_project/bal_Z");
+	if ((fabs(m_Bal.X) < 0.1) && (fabs(m_Bal.Y) < 0.1))
+		SetCenterPosition();
+	else
+		Update();
 
 	return true;
 }
@@ -96,6 +103,8 @@ bool StereoView::SaveProject(std::string filename)
 	std::ofstream out(filename);
 	if (!out.good())
 		return false;
+	out.setf(std::ios::fixed);
+	out.precision(2);
 	out << "<stereopair_project>" << std::endl;
 	out << "<left_image> " << path.Relative(folder.c_str(), m_ImageL.Filename().c_str()) << " </left_image>" << std::endl;
 	out << "<left_image_rotation> " << m_ImageL.GetRotation() << " </left_image_rotation>" << std::endl;
@@ -108,6 +117,9 @@ bool StereoView::SaveProject(std::string filename)
 	out << "<factor> " << m_nFactor << " </factor>" << std::endl;
 	out << "<right_ori_X> " << m_ImageR.OriX() << " </right_ori_X>" << std::endl;
 	out << "<right_ori_Y> " << m_ImageR.OriY() << " </right_ori_Y>" << std::endl;
+	out << "<bal_X> " << m_Bal.X << " </bal_X>" << std::endl;
+	out << "<bal_Y> " << m_Bal.Y << " </bal_Y>" << std::endl;
+	out << "<bal_Z> " << m_Bal.Z << " </bal_Z>" << std::endl;
 
 	out << "</stereopair_project>" << std::endl;
 	return true;
@@ -139,40 +151,6 @@ void StereoView::Update()
 //==============================================================================
 bool StereoView::keyPressed(const juce::KeyPress& key)
 {
-	if (key.getModifiers() == juce::ModifierKeys::ctrlModifier) {
-		if (juce::String(key.getTextCharacter()).compareIgnoreCase("o")) {
-			juce::String filename = AppUtil::OpenFile("ProjectPath", juce::translate("Open Project"), "*.xml");
-			if (!filename.isEmpty())
-				OpenProject(AppUtil::GetStringFilename(filename));
-			return true;
-		}
-	}
-
-	if ((key.getTextCharacter() == 'W') || (key.getTextCharacter() == 'w')) {
-		juce::String filename = AppUtil::OpenFile("RasterPath", juce::translate("Open Left Image"), "*.tif;*.jp2;*.cog");
-		if (!filename.isEmpty())
-			OpenImage(AppUtil::GetStringFilename(filename), true);
-		return true;
-	}
-	if ((key.getTextCharacter() == 'X') || (key.getTextCharacter() == 'x')) {
-		juce::String filename = AppUtil::OpenFile("RasterPath", juce::translate("Open Right Image"), "*.tif;*.jp2;*.cog");
-		if (!filename.isEmpty())
-			OpenImage(AppUtil::GetStringFilename(filename), false);
-		return true;
-	}
-	if ((key.getTextCharacter() == 'C') || (key.getTextCharacter() == 'c')) {
-		juce::String filename = AppUtil::OpenFile("CameraPath", juce::translate("Open Camera File"), "*.xml");
-		if (!filename.isEmpty())
-			OpenCamera(AppUtil::GetStringFilename(filename));
-		return true;
-	}
-	if ((key.getTextCharacter() == 'V') || (key.getTextCharacter() == 'v')) {
-		juce::String filename = AppUtil::OpenFile("CameraPath", juce::translate("Open Orientation File"), "*.opk");
-		if (!filename.isEmpty())
-			OpenOrientation(AppUtil::GetStringFilename(filename));
-		return true;
-	}
-
 	int Tx = 0, Ty = 0;
 	// Deplacement du ViewPort
 	if (key.getKeyCode() == juce::KeyPress::leftKey)
@@ -251,14 +229,7 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 
 	// Recherche du Z du ballonnet sur la Geoplateforme et mise a niveau
 	if ((key.getTextCharacter() == 'T') || (key.getTextCharacter() == 't')) {
-		XGeoPref pref;
-		pref.Projection(XGeoProjection::Lambert93);
-		double lon, lat;
-		pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, m_Bal.X, m_Bal.Y, lon, lat);
-		m_Bal.Z = m_GeoSearch.GetAltitude(lon, lat);
-		SetBallonnet();
-		SetZBallonnet();
-		repaint();
+		AutoLevel();
 		return true;
 	}
 
@@ -317,7 +288,7 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 	}
 
 	// Mode restitution
-	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+	if ((key.getKeyCode() == juce::KeyPress::F2Key)|| (key.getKeyCode() == juce::KeyPress::escapeKey)) {
 		m_Restit = (!m_Restit);
 		if (m_Restit)
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NoCursor));
@@ -387,14 +358,104 @@ void StereoView::mouseDrag(const juce::MouseEvent& event)
 void StereoView::mouseDown(const juce::MouseEvent& event)
 {
 	m_DragPt = juce::Point<float>(0, 0);
-	if (event.mods.isLeftButtonDown()) {
+	if (event.mods.isLeftButtonDown()) {	// Bouton gauche
 		m_StartPt = event.position;
 		setMouseCursor(juce::MouseCursor(juce::MouseCursor::DraggingHandCursor));
 		m_bDrag = true;
+		return;
 	}
-	if ((event.mods.isMiddleButtonDown()) && (m_Restit)) {
+	if ((event.mods.isMiddleButtonDown()) && (m_Restit)) {	// Bouton du milieu
 		Correlation();
 		SetZBallonnet();
+		return;
+	}
+	if (event.mods.isRightButtonDown() && (m_Restit)) {	// Bouton droit en restitution
+		juce::PopupMenu m;
+		m.addItem(1, juce::translate("Z Correlation"));
+		m.addItem(2, juce::translate("Z auto"));
+
+		m.showMenuAsync(juce::PopupMenu::Options(),
+			[this](int result)
+			{
+				if (result == 0)
+				{
+					// user dismissed the menu without picking anything
+				}
+				else if (result == 1)	// Correlation
+				{
+					Correlation();
+					SetZBallonnet();
+				}
+				else if (result == 2)	// Sauvegarde d'un projet
+				{
+					AutoLevel();
+				}
+			});
+		return;
+	}
+
+	if (event.mods.isRightButtonDown()) {	// Bouton droit
+		juce::PopupMenu m;
+		m.addItem(1, juce::translate("New Project"));
+		m.addItem(2, juce::translate("Open Project"));
+		m.addItem(3, juce::translate("Save Project"));
+		m.addSeparator();
+		m.addItem(11, juce::translate("Open Left Image"));
+		m.addItem(12, juce::translate("Open Right Image"));
+		if ((!m_ImageL.Filename().empty()) && (!m_ImageR.Filename().empty())) {
+			m.addItem(13, juce::translate("Open Camera File"));
+			m.addItem(14, juce::translate("Open Orientation File"));
+		}
+
+		m.showMenuAsync(juce::PopupMenu::Options(),
+			[this](int result)
+			{
+				if (result == 0)
+				{
+					// user dismissed the menu without picking anything
+				}
+				else if (result == 1)	// Nouveau projet
+				{
+					Clear();
+					repaint();
+				}
+				else if (result == 2)	// Ouverture d'un projet
+				{
+					juce::String filename = AppUtil::OpenFile("ProjectPath", juce::translate("Open Project"), "*.xml");
+					if (!filename.isEmpty())
+						OpenProject(AppUtil::GetStringFilename(filename));
+				}
+				else if (result == 3)	// Sauvegarde d'un projet
+				{
+					juce::String filename = AppUtil::SaveFile("ProjectPath", juce::translate("Save Project"), "*.xml");
+					if (!filename.isEmpty())
+						SaveProject(AppUtil::GetStringFilename(filename));
+				}
+				else if (result == 11)	// Ouverture image Gauche
+				{
+					juce::String filename = AppUtil::OpenFile("RasterPath", juce::translate("Open Left Image"), "*.tif;*.jp2;*.cog");
+					if (!filename.isEmpty())
+						OpenImage(AppUtil::GetStringFilename(filename), true);
+				}
+				else if (result == 12)	// Ouverture image Droite
+				{
+					juce::String filename = AppUtil::OpenFile("RasterPath", juce::translate("Open Right Image"), "*.tif;*.jp2;*.cog");
+					if (!filename.isEmpty())
+						OpenImage(AppUtil::GetStringFilename(filename), false);
+				}
+				else if (result == 13)	// Ouverture Camera
+				{
+					juce::String filename = AppUtil::OpenFile("CameraPath", juce::translate("Open Camera File"), "*.xml");
+					if (!filename.isEmpty())
+						OpenCamera(AppUtil::GetStringFilename(filename));
+				}
+				else if (result == 14)	// Ouverture Orientation
+				{
+					juce::String filename = AppUtil::OpenFile("CameraPath", juce::translate("Open Orientation File"), "*.opk");
+					if (!filename.isEmpty())
+						OpenOrientation(AppUtil::GetStringFilename(filename));
+				}
+			});
 	}
 }
 
@@ -800,13 +861,14 @@ bool StereoView::OpenImage(std::string filename, bool left, int rot)
 //-----------------------------------------------------------------------------
 // Ouverture du fichier d'orientation
 //-----------------------------------------------------------------------------
-bool StereoView::OpenOrientation(std::string filename)
+bool StereoView::OpenOrientation(std::string filename, bool center)
 {
 	std::ifstream in;
 	in.open(filename);
 	if (!in.good())
 		return false;
 	m_strOrientationFile = filename;
+	/*
 	std::string field, sep, value, name, camera;
 	in >> field >> sep >> value; // CHANTIER : ori
 	in >> field >> sep >> value; // PROJECTION : LAMBERT93
@@ -833,16 +895,43 @@ bool StereoView::OpenOrientation(std::string filename)
 		if (left_good && right_good)
 			break;
 	}
+	*/
+	XPath P;
+	std::string nameL = P.Name(m_ImageL.Filename().c_str(), false);
+	std::string nameR = P.Name(m_ImageR.Filename().c_str(), false);
+	bool left_good = false, right_good = false;
+	std::string field;
+	char buf[1024];
+	double x, y, z, omega, phi, kappa;
+	while (!in.eof()) {
+		in >> field;
+		if (field.compare(nameL) == 0) {
+			in >> x >> y >> z >> omega >> phi >> kappa;
+			m_Model.SetCli(true, XPt3D(x, y, z), omega, phi, kappa);
+			left_good = true;
+		}
+		if (field.compare(nameR) == 0) {
+			in >> x >> y >> z >> omega >> phi >> kappa;
+			m_Model.SetCli(false, XPt3D(x, y, z), omega, phi, kappa);
+			right_good = true;
+		}
+		if (left_good && right_good)
+			break;
+		in.getline(buf, 1024);
+	}
+
 	if (!(left_good && right_good))
 		return false;
 	m_OrientationType = StereoModel;
+	if (center)
+		SetCenterPosition();
 	return true;
 }
 
 //-----------------------------------------------------------------------------
 // Ouverture du fichier camera
 //-----------------------------------------------------------------------------
-bool StereoView::OpenCamera(std::string filename)
+bool StereoView::OpenCamera(std::string filename, bool center)
 {
 	XParserXML parser;
 	if (!parser.Parse(filename))
@@ -858,8 +947,8 @@ bool StereoView::OpenCamera(std::string filename)
 	F.XmlRead(&focal);
 	double pixelSize = sensor.ReadNodeAsDouble("/sensor/pixel_size");
 	m_Model.SetFocal(F, pixelSize);
-
-	SetCenterPosition();
+	if (center)
+		SetCenterPosition();
 	return true;
 }
 
@@ -1066,6 +1155,19 @@ void StereoView::GoToPix(int x, int y)
 }
 
 //-----------------------------------------------------------------------------
+// Fixe la cible
+//-----------------------------------------------------------------------------
+void StereoView::SetTarget(const double& X, const double& Y, const double& Z)
+{
+	m_Bal = XPt3D(X, Y, Z);
+	if (Z <= 0.)
+		AutoLevel();
+	else
+		SetBallonnet();
+	repaint();
+}
+
+//-----------------------------------------------------------------------------
 // Fixe le ballonnet
 //-----------------------------------------------------------------------------
 void StereoView::SetBallonnet(double x, double y, double z)
@@ -1258,5 +1360,20 @@ void StereoView::Correlation()
 		m_Bal = (U1 + U2) * 0.5;
 		SetBallonnet(m_Bal.X, m_Bal.Y, m_Bal.Z);
 	}
+	repaint();
+}
+
+//-----------------------------------------------------------------------------
+// Recherche du Z sur la GeoPlateforme
+//-----------------------------------------------------------------------------
+void StereoView::AutoLevel()
+{
+	XGeoPref pref;
+	pref.Projection(XGeoProjection::Lambert93);
+	double lon, lat;
+	pref.ConvertDeg(pref.Projection(), XGeoProjection::RGF93, m_Bal.X, m_Bal.Y, lon, lat);
+	m_Bal.Z = m_GeoSearch.GetAltitude(lon, lat);
+	SetBallonnet();
+	SetZBallonnet();
 	repaint();
 }

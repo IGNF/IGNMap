@@ -111,7 +111,7 @@ void ClassViewerModel::paintCell(juce::Graphics& g, int rowNumber, int columnId,
 //==============================================================================
 // Clic dans une cellule
 //==============================================================================
-void ClassViewerModel::cellClicked(int /*rowNumber*/, int columnId, const juce::MouseEvent& /*event*/)
+void ClassViewerModel::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
 	// Visibilite
 	if (columnId == Column::Visibility) {
@@ -124,6 +124,47 @@ void ClassViewerModel::cellClicked(int /*rowNumber*/, int columnId, const juce::
 		sendActionMessage("UpdateObjectSelectability");
 		return;
 	}
+	XGeoVector* V = FindVector(rowNumber);
+	if (V == nullptr)
+		return;
+
+	if (!event.mods.isRightButtonDown())
+		return;
+	juce::PopupMenu m;
+	m.addItem(1, juce::translate("Copy item"));
+	m.addItem(2, juce::translate("Copy all items"));
+
+	m.showMenuAsync(juce::PopupMenu::Options(),
+		[this, V](int result)
+		{
+			if (result == 0)
+			{
+				// user dismissed the menu without picking anything
+			}
+			else if (result == 1)	// Copie de la ligne
+			{
+				std::vector<std::string> Att;
+				V->ReadAttributes(Att);
+				juce::String text;
+				for (size_t i = 0; i < Att.size() / 2; i++)
+					text = text + (Att[2*i + 1] + ",");
+				juce::SystemClipboard::copyTextToClipboard(text);
+			}
+			else if (result == 2)	// Copie de toutes les lignes
+			{
+				std::vector<std::string> Att;
+				std::string text;
+				for (size_t i = 0; i < m_Proxy.size(); i++) {
+					m_Proxy[i]->ReadAttributes(Att);
+					for (size_t j = 0; j < Att.size() / 2; j++) {
+						if (j > 0) text += ",";
+						text += (Att[2*j + 1]);
+					}
+					text += "\n";
+				}
+				juce::SystemClipboard::copyTextToClipboard(text);
+			}
+		});
 
 }
 
@@ -245,9 +286,17 @@ void ClassViewer::actionListenerCallback(const juce::String& message)
 		m_Table.repaint();
 		return;
 	}
+	XGeoClass* C = GetClass();
+	if (C == nullptr) return;
+	juce::String updateMessage;
+	if (C->IsVector()) updateMessage = "UpdateVector";
+	if (C->IsDTM()) updateMessage = "UpdateDtm";
+	if (C->IsLAS()) updateMessage = "UpdateLas";
+	if (C->IsRaster()) updateMessage = "UpdateRaster";
+
 	if (message == "InvertVisibility") {
 		m_Table.repaint();
-		sendActionMessage("UpdateClass");
+		sendActionMessage(updateMessage);
 		return;
 	}
 
@@ -264,7 +313,7 @@ void ClassViewer::actionListenerCallback(const juce::String& message)
 		for (int i = 0; i < T.size(); i++)
 			T[i]->Visible(!T[i]->Visible());
 		m_Table.repaint();
-		sendActionMessage("UpdateClass");
+		sendActionMessage(updateMessage);
 		return;
 	}
 	if (message == "UpdateObjectSelectability") {

@@ -19,6 +19,10 @@ class XOpenJp2Image : public XBaseImage {
 protected:
   bool											m_bValid;	// Indique si l'image est valide
   uint32_t									m_nNumli;	// Numero de la ligne active
+  uint32_t                  m_nTileW;
+  uint32_t                  m_nTileH;
+  uint8_t*                  m_Tile;		// Derniere tile chargee
+  uint32_t		              m_nLastTile;	// Numero de la derniere tile chargee
   std::string               m_strFilename;
   std::string							  m_strXmlMetadata;
   opj_codec_t*              m_Codec;
@@ -33,6 +37,9 @@ protected:
 
   bool CreateCodec();
   void ClearCodec();
+
+  bool LoadTile(uint32_t x, uint32_t y);
+  bool CopyTile(uint32_t tX, uint32_t tY, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t* area);
 
   typedef struct {
     uint32_t box_size, box_type;

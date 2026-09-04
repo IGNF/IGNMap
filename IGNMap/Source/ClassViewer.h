@@ -17,7 +17,7 @@ class XGeoClass;
 class XGeoVector;
 
 //==============================================================================
-// ClassViewerModel : table pour montrer les objets d'une classe
+// ClassViewerModel : modele pour montrer les objets d'une classe
 //==============================================================================
 class ClassViewerModel : public juce::TableListBoxModel, public juce::ActionBroadcaster {
 public:

@@ -532,10 +532,6 @@ void DtmLayersViewer::actionListenerCallback(const juce::String& message)
 		m_TableDtm.repaint();
 		return;
 	}
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateDtm");
-		return;
-	}
 	if (message == "UpdateDtm") {
 		sendActionMessage("UpdateDtm");
 		repaint();
@@ -742,9 +738,10 @@ void DtmLayersViewer::ComputeDeltaZ(std::vector< XGeoClass*> T)
 	Att.add("DeltaZ decimal (10,2)");
 	M.CreateMifMidFile(m_Cache, juce::String("DeltaZ_") + juce::String(deltaZ,2) , Att);
 	M.runThread();
-	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	XGeoClass* resultClass = GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVectorClass");
+	gClassViewerMgr.AddClassViewer(resultClass->Name(), resultClass, this);
 }
 
 //==============================================================================
@@ -838,7 +835,8 @@ void DtmLayersViewer::ComputeDeltaVector(std::vector< XGeoClass*> T)
 	Att.add("ID char (64)");
 	M.CreateMifMidFile(m_Cache, juce::String("DeltaZVector_") + juce::String(deltaZ, 2), Att);
 	M.runThread();
-	GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
+	XGeoClass* resultClass = GeoTools::ImportMifMid(M.m_strMifFile, m_Base);
 	GeoTools::ColorizeClasses(m_Base);
 	sendActionMessage("UpdateVector");
+	gClassViewerMgr.AddClassViewer(resultClass->Name(), resultClass, this);
 }

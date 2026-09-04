@@ -359,10 +359,6 @@ void AnnotViewer::actionListenerCallback(const juce::String& message)
 		m_Table.updateContent();
 		return;
 	}
-	if (message == "UpdateClass") {
-		sendActionMessage("UpdateAnnotation");
-		return;
-	}
 	if (message == "UpdateAnnotRepres") {
 		m_Table.repaint();
 		sendActionMessage("Repaint");
