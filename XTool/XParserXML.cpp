@@ -418,6 +418,16 @@ int XParserXML::ReadNodeAsInt(std::string nodename, uint32_t num)
 	return n;
 }
 
+uint16_t XParserXML::ReadNodeAsUInt16(std::string nodename, uint32_t num)
+{
+	if (!FindNode(nodename, num))
+		return 0;
+	std::string result = ReadNode(nodename, num);
+	uint16_t n;
+	(void)sscanf(result.c_str(), "%hu", &n);
+	return n;
+}
+
 uint32_t XParserXML::ReadNodeAsUInt32(std::string nodename, uint32_t num)
 {
 	if (!FindNode(nodename, num))
@@ -476,6 +486,18 @@ uint32_t XParserXML::ReadArrayNodeAsInt(std::string nodename, std::vector<int>* 
 	int x;
 	for (uint32_t i = 0; i < T.size(); i++) {
 		(void)sscanf(T[i].c_str(), "%d", &x);
+		V->push_back(x);
+	}
+	return (uint32_t)V->size();
+}
+
+uint32_t XParserXML::ReadArrayNodeAsUInt16(std::string nodename, std::vector<uint16_t>* V)
+{
+	std::vector<std::string> T;
+	ReadArrayNode(nodename, &T);
+	uint16_t x;
+	for (uint32_t i = 0; i < T.size(); i++) {
+		(void)sscanf(T[i].c_str(), "%hu", &x);
 		V->push_back(x);
 	}
 	return (uint32_t)V->size();

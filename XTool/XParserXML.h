@@ -79,6 +79,7 @@ public:
 	bool FindNode(std::string nodename, uint32_t num = 0);
 	std::string ReadNode(std::string nodename, uint32_t num = 0);
 	int ReadNodeAsInt(std::string nodename, uint32_t num = 0);
+	uint16_t ReadNodeAsUInt16(std::string nodename, uint32_t num = 0);
 	uint32_t ReadNodeAsUInt32(std::string nodename, uint32_t num = 0);
 	uint32_t ReadNodeAsHexUInt32(std::string nodename, uint32_t num = 0);
 	double ReadNodeAsDouble(std::string nodename, uint32_t num = 0);
@@ -86,6 +87,7 @@ public:
 
 	uint32_t ReadArrayNode(std::string nodename, std::vector<std::string>* V);
 	uint32_t ReadArrayNodeAsInt(std::string nodename, std::vector<int>* V);
+	uint32_t ReadArrayNodeAsUInt16(std::string nodename, std::vector<uint16_t>* V);
 	uint32_t ReadArrayNodeAsUInt32(std::string nodename, std::vector<uint32_t>* V);
 	uint32_t ReadArrayNodeAsDouble(std::string nodename, std::vector<double>* V);
 

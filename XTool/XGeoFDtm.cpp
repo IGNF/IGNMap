@@ -418,14 +418,14 @@ bool XGeoFDtm::ImportAsc(std::string file_asc, std::string file_bin)
   if (!out.good())
     return false;
   out.seekp(0, std::ios_base::end);
-  m_nOffset = out.tellp();
+  m_nOffset = (uint32_t)out.tellp();
 
   // Conversion des donnees
   float *line, *ptr;
   line = new float[w];
   if (line == NULL)
     return false;
-  float zmax = -9e9, zmin = 9e9;
+  float zmax = (float) -9e9, zmin = (float)9e9;
   m_nNbNoZ = 0;
   for (uint32_t i = 0; i < h; i++) {
     ptr = line;
@@ -616,8 +616,8 @@ bool XGeoFDtm::ImportXyz(std::string file_asc, std::string file_bin)
 
 	m_dZmin = zmin;
 	m_dZmax = zmax;
-	m_nH = (ymax - ymin) / stepy + 1;
-	m_nW = (xmax - xmin) / stepx + 1;
+	m_nH = (uint32_t)((ymax - ymin) / stepy + 1);
+	m_nW = (uint32_t)((xmax - xmin) / stepx + 1);
 
 	m_Frame.Xmin = xmin;
 	m_Frame.Ymin = ymin;
@@ -633,7 +633,7 @@ bool XGeoFDtm::ImportXyz(std::string file_asc, std::string file_bin)
   if (!out.good())
     return false;
   out.seekp(0, std::ios_base::end);
-  m_nOffset = out.tellp();
+  m_nOffset = (uint32_t)out.tellp();
 
 	// Conversion des donnees
 	in.clear();
@@ -645,14 +645,14 @@ bool XGeoFDtm::ImportXyz(std::string file_asc, std::string file_bin)
 	if (area == nullptr)
 		return false;
 	for (uint32_t k = 0; k < m_nW * m_nH; k++)
-		area[k] = m_dNoData;
+		area[k] = (float)m_dNoData;
   m_nNbNoZ = m_nW * m_nH;
 	uint32_t i, j;
 	while(!in.eof()) {
 		in >> x >> y >> z;
 		i = XRint((x - m_Frame.Xmin) / stepx);
 		j = XRint((m_Frame.Ymax - y) / stepx);
-		area[j * m_nW + i] = z;
+		area[j * m_nW + i] = (float)z;
     m_nNbNoZ--;
 	}
 	out.write((char*)area, (size_t)m_nW * m_nH * sizeof(float));
@@ -760,7 +760,7 @@ bool XGeoFDtm::ImportHdr(std::string file_hdr, std::string file_bin)
   if (!out.good())
     return false;
   out.seekp(0, std::ios_base::end);
-  m_nOffset = out.tellp();
+  m_nOffset = (uint32_t)out.tellp();
 
   // Cas des fichiers BIL en 32 bits -> lecture directe
   if (nbbits == 32) {
@@ -799,7 +799,7 @@ bool XGeoFDtm::ImportHdr(std::string file_hdr, std::string file_bin)
       data.read((char*)line_in, m_nW * sizeof(short int));
       for (uint32_t i = 0; i < m_nW; i++) {
         if (line_in[i] <= m_dNoData) {
-          line_out[i] = m_dNoData;
+          line_out[i] = (float)m_dNoData;
         } else {
           m_nNbNoZ--;
           m_dZmin = XMin((double)line_in[i], m_dZmin);
@@ -847,7 +847,7 @@ bool XGeoFDtm::Export(std::string filename)
   if (!out.good())
     return false;
   out.seekp(0, std::ios_base::end);
-  uint32_t offset = out.tellp();
+  uint32_t offset = (uint32_t)out.tellp();
 
 	// Ecriture des donnees
   if (!StreamReady())
@@ -919,7 +919,7 @@ bool XGeoFDtm::ExportTiff16(std::string filename)
   for (uint32_t i = 0; i < m_nH; i++) {
     ReadLine(line_in, i);
     for (uint32_t j = 0; j < m_nW; j++)
-      line_out[j] = XRint(line_in[j]);
+      line_out[j] = (short)XRint(line_in[j]);
     out.write((char*)line_out, m_nW * sizeof(short));
   }
   out.close();
@@ -1217,14 +1217,14 @@ bool XGeoFDtm::ExportContour(std::string filename, double equi, double resol)
       N[1] = lineT[j+1];
       N[2] = lineB[j];
       N[3] = lineB[j+1];
-      for (uint32_t y = 0; y < factor; y++)
-        for (uint32_t x = 0; x < factor; x++) {
-          Z[y * factor + x] = floor(interpol.BiCompute(N, x, y, factor, factor) / equi);
+      for (uint32_t y = 0; y < (uint32_t)factor; y++)
+        for (uint32_t x = 0; x < (uint32_t)factor; x++) {
+          Z[y * factor + x] = (int)floor(interpol.BiCompute(N, x, y, factor, factor) / equi);
          // pix[y * m_nW * factor + x + j * factor] = Z[y * factor + x];
         }
 
-      for (uint32_t y = 0; y < factor - 1; y++)
-        for (uint32_t x = 0; x < factor - 1; x++) {
+      for (uint32_t y = 0; y < (uint32_t)(factor - 1); y++)
+        for (uint32_t x = 0; x < (uint32_t)(factor - 1); x++) {
           if (Z[y * factor + x] != Z[y * factor + x + 1])
             pix[y * m_nW * factor + x + j * factor] = 0;
           if (Z[y * factor + x] != Z[(y + 1) * factor + x])

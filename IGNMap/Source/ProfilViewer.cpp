@@ -51,7 +51,7 @@ void ProfilViewer::ProfilDrawer::paint(juce::Graphics& g)
     for (int i = Z0 - D; i < zmax + 2 * D; i += D) {
       double Zn = (i - zmin) * H / fabs(zmax - zmin);
       g.drawLine(0.f, (float)(H - Zn), (float)(W + 5), (float)(H - Zn));
-      g.drawSingleLineText(juce::String(i), 0.f, (float)(H - Zn));
+      g.drawSingleLineText(juce::String(i), 0, (int)(H - Zn));
     }
   }
   else {  // Cas des profils "plats"
@@ -319,9 +319,9 @@ bool ProfilViewer::ProfilComponent::ExportCsvFile()
   out.open(filename.toStdString(), std::ios::out);
   out.setf(std::ios::fixed); out.precision(2);
   bool dtm_mode = true, las_mode = true;
-  int nb_point = m_ProfilDtm.size();
+  int nb_point = (int)m_ProfilDtm.size();
   if (nb_point < 1)
-    nb_point = m_ProfilLas.size();
+    nb_point = (int)m_ProfilLas.size();
   if (m_ProfilDtm.size() < 1) dtm_mode = false;
   if (m_ProfilLas.size() < 1) las_mode = false;
 

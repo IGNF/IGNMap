@@ -30,7 +30,7 @@ public:
 
   void Clear();
 
-  bool OpenImage(std::string filename, bool left, int rot = 1);
+  bool OpenImage(std::string filename, bool left, uint16_t rot = 1);
   bool OpenOrientation(std::string filename, bool center = true);
   bool OpenCamera(std::string filename, bool center = true);
   bool OpenPseudoOrientation(std::string filename);
@@ -118,13 +118,14 @@ private:
   void GoToPix(int x, int y);
   void SetBallonnet(double x, double y, double z);
   void SetBallonnet() { SetBallonnet(m_Bal.X, m_Bal.Y, m_Bal.Z); }
-  void DrawBallonnet(juce::Graphics&, int u, int v, juce::Colour& color);
+  void DrawBallonnet(juce::Graphics&, float u, float v, juce::Colour& color);
   void SetApproximatePosition(double overlap = 0.6);
   void SetCenterPosition();
   void SetOrthoPosition();
   void SetZBallonnet();
   void Correlation();
   void AutoLevel();
+  void ZoomFactor(int factor, const double& X, const double& Y);
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StereoView)
 };
@@ -148,7 +149,7 @@ public:
 
   void SetTarget(const double& X, const double& Y, const double& Z) override { m_Stereo.SetTarget(X, Y, Z); }
   void SetSelection(void*) override { ; }
-  bool OpenImage(std::string filename, bool left, int rot = 1) { return m_Stereo.OpenImage(filename, left, rot); }
+  bool OpenImage(std::string filename, bool left, uint16_t rot = 1) { return m_Stereo.OpenImage(filename, left, rot); }
   void SetPseudoOrientation(XPt3D SL, XPt3D SR, XPt3D Ori, double gsd) { m_Stereo.SetPseudoOrientation(SL, SR, Ori, gsd); }
 
 private:

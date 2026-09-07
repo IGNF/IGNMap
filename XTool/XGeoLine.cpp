@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 XPt2D XGeoLine2D::Pt(uint32_t i)
 { 
-	if ((i < m_nNumPoints)&&(m_Pt != NULL)) 
+	if ((i < (uint32_t)m_nNumPoints)&&(m_Pt != NULL))
 		return XPt2D(m_Pt[i].X, m_Pt[i].Y);
 	return XPt2D(XGEO_NO_DATA, XGEO_NO_DATA);
 }
@@ -33,7 +33,7 @@ bool XGeoLine2D::IsNear2D(const XPt2D& P, double dist)
 	double minx, maxx, miny, maxy;
 	if (!LoadGeom())
 		return false;
-	for (uint32_t j = 0; j < m_nNumPoints - 1; j++) {
+	for (uint32_t j = 0; j < (uint32_t)m_nNumPoints - 1; j++) {
 		minx = XMin(m_Pt[j].X, m_Pt[j + 1].X);
 		if (P.X < minx - dist)
 			continue;
@@ -90,7 +90,7 @@ void XGeoLine3D::Unload()
 //-----------------------------------------------------------------------------
 double XGeoLine3D::Z(uint32_t i)
 {
-	if ((i < m_nNumPoints)&&(m_Z != NULL)) 
+	if ((i < (uint32_t)m_nNumPoints)&&(m_Z != NULL))
 		return m_Z[i];
 	return XGEO_NO_DATA;
 }
@@ -128,9 +128,9 @@ bool XGeoMLine2D::IsNear2D(const XPt2D& P, double dist)
 	double minx, maxx, miny, maxy;
 	if (!LoadGeom())
 		return false;
-	for (i = 0; i < m_nNumParts; i++) {
-		if (i == m_nNumParts - 1)
-			k = m_nNumPoints;
+	for (i = 0; i < (uint32_t)m_nNumParts; i++) {
+		if (i == (uint32_t)(m_nNumParts - 1))
+			k = (uint32_t)m_nNumPoints;
 		else
 			k = m_Parts[i + 1];
 		for (j = m_Parts[i]; j < k - 1; j++) {
@@ -191,7 +191,7 @@ void XGeoMLine3D::Unload()
 //-----------------------------------------------------------------------------
 double XGeoMLine3D::Z(uint32_t i)
 {
-	if ((i < m_nNumPoints)&&(m_Z != NULL)) 
+	if ((i < (uint32_t)m_nNumPoints)&&(m_Z != NULL))
 		return m_Z[i];
 	return XGEO_NO_DATA;
 }

@@ -21,6 +21,7 @@ void XFile::Seek(std::istream* in, std::streampos pos)
   return;
 #endif // IGNMAP_WIN32
 
+#ifdef IGNMAP_WIN32
   std::streampos max_offset = 0x7FFFFFFF; // Limite 2GB - 1
   if (pos <= max_offset) {
     in->seekg(pos);
@@ -29,30 +30,7 @@ void XFile::Seek(std::istream* in, std::streampos pos)
   // Fichier de taille > 2GB
   in->seekg(max_offset, std::ios_base::beg);
   std::streampos curpos = pos - max_offset;
-#ifndef IGNMAP_WIN32
-  while (curpos > max_offset) {
-    in->seekg(max_offset, std::ios_base::cur);
-    curpos -= max_offset;
-  }
-  in->seekg(curpos, std::ios_base::cur);
-  return;
-#else // Bug de MinGW dans la methode seekg pour les gros fichiers
-  /*
-  if (curpos < max_offset) {
-    in->seekg(curpos, std::ios_base::cur);
-    return;
-  }
-  if (curpos > max_offset) {
-    in->seekg(max_offset, std::ios_base::cur);
-    curpos -= max_offset;
-  }
-  std::streampos bufsize = 1024*1024*1024;
-  while (curpos > bufsize) {
-    in->ignore(bufsize);
-    curpos -= bufsize;
-  }
-  in->ignore(curpos);
-  */
+
   while (curpos > max_offset) {
     //in->seekg(max_offset, std::ios_base::cur);
     in->rdbuf()->pubseekoff(max_offset, std::ios_base::cur, std::ios_base::in);
@@ -60,7 +38,6 @@ void XFile::Seek(std::istream* in, std::streampos pos)
   }
   //in->seekg(curpos, std::ios_base::cur);
   in->rdbuf()->pubseekoff(curpos, std::ios_base::cur, std::ios_base::in);
-
 #endif
 }
 

@@ -67,8 +67,8 @@ bool StereoView::OpenProject(std::string filename)
 	std::string right_image = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/right_image").c_str());
 	std::string opk_file = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/opk_file").c_str());
 	std::string camera_file = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/camera_file").c_str());
-	uint32_t rot_left = parser.ReadNodeAsUInt32("/stereopair_project/left_image_rotation");
-	uint32_t rot_right = parser.ReadNodeAsUInt32("/stereopair_project/right_image_rotation");
+	uint16_t rot_left = parser.ReadNodeAsUInt16("/stereopair_project/left_image_rotation");
+	uint16_t rot_right = parser.ReadNodeAsUInt16("/stereopair_project/right_image_rotation");
 	OpenImage(left_image, true);
 	m_ImageL.SetRotation(rot_left);
 	OpenImage(right_image, false);
@@ -288,12 +288,18 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 	}
 
 	// Mode restitution
-	if ((key.getKeyCode() == juce::KeyPress::F2Key)|| (key.getKeyCode() == juce::KeyPress::escapeKey)) {
+	if (key.getKeyCode() == juce::KeyPress::escapeKey) {
 		m_Restit = (!m_Restit);
 		if (m_Restit)
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NoCursor));
 		else
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
+		return true;
+	}
+
+	// Sauvegarde de l'image
+	if (key.getKeyCode() == juce::KeyPress::F2Key) {
+		AppUtil::SaveComponent(this);
 		return true;
 	}
 
@@ -324,15 +330,19 @@ void StereoView::mouseWheelMove(const juce::MouseEvent& event, const juce::Mouse
 		m_nFactor--;
 		if (accelerator) m_nFactor = 1;
 	}
+	ZoomFactor(m_nFactor, X, Y);
+
+	/*
 	if (m_nFactor < 1) {
 		m_nFactor = 1;
 		return;
 	}
 
 	auto bounds = getBounds();
-	m_ViewX = X - (bounds.getWidth() / 2) * m_nFactor;
-	m_ViewY = Y - (bounds.getHeight() / 2) * m_nFactor;
+	m_ViewX = XRint(X - (bounds.getWidth() / 2) * m_nFactor);
+	m_ViewY = XRint(Y - (bounds.getHeight() / 2) * m_nFactor);
 	repaint();
+	*/
 }
 
 //==============================================================================
@@ -373,9 +383,15 @@ void StereoView::mouseDown(const juce::MouseEvent& event)
 		juce::PopupMenu m;
 		m.addItem(1, juce::translate("Z Correlation"));
 		m.addItem(2, juce::translate("Z auto"));
+		m.addSeparator();
+		m.addItem(11, juce::translate("Zoom x1"));
+		m.addItem(12, juce::translate("Zoom x4"));
+		m.addItem(13, juce::translate("Zoom x8"));
+
+		double X = m_ViewX + event.getPosition().x * m_nFactor, Y = m_ViewY + event.getPosition().y * m_nFactor;
 
 		m.showMenuAsync(juce::PopupMenu::Options(),
-			[this](int result)
+			[this, X, Y](int result)
 			{
 				if (result == 0)
 				{
@@ -386,10 +402,23 @@ void StereoView::mouseDown(const juce::MouseEvent& event)
 					Correlation();
 					SetZBallonnet();
 				}
-				else if (result == 2)	// Sauvegarde d'un projet
+				else if (result == 2)	// Z automatique
 				{
 					AutoLevel();
 				}
+				else if (result == 11)	// Zoomm x1
+				{
+					ZoomFactor(1, X, Y);
+				}
+				else if (result == 12)	// Zoom x4
+				{
+					ZoomFactor(4, X, Y);
+				}
+				else if (result == 13)	// Zoom x8
+				{
+					ZoomFactor(8, X, Y);
+				}
+
 			});
 		return;
 	}
@@ -459,7 +488,7 @@ void StereoView::mouseDown(const juce::MouseEvent& event)
 	}
 }
 
-void StereoView::mouseUp(const juce::MouseEvent& event)
+void StereoView::mouseUp(const juce::MouseEvent&)
 {
 	m_bDrag = false;
 	if (m_Restit)
@@ -496,16 +525,16 @@ void StereoView::paint(juce::Graphics& graphics)
 	if (m_ViewMode == ViewMode::Split) {
 		auto b = getBounds();
 
-		int x = m_BalL.X, y = m_BalL.Y;
+		int x = XRint(m_BalL.X), y = XRint(m_BalL.Y);
 		Image2Component(true, x, y);
 		if (x < b.getWidth() / 2)
-			DrawBallonnet(graphics, x, y, m_BalColorL);
+			DrawBallonnet(graphics, (float)x, (float)y, m_BalColorL);
 
-		x = m_BalR.X;
-		y = m_BalR.Y;
+		x = XRint(m_BalR.X);
+		y = XRint(m_BalR.Y);
 		Image2Component(false, x, y);
 		x += (b.getWidth() / 2);
-		DrawBallonnet(graphics, x, y, m_BalColorR);
+		DrawBallonnet(graphics, (float)x, (float)y, m_BalColorR);
 	}
 
 	DrawDecoration(graphics);
@@ -586,7 +615,7 @@ bool StereoView::DrawStereo(juce::Graphics& graphics)
 
 	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
 		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-		juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+		//juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
 
 		int rL, gL, bL, rR, gR, bR, r, g, b, pos;
 
@@ -605,7 +634,7 @@ bool StereoView::DrawStereo(juce::Graphics& graphics)
 
 			for (int j = 0; j < bitmap.width; j++) {
 				int x = m_ViewX + j * m_nFactor;
-				if ((x < startX_L) || (x > startX_L + w_L)) {
+				if ((x < startX_L) || (x > startX_L + (int)w_L)) {
 					if (m_bStereoOnly) {
 						line += bitmap.pixelStride;
 						continue;
@@ -624,7 +653,7 @@ bool StereoView::DrawStereo(juce::Graphics& graphics)
 						rL = gL = bL = pixL[pos];
 				}
 
-				if ((x < startX_R) || (x > startX_R + w_R)) {
+				if ((x < startX_R) || (x > startX_R + (int)w_R)) {
 					if (m_bStereoOnly) {
 						line += bitmap.pixelStride;
 						continue;
@@ -650,23 +679,23 @@ bool StereoView::DrawStereo(juce::Graphics& graphics)
 				}
 
 				if (m_bRedLeft) { // Rouge à gauche
-					r = 0.4154 * rL + 0.4710 * gL + 0.1669 * bL - 0.0109 * rR - 0.0364 * gR - 0.0060 * bR;
-					g = -0.0458 * rL - 0.0484 * gL - 0.0257 * bL + 0.3756 * rR + 0.7333 * gR + 0.0111 * bR;
-					b = -0.0547 * rL - 0.0615 * gL + 0.0128 * bL - 0.0651 * rR - 0.1287 * gR + 1.2971 * bR;
+					r = (int)(0.4154 * rL + 0.4710 * gL + 0.1669 * bL - 0.0109 * rR - 0.0364 * gR - 0.0060 * bR);
+					g = (int)(-0.0458 * rL - 0.0484 * gL - 0.0257 * bL + 0.3756 * rR + 0.7333 * gR + 0.0111 * bR);
+					b = (int)(-0.0547 * rL - 0.0615 * gL + 0.0128 * bL - 0.0651 * rR - 0.1287 * gR + 1.2971 * bR);
 				}
 				else {
-					r = 0.4154 * rR + 0.4710 * gR + 0.1669 * bR - 0.0109 * rL - 0.0364 * gL - 0.0060 * bL;
-					g = -0.0458 * rR - 0.0484 * gR - 0.0257 * bR + 0.3756 * rL + 0.7333 * gL + 0.0111 * bL;
-					b = -0.0547 * rR - 0.0615 * gR + 0.0128 * bR - 0.0651 * rL - 0.1287 * gL + 1.2971 * bL;
+					r = (int)(0.4154 * rR + 0.4710 * gR + 0.1669 * bR - 0.0109 * rL - 0.0364 * gL - 0.0060 * bL);
+					g = (int)(-0.0458 * rR - 0.0484 * gR - 0.0257 * bR + 0.3756 * rL + 0.7333 * gL + 0.0111 * bL);
+					b = (int)(-0.0547 * rR - 0.0615 * gR + 0.0128 * bR - 0.0651 * rL - 0.1287 * gL + 1.2971 * bL);
 				}
 
 				if (r < 0) r = 0; if (r > 255) r = 255;
 				if (g < 0) g = 0; if (g > 255) g = 255;
 				if (b < 0) b = 0; if (b > 255) b = 255;
 
-				line[indexB] = b;
-				line[indexG] = g;
-				line[indexR] = r;
+				line[indexB] = (uint8_t)b;
+				line[indexG] = (uint8_t)g;
+				line[indexR] = (uint8_t)r;
 
 				line += bitmap.pixelStride;
 			}
@@ -703,7 +732,7 @@ bool StereoView::DrawSplit(juce::Graphics& graphics)
 
 	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
 		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-		juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+		//juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
 
 		int r, g, b;
 
@@ -718,7 +747,7 @@ bool StereoView::DrawSplit(juce::Graphics& graphics)
 			if (pixL != nullptr) {	// Image gauche
 				for (int j = 0; j < bitmap.width / 2; j++) {
 					int x = m_ViewX + j * m_nFactor;
-					if ((x < startX_L) || (x > startX_L + w_L)) {
+					if ((x < startX_L) || (x > startX_L + (int)w_L)) {
 						line += bitmap.pixelStride;
 						continue;
 					}
@@ -732,9 +761,9 @@ bool StereoView::DrawSplit(juce::Graphics& graphics)
 					else
 						r = g = b = pixL[pos];
 
-					line[indexB] = b;
-					line[indexG] = g;
-					line[indexR] = r;
+					line[indexB] = (uint8_t)b;
+					line[indexG] = (uint8_t)g;
+					line[indexR] = (uint8_t)r;
 
 					line += bitmap.pixelStride;
 				}
@@ -743,7 +772,7 @@ bool StereoView::DrawSplit(juce::Graphics& graphics)
 			if (pixR != nullptr) {	// Image droite
 				for (int j = bitmap.width / 2; j < bitmap.width; j++) {
 					int x = m_ViewX + (j - bitmap.width / 2) * m_nFactor;
-					if ((x < startX_R) || (x > startX_R + w_R)) {
+					if ((x < startX_R) || (x > startX_R + (int)w_R)) {
 						line += bitmap.pixelStride;
 						continue;
 					}
@@ -757,9 +786,9 @@ bool StereoView::DrawSplit(juce::Graphics& graphics)
 					else
 						r = g = b = pixR[pos];
 
-					line[indexB] = b;
-					line[indexG] = g;
-					line[indexR] = r;
+					line[indexB] = (uint8_t)b;
+					line[indexG] = (uint8_t)g;
+					line[indexR] = (uint8_t)r;
 
 					line += bitmap.pixelStride;
 				}
@@ -799,7 +828,7 @@ bool StereoView::DrawMono(juce::Graphics& graphics, bool left)
 
 	{ // Necessaire pour que bitmap soit detruit avant l'appel a drawImageAt
 		juce::Image::BitmapData bitmap(tmpImage, juce::Image::BitmapData::readWrite);
-		juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
+		//juce::Image::PixelFormat format = bitmap.pixelFormat;	// Sur Mac, on obtient toujours ARGB meme en demandant RGB !
 
 		int r, g, b;
 
@@ -813,7 +842,7 @@ bool StereoView::DrawMono(juce::Graphics& graphics, bool left)
 			uint8_t* line = bitmap.getLinePointer(i);
 			for (int j = 0; j < bitmap.width; j++) {
 				int x = m_ViewX + j * m_nFactor;
-				if ((x < startX) || (x > startX + w)) {
+				if ((x < startX) || (x > startX + (int)w)) {
 					line += bitmap.pixelStride;
 					continue;
 				}
@@ -827,9 +856,9 @@ bool StereoView::DrawMono(juce::Graphics& graphics, bool left)
 				else
 					r = g = b = pix[pos];
 
-				line[indexB] = b;
-				line[indexG] = g;
-				line[indexR] = r;
+				line[indexB] = (uint8_t)b;
+				line[indexG] = (uint8_t)g;
+				line[indexR] = (uint8_t)r;
 
 				line += bitmap.pixelStride;
 			}
@@ -843,7 +872,7 @@ bool StereoView::DrawMono(juce::Graphics& graphics, bool left)
 //-----------------------------------------------------------------------------
 // Ouverture d'une image du couple
 //-----------------------------------------------------------------------------
-bool StereoView::OpenImage(std::string filename, bool left, int rot)
+bool StereoView::OpenImage(std::string filename, bool left, uint16_t rot)
 {
 	XMemRaster* image = &m_ImageL;
 	if (!left)
@@ -998,7 +1027,7 @@ void StereoView::SetApproximatePosition(double overlap)
 	m_ViewX = m_ImageL.NbPixelX() / 2 - bounds.getWidth() / 2;
 	m_ViewY = m_ImageL.NbPixelY() / 2 - bounds.getHeight() / 2;
 
-	m_ImageR.SetOrigin(m_ImageL.NbPixelX() * (1. - overlap), 0);
+	m_ImageR.SetOrigin(XRint(m_ImageL.NbPixelX() * (1. - overlap)), 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1021,7 +1050,7 @@ void StereoView::SetCenterPosition()
 
 	// Viewport
 	auto bounds = getBounds();
-	int uL = pixL.X, vL = pixL.Y, uR = pixR.X, vR = pixR.Y;
+	int uL = (int)pixL.X, vL = (int)pixL.Y, uR = (int)pixR.X, vR = (int)pixR.Y;
 	m_ImageL.Image2Viewport(uL, vL);
 	m_ImageR.SetOrigin(0, 0);
 	m_ImageR.Image2Viewport(uR, vR);
@@ -1055,8 +1084,8 @@ void StereoView::SetOrthoPosition()
 //-----------------------------------------------------------------------------
 void StereoView::SetZBallonnet()
 {
-	int uL = m_BalL.X, vL = m_BalL.Y;
-	int uR = m_BalR.X, vR = m_BalR.Y;
+	int uL = XRint(m_BalL.X), vL = XRint(m_BalL.Y);
+	int uR = XRint(m_BalR.X), vR = XRint(m_BalR.Y);
 	m_ImageL.Image2Viewport(uL, vL);
 	m_ImageR.SetOrigin(0, 0);
 	m_ImageR.Image2Viewport(uR, vR);
@@ -1079,7 +1108,7 @@ bool StereoView::Ground2Image(XPt3D P, XPt2D& uL, XPt2D& uR)
 		m_Ortho.Ground2Image(P, uL, uR);
 		return true;
 	}
-	int xL = P.X, yL = P.Y, xR = P.X, yR = P.Y;
+	int xL = XRint(P.X), yL = XRint(P.Y), xR = XRint(P.X), yR = XRint(P.Y);
 	m_ImageL.ViewPort2Image(xL, yL);
 	m_ImageR.ViewPort2Image(xR, yR);
 	uL = XPt2D(xL, yL);
@@ -1093,7 +1122,7 @@ double StereoView::Image2Ground(XPt2D uL, XPt2D uR, XPt3D& PL, XPt3D& PR)
 		return m_Model.Image2Ground(uL, uR, PL, PR);
 	if (m_OrientationType == OrthoModel)
 		return m_Ortho.Image2Ground(uL, uR, PL, PR);
-	int xL = uL.X, yL = uL.Y, xR = uR.X, yR = uR.Y;
+	int xL = XRint(uL.X), yL = XRint(uL.Y), xR = XRint(uR.X), yR = XRint(uR.Y);
 	m_ImageL.Image2Viewport(xL, yL);
 	m_ImageR.Image2Viewport(xR, yR);
 	PL = XPt3D(xL, yL, 0.);
@@ -1174,7 +1203,7 @@ void StereoView::SetBallonnet(double x, double y, double z)
 {
 	XPt2D pL, pR;
 	Ground2Image(XPt3D(x, y, z), m_BalL, m_BalR);
-	int uL = m_BalL.X, vL = m_BalL.Y, uR = m_BalR.X, vR = m_BalR.Y;
+	int uL = XRint(m_BalL.X), vL = XRint(m_BalL.Y), uR = XRint(m_BalR.X), vR = XRint(m_BalR.Y);
 	Image2Component(true, uL, vL);
 	Image2Component(false, uR, vR);
 
@@ -1188,9 +1217,9 @@ void StereoView::SetBallonnet(double x, double y, double z)
 
 	{
 		juce::Graphics graphicsL(imaL);
-		DrawBallonnet(graphicsL, uL - u0, vL - v0, m_BalColorL);
+		DrawBallonnet(graphicsL, (float)(uL - u0), (float)(vL - v0), m_BalColorL);
 		juce::Graphics graphicsR(imaR);
-		DrawBallonnet(graphicsR, uR - u0, vR - v0, m_BalColorR);
+		DrawBallonnet(graphicsR, (float)(uR - u0), (float)(vR - v0), m_BalColorR);
 	}
 	DrawAnaglyph(imaL, imaR, m_BalImage);
 	m_BalPos = juce::Point<int>(u0, v0);
@@ -1199,7 +1228,7 @@ void StereoView::SetBallonnet(double x, double y, double z)
 //-----------------------------------------------------------------------------
 // Dessin du ballonnet
 //-----------------------------------------------------------------------------
-void StereoView::DrawBallonnet(juce::Graphics& graphics, int u, int v, juce::Colour& color)
+void StereoView::DrawBallonnet(juce::Graphics& graphics, float u, float v, juce::Colour& color)
 {
 	graphics.setColour(color);
 	switch (m_BalShape) {
@@ -1267,14 +1296,14 @@ bool StereoView::DrawAnaglyph(juce::Image& left, juce::Image& right, juce::Image
 			lineR += bitmapR.pixelStride;
 
 			if (redLeft) { // Rouge à gauche
-				r = 0.4154 * rL + 0.4710 * gL + 0.1669 * bL - 0.0109 * rR - 0.0364 * gR - 0.0060 * bR;
-				g = -0.0458 * rL - 0.0484 * gL - 0.0257 * bL + 0.3756 * rR + 0.7333 * gR + 0.0111 * bR;
-				b = -0.0547 * rL - 0.0615 * gL + 0.0128 * bL - 0.0651 * rR - 0.1287 * gR + 1.2971 * bR;
+				r = (int)(0.4154 * rL + 0.4710 * gL + 0.1669 * bL - 0.0109 * rR - 0.0364 * gR - 0.0060 * bR);
+				g = (int)(-0.0458 * rL - 0.0484 * gL - 0.0257 * bL + 0.3756 * rR + 0.7333 * gR + 0.0111 * bR);
+				b = (int)(-0.0547 * rL - 0.0615 * gL + 0.0128 * bL - 0.0651 * rR - 0.1287 * gR + 1.2971 * bR);
 			}
 			else {
-				r = 0.4154 * rR + 0.4710 * gR + 0.1669 * bR - 0.0109 * rL - 0.0364 * gL - 0.0060 * bL;
-				g = -0.0458 * rR - 0.0484 * gR - 0.0257 * bR + 0.3756 * rL + 0.7333 * gL + 0.0111 * bL;
-				b = -0.0547 * rR - 0.0615 * gR + 0.0128 * bR - 0.0651 * rL - 0.1287 * gL + 1.2971 * bL;
+				r = (int)(0.4154 * rR + 0.4710 * gR + 0.1669 * bR - 0.0109 * rL - 0.0364 * gL - 0.0060 * bL);
+				g = (int)(-0.0458 * rR - 0.0484 * gR - 0.0257 * bR + 0.3756 * rL + 0.7333 * gL + 0.0111 * bL);
+				b = (int)(-0.0547 * rR - 0.0615 * gR + 0.0128 * bR - 0.0651 * rL - 0.1287 * gL + 1.2971 * bL);
 			}
 
 			if (r < 0) r = 0; if (r > 255) r = 255;
@@ -1284,7 +1313,7 @@ bool StereoView::DrawAnaglyph(juce::Image& left, juce::Image& right, juce::Image
 			a = 255;
 			if ((aL == 0) && (aR == 0))
 				a = 0;
-			color = juce::Colour::fromRGBA(r, g, b, a);
+			color = juce::Colour::fromRGBA((juce::uint8)r, (juce::uint8)g, (juce::uint8)b, (juce::uint8)a);
 			*((uint32_t*)lineS) = color.getARGB();
 
 			lineS += bitmapS.pixelStride;
@@ -1318,8 +1347,8 @@ void StereoView::Correlation()
 	}
 
 	// Chargement des zones de pixels
-	bool flagL = m_ImageL.GetArea(m_BalL.X - half_win, m_BalL.Y - half_win, win_size, win_size, pixL);
-	bool flagR = m_ImageR.GetArea(m_BalR.X - half_search, m_BalR.Y - half_search, win_search, win_search, pixR);
+	bool flagL = m_ImageL.GetArea((uint32_t)(m_BalL.X - half_win), (uint32_t)(m_BalL.Y - half_win), win_size, win_size, pixL);
+	bool flagR = m_ImageR.GetArea((uint32_t)(m_BalR.X - half_search), (uint32_t)(m_BalR.Y - half_search), win_search, win_search, pixR);
 	if ((flagL == false) || (flagR == false)) {
 		delete[] pixL; delete[] pixR;
 		return;
@@ -1375,5 +1404,17 @@ void StereoView::AutoLevel()
 	m_Bal.Z = m_GeoSearch.GetAltitude(lon, lat);
 	SetBallonnet();
 	SetZBallonnet();
+	repaint();
+}
+
+//-----------------------------------------------------------------------------
+// Zoom a un facteur donne
+//-----------------------------------------------------------------------------
+void StereoView::ZoomFactor(int factor, const double& X, const double& Y)
+{
+	m_nFactor = std::clamp<int>(factor, 1, 24);
+	auto bounds = getBounds();
+	m_ViewX = XRint(X - (bounds.getWidth() / 2) * m_nFactor);
+	m_ViewY = XRint(Y - (bounds.getHeight() / 2) * m_nFactor);
 	repaint();
 }
