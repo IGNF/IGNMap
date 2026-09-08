@@ -87,7 +87,9 @@ juce::Image& RotationImage::GetAreaImage(const XFrame& F, double gsd)
         m_ToneMapper->process_8bit_rgb_image(bitmap.data, wtmp, htmp);
 
       uint8_t r = 0, g = 0, b = 0, alpha = 255;
+#ifndef JUCE_MAC
       XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp, r, g, b, alpha);
+#endif
       XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
     }
   }

@@ -784,15 +784,19 @@ void SentinelAnalyzeTask::run()
 			if (format == juce::Image::PixelFormat::RGB) {
 				if (nbBand == 1)
 					XBaseImage::Gray2RGB(bitmap.data, wtmp * htmp);
+#ifndef JUCE_MAC
 				else
 					XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
+#endif
 				XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
 			}
 			else {
 				if (nbBand == 1)
 					XBaseImage::Gray2RGBA(bitmap.data, wtmp * htmp);
+#ifndef JUCE_MAC
 				else
 					XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp);
+#endif
 				XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
 			}
 		}

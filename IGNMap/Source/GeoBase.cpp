@@ -226,11 +226,15 @@ juce::Image GeoSentinelImage::GetQuickView()
 			GetZoomArea(U0, V0, win, hin, bitmap.data, factor);
 
 		if (format == juce::Image::PixelFormat::RGB) {
+#ifndef JUCE_MAC
 			XBaseImage::SwitchRGB2BGR(bitmap.data, wtmp * htmp);
+#endif
 			XBaseImage::OffsetArea(bitmap.data, wtmp * 3, bitmap.height, bitmap.lineStride);
 		}
 		else {
+#ifndef JUCE_MAC
 			XBaseImage::RGB2BGRA(bitmap.data, wtmp * htmp);
+#endif
 			XBaseImage::OffsetArea(bitmap.data, wtmp * 4, bitmap.height, bitmap.lineStride);
 		}
 	}
