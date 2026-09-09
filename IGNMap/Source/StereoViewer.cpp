@@ -35,7 +35,7 @@ void StereoView::Clear()
 	m_nGamma = 0;
 	m_bRedLeft = m_bStereoOnly = m_bDirty = true;
 	m_bDrag = false;
-	m_Restit = false;
+	m_bRestit = m_bAutoBalLevel = false;
 	m_OrientationType = NoOrientation;
 	m_ViewMode = ViewMode::Anaglyph;
 	m_dPara = m_dGSD = 1.0;
@@ -215,7 +215,10 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 		dZ = 0.5 * m_dGSD * m_nFactor;
 	if (dZ != 0.) {
 		m_Bal.Z += dZ;
-		SetBallonnet();
+		if (m_bAutoBalLevel)
+			SetZBallonnet();
+		else
+			SetBallonnet();
 		repaint();
 		return true;
 	}
@@ -264,6 +267,13 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 		return true;
 	}
 
+	// Z ballonnet
+	if ((key.getTextCharacter() == 'V') || (key.getTextCharacter() == 'v')) {
+		m_bAutoBalLevel = (!m_bAutoBalLevel);
+		if (m_bAutoBalLevel)
+			SetZBallonnet();
+		return true;
+	}
 	// Forme du ballonnet
 	if ((key.getTextCharacter() == 'B') || (key.getTextCharacter() == 'b')) {
 		m_BalShape = (BallonnetShape)((m_BalShape + 1) % 6);
@@ -294,8 +304,8 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 
 	// Mode restitution
 	if (key.getKeyCode() == juce::KeyPress::escapeKey) {
-		m_Restit = (!m_Restit);
-		if (m_Restit)
+		m_bRestit = (!m_bRestit);
+		if (m_bRestit)
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NoCursor));
 		else
 			setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));
@@ -317,9 +327,12 @@ bool StereoView::keyPressed(const juce::KeyPress& key)
 void StereoView::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
 {
 	// Changement du Z du ballonnet
-	if (m_Restit) {
+	if (m_bRestit) {
 		m_Bal.Z -= (wheel.deltaY * m_dGSD);
-		SetBallonnet();
+		if (m_bAutoBalLevel)
+			SetZBallonnet();
+		else
+			SetBallonnet();
 		repaint();
 		return;
 	}
@@ -355,7 +368,7 @@ void StereoView::mouseWheelMove(const juce::MouseEvent& event, const juce::Mouse
 //==============================================================================
 void StereoView::mouseMove(const juce::MouseEvent& event)
 {
-	if (m_Restit)
+	if (m_bRestit)
 		GoToPix(event.x, event.y);
 }
 
@@ -379,15 +392,15 @@ void StereoView::mouseDown(const juce::MouseEvent& event)
 		m_bDrag = true;
 		return;
 	}
-	if ((event.mods.isMiddleButtonDown()) && (m_Restit)) {	// Bouton du milieu
+	if ((event.mods.isMiddleButtonDown()) && (m_bRestit)) {	// Bouton du milieu
 		Correlation();
 		SetZBallonnet();
 		return;
 	}
-	if (event.mods.isRightButtonDown() && (m_Restit)) {	// Bouton droit en restitution
+	if (event.mods.isRightButtonDown() && (m_bRestit)) {	// Bouton droit en restitution
 		juce::PopupMenu m;
 		m.addItem(1, juce::translate("Z Correlation"));
-		m.addItem(2, juce::translate("Z auto"));
+		m.addItem(2, juce::translate("Z DTM"));
 		m.addSeparator();
 		m.addItem(11, juce::translate("Zoom x1"));
 		m.addItem(12, juce::translate("Zoom x4"));
@@ -496,7 +509,7 @@ void StereoView::mouseDown(const juce::MouseEvent& event)
 void StereoView::mouseUp(const juce::MouseEvent&)
 {
 	m_bDrag = false;
-	if (m_Restit)
+	if (m_bRestit)
 		setMouseCursor(juce::MouseCursor(juce::MouseCursor::NoCursor));
 	else
 		setMouseCursor(juce::MouseCursor(juce::MouseCursor::NormalCursor));

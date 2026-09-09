@@ -82,7 +82,8 @@ private:
   bool  m_bRedLeft; // Rouge a gauche
   int   m_ViewMode;
   bool  m_bStereoOnly; // Indique si en bord de zone hors stereo, on affiche ou pas
-  bool  m_Restit;
+  bool  m_bRestit;
+  bool  m_bAutoBalLevel;  // Indique que l'on met le plan de vision au niveau du ballonnet
 
   BallonnetShape  m_BalShape;
   int m_nBalColor;
