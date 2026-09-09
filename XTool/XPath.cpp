@@ -20,7 +20,7 @@ char XPath::gDefaultSep = '/';
 //-----------------------------------------------------------------------------
 // Renvoie le nom du repertoire parent
 //-----------------------------------------------------------------------------
-std::string XPath::Path(const char* filename)
+std::string XPath::Path(const char* filename) const
 {
 	std::string P = filename;
 	return P.substr(0, P.rfind(m_Sep));
@@ -29,7 +29,7 @@ std::string XPath::Path(const char* filename)
 //-----------------------------------------------------------------------------
 // Renvoie le nom du fichier ou du repertoire (sans le chemin)
 //-----------------------------------------------------------------------------
-std::string XPath::Name(const char* filename)
+std::string XPath::Name(const char* filename) const
 {
 	std::string P = filename;
 	return P.substr(P.rfind(m_Sep)+1);
@@ -38,7 +38,7 @@ std::string XPath::Name(const char* filename)
 //-----------------------------------------------------------------------------
 // Renvoie le nom du fichier (sans le chemin) avec ou sans l'extension
 //-----------------------------------------------------------------------------
-std::string XPath::Name(const char* filename, bool extension)
+std::string XPath::Name(const char* filename, bool extension) const
 {
 	if (extension)
 		return Name(filename);
@@ -49,7 +49,7 @@ std::string XPath::Name(const char* filename, bool extension)
 //-----------------------------------------------------------------------------
 // Renvoie l'extension du fichier
 //-----------------------------------------------------------------------------
-std::string XPath::Ext(const char* filename)
+std::string XPath::Ext(const char* filename) const
 {
 	std::string P = filename;
 	if (P.rfind('.') != std::string::npos)
@@ -60,7 +60,7 @@ std::string XPath::Ext(const char* filename)
 //-----------------------------------------------------------------------------
 // Renvoie le chemin et le nom (sans l'extension)
 //-----------------------------------------------------------------------------
-std::string XPath::PathName(const char* filename)
+std::string XPath::PathName(const char* filename) const
 {
 	std::string P = filename;
 	return P.substr(0, P.rfind('.'));
@@ -69,7 +69,7 @@ std::string XPath::PathName(const char* filename)
 //-----------------------------------------------------------------------------
 // Renvoie le chemin complet (repertoire + nom)
 //-----------------------------------------------------------------------------
-std::string XPath::FullName(const char* folder, const char* filename)
+std::string XPath::FullName(const char* folder, const char* filename) const
 {
 	std::string F = folder, P = filename;
 	return F + m_Sep + P;
@@ -78,7 +78,7 @@ std::string XPath::FullName(const char* folder, const char* filename)
 //-----------------------------------------------------------------------------
 // Renvoie un chemin relatif
 //-----------------------------------------------------------------------------
-std::string XPath::Relative(const char* root, const char* path)
+std::string XPath::Relative(const char* root, const char* path) const
 {
 	std::string R = root;
 	std::string P = path;
@@ -154,7 +154,7 @@ std::string XPath::Relative(const char* root, const char* path)
 //-----------------------------------------------------------------------------
 // Renvoie un chemin absolue
 //-----------------------------------------------------------------------------
-std::string XPath::Absolute(const char* root, const char* path)
+std::string XPath::Absolute(const char* root, const char* path) const
 {
 	std::string R = root;
 	std::string P = path;
@@ -182,13 +182,27 @@ std::string XPath::Absolute(const char* root, const char* path)
 }
 
 //-----------------------------------------------------------------------------
+// Conversion avec le separateur attendu par l'OS
+//-----------------------------------------------------------------------------
+std::string XPath::Convert(const char* filename) const
+{
+	std::string P = filename;
+	for (size_t i = 0; i < P.length(); i++) {
+		if (P[i] == '\\') P[i] = m_Sep;
+		if (P[i] == '/') P[i] = m_Sep;
+	}
+	return P;
+}
+
+
+//-----------------------------------------------------------------------------
 // Traduit un nom de fichier a la norme Windows
 // Les caracteres : \ / : * ? " < > | sont interdits
 //-----------------------------------------------------------------------------
 std::string XPath::ConvertWindows(const char* filename)
 {
 	std::string P = filename;
-	for (uint32_t i = 0; i < P.length(); i++)
+	for (size_t i = 0; i < P.length(); i++)
 		if ((P[i] == '\\') || (P[i] == '/') || (P[i] == ':') || (P[i] == '*') ||
 				(P[i] == '?') || (P[i] == '"') || (P[i] == '<') || (P[i] == '>') ||
 				(P[i] == '|'))

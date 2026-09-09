@@ -63,10 +63,15 @@ bool StereoView::OpenProject(std::string filename)
 	XPath path;
 	std::string folder = path.Path(filename.c_str());
 
-	std::string left_image = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/left_image").c_str());
-	std::string right_image = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/right_image").c_str());
-	std::string opk_file = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/opk_file").c_str());
-	std::string camera_file = path.Absolute(folder.c_str(), parser.ReadNode("/stereopair_project/camera_file").c_str());
+	std::string left = path.Convert(parser.ReadNode("/stereopair_project/left_image").c_str());
+	std::string right = path.Convert(parser.ReadNode("/stereopair_project/right_image").c_str());
+	std::string opk = path.Convert(parser.ReadNode("/stereopair_project/opk_file").c_str());
+	std::string camera = path.Convert(parser.ReadNode("/stereopair_project/camera_file").c_str());
+
+	std::string left_image = path.Absolute(folder.c_str(), left.c_str());
+	std::string right_image = path.Absolute(folder.c_str(), right.c_str());
+	std::string opk_file = path.Absolute(folder.c_str(), opk.c_str());
+	std::string camera_file = path.Absolute(folder.c_str(), camera.c_str());
 	uint16_t rot_left = parser.ReadNodeAsUInt16("/stereopair_project/left_image_rotation");
 	uint16_t rot_right = parser.ReadNodeAsUInt16("/stereopair_project/right_image_rotation");
 	OpenImage(left_image, true);

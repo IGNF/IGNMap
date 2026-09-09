@@ -21,15 +21,16 @@ public:
   XPath() { m_Sep = gDefaultSep; }
   XPath(char sep) { m_Sep = sep;}
 
-	std::string Path(const char* filename);
-	std::string Name(const char* filename);
-	std::string Name(const char* filename, bool extension);
-	std::string Ext(const char* filename);
-	std::string PathName(const char* filename);
-	std::string FullName(const char* folder, const char* filename);
+	std::string Path(const char* filename) const;
+	std::string Name(const char* filename) const;
+	std::string Name(const char* filename, bool extension) const;
+	std::string Ext(const char* filename) const;
+	std::string PathName(const char* filename) const;
+	std::string FullName(const char* folder, const char* filename) const;
 
-	std::string Relative(const char* root, const char* path);
-	std::string Absolute(const char* root, const char* path);
+	std::string Relative(const char* root, const char* path) const;
+	std::string Absolute(const char* root, const char* path) const;
+	std::string Convert(const char* filename) const;
 
 	static std::string ConvertWindows(const char* filename);
 	static void SetDefaultSep(char c) { gDefaultSep = c; }
