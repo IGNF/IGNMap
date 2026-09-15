@@ -37,7 +37,10 @@ OGLWidget::OGLWidget() : m_MapThread("OGL3DViewer")
 {
   setSize(500, 500);
   setWantsKeyboardFocus(true);
-  openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL3_2);
+  setOpaque(true);
+  //openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::openGL3_2);
+  openGLContext.setPreferredVersion ({ 3, 2 });
+  openGLContext.setPreferredProfile(juce::OpenGLProfile::core);
   // openGL3_2 est recommande par JUCE mais probleme sur MacOS avec glLineWidth
   openGLContext.setContinuousRepainting(true);
   m_MapThread.addListener(this);
@@ -311,7 +314,8 @@ void OGLWidget::paint(juce::Graphics& g)
     repaint();
   }
 
-  auto b = getLocalBounds();
+  //auto b = getLocalBounds();
+  auto b = m_Bounds;
   int info_origin = b.getBottom() - 125;
 
   g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
@@ -386,7 +390,7 @@ void OGLWidget::paint(juce::Graphics& g)
 void OGLWidget::render()
 {
   using namespace ::juce::gl;
-  const juce::ScopedLock lock(m_Mutex);
+  //const juce::ScopedLock lock(m_Mutex);
 
   auto desktopScale = (float)openGLContext.getRenderingScale();
   juce::OpenGLHelpers::clear(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
@@ -408,7 +412,10 @@ void OGLWidget::render()
   glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-  glViewport(0, 0, W, H);
+  {
+    const juce::ScopedLock lock(m_Mutex);
+    glViewport(0, 0, W, H);
+  }
 
   m_Shader->use();
 
@@ -527,6 +534,8 @@ void OGLWidget::render()
   // Reset the element buffers so child Components draw correctly
   openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
   openGLContext.extensions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  juce::OpenGLHelpers::resetErrorState();
 }
 
 //==============================================================================
