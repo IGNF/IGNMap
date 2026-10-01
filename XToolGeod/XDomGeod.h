@@ -126,8 +126,8 @@ public:
   void ConvertRGAF09ToRRAF(double xW, double yW, double* xL, double* yL, double Z = 0.);
   void SetZoneRGAF09(double phi);
 
-	virtual bool ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.);
-	virtual bool Convert(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.);
+	virtual bool ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override;
+	virtual bool Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override;
 
   // Alteration lineaire
   virtual double AltLin(XProjCode start_proj, double Xi, double Yi);

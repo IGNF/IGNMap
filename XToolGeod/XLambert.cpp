@@ -324,7 +324,7 @@ bool XLambert::ReadGrid(const char* filename, XError* error)
 //-----------------------------------------------------------------------------
 // Conversion de coordonnees d'un systeme dans un autre
 //-----------------------------------------------------------------------------
-bool XLambert::Convert(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+bool XLambert::Convert(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 											 double& Xf, double& Yf, double Z)
 {
   if (start_proj == end_proj) {
@@ -390,7 +390,7 @@ bool XLambert::Convert(XProjCode start_proj, XProjCode end_proj, double Xi, doub
 //-----------------------------------------------------------------------------
 // Conversion Lambert Zone vers Lambert 2 etendu (ellipsoide de Clarke)
 //-----------------------------------------------------------------------------
-bool XLambert::ConvertClarke(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+bool XLambert::ConvertClarke(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 														 double& Xf, double& Yf)
 {
 	if (start_proj == end_proj) {
@@ -399,18 +399,19 @@ bool XLambert::ConvertClarke(XProjCode start_proj, XProjCode end_proj, double Xi
 		return true;
 	}
 	// Gestion du Lambert Carto en entree
+	double YiC = Yi;
 	if (start_proj < Lambert2E) {
-		if (Yi > 1e6)
-			Yi = Yi - (double)start_proj * 1e6;
+		if (YiC > 1e6)
+			YiC = YiC - (double)start_proj * 1e6;
 	}
 	double gammaF, pound, RF;
 	double nI, cI, xI, yI, nF, cF, xF, yF;
 	SetParameterClarke(start_proj, nI, cI, xI, yI);
 	SetParameterClarke(end_proj, nF, cF, xF, yF);
 
-	gammaF = (nF / nI) * atan((xI - Xi)/(Yi - yI));
+	gammaF = (nF / nI) * atan((xI - Xi)/(YiC - yI));
 	pound = log(cI / sqrt((Xi - xI)*(Xi - xI) + 
-							(Yi - yI)*(Yi - yI))) / nI;
+							(YiC - yI)*(YiC - yI))) / nI;
 	RF = cF * exp(-nF * pound);
 	
 	Xf = xF + RF * sin(gammaF);
@@ -421,7 +422,7 @@ bool XLambert::ConvertClarke(XProjCode start_proj, XProjCode end_proj, double Xi
 //-----------------------------------------------------------------------------
 // Conversion entre Lambert 93 et Lambert CC
 //-----------------------------------------------------------------------------
-bool XLambert::ConvertGRS(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+bool XLambert::ConvertGRS(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 														 double& Xf, double& Yf)
 {
 	double lambda, phi;
@@ -531,7 +532,7 @@ bool XLambert::SetParametersGRS(XProjCode projection)
 //-----------------------------------------------------------------------------
 // Conversion en coordonnees geographiques RGF93 (lambda : X ; phi : Y)
 //-----------------------------------------------------------------------------
-bool XLambert::ConvertRGF93(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+bool XLambert::ConvertRGF93(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 											 double& Xf, double& Yf, double Z)
 {
 	if (start_proj == end_proj) {
@@ -612,7 +613,7 @@ bool XLambert::ConvertRGF93(XProjCode start_proj, XProjCode end_proj, double Xi,
 //-----------------------------------------------------------------------------
 // Conversion avec passage en degree decimaux
 //-----------------------------------------------------------------------------
-bool XLambert::ConvertDeg(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+bool XLambert::ConvertDeg(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 													double& Xf, double& Yf, double Z)
 {
 	if ((start_proj != RGF93)&&(end_proj != RGF93))
@@ -673,7 +674,7 @@ double XLambert::AltLin(XProjCode start_proj, double Xi, double Yi)
 //-----------------------------------------------------------------------------
 // Gestion du LAEA
 //-----------------------------------------------------------------------------
-bool XLambert::ConvertLAEA(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi,
+bool XLambert::ConvertLAEA(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
                            double& Xf, double& Yf, double Z)
 {
   double lambda = 0., phi = 0.;
@@ -731,7 +732,7 @@ bool XLambert::SetParametersUTM(XProjCode projection)
   return true;
 }
 
-bool XLambert::ConvertUTM(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi,
+bool XLambert::ConvertUTM(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
                           double& Xf, double& Yf, double Z)
 {
   double lambda, phi;

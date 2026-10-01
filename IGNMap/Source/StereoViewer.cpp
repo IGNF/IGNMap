@@ -138,7 +138,7 @@ void StereoView::resized()
 	auto bounds = getLocalBounds();
 	m_Image = juce::Image(juce::Image::ARGB, bounds.getWidth(), bounds.getHeight(), true);
 	m_bDirty = true;
-	grabKeyboardFocus();
+	//grabKeyboardFocus();
 }
 
 //-----------------------------------------------------------------------------

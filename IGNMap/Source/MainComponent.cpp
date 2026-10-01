@@ -15,6 +15,7 @@
 #include "WmtsLayer.h"
 #include "TmsLayer.h"
 #include "MvtLayer.h"
+#include "ClassViewer.h"
 #include "WmtsTmsViewer.h"
 #include "ExportImageDlg.h"
 #include "ExportLasDlg.h"
@@ -151,6 +152,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+	Clear();
 	disconnect();
 }
 
@@ -1059,19 +1061,13 @@ void MainComponent::Clear()
 	m_LasViewer.get()->SetBase(&m_GeoBase);
 	m_SelTreeViewer.get()->SetBase(&m_GeoBase);
 	m_ImageOptionsViewer.get()->SetImage(nullptr);
-	ClearSearch();
+	m_Search.clear();
 	gWmtsTmsViewerMgr.RemoveAll();
+	gClassViewerMgr.RemoveAll();
 	for (size_t i = 0; i < m_ToolWindows.size(); i++)
 		delete m_ToolWindows[i];
 	m_ToolWindows.clear();
 	m_OGL3DViewer.reset();
-}
-
-void MainComponent::ClearSearch()
-{
-	for (size_t i = 0; i < m_Search.size(); i++)
-		delete m_Search[i];
-	m_Search.clear();
 }
 
 //==============================================================================
@@ -2123,15 +2119,11 @@ void MainComponent::Search(juce::String query)
 {
 	if (query.length() < 3)
 		return;
-	GeoSearch* search = new GeoSearch;
-		if (!search->Search(query)) {
-			delete search;
+	GeoSearch search;
+	if (!search.Search(query)) 
 			return;
-		}
-	if (!ImportVectorFile(search->Filename())) {
-		delete search;
+	if (!ImportVectorFile(search.Filename()))
 		return;
-	}
 	m_Search.push_back(search);
 	m_VectorViewer.get()->RenameAndViewLastClass(query);
 }

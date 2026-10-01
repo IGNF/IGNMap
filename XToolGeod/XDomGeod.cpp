@@ -151,7 +151,7 @@ bool XDomGeod::SetDefaultProjection(XProjCode start_proj, XProjCode end_proj)
 //-----------------------------------------------------------------------------
 // Conversion en fonction des projections par defaut
 //-----------------------------------------------------------------------------
-bool XDomGeod::Convert(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XDomGeod::Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z)
 {
   if (m_StartProjection == RGF93) {
     switch(m_EndProjection){
@@ -254,7 +254,7 @@ bool XDomGeod::Convert(double Xi, double Yi, double& Xf, double& Yf, double Z)
 //-----------------------------------------------------------------------------
 // Conversion avec passage en degree decimaux
 //-----------------------------------------------------------------------------
-bool XDomGeod::ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XDomGeod::ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z)
 {
   if ((m_StartProjection != RGF93)&&(m_EndProjection != RGF93))
     return Convert(Xi, Yi, Xf, Yf, Z);

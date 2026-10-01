@@ -121,11 +121,10 @@ private:
   MainComponentToolbarFactory m_ToolbarFactory;
 
   XGeoBase m_GeoBase;
-  std::vector<GeoSearch*> m_Search;   // Recherche effectuees pendant la session
+  std::vector<GeoSearch> m_Search;   // Recherche effectuees pendant la session
   std::vector<ToolWindow*> m_ToolWindows;
 
   void Clear();
-  void ClearSearch();
   void NewWindow();
   void AboutIGNMap();
   void Translate();

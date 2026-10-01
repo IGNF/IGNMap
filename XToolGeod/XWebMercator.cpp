@@ -35,7 +35,7 @@ bool XWebMercator::SetDefaultProjection(XProjCode start_proj, XProjCode end_proj
 //-----------------------------------------------------------------------------
 // Conversion avec passage en degree decimaux
 //-----------------------------------------------------------------------------
-bool XWebMercator::ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XWebMercator::ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z)
 {
   if ((m_StartProjection != RGF93)&&(m_EndProjection != RGF93))
     return Convert(Xi, Yi, Xf, Yf, Z);
@@ -56,7 +56,7 @@ bool XWebMercator::ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, doub
 //-----------------------------------------------------------------------------
 // Conversion normale
 //-----------------------------------------------------------------------------
-bool XWebMercator::Convert(double Xi, double Yi, double& Xf, double& Yf, double /*Z*/)
+bool XWebMercator::Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double /*Z*/)
 {
   double a = 6378137;
   if ((m_StartProjection == RGF93)&&(m_EndProjection == WebMercator)) {

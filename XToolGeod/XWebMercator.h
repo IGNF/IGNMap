@@ -19,10 +19,10 @@ public:
   virtual bool SetDefaultProjection(XProjCode start_proj, XProjCode end_proj);
 
   // Conversion avec passage en degree decimaux
-  virtual bool ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.);
+  virtual bool ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override;
 
   // Conversion normale
-  virtual bool Convert(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.);
+  virtual bool Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override;
 };
 
 #endif // XWEBMERCATOR_H

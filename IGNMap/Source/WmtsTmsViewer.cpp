@@ -169,7 +169,7 @@ void WmtsViewerComponent::resized()
 //==============================================================================
 // Chargement d'une URL
 //==============================================================================
-void WmtsViewerComponent:: textEditorReturnKeyPressed(juce::TextEditor& textEdit)
+void WmtsViewerComponent::textEditorReturnKeyPressed(juce::TextEditor& textEdit)
 {
 	if (textEdit.getName() != "URL")
 		return;

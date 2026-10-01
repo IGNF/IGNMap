@@ -214,7 +214,7 @@ bool XNCGeod::SetDataProjection(XProjCode proj, DataProjection* data)
 //-----------------------------------------------------------------------------
 // Conversion normale
 //-----------------------------------------------------------------------------
-bool XNCGeod::Convert(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XNCGeod::Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z)
 {
   double lambda = 0., phi = 0., h = Z;
   double epsilon_phi = 0.000000001;
@@ -361,7 +361,7 @@ bool XNCGeod::Convert(double Xi, double Yi, double& Xf, double& Yf, double Z)
 //-----------------------------------------------------------------------------
 // Conversion avec passage en degree decimaux
 //-----------------------------------------------------------------------------
-bool XNCGeod::ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z)
+bool XNCGeod::ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z)
 {
   if ((m_StartProjection != RGF93)&&(m_EndProjection != RGF93))
     return Convert(Xi, Yi, Xf, Yf, Z);

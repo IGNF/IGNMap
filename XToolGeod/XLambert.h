@@ -100,22 +100,22 @@ protected:
 	bool Interpol(double lambda, double phi, double* Tx, double* Ty, double* Tz);
 
 	bool SetParameterClarke(XProjCode proj, double& N, double& C, double& X, double& Y);
-	bool ConvertClarke(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+	bool ConvertClarke(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 														 double& Xf, double& Yf);
 
 	void Convert2ETo93(double x2e, double y2e, double* x93, double* y93, double Z = 0, bool rgf93 = false);
 	void Convert93To2E(double x93, double y93, double* x2e, double* y2e, double Z = 0, bool rgf93 = false);
 	bool SetParametersGRS(XProjCode projection);
-	bool ConvertGRS(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+	bool ConvertGRS(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 														 double& Xf, double& Yf);
-	bool ConvertRGF93(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+	bool ConvertRGF93(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 											 double& Xf, double& Yf, double Z = 0);
 
-  bool ConvertLAEA(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi,
+  bool ConvertLAEA(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
                    double& Xf, double& Yf, double Z);
 
   bool SetParametersUTM(XProjCode projection);
-  bool ConvertUTM(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi,
+  bool ConvertUTM(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
                   double& Xf, double& Yf, double Z);
 
 public:
@@ -128,14 +128,14 @@ public:
 	bool ReadGrid(const char* filename, XError* error = NULL);
 
 
-	bool Convert(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+	bool Convert(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 											 double& Xf, double& Yf, double Z = 0.);
-	bool ConvertDeg(XProjCode start_proj, XProjCode end_proj, double Xi, double Yi, 
+	bool ConvertDeg(XProjCode start_proj, XProjCode end_proj, const double& Xi, const double& Yi,
 											 double& Xf, double& Yf, double Z = 0.);
 
-	virtual bool Convert(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.)
+	virtual bool Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override
 														{ return Convert(m_StartProjection, m_EndProjection, Xi, Yi, Xf, Yf, Z);}
-	virtual bool ConvertDeg(double Xi, double Yi, double& Xf, double& Yf, double Z = 0.)
+	virtual bool ConvertDeg(const double& Xi, const double& Yi, double& Xf, double& Yf, double Z = 0.) override
 														{ return ConvertDeg(m_StartProjection, m_EndProjection, Xi, Yi, Xf, Yf, Z);}
 
   // Alteration lineaire
