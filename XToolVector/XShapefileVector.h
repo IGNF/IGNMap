@@ -19,11 +19,11 @@
 //-----------------------------------------------------------------------------
 class XShapefileVector {
 protected :
-	XShapefile*			m_File;
-	uint32_t					m_nIndex;
+	XShapefile*			m_File = nullptr;
+	uint32_t				m_nIndex = 0;
 
 public :
-	XShapefileVector() { m_File = NULL;}
+	XShapefileVector() {;}
 
 	inline XShapefile* Shapefile() const { return m_File;}
 	inline uint32_t Index() const { return m_nIndex;}

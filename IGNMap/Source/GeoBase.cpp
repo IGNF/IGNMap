@@ -22,6 +22,7 @@
 #include "../../XToolVector/XGeoJson.h"
 #include "../../XToolVector/XTAChantier.h"
 #include "../../XToolVector/XCsv.h"
+#include "../../XToolVector/XFlatGeoBuf.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 #include "../../XToolGeod/XGeoPref.h"
@@ -631,6 +632,12 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 	for (int i = 0; i < T.size(); i++)
 		ImportCsv(T[i].getFullPathName(), base);
 
+	// Format FlatGeoBuf
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.fgb");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportFlatGeoBuf(T[i].getFullPathName(), base);
+
 	ColorizeClasses(base);
 
 	return true;
@@ -712,6 +719,16 @@ XGeoClass* GeoTools::ImportCsv(juce::String fileName, XGeoBase* base, XGeoMap* m
 	if (fileName.isEmpty())
 		return nullptr;
 	return XCsvFile::ImportCsv(base, AppUtil::GetStringFilename(fileName).c_str(), map);
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier FlatGeoBuf
+//-----------------------------------------------------------------------------
+XGeoClass* GeoTools::ImportFlatGeoBuf(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return nullptr;
+	return XFlatGeoBufMap::ImportFlatGeoBuf(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------

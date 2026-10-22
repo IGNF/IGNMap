@@ -1215,7 +1215,7 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 {
 	if (filename.isEmpty())
 		filename = AppUtil::OpenFile("VectorPath", juce::translate("Open vector file"), 
-																	"*.shp;*.mif;*.gpkg;*.dxf;*.json;*.geojson;*.xml,*.csv");
+																	"*.shp;*.mif;*.gpkg;*.dxf;*.json;*.geojson;*.xml,*.csv,*.fgb");
 	if (filename.isEmpty())
 		return false;
 	juce::File file(filename);
@@ -1238,6 +1238,8 @@ bool MainComponent::ImportVectorFile(juce::String filename)
 		flag = GeoTools::ImportTA(filename, &m_GeoBase);
 	if (extension == ".csv")
 		flag = GeoTools::ImportCsv(filename, &m_GeoBase);
+	if (extension == ".fgb")
+		flag = GeoTools::ImportFlatGeoBuf(filename, &m_GeoBase);
 	if (flag == false) {
 		juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "IGNMap",
 			filename + juce::translate(" : this file cannot be opened"), "OK");

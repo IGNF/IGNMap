@@ -21,15 +21,16 @@
 class XFile {
 protected:
   std::string               m_strFilename;
-  std::ifstream*            m_In;
-  std::ios_base::openmode   m_Mode;
+  std::ifstream*            m_In = nullptr;
+  std::ios_base::openmode   m_Mode = 0;
 
 public:
-  XFile();
+  XFile() { ; }
   XFile(const char *filename, std::ios_base::openmode mode);
   virtual ~XFile();
   bool Open(const char *filename, std::ios_base::openmode mode);
   void Close();
+  std::string Name() { return m_strFilename; }
 
   std::ifstream* IStream();
   bool Good();

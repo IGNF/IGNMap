@@ -172,7 +172,7 @@ bool DtmTmsLayer::LoadFrame(const XFrame& F, int zoomlevel)
   }
   // On reinitialise le Zmin et le Zmax
   m_dZmin = std::numeric_limits<double>::max();
-  m_dZmax = std::numeric_limits<double>::min();
+  m_dZmax = std::numeric_limits<double>::lowest();
 
   for (int i = 0; i < nb_tiley; i++) {
     for (int j = 0; j < nb_tilex; j++) {

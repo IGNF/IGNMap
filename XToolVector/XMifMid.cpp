@@ -75,7 +75,7 @@ void XMifMid::Class(XGeoClass* C)
 		if ((strncmp(type.c_str(), "char", 4)==0)||(strncmp(type.c_str(), "Char", 4)==0)) {
 			size_t pos = type.find('(');
 			if (pos > 0) {
-				sscanf(type.substr(pos+1).c_str(),"%d", &length);
+				(void)sscanf(type.substr(pos+1).c_str(),"%d", &length);
 				attType = XGeoAttribut::String;
 			} else
 				length = 20;
@@ -846,7 +846,7 @@ bool XMifMidMLine2D::Read(std::ifstream* in, uint32_t num, XError* /*error*/)
 //-----------------------------------------------------------------------------
 bool XMifMidMLine2D::LoadGeom()
 {
-	if (m_File == NULL)
+	if (m_File == nullptr)
 		return false;
 	std::ifstream* in = m_File->IStream();
 	if (!in->good())
@@ -855,13 +855,13 @@ bool XMifMidMLine2D::LoadGeom()
 	in->seekg(m_Pos);	
 
 	m_Parts = new int[m_nNumParts];
-	if (m_Parts == NULL) {
+	if (m_Parts == nullptr) {
 		Unload();
 		return false;
 	}
 
 	m_Pt = new XPt[m_nNumPoints];
-	if (m_Pt == NULL) {
+	if (m_Pt == nullptr) {
 		Unload();
 		return false;
 		}

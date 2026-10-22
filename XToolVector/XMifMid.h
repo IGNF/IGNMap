@@ -37,7 +37,7 @@ protected:
 	uint32_t										m_nNbLine;		// Nombre d'objets lineaires
 	uint32_t										m_nNbPoly;		// Nombre d'objets surfaciques
 
-	std::vector<XGeoRepres*>	m_Repres;			// Representations stockee dans le fichier
+	std::vector<XGeoRepres*>	m_Repres;			// Representations stockees dans le fichier
 
 	bool ReadHeader(XError* error = NULL);
 	bool ReadColumns(uint16_t nb);

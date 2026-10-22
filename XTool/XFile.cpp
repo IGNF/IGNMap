@@ -44,16 +44,11 @@ void XFile::Seek(std::istream* in, std::streampos pos)
 //-----------------------------------------------------------------------------
 // Classe XFile
 //-----------------------------------------------------------------------------
-XFile::XFile()
-{
-  m_In = NULL;
-}
-
 XFile::XFile(const char *filename, std::ios_base::openmode mode)
 {
   m_strFilename = filename;
   m_Mode = mode;
-  m_In = NULL;
+  m_In = nullptr;
 }
 
 XFile::~XFile()
@@ -84,7 +79,7 @@ void XFile::Close()
 //-----------------------------------------------------------------------------
 bool XFile::Good()
 {
-  if (m_In == NULL)
+  if (m_In == nullptr)
     return false;
   return m_In->good();
 }
@@ -94,17 +89,17 @@ bool XFile::Good()
 //-----------------------------------------------------------------------------
 std::ifstream* XFile::IStream()
 {
-  if (m_In == NULL) {
+  if (m_In == nullptr) {
     if (gFileManager.Open(this))
       return m_In;
     else
-      return NULL;
+      return nullptr;
   }
   if (m_In->good())
     return m_In;
   if (gFileManager.Open(this))
     return m_In;
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +107,7 @@ std::ifstream* XFile::IStream()
 //-----------------------------------------------------------------------------
 bool XFile::Seek(std::streampos pos)
 { 
-  if (IStream() == NULL)
+  if (IStream() == nullptr)
     return false;
   Seek(m_In, pos);
   return m_In->good();
@@ -162,12 +157,12 @@ XFileManager::~XFileManager()
 bool XFileManager::Open(XFile* file)
 {
   //m_Log << "Open : " << file->m_strFilename << std::endl;
-  if (file->m_In != NULL) {
+  if (file->m_In != nullptr) {
     file->m_In->close();
   } else
     file->m_In = Stream();
 
-  if (file->m_In == NULL)
+  if (file->m_In == nullptr)
     return false;
 
   file->m_In->open(file->m_strFilename.c_str(), file->m_Mode);
@@ -188,11 +183,11 @@ std::ifstream* XFileManager::Stream()
       if (m_File.size() < 1) break;
       XFile* oldFile = m_File.back();
       //m_Log << "Close : " << oldFile->m_strFilename << std::endl;
-      if (oldFile->m_In != NULL) {
+      if (oldFile->m_In != nullptr) {
         oldFile->m_In->close();
         flag = false;
       }
-      oldFile->m_In = NULL;
+      oldFile->m_In = nullptr;
       m_File.pop_back();
     } while (flag);
   }
@@ -211,9 +206,9 @@ std::ifstream* XFileManager::Stream()
 void XFileManager::Close(XFile* file)
 {
   //m_Log << "--- Close " << m_nCount << " " << m_File.size() << " " << file->m_strFilename << std::endl;
-  if (file->m_In != NULL) {
+  if (file->m_In != nullptr) {
     file->m_In->close();
-    file->m_In = NULL;
+    file->m_In = nullptr;
   }
   m_File.remove(file);
 }

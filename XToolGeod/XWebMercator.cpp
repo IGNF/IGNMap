@@ -58,7 +58,7 @@ bool XWebMercator::ConvertDeg(const double& Xi, const double& Yi, double& Xf, do
 //-----------------------------------------------------------------------------
 bool XWebMercator::Convert(const double& Xi, const double& Yi, double& Xf, double& Yf, double /*Z*/)
 {
-  double a = 6378137;
+  double a = 6378137.;
   if ((m_StartProjection == RGF93)&&(m_EndProjection == WebMercator)) {
     Xf = Xi * a;
     Yf = a * log(tan(Yi * 0.5  + XPI4));

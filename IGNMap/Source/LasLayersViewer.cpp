@@ -465,7 +465,7 @@ void LasLayersViewer::SetBase(XGeoBase* base)
 	m_ModelLas.SetBase(base);
 	m_TableLas.updateContent();
 	double zmin = std::numeric_limits<double>::max();
-	double zmax = std::numeric_limits<double>::min();
+	double zmax = std::numeric_limits<double>::lowest();
 	int count = 0;
 	for (uint32_t i = 0; i < m_Base->NbClass(); i++) {
 		XGeoClass* C = m_Base->Class(i);

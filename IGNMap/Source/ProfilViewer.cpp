@@ -26,7 +26,7 @@ void ProfilViewer::ProfilDrawer::paint(juce::Graphics& g)
     return;
 
   // Recherche des min et max
-  double zmin = std::numeric_limits<double>::max(), zmax = std::numeric_limits<double>::min();
+  double zmin = std::numeric_limits<double>::max(), zmax = std::numeric_limits<double>::lowest();
   for (uint32_t i = 0; i < m_ProfilDtm.size(); i++) {
     zmin = XMin(zmin, m_ProfilDtm[i].Z);
     zmax = XMax(zmax, m_ProfilDtm[i].Z);
