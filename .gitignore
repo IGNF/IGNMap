@@ -39,6 +39,7 @@ TinyEXIF/*
 zstd/*
 lz4/*
 carquet/*
+flatgeobuf/*
 
 
 
