@@ -63,8 +63,8 @@ public:
 
 	inline eType Type() { return m_Type;}
 
-	inline uint32_t NbPt() { return m_nNumPoints;}
-	inline uint32_t NbPart() { return m_nNumParts;}
+	inline uint32_t NbPt() const { return m_nNumPoints;}
+	inline uint32_t NbPart() const { return m_nNumParts;}
 	inline XPt* Pt() { return m_Pt;}
 	inline uint32_t* Parts() { return m_Parts;}
   inline double* Z() { return m_Z;}

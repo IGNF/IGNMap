@@ -233,7 +233,7 @@ bool XGpkgMap::ReadVectors(uint32_t index, XGeoClass* C)
       continue;
     if (type_by_object) { // Cas ou le type geometrique est defini a l'objet
       uint8_t* geom_wkb = &geom[GetGeomHeaderSize(geom)];
-      XWKBGeom wkb(false);
+      XWKBGeom wkb(true);
       if (wkb.Read(geom_wkb))
         typeGeom = wkb.Type();
     }

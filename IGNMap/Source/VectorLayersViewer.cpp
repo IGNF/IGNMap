@@ -197,7 +197,8 @@ void VectorViewerModel::cellClicked(int rowNumber, int columnId, const juce::Mou
 		std::function< void() > ExportClass = [=]() { // Export de la classe
 			sendActionMessage("ExportClass"); };
 		std::function< void() > ViewObjects = [=]() { // Visualisation des objets de la classe
-			gClassViewerMgr.AddClassViewer(geoLayer->Name(), geoLayer, this);
+			gClassViewerMgr.AddClassViewer(juce::String(geoLayer->Name()) + " - " + juce::String(geoLayer->NbVector()) 
+																		+ " " + juce::translate("objects"), geoLayer, this);
 			};
 		std::function< void() > ExportRepresVector = [=]() { // Export des representations des classes
 			sendActionMessage("ExportRepresVector"); };

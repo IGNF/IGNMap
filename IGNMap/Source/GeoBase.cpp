@@ -23,6 +23,7 @@
 #include "../../XToolVector/XTAChantier.h"
 #include "../../XToolVector/XCsv.h"
 #include "../../XToolVector/XFlatGeoBuf.h"
+#include "../../XToolVector/XGeoParquet.h"
 #include "../../XTool/XInterpol.h"
 #include "../../XTool/XTransfo.h"
 #include "../../XToolGeod/XGeoPref.h"
@@ -638,6 +639,12 @@ bool GeoTools::ImportVectorFolder(juce::String folderName, XGeoBase* base, int& 
 	for (int i = 0; i < T.size(); i++)
 		ImportFlatGeoBuf(T[i].getFullPathName(), base);
 
+	// Format GeoParquet
+	T = folder.findChildFiles(juce::File::findFiles, false, "*.parquet");
+	nb_total += T.size();
+	for (int i = 0; i < T.size(); i++)
+		ImportGeoParquet(T[i].getFullPathName(), base);
+
 	ColorizeClasses(base);
 
 	return true;
@@ -729,6 +736,16 @@ XGeoClass* GeoTools::ImportFlatGeoBuf(juce::String fileName, XGeoBase* base, XGe
 	if (fileName.isEmpty())
 		return nullptr;
 	return XFlatGeoBufMap::ImportFlatGeoBuf(base, AppUtil::GetStringFilename(fileName).c_str(), map);
+}
+
+//-----------------------------------------------------------------------------
+// Import d'un fichier GeoParquet
+//-----------------------------------------------------------------------------
+XGeoClass* GeoTools::ImportGeoParquet(juce::String fileName, XGeoBase* base, XGeoMap* map)
+{
+	if (fileName.isEmpty())
+		return nullptr;
+	return XGeoParquetMap::ImportGeoParquet(base, AppUtil::GetStringFilename(fileName).c_str(), map);
 }
 
 //-----------------------------------------------------------------------------
