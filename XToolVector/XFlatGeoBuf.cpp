@@ -60,31 +60,7 @@ XGeoClass* XFlatGeoBufMap::ImportFlatGeoBuf(XGeoBase* base, const char* path, XG
 	else
 		delete file;
 
-    return C;
-}
-
-//-----------------------------------------------------------------------------
-// Fixe la classe d'objets
-//-----------------------------------------------------------------------------
-void XFlatGeoBufMap::Class(XGeoClass* C)
-{
-  uint32_t i;
-  for (i = 0; i < m_Data.size(); i++) {
-    XGeoVector* record = (XGeoVector*)m_Data[i];
-    record->Class(C);
-    C->Vector(record);
-  }
-}
-
-//-----------------------------------------------------------------------------
-// Renvoi la classe d'objets
-//-----------------------------------------------------------------------------
-XGeoClass* XFlatGeoBufMap::Class()
-{
-  if (m_Data.size() < 1)
-    return NULL;
-  XGeoVector* record = (XGeoVector*)m_Data[0];
-  return record->Class();
+  return C;
 }
 
 //-----------------------------------------------------------------------------
@@ -521,7 +497,7 @@ bool XFlatGeoBufMap::LoadFlatGeoBufGeom(uint64_t offset, XFlatGeoBufVector* V, b
 //-----------------------------------------------------------------------------
 // Chargement d'une geometrie
 //-----------------------------------------------------------------------------
-bool XFlatGeoBufMap::ReadAttributes(uint64_t offset, std::vector<std::string>& V, XGeoClass* C)
+bool XFlatGeoBufMap::ReadAttributes(uint64_t offset, std::vector<std::string>& V)
 {
   // Ouverture de l'entete
   if (m_HeaderData == nullptr)

@@ -27,7 +27,7 @@
 class XGeoBase;
 class XFlatGeoBufVector;
 
-class XFlatGeoBufMap : public XGeoMap {
+class XFlatGeoBufMap : public XGeoMapMonoClass {
 protected :
   XFile m_In;
 	uint8_t* m_HeaderData = nullptr;
@@ -42,13 +42,10 @@ public :
 	bool OpenFile(const char* filename);
   bool Read(XGeoBase* base, XWait* wait = nullptr);
 
-  bool ReadAttributes(uint64_t offset, std::vector<std::string>& V, XGeoClass* C);
+  bool ReadAttributes(uint64_t offset, std::vector<std::string>& V);
   bool LoadFlatGeoBufGeom(uint64_t offset, XFlatGeoBufVector* V, bool needZ);
   bool LoadGeom(uint64_t offset, XFlatGeoBufVector* V) { return LoadFlatGeoBufGeom(offset, V, true); }
   bool LoadGeom2D(uint64_t offset, XFlatGeoBufVector* V) { return LoadFlatGeoBufGeom(offset, V, false); }
-
-  void Class(XGeoClass* C);
-  XGeoClass* Class();
 
   static XGeoClass* ImportFlatGeoBuf(XGeoBase* base, const char* path, XGeoMap* map = nullptr);
 
@@ -86,9 +83,10 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
 };
 
 //-----------------------------------------------------------------------------
@@ -104,9 +102,10 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
 };
 
 //-----------------------------------------------------------------------------
@@ -122,7 +121,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -133,7 +132,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
   {
     m_nNumPoints = nb; m_Pt = P;
@@ -153,7 +153,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -164,7 +164,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
   {
     m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
@@ -184,14 +185,15 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
   {
     m_nNumPoints = nb; m_Pt = P;
@@ -211,7 +213,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -222,7 +224,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
   {
     m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
@@ -242,14 +245,15 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
   {
     m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;
@@ -270,7 +274,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -281,7 +285,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
   {
     m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
@@ -301,14 +306,15 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
   {
     m_nNumPoints = nb; m_Pt = P;
@@ -328,7 +334,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -339,7 +345,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
   {
     m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
@@ -360,14 +367,15 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
   {
     m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;
@@ -388,7 +396,7 @@ public:
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
@@ -399,7 +407,8 @@ public:
     if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
 
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
+  virtual XGeoClass* GeoClass() const { return m_Map->Class(); }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
   virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
   {
     m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;

@@ -34,18 +34,22 @@ protected:
 	bool					m_bValid;
   bool          m_bTmpFile;
   XFile         m_In;
+	XGeoClass*		m_Class;
   std::ifstream* m_ActiveStream;
 
 public:
 	XGeoFDtm() {
 		m_dGSD = 0.; m_dZmin = m_dZmax = XGEO_NO_DATA; m_bValid = m_bTmpFile = false; m_ActiveStream = nullptr;
-							m_dNoData = -9999.; m_nOffset=0; m_nNbNoZ = m_nW = m_nH = 0;}
+							m_dNoData = -9999.; m_nOffset=0; m_nNbNoZ = m_nW = m_nH = 0; m_Class = nullptr;}
   virtual ~XGeoFDtm() {Close();}
   bool OpenDtm(const char* filename, const char* tmpname);
   virtual void Close();
 
 	virtual eTypeVector TypeVector () const { return DTM;}
 	inline bool Valid() const { return m_bValid;}
+
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	virtual inline double Zmin() const { return m_dZmin;}
 	virtual inline double Zmax() const { return m_dZmax;}

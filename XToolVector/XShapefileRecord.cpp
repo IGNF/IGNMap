@@ -888,10 +888,13 @@ bool XShapefileRecord::IsNear2D(XPt2D P, double dist)
 {
 	if (!Selectable())
 		return false;
-	if (!m_Class->Selectable())
-		return false;
-	if (!m_Class->Layer()->Selectable())
-		return false;
+	XGeoClass* CL = Class();
+	if (CL != nullptr) {
+		if (!CL->Selectable())
+			return false;
+		if (!CL->Layer()->Selectable())
+			return false;
+	}
 	if (P.X < m_Frame.Xmin - dist)
 		return false;
 	if (P.X > m_Frame.Xmax + dist)

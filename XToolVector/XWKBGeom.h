@@ -11,6 +11,11 @@
 #define _XWKBGEOM_H
 
 #include "../XTool/XBase.h"
+#include "../XTool/XPt2D.h"
+
+#ifndef XGEO_NO_DATA
+#define XGEO_NO_DATA	-1e38
+#endif
 
 class XFrame;
 
@@ -61,13 +66,42 @@ public:
   XWKBGeom(bool autodelete = true);
 	virtual ~XWKBGeom();
 
-	inline eType Type() { return m_Type;}
+	inline eType Type() const { return m_Type;}
 
 	inline uint32_t NbPt() const { return m_nNumPoints;}
 	inline uint32_t NbPart() const { return m_nNumParts;}
 	inline XPt* Pt() { return m_Pt;}
 	inline uint32_t* Parts() { return m_Parts;}
   inline double* Z() { return m_Z;}
+  XPt2D Pt(uint32_t i) { 
+    if ((i >= m_nNumPoints)||(m_Pt == nullptr)) return XPt2D(XGEO_NO_DATA, XGEO_NO_DATA); 
+    return XPt2D(m_Pt[i].X, m_Pt[i].Y);
+  }
+  double Z(uint32_t i) {
+    if ((i >= m_nNumPoints) || (m_Z == nullptr)) return XGEO_NO_DATA;
+    return m_Z[i];
+  }
+  uint32_t Part(uint32_t i) {
+    if ((i >= m_nNumParts) || (m_Parts == nullptr))
+      return 0;
+    return m_Parts[i];
+  }
+
+  bool Is3D() const {
+    if ((m_Type >= wkbPointZ) && (m_Type <= wkbTriangleZ)) return true;
+    if ((m_Type >= wkbPointZM) && (m_Type <= wkbTriangleZM)) return true;
+    return false;
+  }
+
+  bool IsClosed() const {
+    if ((m_Type == wkbPolygon) || (m_Type == wkbMultiPolygon))
+      return true;
+    if ((m_Type == wkbPolygonZ) || (m_Type == wkbMultiPolygonZ))
+      return true;
+    if ((m_Type == wkbPolygonZM) || (m_Type == wkbMultiPolygonZM))
+      return true;
+    return false;
+  }
 
 	bool Read(uint8_t* geom);
   bool Frame(XFrame* F);

@@ -409,12 +409,10 @@ bool XShapefile::Convert(const char* file_in, const char* file_out, XGeodConvert
 //-----------------------------------------------------------------------------
 void XShapefile::Class(XGeoClass* C)
 {
-  uint32_t i;
-  for (i = 0; i < m_Data.size(); i++){
-		XGeoVector* record = (XGeoVector*)m_Data[i];
-		record->Class(C);
-		C->Vector(record);
-	}
+	m_Class = C;
+  for (size_t i = 0; i < m_Data.size(); i++)
+		C->Vector((XGeoVector*)m_Data[i]);
+
 	// Fixe le schema de la classe a partir du DBF
   if (!OpenDBF())
     return;
@@ -424,7 +422,7 @@ void XShapefile::Class(XGeoClass* C)
 	XDBaseFieldDescriptor::eType dbType;
 	XGeoAttribut::eType attType;
 	XGeoSchema schema;
-	for (i = 0; i < m_DBFile->NbField(); i++) {
+	for (uint32_t i = 0; i < m_DBFile->NbField(); i++) {
 		if (!m_DBFile->GetFieldDesc(i, name, dbType, length, dec))
 			continue;
 		switch(dbType) {
@@ -438,17 +436,6 @@ void XShapefile::Class(XGeoClass* C)
 		schema.AddAttribut(name, name, "", attType, length, dec);
 	}
 	C->SetSchema(schema);
-}
-	
-//-----------------------------------------------------------------------------
-// Renvoi la classe d'objets
-//-----------------------------------------------------------------------------
-XGeoClass* XShapefile::Class()
-{
-	if (m_Data.size() < 1)
-		return NULL;
-	XGeoVector* record = (XGeoVector*)m_Data[0];
-	return record->Class();
 }
 
 //-----------------------------------------------------------------------------

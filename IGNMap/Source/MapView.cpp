@@ -466,7 +466,7 @@ void MapView::CenterView(const double& X, const double& Y, double scale, bool no
 //==============================================================================
 // Conversion Pixel -> Terrain
 //==============================================================================
-void MapView::Pixel2Ground(double& X, double& Y)
+void MapView::Pixel2Ground(double& X, double& Y) const
 {
 	X = m_dX0 + X * m_dScale;
 	Y = m_dY0 - Y * m_dScale;
@@ -475,7 +475,7 @@ void MapView::Pixel2Ground(double& X, double& Y)
 //==============================================================================
 // Conversion Terrain -> Pixel
 //==============================================================================
-void MapView::Ground2Pixel(double& X, double& Y)
+void MapView::Ground2Pixel(double& X, double& Y) const
 {
 	X = (X - m_dX0) / m_dScale;
 	Y = (m_dY0 - Y) / m_dScale;
@@ -484,7 +484,7 @@ void MapView::Ground2Pixel(double& X, double& Y)
 //==============================================================================
 // Cree un cadre terrain a partir d'une position Pixel et de la demi-taille en pixels
 //==============================================================================
-XFrame MapView::Pixel2Ground(const double& Xcenter, const double& Ycenter, const double& nbpix)
+XFrame MapView::Pixel2Ground(const double& Xcenter, const double& Ycenter, const double& nbpix) const
 {
 	double X0 = Xcenter - nbpix, Y0 = Ycenter - nbpix, X1 = Xcenter + nbpix, Y1 = Ycenter + nbpix;
 	Pixel2Ground(X0, Y0);

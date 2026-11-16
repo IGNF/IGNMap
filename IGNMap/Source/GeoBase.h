@@ -28,8 +28,11 @@ class XGeoMap;
 //==============================================================================
 class GeoImage : public XGeoVector {
 protected:
+  XGeoClass* m_Class = nullptr;
   GeoImage() { ; }
 public:
+  virtual void Class(XGeoClass* C) { m_Class = C; }
+  virtual XGeoClass* Class() const { return m_Class; }
   virtual eTypeVector TypeVector() const { return XGeoVector::Raster; }
   virtual uint32_t NbPt() const { return 5; }
   virtual uint32_t NbPart() const { return 1; }
@@ -155,6 +158,8 @@ public:
   }
   bool Open(std::string filename);
 
+  virtual void Class(XGeoClass* C) { m_Class = C; }
+  virtual XGeoClass* Class() const { return m_Class; }
   virtual eTypeVector TypeVector() const { return XGeoVector::LAS; }
   virtual	bool ReadAttributes(std::vector<std::string>&);
   virtual std::string Filename() { return m_strFilename; }
@@ -165,6 +170,7 @@ public:
 
 protected:
   double m_ZRange[2];
+  XGeoClass* m_Class;
 };
 
 //==============================================================================

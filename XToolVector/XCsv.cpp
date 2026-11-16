@@ -81,6 +81,7 @@ XCsvFile::XCsvFile()
   m_nYPos = 2;
   m_nStartLine = 1;
   m_bGeo = false;
+  m_Class = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -244,30 +245,6 @@ bool XCsvFile::FindColumns(const char* filename, uint32_t start, char sep, XErro
   }
   m_In.close();
   return true;
-}
-
-//-----------------------------------------------------------------------------
-// Fixe la classe d'objets
-//-----------------------------------------------------------------------------
-void XCsvFile::Class(XGeoClass* C)
-{
-  uint32_t i;
-  for (i = 0; i < m_Data.size(); i++){
-    XGeoVector* record = (XGeoVector*)m_Data[i];
-    record->Class(C);
-    C->Vector(record);
-  }
-}
-
-//-----------------------------------------------------------------------------
-// Renvoi la classe d'objets
-//-----------------------------------------------------------------------------
-XGeoClass* XCsvFile::Class()
-{
-  if (m_Data.size() < 1)
-    return NULL;
-  XGeoVector* record = (XGeoVector*)m_Data[0];
-  return record->Class();
 }
 
 //-----------------------------------------------------------------------------

@@ -286,11 +286,7 @@ bool MapThread::DrawVectorClass(XGeoClass* C)
 			XGeoRepres* R = V->Repres();
 			if (R == nullptr)
 				continue;
-
-			m_bFill = false;
-			if (V->IsClosed())
-				m_bFill = true;
-			
+		
 			g.setColour(juce::Colour(R->Color()));
 
 			juce::Rectangle<int> frame = juce::Rectangle<int>((int)round((F.Xmin - m_dX0) / m_dGsd), (int)round((m_dY0 - F.Ymax) / m_dGsd),
@@ -331,6 +327,9 @@ bool MapThread::DrawGeometry(XGeoVector* V)
 		V->Unload();
 		return false;
 	}
+	m_bFill = false;
+	if (V->IsClosed())
+		m_bFill = true;
 
 	bool flag = false;
 	switch (V->TypeVector()) {
@@ -422,6 +421,7 @@ bool MapThread::DrawCentroide(XGeoVector* G)
 		float Y = (float)((m_dY0 - P.Y) / m_dGsd);
 		m_Path.startNewSubPath(X, Y);
 		m_Path.addStar(juce::Point<float>(X, Y), 4, 5.f, 10.f);
+		m_bFill = true;
 		return true;
 	}
 	return false;

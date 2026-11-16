@@ -21,7 +21,7 @@ XWKBGeom::XWKBGeom(bool autodelete)
 	m_nNumPoints = 0;
 	m_Pt = NULL;
   m_Z = NULL;
-	m_nNumParts = 0;
+	m_nNumParts = 1;
   m_Parts = NULL;
 }
 

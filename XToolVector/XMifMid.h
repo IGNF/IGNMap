@@ -18,7 +18,7 @@
 class XGeodConverter;
 class XGeoBase;
 
-class XMifMid : public XGeoMap {
+class XMifMid : public XGeoMapMonoClass {
 protected:
 	uint16_t										m_nVersion;
 	std::vector<std::string>	m_Column;
@@ -51,7 +51,7 @@ public:
 	inline std::ifstream* IStream() { return &m_In;}
 
 	void Class(XGeoClass* C);
-	XGeoClass* Class();
+	virtual XGeoClass* Class() { return XGeoMapMonoClass::Class(); }
 
 	bool Read(const char* filename,  bool extract_repres = false, XError* error = NULL);
 	bool ReadAttributes(uint32_t num, std::vector<std::string>& V);
@@ -78,6 +78,7 @@ public:
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual XGeoClass* Class() const { if (m_File != nullptr) return m_File->Class(); return nullptr; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
@@ -100,6 +101,7 @@ public:
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual XGeoClass* Class() const { if (m_File != nullptr) return m_File->Class(); return nullptr; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
@@ -124,6 +126,7 @@ public:
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual XGeoClass* Class() const { if (m_File != nullptr) return m_File->Class(); return nullptr; }
 
 	bool Read(std::ifstream* in, uint32_t num = 1, XError* error = NULL);
 	bool Write(std::ofstream* /*out*/, XError* /*error*/ = NULL) { return false; }
@@ -149,6 +152,7 @@ public:
 
 	inline XMifMid* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual XGeoClass* Class() const { if (m_File != nullptr) return m_File->Class(); return nullptr; }
 
 //	virtual inline XPt2D Centroide() const { return m_Centroide;}
 //	void Centroide(double x, double y) { m_Centroide = XPt2D(x, y);}

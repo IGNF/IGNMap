@@ -19,13 +19,14 @@
 #include "../XTool/XFile.h"
 
 #include "../XToolGeod/XGeoProjection.h"
+#include "../XToolVector/XWKBGeom.h"
 
 #include <carquet/carquet.h>
 
 class XGeoBase;
 class XGeoParquetVector;
 
-class XGeoParquetMap : public XGeoMap {
+class XGeoParquetMap : public XGeoMapMonoClass {
 protected:
   std::string m_strFilename;
   XGeoProjection::XProjCode m_ProjCode;
@@ -41,26 +42,29 @@ protected:
   int32_t m_nYminCol = -1;
   int32_t m_nYmaxCol = -1;
   std::vector<std::string> m_Attribut;
+  std::vector<std::string> m_BatchAtt;
+  int32_t m_nBatchAttRowGroup = -1;
+  int32_t m_nBatchAttIndex = -1;
   int32_t m_nActiveRowGroup = -1;
   int64_t m_nNbGeom = 0;
   carquet_column_reader_t* m_GeomColReader = nullptr;
   carquet_byte_array_t* m_GeometryBuf = nullptr;
+  carquet_batch_reader_config_t m_Config;
+
+  static bool FilterIndex(const carquet_reader_t* reader, int32_t row_group_index, void* user_data);
 
 public:
-  XGeoParquetMap() { m_ProjCode = XGeoProjection::WebMercator; }
+  XGeoParquetMap() { m_ProjCode = XGeoProjection::WebMercator; carquet_batch_reader_config_init(&m_Config);}
   virtual ~XGeoParquetMap();
   void ClearGeomReader();
 
   bool OpenFile(const char* filename);
   bool Read(XGeoBase* base, XWait* wait = nullptr);
 
-  bool ReadAttributes(int64_t offset, std::vector<std::string>& V, XGeoClass* C);
+  bool ReadAttributes(int64_t offset, std::vector<std::string>& V);
   bool LoadGeoParquetGeom(int64_t offset, XGeoParquetVector* V, bool needZ);
   bool LoadGeom(int64_t offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, true); }
   bool LoadGeom2D(int64_t offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, false); }
-
-  void Class(XGeoClass* C);
-  XGeoClass* Class();
 
   static XGeoClass* ImportGeoParquet(XGeoBase* base, const char* path, XGeoMap* map = nullptr);
 };
@@ -68,348 +72,57 @@ public:
 //-----------------------------------------------------------------------------
 // Vecteur GeoParquet
 //-----------------------------------------------------------------------------
-class XGeoParquetVector {
+class XGeoParquetVector : public XGeoVector {
 protected:
-  XGeoParquetMap* m_Map;
+  XGeoParquetMap* m_Map = nullptr;
   int64_t   m_Offset;
+  XWKBGeom* m_Geom = nullptr;
 
 public:
-  XGeoParquetVector() { m_Map = nullptr; m_Offset = 0; }
-  virtual ~XGeoParquetVector() { ; }
-  virtual inline XGeoClass* GeoClass() const { return nullptr; }
-  virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/,
-    double /*zmin*/, double /*zmax*/) {
-    ;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Point 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetPoint2D : public XGeoPoint2D, public XGeoParquetVector {
-public:
-  XGeoParquetPoint2D(XGeoParquetMap* map, int64_t offset, XFrame& F) { m_Map = map; m_Offset = offset; m_Frame = F; }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
+  XGeoParquetVector(XGeoParquetMap* map, int64_t offset, XFrame& F) { m_Map = map; m_Offset = offset; m_Frame = F; }
+  virtual ~XGeoParquetVector() { if (m_Geom != nullptr) delete m_Geom; }
   virtual inline XGeoClass* GeoClass() const { return Class(); }
-};
+  virtual void SetGeom(XWKBGeom* geom) { m_Geom = geom; }
 
-//-----------------------------------------------------------------------------
-// Point 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetPoint3D : public XGeoPoint3D, public XGeoParquetVector {
-public:
-  XGeoParquetPoint3D(XGeoParquetMap* map, int64_t offset, XFrame& F, double z)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_Z = z;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Point 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMPoint2D : public XGeoMPoint2D, public XGeoParquetVector {
-public:
-  XGeoParquetMPoint2D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr;
-  }
+  virtual eTypeVector TypeVector() const;
+  virtual uint32_t NbPt() const { if (m_Geom != nullptr) return m_Geom->NbPt();  return 0; }
+  virtual XPt2D Pt(uint32_t i) { if (m_Geom != nullptr) return m_Geom->Pt(i); return XPt2D(XGEO_NO_DATA, XGEO_NO_DATA); }
+  virtual inline XPt* Pt() { if (m_Geom != nullptr) return m_Geom->Pt(); return nullptr; }
+  virtual double Z(uint32_t i) { if (m_Geom != nullptr) return m_Geom->Z(i); return XGEO_NO_DATA; }
+  virtual inline double* Z() { if (m_Geom != nullptr) return m_Geom->Z(); return nullptr; }
+  virtual inline double* ZRange() { return nullptr; }
+  virtual uint32_t NbPart() const { if (m_Geom != nullptr) return m_Geom->NbPart(); return 0; }
+  virtual uint32_t Part(uint32_t i) { if (m_Geom != nullptr) return m_Geom->Part(i); return 0; }
+  virtual inline int* Parts() { if (m_Geom != nullptr) return (int*)m_Geom->Parts(); return nullptr; }
+  virtual bool Is3D() const { if (m_Geom != nullptr) return m_Geom->Is3D(); return false; }
+  virtual bool IsClosed() const { if (m_Geom != nullptr) return m_Geom->IsClosed(); return false; }
 
   virtual inline XGeoMap* Map() const { return m_Map; }
+  virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }
+
   virtual bool ReadAttributes(std::vector<std::string>& V)
   {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
+    if (m_Map != nullptr) return m_Map->ReadAttributes(m_Offset, V); return false;
   }
   virtual bool LoadGeom()
   {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
+    if (m_Map != nullptr) return m_Map->LoadGeom(m_Offset, this); return false;
   }
   virtual bool LoadGeom2D()
   {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
+    if (m_Map != nullptr) return m_Map->LoadGeom2D(m_Offset, this); return false;
   }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
+  virtual void Unload()
   {
-    m_nNumPoints = nb; m_Pt = P;
+    if (m_Geom != nullptr)
+      delete m_Geom;
+    m_Geom = nullptr;
   }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Point 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMPoint3D : public XGeoMPoint3D, public XGeoParquetVector {
-public:
-  XGeoParquetMPoint3D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map; m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr; m_Z = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
-  }
-  virtual bool LoadGeom2D()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Ligne 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetLine2D : public XGeoLine2D, public XGeoParquetVector {
-public:
-  XGeoParquetLine2D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map; m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
-  {
-    m_nNumPoints = nb; m_Pt = P;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Ligne 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetLine3D : public XGeoLine3D, public XGeoParquetVector {
-public:
-  XGeoParquetLine3D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr; m_Z = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
-  }
-  virtual bool LoadGeom2D()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Ligne 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMLine2D : public XGeoMLine2D, public XGeoParquetVector {
-public:
-  XGeoParquetMLine2D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt, uint32_t nbparts)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = nbparts; m_Pt = nullptr; m_Parts = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Ligne 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMLine3D : public XGeoMLine3D, public XGeoParquetVector {
-public:
-  XGeoParquetMLine3D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt, uint32_t nbparts)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = nbparts;
-    m_Pt = nullptr; m_Parts = nullptr; m_Z = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
-  }
-  virtual bool LoadGeom2D()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Polygone 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetPoly2D : public XGeoPoly2D, public XGeoParquetVector {
-public:
-  XGeoParquetPoly2D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double*, int, int*, double, double)
-  {
-    m_nNumPoints = nb; m_Pt = P;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Polygone 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetPoly3D : public XGeoPoly3D, public XGeoParquetVector {
-public:
-  XGeoParquetPoly3D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_Pt = nullptr; m_Z = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
-  }
-  virtual bool LoadGeom2D()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* Z, int, int*, double zmin, double zmax)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Polygon 2D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMPoly2D : public XGeoMPoly2D, public XGeoParquetVector {
-public:
-  XGeoParquetMPoly2D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt, uint32_t nbparts)
-  {
-    m_Map = map;  m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = nbparts;
-    m_Pt = nullptr; m_Parts = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* /*Z*/, int nbparts, int* parts, double, double)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_nNumParts = nbparts; m_Parts = parts;
-  }
-};
-
-//-----------------------------------------------------------------------------
-// Multi-Polygon 3D GeoPackage
-//-----------------------------------------------------------------------------
-class XGeoParquetMPoly3D : public XGeoMPoly3D, public XGeoParquetVector {
-public:
-  XGeoParquetMPoly3D(XGeoParquetMap* map, int64_t offset, XFrame& F, uint32_t nbpt, uint32_t nbparts)
-  {
-    m_Map = map; m_Offset = offset; m_Frame = F; m_nNumPoints = nbpt; m_nNumParts = nbparts;
-    m_Pt = nullptr; m_Parts = nullptr; m_Z = nullptr;
-  }
-
-  virtual inline XGeoMap* Map() const { return m_Map; }
-  virtual bool ReadAttributes(std::vector<std::string>& V)
-  {
-    if (m_Map != NULL) return m_Map->ReadAttributes(m_Offset, V, m_Class); return false;
-  }
-  virtual bool LoadGeom()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom(m_Offset, this); return false;
-  }
-  virtual bool LoadGeom2D()
-  {
-    if (m_Map != NULL) return m_Map->LoadGeom2D(m_Offset, this); return false;
-  }
-
-  virtual inline XGeoClass* GeoClass() const { return Class(); }
-  virtual void SetGeom(int nb, XPt* P, double* Z, int nbparts, int* parts, double zmin, double zmax)
-  {
-    m_nNumPoints = nb; m_Pt = P; m_Z = Z; m_nNumParts = nbparts; m_Parts = parts; m_ZRange = new double[2]; m_ZRange[0] = zmin; m_ZRange[1] = zmax;
+  virtual bool IsLoaded() 
+  { 
+    if (m_Geom == nullptr)
+      return false; 
+    return true;
   }
 };
 

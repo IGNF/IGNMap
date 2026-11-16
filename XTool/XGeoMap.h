@@ -58,4 +58,24 @@ public:
 	virtual bool XmlWrite(std::ostream* out);
 };
 
+//==============================================================================
+// Classe XGeoMapMonoClass : map ne comportant qu'une seule classe
+//==============================================================================
+class XGeoMapMonoClass : public XGeoMap {
+protected:
+	XGeoClass* m_Class = nullptr;
+
+public:
+	virtual XGeoClass* Class() const {
+		return m_Class;
+	}
+
+	virtual void Class(XGeoClass* C) {
+		m_Class = C;
+		for (size_t i = 0; i < m_Data.size(); i++)
+			C->Vector((XGeoVector*)m_Data[i]);
+	}
+
+};
+
 #endif //_XGEOMAP_H

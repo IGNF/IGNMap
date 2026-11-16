@@ -21,7 +21,6 @@
 XGeoVector::XGeoVector()
 {
 	m_Repres = NULL;
-	m_Class = NULL;
 	m_Frame = XFrame(XGEO_NO_DATA,XGEO_NO_DATA,XGEO_NO_DATA,XGEO_NO_DATA);
 }
 
@@ -32,8 +31,9 @@ XGeoRepres* XGeoVector::Repres()
 {
 	if (m_Repres != NULL)
 		return m_Repres;
-	if (m_Class != NULL)
-		return m_Class->Repres();
+	XGeoClass* C = Class();
+	if (C != nullptr)
+		return C->Repres();
 	return NULL;
 }
 
@@ -55,17 +55,20 @@ bool XGeoVector::IsSelectable() const
 {
 	if (!Selectable())
 		return false;
-	if (!m_Class->Selectable())
-		return false;
-	if (!m_Class->Layer()->Selectable())
-		return false;
+	XGeoClass* C = Class();
+	if (C != nullptr) {
+		if (!C->Selectable())
+			return false;
+		if (!C->Layer()->Selectable())
+			return false;
+	}
 	return true;
 }
 
 //-----------------------------------------------------------------------------
 // Indique si un vecteur est proche d'un point terrain
 //-----------------------------------------------------------------------------
-bool XGeoVector::IsNear2D(const XPt2D& P, double dist)
+bool XGeoVector::IsNear2D(const XPt2D& P, const double& dist)
 {
 	if (P.X < m_Frame.Xmin - dist)
 		return false;
@@ -75,7 +78,122 @@ bool XGeoVector::IsNear2D(const XPt2D& P, double dist)
 		return false;
 	if (P.Y > m_Frame.Ymax + dist)
 		return false;
-	return true;
+
+	bool flag = true;
+
+	bool loaded = true;
+	if (!IsLoaded()) {
+		loaded = false;
+		if (!LoadGeom2D())
+			return false;
+	}
+	if ((TypeVector() >= Line) && (TypeVector() <= MLineZ))
+		flag = IsLineNear2D(P, dist);
+	if ((TypeVector() >= Poly) && (TypeVector() <= MPolyZ))
+		flag = IsIn2D(P);
+	if ((TypeVector() >= MPoint) && (TypeVector() <= MPointZ))
+		flag = IsPointNear2D(P, dist);
+
+	if (!loaded)
+		Unload();
+
+	return flag;
+}
+
+//-----------------------------------------------------------------------------
+// Indique si un vecteur lineaire est proche d'un point terrain
+//-----------------------------------------------------------------------------
+bool XGeoVector::IsLineNear2D(const XPt2D& P, const double& dist)
+{
+	if (!XGeoVector::IsNear2D(P, dist))
+		return false;
+
+	double d2 = dist * dist;
+	double d, am, ab, prod;
+	uint32_t i, j, k;
+	double minx, maxx, miny, maxy;
+	bool loaded = true;
+	if (!IsLoaded()) {
+		loaded = false;
+		if (!LoadGeom2D())
+			return false;
+	}
+	int* Part = Parts();
+	XPt* Points = Pt();
+
+	for (i = 0; i < (uint32_t)NbPart(); i++) {
+		if (i == (uint32_t)(NbPart() - 1))
+			k = (uint32_t)NbPt();
+		else
+			k = Part[i + 1];
+		for (j = Part[i]; j < k - 1; j++) {
+			minx = XMin(Points[j].X, Points[j + 1].X);
+			if (P.X < minx - dist)
+				continue;
+			maxx = XMax(Points[j].X, Points[j + 1].X);
+			if (P.X > maxx + dist)
+				continue;
+			miny = XMin(Points[j].Y, Points[j + 1].Y);
+			if (P.Y < miny - dist)
+				continue;
+			maxy = XMax(Points[j].Y, Points[j + 1].Y);
+			if (P.Y > maxy + dist)
+				continue;
+
+			prod = (Points[j + 1].X - Points[j].X) * (P.X - Points[j].X) + (Points[j + 1].Y - Points[j].Y) * (P.Y - Points[j].Y);
+			am = (P.X - Points[j].X) * (P.X - Points[j].X) + (P.Y - Points[j].Y) * (P.Y - Points[j].Y);
+			ab = (Points[j + 1].X - Points[j].X) * (Points[j + 1].X - Points[j].X) +
+				(Points[j + 1].Y - Points[j].Y) * (Points[j + 1].Y - Points[j].Y);
+			if (ab == 0)
+				continue;
+			d = am - (prod * prod) / ab;
+			if (d < d2) {
+				if (!loaded)
+					Unload();
+				return true;
+			}
+		}
+	}
+	if (!loaded)
+		Unload();
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Indique si un vecteur multi-points est proche d'un point terrain
+//-----------------------------------------------------------------------------
+bool XGeoVector::IsPointNear2D(const XPt2D& P, const double& dist)
+{
+	if (!XGeoVector::IsNear2D(P, dist))
+		return false;
+
+	double d2 = dist * dist;
+	double d, am, ab, prod;
+	uint32_t i, j, k;
+	double minx, maxx, miny, maxy;
+	bool loaded = true;
+	if (!IsLoaded()) {
+		loaded = false;
+		if (!LoadGeom2D())
+			return false;
+	}
+
+	XPt* Points = Pt();
+	for (uint32_t j = 0; j < NbPt(); j++) {
+		if (P.X < Points[j].X - dist) continue;
+		if (P.X > Points[j].X + dist) continue;
+		if (P.Y < Points[j].Y - dist) continue;
+		if (P.Y > Points[j].Y + dist) continue;
+
+		if (dist2(P, Points[j]) < d2) {
+			if (!loaded)
+				Unload();
+			return true;
+		}
+	}
+	if (!loaded)
+		Unload();
+	return false;
 }
 
 //-----------------------------------------------------------------------------

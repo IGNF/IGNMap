@@ -46,12 +46,15 @@ public:
 class XDxfPoint2D : public XGeoPoint2D {
 protected :
 	XDxf*					m_File;
+	XGeoClass*		m_Class = nullptr;
 
 public:
 	XDxfPoint2D(XDxf* file = NULL) { m_File = file;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	void SetFrame(double x, double y) { m_Frame = XFrame(x, y, x, y);}
 };
@@ -62,12 +65,15 @@ public:
 class XDxfPoint3D : public XGeoPoint3D {
 protected :
 	XDxf*					m_File;
+	XGeoClass*		m_Class = nullptr;
 
 public:
 	XDxfPoint3D(XDxf* file = NULL) { m_File = file;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	void SetFrame(double x, double y, double z) { m_Frame = XFrame(x, y, x, y); m_Z = z;}
 };
@@ -78,7 +84,8 @@ public:
 class XDxfText2D : public XDxfPoint2D {
 protected:
 	std::string		m_strName;
-	uint16_t				m_nImportance;
+	uint16_t			m_nImportance;
+	XGeoClass*		m_Class = nullptr;
 
 public:
 	XDxfText2D(XDxf* file = NULL) : XDxfPoint2D(file) { m_nImportance = 0;}
@@ -86,6 +93,8 @@ public:
 	virtual void Name(std::string name) { m_strName = name;}
 	virtual std::string Name() { return m_strName;}
 	virtual uint16_t Importance() { return m_nImportance;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	void Importance(uint16_t i) { m_nImportance = i;}
 };
@@ -96,7 +105,8 @@ public:
 class XDxfText3D : public XDxfPoint3D {
 protected:
 	std::string		m_strName;
-	uint16_t				m_nImportance;
+	uint16_t			m_nImportance;
+	XGeoClass*		m_Class = nullptr;
 
 public:
 	XDxfText3D(XDxf* file = NULL) : XDxfPoint3D(file) { m_nImportance = 0;}
@@ -104,6 +114,8 @@ public:
 	virtual void Name(std::string name) { m_strName = name;}
 	virtual std::string Name() { return m_strName;}
 	virtual uint16_t Importance() { return m_nImportance;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	void Importance(uint16_t i) { m_nImportance = i;}
 };
@@ -114,13 +126,16 @@ public:
 class XDxfLine2D : public XGeoLine2D {
 protected :
 	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XDxf*					m_File;
+	XDxf*						m_File;
+	XGeoClass*			m_Class = nullptr;
 
 public:
 	XDxfLine2D(XDxf* file = NULL, uint32_t pos = 0) { m_File = file; m_Pos = pos;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* out, XError* error = NULL);
@@ -135,13 +150,16 @@ public:
 class XDxfLine3D : public XGeoLine3D {
 protected :
 	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XDxf*					m_File;
+	XDxf*						m_File;
+	XGeoClass*			m_Class = nullptr;
 
 public:
 	XDxfLine3D(XDxf* file = NULL, uint32_t pos = 0) { m_File = file; m_Pos = pos;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* out, XError* error = NULL);
@@ -156,13 +174,16 @@ public:
 class XDxfPoly2D : public XGeoPoly2D {
 protected :
 	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XDxf*					m_File;
+	XDxf*						m_File;
+	XGeoClass*			m_Class = nullptr;
 
 public:
 	XDxfPoly2D(XDxf* file = NULL, uint32_t pos = 0) { m_File = file; m_Pos = pos;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* out, XError* error = NULL);
@@ -177,13 +198,16 @@ public:
 class XDxfPoly3D : public XGeoPoly3D {
 protected :
 	uint32_t				m_Pos;						// Position de la geometrie dans le fichier
-	XDxf*					m_File;
+	XDxf*						m_File;
+	XGeoClass*			m_Class = nullptr;
 
 public:
 	XDxfPoly3D(XDxf* file = NULL, uint32_t pos = 0) { m_File = file; m_Pos = pos;}
 
 	inline XDxf* File() const { return m_File;}
 	virtual inline XGeoMap* Map() const { return m_File;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	bool Read(std::ifstream* in, XError* error = NULL);
 	bool Write(std::ofstream* out, XError* error = NULL);

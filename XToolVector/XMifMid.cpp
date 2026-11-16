@@ -44,18 +44,16 @@ XMifMid::~XMifMid()
 //-----------------------------------------------------------------------------
 void XMifMid::Class(XGeoClass* C)
 {
-  uint32_t i;
-  for (i = 0; i < m_Data.size(); i++){
-		XGeoVector* record = (XGeoVector*)m_Data[i];
-		record->Class(C);
-		C->Vector(record);
-	}
+	m_Class = C;
+  for (size_t i = 0; i < m_Data.size(); i++)
+		C->Vector((XGeoVector*)m_Data[i]);
+	
 	// Fixe le schema de la classe a partir du MIF
 	std::string name, type;
 	int length = 20, dec = 0;
 	XGeoAttribut::eType attType = XGeoAttribut::String;
 	XGeoSchema schema;
-	for (i = 0; i < m_Column.size(); i++) {
+	for (size_t i = 0; i < m_Column.size(); i++) {
 		name = m_Column[i];
 		type = m_Type[i];
 		dec = 0;
@@ -84,17 +82,6 @@ void XMifMid::Class(XGeoClass* C)
 		schema.AddAttribut(name, name, "", attType, length, (uint8_t)dec);
 	}
 	C->SetSchema(schema);
-}
-	
-//-----------------------------------------------------------------------------
-// Renvoi la classe d'objets
-//-----------------------------------------------------------------------------
-XGeoClass* XMifMid::Class()
-{
-	if (m_Data.size() < 1)
-		return NULL;
-	XGeoVector* record = (XGeoVector*)m_Data[0];
-	return record->Class();
 }
 
 //-----------------------------------------------------------------------------

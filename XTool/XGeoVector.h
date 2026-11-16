@@ -21,8 +21,11 @@ public:
 	enum eTypeVector { Null, Point, PointZ, MPoint, MPointZ, Line, LineZ, MLine, MLineZ,
 												Poly, PolyZ, MPoly, MPolyZ, Raster, DTM, LAS};
 protected :
-	XGeoClass*	m_Class;		// Classe de l'objet
+	//XGeoClass*	m_Class;		// Classe de l'objet
 	XGeoRepres*	m_Repres;		// Representation particuliere du vecteur
+
+	bool IsLineNear2D(const XPt2D& P, const double& dist);
+	bool IsPointNear2D(const XPt2D& P, const double& dist);
 
 public :
 	XGeoVector();
@@ -30,15 +33,21 @@ public :
 
 	virtual inline eType Type() const { return Vector;}
 
+	/*
 	void Class(XGeoClass* c) { m_Class = c;}
 	inline XGeoClass* Class() const { return m_Class;}
 	std::string ClassName() { if (m_Class != NULL) return m_Class->Name(); return "";}
 	virtual inline XGeoMap* Map() const { return NULL;}
+	*/
+	virtual void Class(XGeoClass*) { ; }
+	virtual XGeoClass* Class() const { return nullptr; }
+	std::string ClassName() { XGeoClass* C = Class(); if (C != nullptr) return C->Name(); return ""; }
+	virtual inline XGeoMap* Map() const { return nullptr; }
 
 	virtual XGeoRepres* Repres();
 	virtual void Repres(XGeoRepres* repres);
 	virtual bool IsSelectable() const;
-	virtual bool IsNear2D(const XPt2D& P, double dist);
+	virtual bool IsNear2D(const XPt2D& P, const double& dist);
 	virtual bool IsIn2D(const XPt2D& P);
 	virtual bool IsIn2D(const XPt2D& P, double d);
 	virtual bool IsIn2D(const XPt2D& M, const XPt2D& P);

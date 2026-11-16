@@ -21,7 +21,7 @@ class XGeoBase;
 //-----------------------------------------------------------------------------
 // Fichier CSV
 //-----------------------------------------------------------------------------
-class XCsvFile :  public XGeoMap {
+class XCsvFile :  public XGeoMapMonoClass {
 protected:
   std::ifstream							m_In;
   std::string								m_strFilename;
@@ -37,9 +37,6 @@ protected:
 public:
   XCsvFile();
   virtual ~XCsvFile() {;}
-
-  void Class(XGeoClass* C);
-  XGeoClass* Class();
 
   bool FindColumns(const char* filename, uint32_t start = 0, char sep = ',', XError* error = nullptr);
   bool Read(const char* filename, uint32_t start, uint32_t xpos, uint32_t ypos, bool geo,

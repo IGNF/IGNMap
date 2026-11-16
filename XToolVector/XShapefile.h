@@ -62,13 +62,12 @@ public:
 //-----------------------------------------------------------------------------
 // Fichier ShapeFile
 //-----------------------------------------------------------------------------
-class XShapefile : public XGeoMap {
+class XShapefile : public XGeoMapMonoClass {
 protected:
 	std::string											m_strFilename;
 	XShapefileHeader								m_Header;
-  //std::ifstream										m_In;
   XFile                           m_In;
-	XDBaseFile*											m_DBFile;
+	XDBaseFile*											m_DBFile = nullptr;
 
 	virtual XShapefileRecord* CreateShapefileRecord();
 
@@ -94,8 +93,8 @@ public:
   //inline std::ifstream* IStream() { return &m_In;}
   std::ifstream* IStream() { return m_In.IStream();}
 
-	void Class(XGeoClass* C);
-	XGeoClass* Class();
+	virtual void Class(XGeoClass* C);
+	virtual XGeoClass* Class() { return XGeoMapMonoClass::Class(); }
 
 	bool ReadAttributes(uint32_t index, std::vector<std::string>& V);
 	int FindField(std::string fieldname, bool no_case = false);

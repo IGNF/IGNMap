@@ -80,9 +80,10 @@ class XGpkgVector {
 protected:
   XGpkgMap*       m_Map;
   sqlite3_int64   m_Id;
+  XGeoClass*      m_Class;
 
 public:
-  XGpkgVector() { m_Map = NULL; m_Id = 0; }
+  XGpkgVector() { m_Map = NULL; m_Id = 0; m_Class = nullptr; }
 	virtual ~XGpkgVector() {;}
   virtual inline XGeoClass* GeoClass() const { return NULL;}
   virtual void SetGeom(int /*nb*/, XPt* /*P*/, double* /*Z*/, int /*nbparts*/, int* /*parts*/,

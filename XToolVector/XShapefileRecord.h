@@ -125,6 +125,7 @@ public:
 
 	inline XShapefile* Shapefile() const { return m_File;}
 	void Shapefile(XShapefile* shapefile) { m_File = shapefile;}
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
 	bool Write(std::ofstream* out, XError* error = NULL);

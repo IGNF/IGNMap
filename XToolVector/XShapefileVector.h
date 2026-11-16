@@ -42,6 +42,7 @@ public:
 
 	uint32_t ByteSize() const {return 20;}
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -58,6 +59,7 @@ public:
 
 	uint32_t ByteSize() const {return 36;}
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -80,6 +82,7 @@ public:
 
 	uint32_t ByteSize() const {return 36 + 16 * m_nNumPoints;}
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -100,6 +103,7 @@ public:
 
 	uint32_t ByteSize() const {return 36 + 16 * m_nNumPoints + 16 + m_nNumPoints * 8; ;}
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -125,6 +129,7 @@ public:
 	uint32_t ByteSize() const { return 44 + 4 * m_nNumParts + 16 * m_nNumPoints;}
 
 	inline uint32_t PosGeom() const { return m_Pos;}
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -148,6 +153,7 @@ public:
 	
 	bool Clone(XShapefileMLine2D* P);
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadDBFAttributes(V);}
@@ -169,6 +175,7 @@ public:
 	uint32_t ByteSize() const { return 44 + 4 * m_nNumParts + 16 * m_nNumPoints + 16 + m_nNumPoints * 8;}
 
 	inline uint32_t PosGeom() const { return m_Pos;}
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -193,6 +200,7 @@ public:
 	
 	bool Clone(XShapefileMLine3D* P);
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadDBFAttributes(V);}
@@ -215,6 +223,7 @@ public:
 	uint32_t ByteSize() const { return 44 + 4 * m_nNumParts + 16 * m_nNumPoints;}
 
 	inline uint32_t PosGeom() const { return m_Pos;}
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -238,6 +247,7 @@ public:
 
 	bool Clone(XShapefileMPoly2D* P);
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadDBFAttributes(V);}
@@ -259,6 +269,7 @@ public:
 	uint32_t ByteSize() const { return 44 + 4 * m_nNumParts + 16 * m_nNumPoints + 16 + m_nNumPoints * 8;}
 
 	inline uint32_t PosGeom() const { return m_Pos;}
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	bool Read(std::ifstream* in, XShapefileRecordHeader* header, XError* error = NULL);
@@ -283,6 +294,7 @@ public:
 	
 	bool Clone(XShapefileMPoly3D* P);
 
+	virtual XGeoClass* Class() const { return m_File->Class(); }
 	virtual inline XGeoMap* Map() const { return m_File;}
 
 	virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadDBFAttributes(V);}
