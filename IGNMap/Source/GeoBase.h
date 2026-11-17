@@ -170,7 +170,7 @@ public:
 
 protected:
   double m_ZRange[2];
-  XGeoClass* m_Class;
+  XGeoClass* m_Class = nullptr;
 };
 
 //==============================================================================

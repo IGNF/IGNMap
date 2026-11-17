@@ -168,9 +168,6 @@ bool XGeoVector::IsPointNear2D(const XPt2D& P, const double& dist)
 		return false;
 
 	double d2 = dist * dist;
-	double d, am, ab, prod;
-	uint32_t i, j, k;
-	double minx, maxx, miny, maxy;
 	bool loaded = true;
 	if (!IsLoaded()) {
 		loaded = false;

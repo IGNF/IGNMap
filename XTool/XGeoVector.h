@@ -21,7 +21,6 @@ public:
 	enum eTypeVector { Null, Point, PointZ, MPoint, MPointZ, Line, LineZ, MLine, MLineZ,
 												Poly, PolyZ, MPoly, MPolyZ, Raster, DTM, LAS};
 protected :
-	//XGeoClass*	m_Class;		// Classe de l'objet
 	XGeoRepres*	m_Repres;		// Representation particuliere du vecteur
 
 	bool IsLineNear2D(const XPt2D& P, const double& dist);
@@ -33,12 +32,6 @@ public :
 
 	virtual inline eType Type() const { return Vector;}
 
-	/*
-	void Class(XGeoClass* c) { m_Class = c;}
-	inline XGeoClass* Class() const { return m_Class;}
-	std::string ClassName() { if (m_Class != NULL) return m_Class->Name(); return "";}
-	virtual inline XGeoMap* Map() const { return NULL;}
-	*/
 	virtual void Class(XGeoClass*) { ; }
 	virtual XGeoClass* Class() const { return nullptr; }
 	std::string ClassName() { XGeoClass* C = Class(); if (C != nullptr) return C->Name(); return ""; }
@@ -67,7 +60,6 @@ public :
 	virtual uint32_t NbPart() const { return 0;}
 	virtual uint32_t Part(uint32_t) { return 0;}
 	virtual inline int* Parts() { return NULL;}
-	virtual bool Is3D() const { return false;}
 	virtual bool IsClosed() const { return false;}
 	virtual inline double Resolution() const { return 10;}
 

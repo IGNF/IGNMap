@@ -1413,12 +1413,15 @@ void OGLWidget::LoadVectorClass(XGeoClass* C)
       continue;
     if (!m_Frame.Intersect(V->Frame()))
       continue;
+    if (!V->LoadGeom())
+      continue;
     if ((V->TypeVector() == XGeoVector::PolyZ) || (V->TypeVector() == XGeoVector::MPolyZ))
       DrawPolyVector(V);
     if ((V->TypeVector() == XGeoVector::LineZ) || (V->TypeVector() == XGeoVector::MLineZ))
       DrawLineVector(V);
     if ((V->TypeVector() == XGeoVector::PointZ) || (V->TypeVector() == XGeoVector::MPointZ))
       DrawPointVector(V);
+    V->Unload();
   }
 }
 
@@ -1435,12 +1438,9 @@ void OGLWidget::DrawPolyVector(XGeoVector* V)
   if ((V->NbPt() + m_nNbPolyVertex + m_nNbPoly) >= m_nMaxPolyPt) // Trop d'index charges
     return;
 
-  if (!V->LoadGeom())
+  if (V->Zmin() < -99.)
     return;
-  if (V->Zmin() < -99.) {
-    V->Unload();
-    return;
-  }
+
   if (m_dZ0 <= XGEO_NO_DATA)
     m_dZ0 = V->Zmin();
   uint32_t color = V->Repres()->Color();
@@ -1497,7 +1497,6 @@ void OGLWidget::DrawPolyVector(XGeoVector* V)
 
   m_nNbPolyVertex += V->NbPt();
   m_nNbPoly += V->NbPart();
-  V->Unload();
 }
 
 //==============================================================================
@@ -1513,12 +1512,9 @@ void OGLWidget::DrawLineVector(XGeoVector* V)
   if ((V->NbPt() + m_nNbLineVertex + m_nNbLine) >= m_nMaxLinePt) // Trop d'index charges
     return;
 
-  if (!V->LoadGeom())
+  if (V->Zmin() < -99.) 
     return;
-  if (V->Zmin() < -99.) {
-    V->Unload();
-    return;
-  }
+
   if (m_dZ0 <= XGEO_NO_DATA)
     m_dZ0 = V->Zmin();
   uint32_t color = V->Repres()->Color();
@@ -1575,7 +1571,6 @@ void OGLWidget::DrawLineVector(XGeoVector* V)
 
   m_nNbLineVertex += V->NbPt();
   m_nNbLine += V->NbPart();
-  V->Unload();
 }
 
 //==============================================================================
@@ -1589,12 +1584,9 @@ void OGLWidget::DrawPointVector(XGeoVector* V)
   if ((V->NbPt() + m_nNbVecPointVertex) >= m_nMaxVecPointPt) // Trop de points charges
     return;
 
-  if (!V->LoadGeom())
+  if (V->Zmin() < -99.)
     return;
-  if (V->Zmin() < -99.) {
-    V->Unload();
-    return;
-  }
+
   if (m_dZ0 <= XGEO_NO_DATA)
     m_dZ0 = V->Zmin();
   uint32_t color = V->Repres()->Color();
@@ -1635,7 +1627,6 @@ void OGLWidget::DrawPointVector(XGeoVector* V)
   glUnmapBuffer(GL_ARRAY_BUFFER);
 
   m_nNbVecPointVertex += V->NbPt();
-  V->Unload();
 }
 
 //==============================================================================

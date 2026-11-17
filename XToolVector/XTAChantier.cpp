@@ -44,18 +44,6 @@ XGeoClass* XTAChantier::ImportTA(XGeoBase* base, const char* path, XGeoMap* /*ma
 }
 
 //-----------------------------------------------------------------------------
-// Fixe la classe d'objets
-//-----------------------------------------------------------------------------
-void XTAChantier::Class(XGeoClass* C)
-{
-	for (uint32_t i = 0; i < m_Data.size(); i++){
-		XGeoVector* record = (XGeoVector*)m_Data[i];
-		record->Class(C);
-		C->Vector(record);
-	}
-}
-
-//-----------------------------------------------------------------------------
 // Lecture dans un fichier
 //-----------------------------------------------------------------------------
 bool XTAChantier::Read(const char* filename, XError* error)

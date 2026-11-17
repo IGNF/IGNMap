@@ -230,6 +230,7 @@ bool XGeoParquetMap::Read(XGeoBase* base, XWait* wait)
           F.Ymax = XWebMercator::ConvertLatToYDeg(F.Ymax);
         }
         XGeoParquetVector* vector = new XGeoParquetVector(this, id, F);
+        vector->XGeoObject::Is3D(geom.Is3D());
 
         if (vector != nullptr)
           m_Data.push_back(vector);

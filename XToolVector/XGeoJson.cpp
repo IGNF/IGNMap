@@ -20,27 +20,6 @@ XGeoJson::XGeoJson()
   m_Projection = XGeoProjection::Unknown;
 }
 
-void XGeoJson::Class(XGeoClass* C)
-{
-  uint32_t i;
-  for (i = 0; i < m_Data.size(); i++){
-    XGeoVector* record = (XGeoVector*)m_Data[i];
-    record->Class(C);
-    C->Vector(record);
-  }
-}
-
-//-----------------------------------------------------------------------------
-// Renvoi la classe d'objets
-//-----------------------------------------------------------------------------
-XGeoClass* XGeoJson::Class()
-{
-  if (m_Data.size() < 1)
-    return NULL;
-  XGeoVector* record = (XGeoVector*)m_Data[0];
-  return record->Class();
-}
-
 //-----------------------------------------------------------------------------
 // Lecture d'un token JSON
 //-----------------------------------------------------------------------------

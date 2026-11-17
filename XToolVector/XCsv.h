@@ -60,6 +60,8 @@ public:
 
   inline XCsvFile* File() const { return m_File;}
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   void SetXY(double x, double y) { m_Frame.Xmin = m_Frame.Xmax = x; m_Frame.Ymin = m_Frame.Ymax = y; }
 

@@ -19,14 +19,12 @@ class XGeoBase;
 //-----------------------------------------------------------------------------
 // Chantier TA
 //-----------------------------------------------------------------------------
-class XTAChantier : public XGeoMap {
+class XTAChantier : public XGeoMapMonoClass {
 protected:
 	std::string				m_strProjection;
 	std::string				m_strImagePath;
 
 public:
-	void Class(XGeoClass* C);
-
 	void ImagePath(const char* path) { m_strImagePath = path;}
 	std::string ImagePath() { return m_strImagePath;}
 
@@ -108,6 +106,9 @@ public:
 	std::string ImagePath();
 
 	virtual inline XGeoMap* Map() const { return m_TA;}
+	virtual void Class(XGeoClass* C) { m_TA->Class(C); }
+	virtual XGeoClass* Class() const { return m_TA->Class(); }
+
 
 	double Resol() const { return m_dResolMoy;}
 	double Cap() const { 	double cap = 90. - (m_dKappa * 180.)/XPI; if(cap < 0) cap += 360.; return cap;}

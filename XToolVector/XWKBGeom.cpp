@@ -71,6 +71,13 @@ bool XWKBGeom::Read(uint8_t* geom)
 		case wkbMultiPolygon :
 			return ReadMultiPolygon(geom);
 
+    case wkbPointZ :
+      m_nNumPoints = 1;
+      m_Pt = new XPt[1];
+      m_Z = new double[1];
+      ::memcpy(m_Pt, &geom[sizeof(uint8_t) + sizeof(uint32_t)], sizeof(XPt));
+      ::memcpy(m_Z, &geom[sizeof(uint8_t) + sizeof(uint32_t) + sizeof(XPt)], sizeof(double));
+      return true;
     case wkbLineStringZ :
       return ReadLineStringZ(geom);
     case wkbPolygonZ :
@@ -82,6 +89,13 @@ bool XWKBGeom::Read(uint8_t* geom)
     case wkbMultiPolygonZ :
       return ReadMultiPolygonZ(geom);
 
+    case wkbPointZM :
+      m_nNumPoints = 1;
+      m_Pt = new XPt[1];
+      m_Z = new double[1];
+      ::memcpy(m_Pt, &geom[sizeof(uint8_t) + sizeof(uint32_t)], sizeof(XPt));
+      ::memcpy(m_Z, &geom[sizeof(uint8_t) + sizeof(uint32_t) + sizeof(XPt)], sizeof(double));
+      return true;
     case wkbLineStringZM :
       return ReadLineStringZM(geom);
     case wkbPolygonZM :

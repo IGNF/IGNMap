@@ -103,6 +103,22 @@ public:
     return false;
   }
 
+  double ZMin() const {
+    if ((m_Z == nullptr)||(m_nNumPoints == 0)) return XGEO_NO_DATA;
+    double zmin = m_Z[0];
+    for (uint32_t i = 0; i < m_nNumPoints; i++)
+      if (zmin > m_Z[i]) zmin = m_Z[i];
+    return zmin;
+  }
+
+  double ZMax() const {
+    if ((m_Z == nullptr) || (m_nNumPoints == 0)) return XGEO_NO_DATA;
+    double zmax = m_Z[0];
+    for (uint32_t i = 0; i < m_nNumPoints; i++)
+      if (zmax < m_Z[i]) zmax = m_Z[i];
+    return zmax;
+  }
+
 	bool Read(uint8_t* geom);
   bool Frame(XFrame* F);
 };

@@ -18,7 +18,7 @@
 
 class XGeoBase;
 
-class XGeoJson : public XGeoMap {
+class XGeoJson : public XGeoMapMonoClass {
 protected:
   std::string                   m_strFilename;
   std::ifstream                 m_In;
@@ -47,9 +47,6 @@ public:
   XGeoJson();
   virtual ~XGeoJson() {;}
 
-  void Class(XGeoClass* C);
-  XGeoClass* Class();
-
   bool Read(const char* filename, XError* error = NULL);
 
   inline std::ifstream* IStream() { return &m_In;}
@@ -67,7 +64,7 @@ public:
 class XGeoJsonVector {
 protected :
   XGeoJson*       m_File;
-  uint32_t          m_Pos;						// Position de la geometrie dans le fichier
+  uint32_t        m_Pos;						// Position de la geometrie dans le fichier
 
 public :
   XGeoJsonVector() { m_File = NULL; m_Pos = 0; }
@@ -91,6 +88,8 @@ public:
   XGeoJsonPoint2D(XGeoJson* file, uint32_t pos, XFrame* F) : XGeoJsonVector(file, pos) { m_Frame = *F;}
 
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)
@@ -120,6 +119,8 @@ public:
                   { m_Frame = *F; m_nNumPoints = *nbPt;}
 
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)
@@ -150,6 +151,8 @@ public:
   XGeoJsonMLine2D(XGeoJson* file, uint32_t pos, XFrame* F, uint32_t *nbPt, uint32_t *nbPart) : XGeoJsonVector(file, pos)
             { m_Frame = *F; m_nNumPoints = *nbPt; m_nNumParts = *nbPart;}
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)
@@ -167,6 +170,8 @@ public:
     { m_Frame = *F; m_nNumPoints = *nbPt;}
 
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)
@@ -219,6 +224,8 @@ public:
     { m_Frame = *F; m_nNumPoints = *nbPt; m_nNumParts = *nbPart;}
 
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)
@@ -236,6 +243,8 @@ public:
     { m_Frame = *F; m_nNumPoints = *nbPt;}
 
   virtual inline XGeoMap* Map() const { return m_File;}
+  virtual void Class(XGeoClass* C) { m_File->Class(C); }
+  virtual XGeoClass* Class() const { return m_File->Class(); }
 
   virtual	bool ReadAttributes(std::vector<std::string>& V) { return ReadGeoJsonAttributes(V);}
   virtual std::string FindAttribute(std::string att_name, bool no_case = false)

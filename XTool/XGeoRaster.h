@@ -115,15 +115,17 @@ protected:
 	std::string		m_strFilename;
 	std::string		m_strPath;
 	uint16_t				m_nRot;						// Indique la rotation de l'image
-//  XGeoClass*		m_Class;					// Classe de l'objet
+  XGeoClass*			m_Class;					// Classe de l'objet
 	XGeoRasterContext*	m_Context;
 	XGeoRasterHisto*		m_Histo;
 
 public:
-	XGeoRaster() : m_dResolution(0.) {m_Histo = NULL; m_Context = NULL; m_nRot = 0; m_Mask = NULL; m_nW = m_nH = 0; m_nByte = 0;}
-	virtual ~XGeoRaster() {if (m_Context != NULL) delete m_Context; if (m_Histo != NULL) delete m_Histo;}
+	XGeoRaster() : m_dResolution(0.) { m_Histo = nullptr; m_Context = nullptr; m_nRot = 0; m_Mask = nullptr; m_nW = m_nH = 0; m_nByte = 0; m_Class = nullptr; }
+	virtual ~XGeoRaster() {if (m_Context != nullptr) delete m_Context; if (m_Histo != nullptr) delete m_Histo;}
 
 	virtual eTypeVector TypeVector () const { return Raster;}
+	virtual void Class(XGeoClass* C) { m_Class = C; }
+	virtual XGeoClass* Class() const { return m_Class; }
 
 	// Geometrie de l'image
 	virtual uint32_t ImageWidth() { return m_nW;}
