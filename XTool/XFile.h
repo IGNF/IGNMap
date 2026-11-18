@@ -22,7 +22,7 @@ class XFile {
 protected:
   std::string               m_strFilename;
   std::ifstream*            m_In = nullptr;
-  std::ios_base::openmode   m_Mode = 0;
+  std::ios_base::openmode   m_Mode = std::ios::in;
 
 public:
   XFile() { ; }

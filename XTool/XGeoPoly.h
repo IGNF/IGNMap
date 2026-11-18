@@ -17,11 +17,10 @@
 //-----------------------------------------------------------------------------
 class XGeoPoly2D : public XGeoLine2D { 
 public :
-	XGeoPoly2D() : XGeoLine2D() {;}
+	XGeoPoly2D() : XGeoLine2D() { XGeoObject::IsClosed(true); }
 	virtual ~XGeoPoly2D() {;}
 
 	virtual eTypeVector TypeVector () const { return Poly;}
-	virtual bool IsClosed() const { return true;}
 
 	virtual bool IsNear2D(const XPt2D& P, double dist);
 };
@@ -31,11 +30,10 @@ public :
 //-----------------------------------------------------------------------------
 class XGeoPoly3D : public XGeoLine3D { 
 public :
-	XGeoPoly3D() : XGeoLine3D() {;}
+	XGeoPoly3D() : XGeoLine3D() { XGeoObject::IsClosed(true); }
 	virtual ~XGeoPoly3D() {;}
 
 	virtual eTypeVector TypeVector () const { return PolyZ;}
-	virtual bool IsClosed() const { return true;}
 	
 	virtual bool IsNear2D(const XPt2D& P, double dist);
 };
@@ -45,11 +43,10 @@ public :
 //-----------------------------------------------------------------------------
 class XGeoMPoly2D : public XGeoMLine2D { 
 public:
-	XGeoMPoly2D() : XGeoMLine2D() {;}
+	XGeoMPoly2D() : XGeoMLine2D() { XGeoObject::IsClosed(true); }
 	virtual ~XGeoMPoly2D() {;}
 
 	virtual eTypeVector TypeVector () const { return MPoly;}
-	virtual bool IsClosed() const { return true;}
 
 	virtual bool IsNear2D(const XPt2D& P, double dist);
 };
@@ -59,11 +56,10 @@ public:
 //-----------------------------------------------------------------------------
 class XGeoMPoly3D : public XGeoMLine3D { 
 public:
-	XGeoMPoly3D() : XGeoMLine3D() {;}
+	XGeoMPoly3D() : XGeoMLine3D() { XGeoObject::IsClosed(true); }
 	virtual ~XGeoMPoly3D() {;}
 
 	virtual eTypeVector TypeVector () const { return MPolyZ;}
-	virtual bool IsClosed() const { return true;}
 
 	virtual bool IsNear2D(const XPt2D& P, double dist);
 };

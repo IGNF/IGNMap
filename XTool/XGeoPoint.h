@@ -45,12 +45,11 @@ protected:
 	double m_Z;
 
 public:
-	XGeoPoint3D() : XGeoPoint2D() { m_Z = XGEO_NO_DATA;}
+	XGeoPoint3D() : XGeoPoint2D() { m_Z = XGEO_NO_DATA; XGeoObject::Is3D(true);}
 
 	virtual eTypeVector TypeVector () const { return PointZ;}
 
 	virtual double Z(uint32_t /*i*/) { return m_Z; }
-	virtual bool Is3D() const { return true;}
 
 	virtual inline double Zmin() const { return m_Z;}
 	virtual inline double Zmax() const { return m_Z;}
@@ -91,12 +90,10 @@ protected:
 	double*	m_ZRange;
 
 public:
-	XGeoMPoint3D() : XGeoMPoint2D() { m_Z = NULL; m_ZRange = NULL;}
+	XGeoMPoint3D() : XGeoMPoint2D() { m_Z = NULL; m_ZRange = NULL; XGeoObject::Is3D(true);}
 	virtual ~XGeoMPoint3D() { Unload();}
 
 	virtual eTypeVector TypeVector () const { return MPointZ;}
-
-	virtual bool Is3D() const { return true;}
 
 	virtual double Z(uint32_t i);
 	virtual inline double* Z() { return m_Z;}

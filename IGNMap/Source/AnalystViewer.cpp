@@ -403,7 +403,7 @@ void AnalystViewerComponent::buttonClicked(juce::Button* button)
 			if (m_Analyse[i]->Name() == name) {
 				A = m_Analyse[i];
 				A->Clear();
-				m_cbxAnalyse.setSelectedItemIndex(i, juce::dontSendNotification);
+				m_cbxAnalyse.setSelectedItemIndex((int)i, juce::dontSendNotification);
 				break;
 			}
 		}
@@ -429,8 +429,8 @@ void AnalystViewerComponent::buttonClicked(juce::Button* button)
 
 		if (new_analyse) {
 			m_Analyse.push_back(A);
-			m_cbxAnalyse.addItem(A->Name(), m_Analyse.size());
-			m_cbxAnalyse.setSelectedId(m_Analyse.size(), juce::dontSendNotification);
+			m_cbxAnalyse.addItem(A->Name(), (int)m_Analyse.size());
+			m_cbxAnalyse.setSelectedId((int)m_Analyse.size(), juce::dontSendNotification);
 		}
 		m_Model.SetAnalyse(A);
 		m_Table.updateContent();

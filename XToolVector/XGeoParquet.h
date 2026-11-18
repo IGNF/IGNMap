@@ -94,7 +94,6 @@ public:
   virtual uint32_t NbPart() const { if (m_Geom != nullptr) return m_Geom->NbPart(); return 0; }
   virtual uint32_t Part(uint32_t i) { if (m_Geom != nullptr) return m_Geom->Part(i); return 0; }
   virtual inline int* Parts() { if (m_Geom != nullptr) return (int*)m_Geom->Parts(); return nullptr; }
-  virtual bool IsClosed() const { if (m_Geom != nullptr) return m_Geom->IsClosed(); return false; }
 
   virtual inline XGeoMap* Map() const { return m_Map; }
   virtual XGeoClass* Class() const { if (m_Map != nullptr) return m_Map->Class(); return nullptr; }

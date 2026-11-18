@@ -1004,8 +1004,8 @@ void LasLayersViewer::ComputeDeltaLasVector(std::vector< XGeoClass*> T)
 					m_P[i].LasPt = Plas;
 				}
 			}
-			return true;
 			las->CloseIfNeeded(1);
+			return true;
 		}
 	};
 

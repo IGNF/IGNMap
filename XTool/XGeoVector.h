@@ -60,7 +60,6 @@ public :
 	virtual uint32_t NbPart() const { return 0;}
 	virtual uint32_t Part(uint32_t) { return 0;}
 	virtual inline int* Parts() { return NULL;}
-	virtual bool IsClosed() const { return false;}
 	virtual inline double Resolution() const { return 10;}
 
 	virtual std::string FindAttribute(std::string att_name, bool no_case = false);

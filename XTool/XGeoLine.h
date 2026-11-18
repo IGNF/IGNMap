@@ -48,14 +48,13 @@ protected :
 	double*	m_ZRange;
 
 public :
-	XGeoLine3D() : XGeoLine2D() { m_Z = NULL; m_ZRange = NULL;}
+	XGeoLine3D() : XGeoLine2D() { m_Z = NULL; m_ZRange = NULL; XGeoObject::Is3D(true);}
 	virtual ~XGeoLine3D();
 
 	virtual eTypeVector TypeVector () const { return LineZ;}
 	virtual double Z(uint32_t i);
 	virtual inline double* Z() { return m_Z;}
 	virtual inline double* ZRange() { return m_ZRange;}
-	virtual bool Is3D() const { return true;}
 
 	virtual inline double Zmin() const { if (m_ZRange != NULL) return m_ZRange[0]; return XGEO_NO_DATA;}
 	virtual inline double Zmax() const { if (m_ZRange != NULL) return m_ZRange[1]; return XGEO_NO_DATA;}
@@ -98,14 +97,13 @@ protected :
 	double*	m_ZRange;
 
 public:
-	XGeoMLine3D() : XGeoMLine2D() { m_Z = NULL; m_ZRange = NULL;}
+	XGeoMLine3D() : XGeoMLine2D() { m_Z = NULL; m_ZRange = NULL; XGeoObject::Is3D(true);}
 	virtual ~XGeoMLine3D();
 
 	virtual eTypeVector TypeVector () const { return MLineZ;}
 	virtual double Z(uint32_t i);
 	virtual inline double* Z() { return m_Z;}
 	virtual inline double* ZRange() { return m_ZRange;}
-	virtual bool Is3D() const { return true;}
 
 	virtual inline double Zmin() const { if (m_ZRange != NULL) return m_ZRange[0]; return XGEO_NO_DATA;}
 	virtual inline double Zmax() const { if (m_ZRange != NULL) return m_ZRange[1]; return XGEO_NO_DATA;}

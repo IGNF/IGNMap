@@ -1165,7 +1165,7 @@ bool MainComponent::ShowHideSidePanel()
 //==============================================================================
 void MainComponent::AboutIGNMap()
 {
-	juce::String version = "0.2.4";
+	juce::String version = "0.2.5";
 	juce::String info = "Compilation : " + juce::String(__DATE__) + ", " + juce::String(__TIME__);
 	juce::String message = "IGNMap 3 Version : " + version + "\n\n" + info + "\n\n";
 	message += "JUCE Version : " + juce::String(JUCE_MAJOR_VERSION) + "."
@@ -1693,7 +1693,7 @@ void MainComponent::Test()
 	window->addButton("OK", 1);
 
 
-	window->enterModalState(true, juce::ModalCallbackFunction::create([window, frame, ref = SafePointer{ this }](int result)
+	window->enterModalState(true, juce::ModalCallbackFunction::create([window, frame, ref = SafePointer{ this }](int /*result*/)
 		{
 			if (ref == nullptr)
 				return;

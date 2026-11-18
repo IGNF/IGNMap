@@ -70,7 +70,7 @@ void LasExportThread::run()
   key_entries[1].count = 1;
   key_entries[1].value_offset = 2154; // Lambert 93
   XGeoPref pref;
-  key_entries[1].value_offset = XGeoProjection::EPSGCode(pref.Projection());
+  key_entries[1].value_offset = (laszip_U16)XGeoProjection::EPSGCode(pref.Projection());
 
   // horizontal units
   key_entries[2].key_id = 3076; // ProjLinearUnitsGeoKey

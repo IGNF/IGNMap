@@ -140,7 +140,7 @@ bool XFlatGeoBufMap::OpenFile(const char* filename)
 //-----------------------------------------------------------------------------
 // Lecture de la base
 //-----------------------------------------------------------------------------
-bool XFlatGeoBufMap::Read(XGeoBase* base, XWait*)
+bool XFlatGeoBufMap::Read(XGeoBase*, XWait*)
 {
   if (m_HeaderData == nullptr)
     return false;
@@ -378,7 +378,7 @@ bool XFlatGeoBufMap::LoadFlatGeoBufGeom(uint64_t offset, XFlatGeoBufVector* V, b
   auto feature = FlatGeobuf::GetFeature(m_FeatureData);
   auto geometry = feature->geometry();
 
-  int nb = 0;
+  uint32_t nb = 0;
   std::vector<int> Parts;
   XPt* P = nullptr;
   double zmin = std::numeric_limits<double>::max(), zmax = std::numeric_limits<double>::lowest();
@@ -432,7 +432,7 @@ bool XFlatGeoBufMap::LoadFlatGeoBufGeom(uint64_t offset, XFlatGeoBufVector* V, b
   }
 
   // Multi-parts
-  for (int j = 0; j < parts->size(); j++) {
+  for (int j = 0; j < (int)parts->size(); j++) {
     auto geopart = (*parts)[j];
     auto xy = geopart->xy();
     if (xy == nullptr)
@@ -489,7 +489,7 @@ bool XFlatGeoBufMap::LoadFlatGeoBufGeom(uint64_t offset, XFlatGeoBufVector* V, b
 
   int* T = new int[Parts.size()];
   memcpy(T, Parts.data(), Parts.size() * sizeof(int));
-  V->SetGeom(nb, P, Z, Parts.size(), T, zmin, zmax);
+  V->SetGeom((int)nb, P, Z, (int)Parts.size(), T, zmin, zmax);
 
   return true;
 }

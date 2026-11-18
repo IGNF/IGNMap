@@ -55,7 +55,7 @@ public:
 
 class XShapefilePoint3D : public XGeoPoint3D, public XShapefileVector {
 public:
-	XShapefilePoint3D() { m_File = NULL;}
+	XShapefilePoint3D() { m_File = NULL; }
 
 	uint32_t ByteSize() const {return 36;}
 

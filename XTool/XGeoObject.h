@@ -22,7 +22,7 @@ class XGeoRepres;
 class XGeoObject {
 public:
 	enum eType { None, Map, Vector, Layer, Class};
-	enum eState { sNone = 0, sActif = 2, sVisible = 4, sSelected = 8, sSelectable = 16, sEditable = 32, sIs3D = 64};
+	enum eState { sNone = 0, sActif = 2, sVisible = 4, sSelected = 8, sSelectable = 16, sEditable = 32, sIs3D = 64, sIsClosed = 128};
 protected:
 	XFrame			m_Frame;					// Rectangle englobant
 	int					m_State;					// Etat
@@ -38,6 +38,7 @@ public:
 	inline bool Selectable() const { if (m_State & sSelectable) return true; return false;}
 	inline bool Editable() const { if (m_State & sEditable) return true; return false;}
 	inline bool Is3D() const { if (m_State & sIs3D) return true; return false; }
+	inline bool IsClosed() const { if (m_State & sIsClosed) return true; return false; }
 
 	virtual bool IsSelectable() const { return Selectable();}
 
@@ -47,6 +48,7 @@ public:
   virtual void Selectable(bool flag) { if (flag) m_State |= sSelectable; else m_State &= ~sSelectable;}
   virtual void Editable(bool flag) { if (flag) m_State |= sEditable; else m_State &= ~sEditable;}
 	virtual void Is3D(bool flag) { if (flag) m_State |= sIs3D; else m_State &= ~sIs3D; }
+	virtual void IsClosed(bool flag) { if (flag) m_State |= sIsClosed; else m_State &= ~sIsClosed; }
 
 	virtual XFrame Frame() const { return m_Frame;}
 	virtual bool IntersectFrame(XFrame& r) const { 	if (m_Frame.Xmin > r.Xmax) return false;

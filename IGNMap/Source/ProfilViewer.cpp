@@ -58,8 +58,8 @@ void ProfilViewer::ProfilDrawer::paint(juce::Graphics& g)
     D = 1;
     for (int i = Z0 * 10 - D; i < zmax * 10 + 2 * D; i += D) {
       double Zn = (i * 0.1 - zmin) * H / fabs(zmax - zmin);
-      g.drawLine(0, H - Zn, W + 5, H - Zn);
-      g.drawSingleLineText(juce::String(i * 0.1), 0, H - Zn);
+      g.drawLine(0.f, (float)(H - Zn), (float)(W + 5), (float)(H - Zn));
+      g.drawSingleLineText(juce::String(i * 0.1), 0, (int)(H - Zn));
     }
   }
 

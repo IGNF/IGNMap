@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 #include "XGeoParquet.h"
+#include <cstring>
 #include "../XTool/XGeoBase.h"
 #include "../XTool/XPath.h"
 #include "../XToolGeod/XWebMercator.h"
@@ -109,7 +110,6 @@ bool XGeoParquetMap::OpenFile(const char* filename)
       find_keys.pop_back();
       find_keys.push_back("bbox");
       std::string bbox = XJson::FindValue(find_keys, source);
-      std::cout << "Geometry bbox : " << bbox << std::endl;
       std::vector<double> TFrame;
       XJson::ReadArrayAsDouble(bbox, TFrame);
       if (TFrame.size() == 4) {
@@ -140,7 +140,6 @@ bool XGeoParquetMap::OpenFile(const char* filename)
       find_keys.pop_back();
       find_keys.push_back("geometry_types");
       std::string geomtypes = XJson::FindValue(find_keys, source);
-      std::cout << "Geometry types : " << geomtypes << std::endl;
       std::vector<std::string> types;
       XJson::ReadArrayAsString(geomtypes, types);
     }
@@ -231,6 +230,7 @@ bool XGeoParquetMap::Read(XGeoBase* base, XWait* wait)
         }
         XGeoParquetVector* vector = new XGeoParquetVector(this, id, F);
         vector->XGeoObject::Is3D(geom.Is3D());
+        vector->XGeoObject::IsClosed(geom.IsClosed());
 
         if (vector != nullptr)
           m_Data.push_back(vector);
