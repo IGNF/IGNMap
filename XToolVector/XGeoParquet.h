@@ -35,6 +35,8 @@ protected:
   int64_t m_nTotalRows = 0;
   int32_t m_nNumCols = 0;
   int32_t m_nNumRgs = 0;
+  int64_t m_nMaxBatchSize = 0;
+  std::vector<int64_t> m_BatchSize;
   std::string m_strGeomCol;
   int32_t m_nGeomCol = -1;
   int32_t m_nXminCol = -1;
@@ -52,6 +54,7 @@ protected:
   carquet_batch_reader_config_t m_Config;
 
   static bool FilterIndex(const carquet_reader_t* reader, int32_t row_group_index, void* user_data);
+  int32_t FindRowGroup(const int64_t& offset, int64_t& index);
 
 public:
   XGeoParquetMap() { m_ProjCode = XGeoProjection::WebMercator; carquet_batch_reader_config_init(&m_Config);}
@@ -61,10 +64,10 @@ public:
   bool OpenFile(const char* filename);
   bool Read(XGeoBase* base, XWait* wait = nullptr);
 
-  bool ReadAttributes(int64_t offset, std::vector<std::string>& V);
-  bool LoadGeoParquetGeom(int64_t offset, XGeoParquetVector* V, bool needZ);
-  bool LoadGeom(int64_t offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, true); }
-  bool LoadGeom2D(int64_t offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, false); }
+  bool ReadAttributes(const int64_t& offset, std::vector<std::string>& V);
+  bool LoadGeoParquetGeom(const int64_t& offset, XGeoParquetVector* V, bool needZ);
+  bool LoadGeom(const int64_t& offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, true); }
+  bool LoadGeom2D(const int64_t& offset, XGeoParquetVector* V) { return LoadGeoParquetGeom(offset, V, false); }
 
   static XGeoClass* ImportGeoParquet(XGeoBase* base, const char* path, XGeoMap* map = nullptr);
 };

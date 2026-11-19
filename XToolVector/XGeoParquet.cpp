@@ -21,11 +21,9 @@
 //-----------------------------------------------------------------------------
 XGeoParquetMap::~XGeoParquetMap()
 {
+  ClearGeomReader();
   if (m_Reader != nullptr) 
     carquet_reader_close(m_Reader);
-  if (m_GeometryBuf != nullptr)
-    delete[] m_GeometryBuf;
-  carquet_column_reader_free(m_GeomColReader);
   m_nActiveRowGroup = -1;
   m_nNbGeom = 0;
 }
@@ -35,11 +33,12 @@ XGeoParquetMap::~XGeoParquetMap()
 //-----------------------------------------------------------------------------
 void XGeoParquetMap::ClearGeomReader()
 {
+  if (m_GeomColReader != nullptr)
+    carquet_column_reader_free(m_GeomColReader);
+  m_GeomColReader = nullptr;
   if (m_GeometryBuf != nullptr)
     delete[] m_GeometryBuf;
   m_GeometryBuf = nullptr;
-  carquet_column_reader_free(m_GeomColReader);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -169,7 +168,7 @@ bool XGeoParquetMap::OpenFile(const char* filename)
     indices.push_back(c);
   }
 
-  // Configuraion pour la lecture d'attributs
+  // Configuration pour la lecture d'attributs
   if (m_Config.column_indices != nullptr)
     delete[] m_Config.column_indices;
   int32_t* T_indices = new (std::nothrow) int32_t[indices.size()];
@@ -180,6 +179,18 @@ bool XGeoParquetMap::OpenFile(const char* filename)
 
   m_Config.column_indices = T_indices;
   m_Config.num_columns = (int32_t)indices.size();
+
+  // Lecture des metadonnees des row groups
+  m_nMaxBatchSize = 0;
+  m_BatchSize.clear();
+  for (int32_t rg = 0; rg < m_nNumRgs; rg++) {
+    carquet_row_group_metadata_t metadata;
+    if (carquet_reader_row_group_metadata(m_Reader, rg, &metadata) != CARQUET_OK)
+      return false;;
+    if (metadata.num_rows > m_nMaxBatchSize)
+      m_nMaxBatchSize = metadata.num_rows;
+    m_BatchSize.push_back(metadata.num_rows);
+  }
 
   return true;
 }
@@ -193,55 +204,60 @@ bool XGeoParquetMap::Read(XGeoBase* base, XWait* wait)
  
   int64_t id = -1;
   XFrame F;
-  double zmin = 0.;
-  uint32_t nbpt = 0;
-  uint32_t nbparts = 0;
-  int64_t batch_size = m_nTotalRows / m_nNumRgs;
   
   if (m_GeometryBuf == nullptr) {
-    m_GeometryBuf = new (std::nothrow) carquet_byte_array_t[batch_size];
+    m_GeometryBuf = new (std::nothrow) carquet_byte_array_t[m_nMaxBatchSize];
     if (m_GeometryBuf == nullptr)
       return false;
   }
 
   m_GeomColReader = carquet_reader_get_column(m_Reader, 0, m_nGeomCol, &err);
+  if (m_GeomColReader == nullptr)
+    return false;
   for (int32_t rg = 0; rg < m_nNumRgs; rg++) {
     if (rg > 0)
-      carquet_column_reader_reset(m_GeomColReader, rg, &err);
+      if (carquet_column_reader_reset(m_GeomColReader, rg, &err) != CARQUET_OK)
+        continue;
     m_nActiveRowGroup = rg;
+    int64_t batch_size = m_BatchSize[rg];
 
     m_nNbGeom = carquet_column_read_batch(m_GeomColReader, m_GeometryBuf, batch_size, NULL, NULL);
 
-      for (int64_t i = 0; i < m_nNbGeom; i++) {
-        id++;
-        uint8_t* data = m_GeometryBuf[i].data;
-        if (data == nullptr)
-          continue;
-        XWKBGeom geom(true);
-        if (!geom.Read(data))
-          continue;
-        if (!geom.Frame(&F))
-          continue;
-        if (m_ProjCode == XGeoProjection::RGF93) {
-          F.Xmin = XWebMercator::ConvertLonToXDeg(F.Xmin);
-          F.Xmax = XWebMercator::ConvertLonToXDeg(F.Xmax);
-          F.Ymin = XWebMercator::ConvertLatToYDeg(F.Ymin);
-          F.Ymax = XWebMercator::ConvertLatToYDeg(F.Ymax);
-        }
-        XGeoParquetVector* vector = new XGeoParquetVector(this, id, F);
-        vector->XGeoObject::Is3D(geom.Is3D());
-        vector->XGeoObject::IsClosed(geom.IsClosed());
+		for (int64_t i = 0; i < m_nNbGeom; i++) {
+			id++;
+			uint8_t* data = m_GeometryBuf[i].data;
+			if (data == nullptr)
+				continue;
+			XWKBGeom geom(true);
+			if (!geom.Read(data))
+				continue;
+			if (!geom.Frame(&F))
+				continue;
+			if (m_ProjCode == XGeoProjection::RGF93) {
+				F.Xmin = XWebMercator::ConvertLonToXDeg(F.Xmin);
+				F.Xmax = XWebMercator::ConvertLonToXDeg(F.Xmax);
+				F.Ymin = XWebMercator::ConvertLatToYDeg(F.Ymin);
+				F.Ymax = XWebMercator::ConvertLatToYDeg(F.Ymax);
+			}
+			XGeoParquetVector* vector = new XGeoParquetVector(this, id, F);
+			vector->XGeoObject::Is3D(geom.Is3D());
+			vector->XGeoObject::IsClosed(geom.IsClosed());
 
-        if (vector != nullptr)
-          m_Data.push_back(vector);
-      }
+			if (vector != nullptr)
+				m_Data.push_back(vector);
+		}
     
   }
   ClearGeomReader();
+  if (id != (m_nTotalRows - 1))
+    return false;
 
   return true;
 }
 
+//-----------------------------------------------------------------------------
+// Filtre
+//-----------------------------------------------------------------------------
 bool XGeoParquetMap::FilterIndex(const carquet_reader_t* reader, int32_t row_group_index, void* user_data)
 {
   int32_t* ptr = (int32_t*)user_data;
@@ -251,15 +267,33 @@ bool XGeoParquetMap::FilterIndex(const carquet_reader_t* reader, int32_t row_gro
 }
 
 //-----------------------------------------------------------------------------
+// Recherche du Row Group pour un offset donne
+//-----------------------------------------------------------------------------
+int32_t XGeoParquetMap::FindRowGroup(const int64_t& offset, int64_t& index)
+{
+  int64_t pos = 0;
+  for (size_t i = 0; i < m_BatchSize.size(); i++) {
+    if (offset < (pos + m_BatchSize[i])) {
+      index = offset - pos;
+      return (int32_t)i;
+    }
+    pos += m_BatchSize[i];
+  }
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
 // Lecture des attributs
 //-----------------------------------------------------------------------------
-bool XGeoParquetMap::ReadAttributes(int64_t offset, std::vector<std::string>& V)
+bool XGeoParquetMap::ReadAttributes(const int64_t& offset, std::vector<std::string>& V)
 {
   carquet_error_t err = CARQUET_ERROR_INIT;
 
-  int64_t batch_size = m_nTotalRows / m_nNumRgs;
-  int32_t row_group = offset / batch_size;
-  int64_t index = offset - row_group * batch_size;
+  int64_t index;
+  int32_t row_group = FindRowGroup(offset, index);
+  if (row_group < 0)
+    return false;
+
   int32_t att_batch_size = 100;
 
   if ((row_group == m_nBatchAttRowGroup) && (index < m_nBatchAttIndex) && (index >= (m_nBatchAttIndex - att_batch_size))) {
@@ -360,38 +394,33 @@ bool XGeoParquetMap::ReadAttributes(int64_t offset, std::vector<std::string>& V)
 //-----------------------------------------------------------------------------
 // Lecture de la geometrie
 //-----------------------------------------------------------------------------
-bool XGeoParquetMap::LoadGeoParquetGeom(int64_t offset, XGeoParquetVector* V, bool needZ)
+bool XGeoParquetMap::LoadGeoParquetGeom(const int64_t& offset, XGeoParquetVector* V, bool needZ)
 {
   carquet_error_t err = CARQUET_ERROR_INIT;
 
-  int64_t batch_size = m_nTotalRows / m_nNumRgs;
-  int32_t row_group = offset / batch_size;
-  int64_t index = offset - row_group * batch_size;
+  int64_t index;
+  int32_t row_group = FindRowGroup(offset, index);
+  if (row_group < 0)
+    return false;
 
   if (m_GeometryBuf == nullptr) {
-    m_GeometryBuf = new (std::nothrow) carquet_byte_array_t[batch_size];
+    m_GeometryBuf = new (std::nothrow) carquet_byte_array_t[m_nMaxBatchSize];
     if (m_GeometryBuf == nullptr)
       return false;
     m_nActiveRowGroup = row_group;
     m_GeomColReader = carquet_reader_get_column(m_Reader, row_group, m_nGeomCol, &err);
-    m_nNbGeom = carquet_column_read_batch(m_GeomColReader, m_GeometryBuf, batch_size, NULL, NULL);
+    m_nNbGeom = carquet_column_read_batch(m_GeomColReader, m_GeometryBuf, m_BatchSize[row_group], NULL, NULL);
   }
 
   if (m_nActiveRowGroup != row_group) {
     if (carquet_column_reader_reset(m_GeomColReader, row_group, &err) != CARQUET_OK)
       return false;
     m_nActiveRowGroup = row_group;
-    m_nNbGeom = carquet_column_read_batch(m_GeomColReader, m_GeometryBuf, batch_size, NULL, NULL);
+    m_nNbGeom = carquet_column_read_batch(m_GeomColReader, m_GeometryBuf, m_BatchSize[row_group], NULL, NULL);
   }
 
   if (index >= m_nNbGeom)
     return false;
-
-  //int64_t skip = carquet_column_skip(m_GeomColReader, index);
-  //carquet_byte_array_t geomBuf[1];
-  //int64_t nbgeom = carquet_column_read_batch(m_GeomColReader, geomBuf, 1, NULL, NULL);
-
-  double zmin = 0., zmax = 0.;
 
   uint8_t* data = m_GeometryBuf[index].data;
   if (data != nullptr) {
